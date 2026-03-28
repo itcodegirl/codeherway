@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Functions Explained: Declarations, Expressions & Arrow Functions | CodeHerWay</title>
+<meta name="description" content="Functions are the most important concept in JavaScript. Learn declarations, expressions, arrow functions, parameters, and return values. CodeHerWay.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+
+@media(max-width:375px){main{padding:20px 14px 48px!important;}.code-body{font-size:11.5px;}}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="chw-wrapper">
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Click</span> Post 05 of 15</div>
+  <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+  <span class="series-label">JavaScript, But Make It Click &nbsp;·&nbsp; Post 05 of 15</span>
+  <div class="post-number">Post 05 of 15</div>
+  <h1 class="post-title">JavaScript Functions Explained</h1>
+  <p class="post-subtitle">The single most important concept in JavaScript. Write logic once, use it everywhere.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 11 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Complete Beginners</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+<main id="main-content">
+<div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">The Most Important Concept in JavaScript</h2><div class="section-line"></div></div>
+  <p>If you only understand one thing deeply from this entire series, make it functions. They are the foundation of all organized code. A function is a <span class="highlight">reusable block of logic</span> you can name, call, and pass data to.</p>
+  <p>Without functions, you'd write the same code over and over. With them, you write it once and use it everywhere.</p>
+<div class="section-header"><span class="section-icon">🧱</span><h2 class="section-title">Three Ways to Write a Function</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>Stop and appreciate what <code class='il'>return</code> does. It doesn't just end the function — it sends a value back to wherever the function was called from. That returned value can be stored, passed to another function, or used directly. Functions without <code class='il'>return</code> come back as <code class='il'>undefined</code>. This trips up beginners constantly.</p>
+  </div>
+
+</div>
+  <p>JavaScript has three syntax forms for functions. They mostly do the same thing, but there are important differences you need to know — especially around <strong>hoisting</strong>.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — functions.js</div></div>
+    <div class="code-body"><span class="sy-comment">// 1. Function Declaration — HOISTED: can be called BEFORE it appears in the file</span>
+<span class="sy-kw">function</span> <span class="sy-fn">greet</span>(<span class="sy-plain">name</span>) {
+  <span class="sy-kw">return</span> <span class="sy-str">`Hello, ${<span class="sy-plain">name</span>}!`</span>
+}
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-fn">greet</span>(<span class="sy-str">"Jenna"</span>))  <span class="sy-comment">// "Hello, Jenna!" — works ✅</span>
+
+<span class="sy-comment">// 2. Function Expression — NOT hoisted: must be defined before you call it</span>
+<span class="sy-kw">const</span> <span class="sy-fn">sayHello</span> = <span class="sy-kw">function</span>(<span class="sy-plain">name</span>) {
+  <span class="sy-kw">return</span> <span class="sy-str">`Hello, ${<span class="sy-plain">name</span>}!`</span>
+}
+<span class="sy-comment">// sayHello("Jenna") called BEFORE this line would throw: ReferenceError</span>
+
+<span class="sy-comment">// 3. Arrow Function — modern, concise, also NOT hoisted</span>
+<span class="sy-kw">const</span> <span class="sy-fn">hi</span> = (<span class="sy-plain">name</span>) => <span class="sy-str">`Hello, ${<span class="sy-plain">name</span>}!`</span>
+<span class="sy-comment">// Single parameter? Parens are optional: name => `Hello, ${name}!`</span>
+<span class="sy-comment">// Single expression? No curly braces needed — the result is returned implicitly</span>
+
+<span class="sy-comment">// Arrow function — multi-line needs curly braces AND an explicit return</span>
+<span class="sy-kw">const</span> <span class="sy-fn">greetFull</span> = (<span class="sy-plain">name</span>) => {
+  <span class="sy-kw">const</span> <span class="sy-plain">msg</span> = <span class="sy-str">`Hello, ${<span class="sy-plain">name</span>}!`</span>
+  <span class="sy-kw">return</span> <span class="sy-plain">msg</span>
+}</div>
+  </div>  <div class="callout callout-warn">
+    <div class="callout-title">⚠️ Hoisting — The Key Difference</div>
+    <p>Only <strong>function declarations</strong> are hoisted (available before their definition line). <strong>Function expressions</strong> and <strong>arrow functions</strong> stored in <code class="il">const</span>/<code class="il">let</span> are NOT hoisted — calling them before their definition throws a <code class="il">ReferenceError</span>. This is a real bug you will hit if you don't know this.</p>
+  </div><div class="section-header"><span class="section-icon">📨</span><h2 class="section-title">Parameters, Arguments &amp; Return Values</h2><div class="section-line"></div></div>  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — params-returns.js</div></div>
+    <div class="code-body"><span class="sy-comment">// Parameters: name, age (placeholders in the definition)</span>
+<span class="sy-kw">function</span> <span class="sy-fn">introduce</span>(<span class="sy-plain">name</span>, <span class="sy-plain">age</span>) {
+  <span class="sy-kw">return</span> <span class="sy-str">`I'm ${<span class="sy-plain">name</span>}, ${<span class="sy-plain">age</span>} years old`</span>
+}
+
+<span class="sy-comment">// Arguments: "Jenna", 27 (actual values passed in when calling)</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-fn">introduce</span>(<span class="sy-str">"Jenna"</span>, <span class="sy-num">27</span>))  <span class="sy-comment">// "I'm Jenna, 27 years old"</span>
+
+<span class="sy-comment">// Default parameters — fallback if no argument is given</span>
+<span class="sy-kw">function</span> <span class="sy-fn">greetUser</span>(<span class="sy-plain">name</span> = <span class="sy-str">"friend"</span>) {
+  <span class="sy-kw">return</span> <span class="sy-str">`Hey ${<span class="sy-plain">name</span>}!`</span>
+}
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-fn">greetUser</span>())           <span class="sy-comment">// "Hey friend!"</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-fn">greetUser</span>(<span class="sy-str">"Jenna"</span>))    <span class="sy-comment">// "Hey Jenna!"</span>
+
+<span class="sy-comment">// A function with no return — performs an action, returns undefined</span>
+<span class="sy-kw">function</span> <span class="sy-fn">logScore</span>(<span class="sy-plain">score</span>) {
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Score:"</span>, <span class="sy-plain">score</span>)
+  <span class="sy-comment">// no return → returns undefined</span>
+}
+<span class="sy-kw">const</span> <span class="sy-plain">result</span> = <span class="sy-fn">logScore</span>(<span class="sy-num">10</span>)
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">result</span>)  <span class="sy-comment">// undefined — console.log is not the return value</span></div>
+  </div>  <div class="callout callout-mindset">
+    <div class="callout-title">🧠 return vs console.log</div>
+    <p>A function that <strong>returns</strong> a value sends something back so other code can use it. <code class="il">console.log</span> just prints for you to see and returns <code class="il">undefined</span> — the value vanishes. Always ask: do I need to use this result somewhere else? If yes, use <code class="il">return</span>.</p>
+  </div>  <div class="callout callout-info">
+    <div class="callout-title">ℹ️ Rest Parameters vs arguments</div>
+    <p>Arrow functions don't have the old <code class="il">arguments</span> object (you'll see this in older code). The modern way to accept any number of arguments is with the rest parameter: <code class="il">function sum(...nums) { return nums.reduce((a,b) => a+b, 0) }</span>. The <code class="il">...</span> collects all arguments into a real array.</p>
+  </div>  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body"><p>I wrote the same validation logic in four different places in my first project — literally copy-pasted it each time. Then a mentor asked why I didn't just make it a function. I didn't have an answer. I didn't realize that was an option. Now "write it once, call it everywhere" is basically my religion.</p></div>
+  </div>  <div class="mini-build">
+    <div class="mini-build-header"><span class="trophy">🏆</span><span class="mb-title">MINI BUILD — Greeting Generator (Three Ways)</span></div>
+    <div class="mini-build-body"><p>Write a greeting function that takes a name and time of day, returning a custom greeting. Then rewrite it all three ways.</p><div class="goal-label">Your steps:</div><ul class="step-list"><li><span class="step-num">01</span> Write a <strong>function declaration</strong> <code class="il">greet(name, timeOfDay)</span> that returns e.g. <code class="il">"Good morning, Jenna!"</span></li>
+<li><span class="step-num">02</span> Rewrite it as a <strong>function expression</strong> stored in a <code class="il">const</span></li>
+<li><span class="step-num">03</span> Rewrite it as an <strong>arrow function</strong></li>
+<li><span class="step-num">04</span> Add a <strong>default parameter</strong> so it works even without a name</li>
+<li><span class="step-num">05</span> Call each version and log the result — all three should produce the same output</li>
+<li><span class="step-num">06</span> Bonus: test that only function declarations can be called before their definition line</li></ul></div>
+  </div>  <div class="confidence-close">
+    <div class="cc-icon">💛</div>
+    <div class="cc-heading">You Just Unlocked Code Reuse</div>
+    <p>Functions are the building blocks of every JavaScript program ever written. You know how to write them three ways, the hoisting difference between them, how to pass data in, get data back, and set defaults. Next: loops — making JavaScript do repetitive work so you don't have to.</p>
+  </div>  <a class="next-post" href="js-click-post06-loops.html">
+    <div><div class="next-label">// next post →</div><div class="next-title">Post 06 — Loops: Make JS Do the Boring Work</div></div>
+    <div class="next-arrow">→</div>
+  </a>
+
+  <nav class="post-nav">
+    <a href="click-04-making-decisions.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Making Decisions</span></a>
+    <a href="click-06-loops.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Loops</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+</div>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

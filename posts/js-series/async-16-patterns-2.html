@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Async Patterns: Stale-While-Revalidate, Infinite Scroll & Background Sync | CodeHerWay</title>
+<meta name="description" content="Stale-while-revalidate, infinite scroll, prefetching, and background sync. The patterns that make your app feel alive. CodeHerWay.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.container{max-width: 860px; margin: 0 auto; padding: 0 24px 80px;}
+.code-block{background: var(--bg-code); border: 1px solid #2a2a3e; border-radius: 10px; margin: 24px 0; overflow: hidden;}
+.code-header{background: #12121a; padding: 10px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #2a2a3e;}
+.code-label{font-family: 'Fira Code', monospace; font-size: 0.78rem; color: var(--muted); margin-left: auto;}
+.c-comment{color: #ffffff; font-style: italic;}
+.c-keyword{color: var(--purple);}
+.c-fn{color: var(--sky-blue);}
+.c-string{color: var(--mint-green);}
+.c-num{color: var(--gold);}
+.c-cyan{color: var(--cyan);}
+.c-pink{color: var(--pink);}
+.mini-build-header .build-title{font-size: 0.85rem; font-weight: 700; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.05em;}
+.mini-build-header .build-desc{font-size: 0.9rem; color: var(--text); margin-top: 4px;}
+.devfession-label{font-size: 0.75rem; font-weight: 700; color: var(--purple); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;}
+.flow-steps{display: flex; flex-direction: column; gap: 0; margin: 24px 0;}
+.flow-step{display: flex; gap: 16px; align-items: flex-start;}
+.flow-line{display: flex; flex-direction: column; align-items: center;}
+.flow-dot{width: 32px; height: 32px; border-radius: 50%; background: var(--cyan); color: #000; font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;}
+.flow-connector{width: 2px; background: #2a2a3e; flex: 1; min-height: 24px;}
+.flow-content{padding: 4px 0 24px; flex: 1;}
+.flow-content strong{color: #fff; display: block; margin-bottom: 4px;}
+.flow-content p{color: var(--muted); font-size: 0.9rem; margin: 0;}
+.next-post .label{font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;}
+.next-post .title{font-weight: 700; color: #fff; font-size: 1.05rem;}
+.next-btn{background: var(--cyan); color: #000; font-weight: 700; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 0.9rem; white-space: nowrap;}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="container">
+
+  <div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Async</span> Post 16 of 16</div>
+    <a href="/" class="chw-logo">
+      <span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span>
+    </a>
+    <div class="series-line">
+      <span class="series-label">⚡ JavaScript, But Make It Async</span>
+      <span class="post-number">Post 16 of 18</span>
+    </div>
+    <h1 class="post-title">Advanced Async Patterns</h1>
+    <p class="post-subtitle">Stale-while-revalidate, infinite scroll, prefetching, and background sync — the patterns that make your app feel alive.</p>
+    <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 15 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Intermediate</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+  </div>
+
+  <div class="back-ref">
+    <strong>📚 Continues from:</strong> Post 15 (Polling, Optimistic Updates, Deduplication, Skeletons)
+  </div>
+
+  <p>Part 1 was the starter pack. Part 2 is where things get a little more architectural. These patterns are what separates "the app feels fast" from "I don't know why this app feels fast, but it does." Now you will know.</p>
+
+  <!-- SWR -->
+  <h2>Pattern 5: <span class="accent">Stale-While-Revalidate</span></h2>
+
+  <p>The name is from an HTTP cache directive, but the pattern shows up everywhere in JavaScript land. The idea: when someone requests data, give them the old cached version <em>immediately</em>, then quietly fetch fresh data in the background and update the UI when it arrives.</p>
+
+  <p>The user always sees something instantly. No spinner, no flash of empty. It might be slightly stale for half a second, but for most UI data (user profile, news feed, dashboard stats), that's completely fine.</p>
+
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-header bad">❌ Cache-then-network (sequential)</div>
+      <div class="compare-body"><span class="c-comment">// Check cache first,</span>
+<span class="c-comment">// THEN go to network</span>
+<span class="c-keyword">async function</span> <span class="c-fn">getUser</span>(id) {
+  <span class="c-keyword">const</span> cached = <span class="c-fn">getCache</span>(id);
+  <span class="c-keyword">if</span> (cached) <span class="c-keyword">return</span> cached;
+
+  <span class="c-comment">// Only hits network</span>
+  <span class="c-comment">// if cache miss</span>
+  <span class="c-keyword">const</span> fresh = <span class="c-keyword">await</span> <span class="c-fn">fetchUser</span>(id);
+  <span class="c-fn">setCache</span>(id, fresh);
+  <span class="c-keyword">return</span> fresh;
+}
+<span class="c-comment">// Problem: cached data gets stale</span>
+<span class="c-comment">// and never refreshes</span></div>
+    </div>
+    <div class="compare-card">
+      <div class="compare-header good">✅ Stale-while-revalidate</div>
+      <div class="compare-body"><span class="c-comment">// Return stale + refresh both</span>
+<span class="c-keyword">function</span> <span class="c-fn">getUser</span>(id, <span class="c-fn">onUpdate</span>) {
+  <span class="c-keyword">const</span> cached = <span class="c-fn">getCache</span>(id);
+
+  <span class="c-comment">// Show stale data instantly</span>
+  <span class="c-keyword">if</span> (cached) <span class="c-fn">onUpdate</span>(cached);
+
+  <span class="c-comment">// Always revalidate in BG</span>
+  <span class="c-fn">fetchUser</span>(id).<span class="c-fn">then</span>(fresh => {
+    <span class="c-fn">setCache</span>(id, fresh);
+    <span class="c-fn">onUpdate</span>(fresh); <span class="c-comment">// update UI</span>
+  });
+}
+<span class="c-comment">// Instant response + always fresh</span></div>
+    </div>
+  </div>
+
+  <h3>Full SWR Implementation</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-label">swr.js</span></div>
+    <div class="code-body"><span class="c-keyword">const</span> swrCache = <span class="c-keyword">new</span> <span class="c-fn">Map</span>();
+
+<span class="c-keyword">function</span> <span class="c-fn">useSWR</span>(key, fetcher, { maxAge = <span class="c-num">60000</span> } = {}) {
+  <span class="c-keyword">const</span> now = <span class="c-fn">Date</span>.<span class="c-fn">now</span>();
+  <span class="c-keyword">const</span> callbacks = <span class="c-keyword">new</span> <span class="c-fn">Set</span>();
+
+  <span class="c-keyword">function</span> <span class="c-fn">subscribe</span>(cb) {
+    callbacks.<span class="c-fn">add</span>(cb);
+    <span class="c-keyword">return</span> () => callbacks.<span class="c-fn">delete</span>(cb);
+  }
+
+  <span class="c-keyword">function</span> <span class="c-fn">notify</span>(data, isStale = <span class="c-keyword">false</span>) {
+    callbacks.<span class="c-fn">forEach</span>(cb => <span class="c-fn">cb</span>({ data, isStale }));
+  }
+
+  <span class="c-keyword">async function</span> <span class="c-fn">revalidate</span>() {
+    <span class="c-keyword">try</span> {
+      <span class="c-keyword">const</span> fresh = <span class="c-keyword">await</span> <span class="c-fn">fetcher</span>(key);
+      swrCache.<span class="c-fn">set</span>(key, { data: fresh, timestamp: <span class="c-fn">Date</span>.<span class="c-fn">now</span>() });
+      <span class="c-fn">notify</span>(fresh, <span class="c-keyword">false</span>);
+    } <span class="c-keyword">catch</span> (err) {
+      <span class="c-fn">console</span>.<span class="c-fn">error</span>(<span class="c-string">'SWR revalidation failed:'</span>, err);
+    }
+  }
+
+  <span class="c-keyword">const</span> cached = swrCache.<span class="c-fn">get</span>(key);
+  <span class="c-keyword">const</span> isExpired = cached && (now - cached.timestamp > maxAge);
+
+  <span class="c-keyword">if</span> (cached) {
+    <span class="c-comment">// Immediately emit stale data</span>
+    <span class="c-fn">setTimeout</span>(() => <span class="c-fn">notify</span>(cached.data, isExpired), <span class="c-num">0</span>);
+  }
+
+  <span class="c-comment">// Always revalidate if no cache, or if expired</span>
+  <span class="c-keyword">if</span> (!cached || isExpired) {
+    <span class="c-fn">revalidate</span>();
+  }
+
+  <span class="c-keyword">return</span> { subscribe, revalidate };
+}
+
+<span class="c-comment">// Usage</span>
+<span class="c-keyword">const</span> userSWR = <span class="c-fn">useSWR</span>(
+  <span class="c-string">'user-123'</span>,
+  (id) => <span class="c-fn">fetch</span>(<span class="c-string">`/api/users/</span>${id}<span class="c-string">`</span>).<span class="c-fn">then</span>(r => r.<span class="c-fn">json</span>()),
+  { maxAge: <span class="c-num">30000</span> } <span class="c-comment">// 30 second max age</span>
+);
+
+userSWR.<span class="c-fn">subscribe</span>(({ data, isStale }) => {
+  <span class="c-fn">renderUser</span>(data);
+  <span class="c-comment">// Optionally show a subtle "refreshing" indicator</span>
+  <span class="c-keyword">if</span> (isStale) <span class="c-fn">showRefreshingBadge</span>();
+});</div>
+  </div>
+
+  <div class="callout-tip">
+    <div class="callout-title">✅ Real Talk</div>
+    <p>Libraries like SWR and React Query are entire packages built around this pattern. Understanding the pattern helps you use those libraries well — and makes you dangerous in interviews when you can explain what they're actually doing under the hood.</p>
+  </div>
+
+  <!-- INFINITE SCROLL -->
+  <h2>Pattern 6: <span class="accent">Infinite Scroll</span></h2>
+
+  <p>Load more content as the user scrolls. Sounds simple. Gets messy fast. The key tool here is <strong>IntersectionObserver</strong> — a browser API that fires when an element enters or leaves the viewport, without any scroll event listeners (which are notoriously bad for performance).</p>
+
+  <h3>How Infinite Scroll Works</h3>
+
+  <div class="flow-steps">
+    <div class="flow-step">
+      <div class="flow-line"><div class="flow-dot">1</div><div class="flow-connector"></div></div>
+      <div class="flow-content"><strong>Place a sentinel element</strong><p>A small invisible div at the bottom of your list. This is what we observe.</p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-line"><div class="flow-dot">2</div><div class="flow-connector"></div></div>
+      <div class="flow-content"><strong>Watch it with IntersectionObserver</strong><p>When it enters the viewport, trigger a fetch for the next page.</p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-line"><div class="flow-dot">3</div><div class="flow-connector"></div></div>
+      <div class="flow-content"><strong>Append new items</strong><p>New content pushes the sentinel down. User scrolls more. Cycle continues.</p></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-line"><div class="flow-dot">4</div><div class="flow-connector"></div></div>
+      <div class="flow-content"><strong>Stop observing when done</strong><p>When the API says there's no next page, disconnect the observer.</p></div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-label">infinite-scroll.js</span></div>
+    <div class="code-body"><span class="c-keyword">let</span> page = <span class="c-num">1</span>;
+<span class="c-keyword">let</span> isLoading = <span class="c-keyword">false</span>;
+<span class="c-keyword">let</span> hasMore = <span class="c-keyword">true</span>;
+
+<span class="c-keyword">const</span> list = document.<span class="c-fn">getElementById</span>(<span class="c-string">'posts-list'</span>);
+<span class="c-keyword">const</span> sentinel = document.<span class="c-fn">getElementById</span>(<span class="c-string">'scroll-sentinel'</span>);
+
+<span class="c-keyword">async function</span> <span class="c-fn">loadNextPage</span>() {
+  <span class="c-comment">// Guard against overlapping requests</span>
+  <span class="c-keyword">if</span> (isLoading || !hasMore) <span class="c-keyword">return</span>;
+  isLoading = <span class="c-keyword">true</span>;
+
+  <span class="c-comment">// Show skeleton loaders at the bottom</span>
+  <span class="c-keyword">const</span> skeletons = <span class="c-fn">renderSkeletons</span>(<span class="c-num">3</span>);
+  list.<span class="c-fn">appendChild</span>(skeletons);
+
+  <span class="c-keyword">try</span> {
+    <span class="c-keyword">const</span> response = <span class="c-keyword">await</span> <span class="c-fn">fetch</span>(<span class="c-string">`/api/posts?page=</span>${page}<span class="c-string">&limit=10`</span>);
+    <span class="c-keyword">const</span> { posts, nextPage } = <span class="c-keyword">await</span> response.<span class="c-fn">json</span>();
+
+    <span class="c-comment">// Remove skeletons, add real content</span>
+    skeletons.<span class="c-fn">remove</span>();
+    posts.<span class="c-fn">forEach</span>(post => {
+      list.<span class="c-fn">insertAdjacentHTML</span>(<span class="c-string">'beforeend'</span>, <span class="c-fn">renderPost</span>(post));
+    });
+
+    <span class="c-comment">// Update state</span>
+    page = nextPage || page + <span class="c-num">1</span>;
+    hasMore = !!nextPage;
+
+    <span class="c-keyword">if</span> (!hasMore) {
+      sentinel.<span class="c-fn">remove</span>(); <span class="c-comment">// No more content, stop observing</span>
+      list.<span class="c-fn">insertAdjacentHTML</span>(<span class="c-string">'beforeend'</span>, <span class="c-string">'&lt;p class="end-msg"&gt;You\'ve seen it all. Impressive.&lt;/p&gt;'</span>);
+    }
+
+  } <span class="c-keyword">catch</span> (err) {
+    skeletons.<span class="c-fn">remove</span>();
+    <span class="c-fn">showError</span>(<span class="c-string">'Failed to load more posts'</span>);
+  } <span class="c-keyword">finally</span> {
+    isLoading = <span class="c-keyword">false</span>;
+  }
+}
+
+<span class="c-comment">// The observer — no scroll listeners needed</span>
+<span class="c-keyword">const</span> observer = <span class="c-keyword">new</span> <span class="c-fn">IntersectionObserver</span>(
+  (entries) => {
+    <span class="c-keyword">if</span> (entries[<span class="c-num">0</span>].isIntersecting) {
+      <span class="c-fn">loadNextPage</span>();
+    }
+  },
+  { rootMargin: <span class="c-string">'200px'</span> } <span class="c-comment">// Trigger 200px before sentinel is visible</span>
+);
+
+observer.<span class="c-fn">observe</span>(sentinel);
+<span class="c-fn">loadNextPage</span>(); <span class="c-comment">// Load first page immediately</span></div>
+  </div>
+
+  <div class="callout-warn">
+    <div class="callout-title">⚠️ Infinite Scroll Gotchas</div>
+    <p><strong>Accessibility:</strong> Users who keyboard-navigate can't reach content that hasn't loaded. Consider a "Load More" button as a fallback.<br>
+    <strong>Back button:</strong> If the user clicks into a post and returns, they lose their scroll position. This is why many apps use cursor-based pagination with URL state.<br>
+    <strong>Memory:</strong> A list with 10,000 DOM nodes will destroy performance. For very long lists, use virtual scrolling.</p>
+  </div>
+
+  <!-- PREFETCHING -->
+  <h2>Pattern 7: <span class="accent">Prefetching</span></h2>
+
+  <p>Prefetching is fetching data before the user explicitly asks for it, based on what they're probably about to do. Hover over a link? Start fetching that page's data. Scrolling through a list? Fetch the next page before they reach the bottom.</p>
+
+  <p>Used well, prefetching makes your app feel psychic. Used wrong, it hammers your API for data users never actually view.</p>
+
+  <h3>Hover Prefetch</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-label">hover-prefetch.js</span></div>
+    <div class="code-body"><span class="c-keyword">const</span> prefetchCache = <span class="c-keyword">new</span> <span class="c-fn">Map</span>();
+
+<span class="c-keyword">async function</span> <span class="c-fn">prefetch</span>(url) {
+  <span class="c-comment">// Already cached or in-flight? Skip</span>
+  <span class="c-keyword">if</span> (prefetchCache.<span class="c-fn">has</span>(url)) <span class="c-keyword">return</span>;
+
+  <span class="c-comment">// Store the promise so we don't double-fetch</span>
+  <span class="c-keyword">const</span> promise = <span class="c-fn">fetch</span>(url).<span class="c-fn">then</span>(r => r.<span class="c-fn">json</span>());
+  prefetchCache.<span class="c-fn">set</span>(url, promise);
+}
+
+<span class="c-keyword">async function</span> <span class="c-fn">getFromCache</span>(url) {
+  <span class="c-comment">// If we prefetched this, get it instantly</span>
+  <span class="c-keyword">if</span> (prefetchCache.<span class="c-fn">has</span>(url)) {
+    <span class="c-keyword">return</span> <span class="c-keyword">await</span> prefetchCache.<span class="c-fn">get</span>(url);
+  }
+  <span class="c-comment">// Otherwise fetch normally</span>
+  <span class="c-keyword">const</span> data = <span class="c-keyword">await</span> <span class="c-fn">fetch</span>(url).<span class="c-fn">then</span>(r => r.<span class="c-fn">json</span>());
+  <span class="c-keyword">return</span> data;
+}
+
+<span class="c-comment">// Attach to links — prefetch on hover</span>
+document.<span class="c-fn">querySelectorAll</span>(<span class="c-string">'a[data-prefetch]'</span>).<span class="c-fn">forEach</span>(link => {
+  <span class="c-keyword">let</span> timer;
+
+  link.<span class="c-fn">addEventListener</span>(<span class="c-string">'mouseenter'</span>, () => {
+    <span class="c-comment">// Wait 100ms to avoid prefetching on accidental hovers</span>
+    timer = <span class="c-fn">setTimeout</span>(() => {
+      <span class="c-keyword">const</span> apiUrl = link.<span class="c-fn">getAttribute</span>(<span class="c-string">'data-api-url'</span>);
+      <span class="c-keyword">if</span> (apiUrl) <span class="c-fn">prefetch</span>(apiUrl);
+    }, <span class="c-num">100</span>);
+  });
+
+  link.<span class="c-fn">addEventListener</span>(<span class="c-string">'mouseleave'</span>, () => {
+    <span class="c-fn">clearTimeout</span>(timer);
+  });
+
+  link.<span class="c-fn">addEventListener</span>(<span class="c-string">'click'</span>, <span class="c-keyword">async</span> (e) => {
+    e.<span class="c-fn">preventDefault</span>();
+    <span class="c-keyword">const</span> apiUrl = link.<span class="c-fn">getAttribute</span>(<span class="c-string">'data-api-url'</span>);
+    <span class="c-keyword">const</span> data = <span class="c-keyword">await</span> <span class="c-fn">getFromCache</span>(apiUrl);
+    <span class="c-fn">renderPage</span>(data); <span class="c-comment">// Probably already in cache = instant</span>
+  });
+});</div>
+  </div>
+
+  <h3>Viewport-Based Prefetch (Scroll Ahead)</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-label">prefetch-next-page.js</span></div>
+    <div class="code-body"><span class="c-comment">// When user is 70% through the current page,
+// start fetching the next one</span>
+<span class="c-keyword">let</span> nextPagePrefetched = <span class="c-keyword">null</span>;
+
+window.<span class="c-fn">addEventListener</span>(<span class="c-string">'scroll'</span>, <span class="c-fn">debounce</span>(() => {
+  <span class="c-keyword">const</span> scrollPercent = (window.scrollY + window.innerHeight)
+    / document.body.scrollHeight;
+
+  <span class="c-keyword">if</span> (scrollPercent > <span class="c-num">0.7</span> && !nextPagePrefetched && hasMore) {
+    nextPagePrefetched = <span class="c-fn">fetch</span>(<span class="c-string">`/api/posts?page=</span>${page + <span class="c-num">1</span>}<span class="c-string">`</span>).<span class="c-fn">then</span>(r => r.<span class="c-fn">json</span>());
+    <span class="c-fn">console</span>.<span class="c-fn">log</span>(<span class="c-string">'Prefetching next page...'</span>);
+  }
+}, <span class="c-num">100</span>));
+
+<span class="c-keyword">async function</span> <span class="c-fn">loadNextPage</span>() {
+  <span class="c-comment">// If we prefetched, this resolves instantly</span>
+  <span class="c-keyword">const</span> data = nextPagePrefetched
+    ? <span class="c-keyword">await</span> nextPagePrefetched
+    : <span class="c-keyword">await</span> <span class="c-fn">fetch</span>(<span class="c-string">`/api/posts?page=</span>${page}<span class="c-string">`</span>).<span class="c-fn">then</span>(r => r.<span class="c-fn">json</span>());
+
+  nextPagePrefetched = <span class="c-keyword">null</span>; <span class="c-comment">// Reset for next page</span>
+  <span class="c-fn">renderPosts</span>(data.posts);
+}</div>
+  </div>
+
+  <!-- BACKGROUND SYNC -->
+  <h2>Pattern 8: <span class="accent">Background Sync</span></h2>
+
+  <p>Background sync is what happens when a user performs an action while offline (or on a flaky connection), and the app queues that action to send when connectivity is restored. Done right, the user doesn't even know they were offline.</p>
+
+  <p>The full-power version involves Service Workers and the Background Sync API. Here's the vanilla JS approximation that works for most use cases:</p>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-label">sync-queue.js</span></div>
+    <div class="code-body"><span class="c-comment">// A queue of actions to sync when online</span>
+<span class="c-keyword">class</span> <span class="c-fn">SyncQueue</span> {
+  <span class="c-fn">constructor</span>() {
+    <span class="c-comment">// Restore any pending actions from last session</span>
+    <span class="c-keyword">this</span>.queue = <span class="c-fn">JSON.parse</span>(<span class="c-fn">localStorage.getItem</span>(<span class="c-string">'sync-queue'</span>) || <span class="c-string">'[]'</span>);
+    <span class="c-keyword">this</span>.<span class="c-fn">_bindListeners</span>();
+  }
+
+  <span class="c-fn">add</span>(action) {
+    <span class="c-keyword">this</span>.queue.<span class="c-fn">push</span>({
+      ...action,
+      id: <span class="c-fn">Date</span>.<span class="c-fn">now</span>().<span class="c-fn">toString</span>(),
+      timestamp: <span class="c-keyword">new</span> <span class="c-fn">Date</span>().<span class="c-fn">toISOString</span>()
+    });
+    <span class="c-keyword">this</span>.<span class="c-fn">_persist</span>();
+
+    <span class="c-comment">// If online, sync immediately</span>
+    <span class="c-keyword">if</span> (navigator.onLine) <span class="c-keyword">this</span>.<span class="c-fn">flush</span>();
+  }
+
+  <span class="c-keyword">async</span> <span class="c-fn">flush</span>() {
+    <span class="c-keyword">if</span> (<span class="c-keyword">this</span>.queue.length === <span class="c-num">0</span>) <span class="c-keyword">return</span>;
+    <span class="c-fn">console</span>.<span class="c-fn">log</span>(<span class="c-string">`Syncing </span>${<span class="c-keyword">this</span>.queue.length}<span class="c-string"> pending action(s)...`</span>);
+
+    <span class="c-keyword">const</span> toProcess = [...<span class="c-keyword">this</span>.queue];
+
+    <span class="c-keyword">for</span> (<span class="c-keyword">const</span> action <span class="c-keyword">of</span> toProcess) {
+      <span class="c-keyword">try</span> {
+        <span class="c-keyword">await</span> <span class="c-fn">this._execute</span>(action);
+        <span class="c-comment">// Remove from queue on success</span>
+        <span class="c-keyword">this</span>.queue = <span class="c-keyword">this</span>.queue.<span class="c-fn">filter</span>(a => a.id !== action.id);
+        <span class="c-keyword">this</span>.<span class="c-fn">_persist</span>();
+      } <span class="c-keyword">catch</span> (err) {
+        <span class="c-fn">console</span>.<span class="c-fn">error</span>(<span class="c-string">'Action failed, will retry:'</span>, action.type, err.message);
+        <span class="c-keyword">break</span>; <span class="c-comment">// Stop processing on failure (maintain order)</span>
+      }
+    }
+  }
+
+  <span class="c-keyword">async</span> <span class="c-fn">_execute</span>(action) {
+    <span class="c-keyword">switch</span> (action.type) {
+      <span class="c-keyword">case</span> <span class="c-string">'CREATE_POST'</span>:
+        <span class="c-keyword">return</span> <span class="c-fn">fetch</span>(<span class="c-string">'/api/posts'</span>, {
+          method: <span class="c-string">'POST'</span>,
+          headers: { <span class="c-string">'Content-Type'</span>: <span class="c-string">'application/json'</span> },
+          body: <span class="c-fn">JSON.stringify</span>(action.payload)
+        });
+      <span class="c-keyword">case</span> <span class="c-string">'UPDATE_PROFILE'</span>:
+        <span class="c-keyword">return</span> <span class="c-fn">fetch</span>(<span class="c-string">'/api/profile'</span>, {
+          method: <span class="c-string">'PATCH'</span>,
+          headers: { <span class="c-string">'Content-Type'</span>: <span class="c-string">'application/json'</span> },
+          body: <span class="c-fn">JSON.stringify</span>(action.payload)
+        });
+      <span class="c-keyword">default</span>:
+        <span class="c-keyword">throw new</span> <span class="c-fn">Error</span>(<span class="c-string">`Unknown action type: </span>${action.type}<span class="c-string">`</span>);
+    }
+  }
+
+  <span class="c-fn">_persist</span>() {
+    <span class="c-fn">localStorage.setItem</span>(<span class="c-string">'sync-queue'</span>, <span class="c-fn">JSON.stringify</span>(<span class="c-keyword">this</span>.queue));
+  }
+
+  <span class="c-fn">_bindListeners</span>() {
+    <span class="c-comment">// Flush when connection is restored</span>
+    window.<span class="c-fn">addEventListener</span>(<span class="c-string">'online'</span>, () => {
+      <span class="c-fn">console</span>.<span class="c-fn">log</span>(<span class="c-string">'Back online! Syncing...'</span>);
+      <span class="c-keyword">this</span>.<span class="c-fn">flush</span>();
+    });
+  }
+}
+
+<span class="c-comment">// Usage</span>
+<span class="c-keyword">const</span> syncQueue = <span class="c-keyword">new</span> <span class="c-fn">SyncQueue</span>();
+
+<span class="c-comment">// User posts a comment — add to queue</span>
+<span class="c-keyword">function</span> <span class="c-fn">submitComment</span>(text) {
+  <span class="c-comment">// Optimistic update (from Post 15)</span>
+  <span class="c-fn">addCommentToUI</span>(text);
+
+  <span class="c-comment">// Queue the actual API call</span>
+  syncQueue.<span class="c-fn">add</span>({
+    type: <span class="c-string">'CREATE_POST'</span>,
+    payload: { text, authorId: currentUser.id }
+  });
+}</div>
+  </div>
+
+  <div class="callout-accent">
+    <div class="callout-title">⚡ Online / Offline Detection</div>
+    <p><code>navigator.onLine</code> tells you the current state. <code>window.addEventListener('online', ...)</code> and <code>window.addEventListener('offline', ...)</code> fire when it changes. These are your tools for offline-aware UIs.</p>
+  </div>
+
+  <div class="devfession">
+    <div class="devfession-label">💜 Dev_Fession</div>
+    <p>Infinite scroll sounds like a feature until you're trying to test it and you realize your fake API doesn't have pagination so you're just infinitely fetching the same 10 items and the sentinel keeps getting pushed down by duplicate data. The list had 847 copies of the same blog post before I noticed.</p>
+  </div>
+
+  <h2>Putting It All Together</h2>
+
+  <p>Here's how these patterns coexist in a real feed app:</p>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-label">feed-app.js (simplified)</span></div>
+    <div class="code-body"><span class="c-comment">// 1. SWR for user profile (instant + background refresh)</span>
+<span class="c-keyword">const</span> profileSWR = <span class="c-fn">useSWR</span>(<span class="c-string">'profile'</span>, <span class="c-fn">fetchProfile</span>);
+profileSWR.<span class="c-fn">subscribe</span>(({ data }) => <span class="c-fn">renderHeader</span>(data));
+
+<span class="c-comment">// 2. Infinite scroll for the feed</span>
+<span class="c-keyword">const</span> observer = <span class="c-keyword">new</span> <span class="c-fn">IntersectionObserver</span>(([entry]) => {
+  <span class="c-keyword">if</span> (entry.isIntersecting) <span class="c-fn">loadNextPage</span>();
+}, { rootMargin: <span class="c-string">'200px'</span> });
+observer.<span class="c-fn">observe</span>(sentinel);
+
+<span class="c-comment">// 3. Prefetch post detail on hover</span>
+document.<span class="c-fn">addEventListener</span>(<span class="c-string">'mouseover'</span>, (e) => {
+  <span class="c-keyword">const</span> card = e.target.<span class="c-fn">closest</span>(<span class="c-string">'[data-post-id]'</span>);
+  <span class="c-keyword">if</span> (card) <span class="c-fn">prefetch</span>(<span class="c-string">`/api/posts/</span>${card.dataset.postId}<span class="c-string">`</span>);
+});
+
+<span class="c-comment">// 4. Optimistic + background sync for likes</span>
+<span class="c-keyword">async function</span> <span class="c-fn">toggleLike</span>(postId) {
+  <span class="c-fn">updateLikeUI</span>(postId); <span class="c-comment">// Optimistic</span>
+  syncQueue.<span class="c-fn">add</span>({ type: <span class="c-string">'TOGGLE_LIKE'</span>, payload: { postId } });
+}</div>
+  </div>
+
+  <div class="callout-accent">
+    <div class="callout-title">⚡ Part 2 Recap</div>
+    <p>
+      <strong>SWR:</strong> Show stale, revalidate in background. Always instant, always eventually fresh.<br>
+      <strong>Infinite Scroll:</strong> IntersectionObserver + sentinel element. No scroll listeners.<br>
+      <strong>Prefetching:</strong> Hover = intent signal. Fetch before they click.<br>
+      <strong>Background Sync:</strong> Queue → flush on reconnect. Offline-resilient by design.
+    </p>
+  </div>
+
+  <div class="next-post">
+    <div>
+      <div class="label">Up Next — Post 17 of 18</div>
+      <div class="title">Async Code in Interviews</div>
+    </div>
+    <a href="async-post17-interviews.html" class="next-btn">Next Post →</a>
+  </div>
+
+</div>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

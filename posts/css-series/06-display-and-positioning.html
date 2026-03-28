@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <title>CSS Display and Positioning Explained: How Elements Actually Get Placed — CodeHerWay</title>
+<meta name="description" content="Half of CSS layout confusion comes from not knowing how elements flow by default. Learn display (block, inline, inline-block, none) and position (static, relative, absolute, fixed, sticky) in this beginner tutorial.">
+ <link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.prop{color: var(--sky-blue);}
+.val{color: var(--mint-green);}
+.sel{color: var(--pink);}
+.sel-class{color: var(--gold);}
+.display-demo{background: var(--bg-code); border-radius: 12px; padding: 28px; margin: 28px 0; border: 1px solid rgba(255,255,255,0.06);}
+.display-demo-label{font-family: 'Fira Code', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px;}
+.demo-block-items > div{background: rgba(180,74,255,0.15); border: 1px solid rgba(180,74,255,0.3); border-radius: 6px; padding: 10px 16px; margin-bottom: 8px; font-family: 'Fira Code', monospace; font-size: 13px; color: var(--purple);}
+.demo-inline-wrap{}
+.demo-inline-items > span{background: rgba(105,210,231,0.12); border: 1px solid rgba(105,210,231,0.3); border-radius: 4px; padding: 4px 10px; font-family: 'Fira Code', monospace; font-size: 13px; color: var(--sky-blue);}
+.demo-inline-items > span + span{margin-left: 6px;}
+.demo-inline-block > div{display: inline-block; background: rgba(125,255,179,0.12); border: 1px solid rgba(125,255,179,0.3); border-radius: 6px; padding: 10px 16px; margin-right: 8px; margin-bottom: 8px; font-family: 'Fira Code', monospace; font-size: 13px; color: var(--mint-green); width: 120px; text-align: center;}
+.pos-visual{position: relative; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; height: 200px; margin: 28px 0; overflow: hidden;}
+.pos-normal{position: static; background: rgba(180,74,255,0.15); border: 1px solid rgba(180,74,255,0.3); border-radius: 6px; padding: 8px 14px; font-family: 'Fira Code', monospace; font-size: 12px; color: var(--purple); display: inline-block; margin: 16px;}
+.pos-relative{position: relative; top: 20px; left: 20px; background: rgba(255,211,105,0.15); border: 1px solid rgba(255,211,105,0.3); border-radius: 6px; padding: 8px 14px; font-family: 'Fira Code', monospace; font-size: 12px; color: var(--gold); display: inline-block;}
+.pos-abs-container{position: relative; background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1); border-radius: 8px; padding: 20px; margin: 28px 0; height: 120px;}
+.pos-abs-label{font-family: 'Fira Code', monospace; font-size: 11px; color: var(--text-muted); margin-bottom: 8px;}
+.pos-abs-badge{position: absolute; top: 12px; right: 12px; background: rgba(255,105,180,0.2); border: 1px solid rgba(255,105,180,0.4); border-radius: 20px; padding: 4px 12px; font-family: 'Fira Code', monospace; font-size: 12px; color: var(--pink);}
+.pos-abs-card{background: rgba(255,255,255,0.04); border-radius: 8px; padding: 12px 16px; font-size: 14px; color: var(--text-secondary); max-width: 280px;}
+.ref-table-wrap{margin: 32px 0; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06);}
+.ref-table{width: 100%; border-collapse: collapse; font-size: 14.5px;}
+.ref-table thead{background: linear-gradient(135deg, rgba(180,74,255,0.15), rgba(255,105,180,0.1));}
+.ref-table th{padding: 13px 18px; text-align: left; font-weight: 600; color: var(--purple); border-bottom: 2px solid rgba(180,74,255,0.2); font-size: 13px;}
+.ref-table td{padding: 11px 18px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top;}
+.ref-table tbody tr{background: var(--bg-code);}
+.ref-table tbody tr:hover{background: rgba(180,74,255,0.04);}
+.ref-table tbody tr:nth-child(even){background: var(--bg-code-alt);}
+.display-demo{background: var(--bg-code); border-radius: 12px; padding: 28px; margin: 28px 0; border: 1px solid rgba(255,255,255,0.06);}
+.display-demo-label{font-family: 'Fira Code', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 16px;}
+.demo-block-items > div{background: rgba(180,74,255,0.15); border: 1px solid rgba(180,74,255,0.3); border-radius: 6px; padding: 10px 16px; margin-bottom: 8px; font-family: 'Fira Code', monospace; font-size: 13px; color: var(--purple);}
+.demo-inline-items > span{background: rgba(105,210,231,0.12); border: 1px solid rgba(105,210,231,0.3); border-radius: 4px; padding: 4px 10px; font-family: 'Fira Code', monospace; font-size: 13px; color: var(--sky-blue);}
+.demo-inline-items > span + span{margin-left: 6px;}
+.demo-inline-block > div{display: inline-block; background: rgba(125,255,179,0.12); border: 1px solid rgba(125,255,179,0.3); border-radius: 6px; padding: 10px 16px; margin-right: 8px; margin-bottom: 8px; font-family: 'Fira Code', monospace; font-size: 13px; color: var(--mint-green); width: 120px; text-align: center;}
+@media (max-width: 480px){
+   .code-body { font-size: 11.5px; padding: 12px; }
+   .hero h1 { font-size: clamp(24px, 9vw, 32px); }
+   .il { white-space: normal; word-break: break-word; }
+   .unit-grid, .compare-2, .before-after, .phase-grid,
+   .lh-demo, .pair-grid, .ba-grid, .font-compare { grid-template-columns: 1fr; }
+   .shadow-grid { grid-template-columns: 1fr 1fr; }
+   .swatch-row { gap: 8px; }
+   .swatch { min-width: 90px; }
+   .pyramid-row { flex-direction: column; gap: 6px; align-items: flex-start; }
+   .score-row { flex-direction: column; gap: 6px; }
+   .score-sel { min-width: unset; }
+   .recap-item { flex-wrap: wrap; gap: 4px; }
+   .recap-title { width: 100%; }
+   .checklist { padding: 14px; }
+   .demo-row { padding: 16px 12px; gap: 12px; }
+   .series-nav-divider { display: none; }
+   .connect-arrow { display: none; }
+   .compare-grid { grid-template-columns: 1fr; }
+   .layer-margin { padding: 20px; }
+   .layer-border { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+ <div id="site-header"></div>
+
+<div class="hero">
+ <div class="post-label"><span class="series-tag">CSS, But Make It Powerful</span> Post 06 of 14 </div>
+ <div class="post-number">CSS Series · Post 06</div>
+ <h1>Display &amp; Positioning<br><span class="gradient-text">Where Things Actually Go</span></h1>
+ <p class="hero-sub">Half of layout confusion comes from not understanding how elements flow by default. The other half comes from not knowing when to break out of that flow — and how.</p>
+ <div class="tag-row">
+  <span class="tag css">CSS</span>
+  <span class="tag beginner">Beginner</span>
+  <span class="tag series">Series: Post 06</span>
+  <span class="tag">~13 min read</span>
+ </div>
+</div>
+
+<main class="article">
+
+ <h2>💬 "Why Won't This Just Sit Next to That?"</h2>
+
+ <p>You have two divs. You want them side by side. You push, you pull, you add margins everywhere — and they still stack vertically like they're ignoring you. Or you set <span class="il">position: absolute</span> on something and it flies to a completely unexpected corner of the screen.</p>
+
+ <p>These are <span class="key">display and positioning</span> problems, and they're caused by CSS having a very specific default behavior that most people don't realize exists until it bites them.</p>
+
+ <h2>🧠 The Default: Normal Flow</h2>
+
+ <p>By default, HTML elements have a <strong>flow</strong>. Block elements stack vertically, one per line, filling the available width. Inline elements sit in a line and wrap like text. This is called <span class="il">normal flow</span>.</p>
+
+ <p>Once you understand that flow exists and how it works, you can work with it — and you'll know exactly which tools to use when you need to break out of it.</p>
+
+ <h2>🧱 The display Property</h2>
+
+ <h3>block — Full Width, New Line</h3>
+
+ <p>Block elements take up the full width available and force a new line before and after themselves. <span class="il">&lt;div&gt;</span>, <span class="il">&lt;p&gt;</span>, <span class="il">&lt;h1&gt;</span>–<span class="il">&lt;h6&gt;</span>, <span class="il">&lt;section&gt;</span> are block by default.</p>
+
+ <div class="display-demo">
+  <div class="display-demo-label">display: block — each element takes full width</div>
+  <div class="demo-block-items">
+   <div>div.card (block)</div>
+   <div>div.card (block)</div>
+   <div>div.card (block)</div>
+  </div>
+ </div>
+
+ <h3>inline — Flows with Text</h3>
+
+ <p>Inline elements sit in the text flow. They don't start on a new line, and their width shrinks to fit their content. <span class="il">&lt;span&gt;</span>, <span class="il">&lt;a&gt;</span>, <span class="il">&lt;strong&gt;</span>, <span class="il">&lt;em&gt;</span> are inline by default. Crucially: <span class="gold-key">you can't set width or height on inline elements</span> — they ignore those properties.</p>
+
+ <div class="display-demo">
+  <div class="display-demo-label">display: inline — flows in line like text</div>
+  <div class="demo-inline-items">
+   <span>span</span>
+   <span>span</span>
+   <span>span</span>
+   <span>flows like words in a sentence</span>
+  </div>
+ </div>
+
+ <h3>inline-block — Best of Both</h3>
+
+ <p>Inline-block sits in the text flow like inline, but respects <span class="il">width</span>, <span class="il">height</span>, <span class="il">padding</span>, and <span class="il">margin</span> like a block. This used to be the primary way to lay out navigation items and buttons before Flexbox became mainstream.</p>
+
+ <div class="display-demo">
+  <div class="display-demo-label">display: inline-block — side by side, but accepts dimensions</div>
+  <div class="demo-inline-block">
+   <div>Nav Item</div>
+   <div>Nav Item</div>
+   <div>Nav Item</div>
+  </div>
+ </div>
+
+ <h3>none — Hides the Element</h3>
+
+ <p><span class="il">display: none</span> removes the element from the page entirely — it takes up no space and is invisible. This is different from <span class="il">visibility: hidden</span>, which hides the element but preserves its space in the layout.</p>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">styles.css</div>
+   <div class="code-lang">CSS · display values</div>
+  </div>
+  <div class="code-body"><code><span class="c">/* Override default display behavior */</span>
+<span class="sel-class">.nav-item</span> { <span class="prop">display</span>: <span class="val">inline-block</span>; } <span class="c">/* sit side by side */</span>
+<span class="sel-class">.pill</span>   { <span class="prop">display</span>: <span class="val">inline-block</span>; } <span class="c">/* badge/tag */</span>
+<span class="sel-class">.hidden</span>  { <span class="prop">display</span>: <span class="val">none</span>; }     <span class="c">/* gone — no space taken */</span>
+<span class="sel-class">.invisible</span> { <span class="prop">visibility</span>: <span class="val">hidden</span>; }  <span class="c">/* invisible — space preserved */</span>
+
+<span class="c">/* Common pattern: show/hide on mobile */</span>
+<span class="sel-class">.mobile-menu</span> { <span class="prop">display</span>: <span class="val">none</span>; }
+<span class="sel-class">.mobile-menu</span><span style="color:var(--purple)">:target</span> { <span class="prop">display</span>: <span class="val">block</span>; }</code></div>
+ </div>
+
+ <h2>🧱 The position Property</h2>
+
+ <p>The <span class="il">position</span> property controls how an element is placed in or out of normal flow. It has five values, and understanding the difference between them will solve most of the "why is this in the wrong place" problems you'll encounter.</p>
+
+ <h3>static — The Default</h3>
+
+ <p>Every element is <span class="il">position: static</span> by default. This means it sits in normal flow. <span class="il">top</span>, <span class="il">right</span>, <span class="il">bottom</span>, <span class="il">left</span> have no effect on static elements — you have to change position first.</p>
+
+ <h3>relative — Move from Its Own Spot</h3>
+
+ <p>A relatively positioned element moves relative to where it would normally be. The original space it occupied is preserved — the element visually shifts, but doesn't push other elements around.</p>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">styles.css</div>
+   <div class="code-lang">CSS · position: relative</div>
+  </div>
+  <div class="code-body"><code><span class="sel-class">.nudged</span> {
+ <span class="prop">position</span>: <span class="val">relative</span>;
+ <span class="prop">top</span>: <span class="val">8px</span>;  <span class="c">/* moves 8px DOWN from its normal position */</span>
+ <span class="prop">left</span>: <span class="val">12px</span>; <span class="c">/* moves 12px RIGHT from its normal position */</span>
+}
+
+<span class="c">/* Most importantly: position: relative makes this element
+  a POSITIONING CONTEXT for any absolute children inside it */</span></code></div>
+ </div>
+
+ <h3>absolute — Pinned to Its Positioned Parent</h3>
+
+ <p>An absolutely positioned element is <span class="key">removed from normal flow entirely</span>. It gets positioned relative to its nearest ancestor that has <span class="il">position: relative</span> (or absolute, fixed, or sticky). If no positioned ancestor exists, it uses the <span class="il">&lt;body&gt;</span>. This is why your badge just flew to the top-left corner of the entire page — the parent element didn't have <code class="il">position: relative</code>. The child climbed all the way up to <code class="il">&lt;body&gt;</code> looking for a positioned ancestor and didn't find one until it got there.</p>
+
+ <div class="pos-abs-container">
+  <div class="pos-abs-label">parent — position: relative</div>
+  <div class="pos-abs-card">Card content here</div>
+  <div class="pos-abs-badge">New</div>
+ </div>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">styles.css</div>
+   <div class="code-lang">CSS · position: absolute</div>
+  </div>
+  <div class="code-body"><code><span class="c">/* Parent must have position: relative to "catch" the child */</span>
+<span class="sel-class">.card</span> {
+ <span class="prop">position</span>: <span class="val">relative</span>; <span class="c">/* ← this creates the positioning context */</span>
+}
+
+<span class="c">/* Badge sits at top-right of .card, not of the whole page */</span>
+<span class="sel-class">.badge</span> {
+ <span class="prop">position</span>: <span class="val">absolute</span>;
+ <span class="prop">top</span>: <span class="val">12px</span>;
+ <span class="prop">right</span>: <span class="val">12px</span>;
+}
+
+<span class="c">/* Absolute elements are removed from flow —
+  they don't push other elements around */</span></code></div>
+ </div>
+
+ <div class="callout warning">
+  <div class="callout-title">⚠️ The Most Common Absolute Mistake</div>
+  <p>If your absolutely positioned element is flying to the top corner of the entire page, it's because its parent doesn't have <span class="il">position: relative</span>. Always set the parent first. The child looks for the nearest positioned ancestor — if there isn't one, it climbs all the way up to the body.</p>
+ </div>
+
+ <h3>fixed — Pinned to the Viewport</h3>
+
+ <p>A fixed element is removed from flow and positioned relative to the browser viewport. It stays in the same spot even as the user scrolls. Classic uses: sticky navigation bars, floating action buttons, cookie banners.</p>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">styles.css</div>
+   <div class="code-lang">CSS · position: fixed</div>
+  </div>
+  <div class="code-body"><code><span class="c">/* Stays at the top of the viewport as you scroll */</span>
+<span class="sel-class">.navbar</span> {
+ <span class="prop">position</span>: <span class="val">fixed</span>;
+ <span class="prop">top</span>: <span class="val">0</span>;
+ <span class="prop">left</span>: <span class="val">0</span>;
+ <span class="prop">width</span>: <span class="val">100%</span>;
+ <span class="prop">z-index</span>: <span class="val">100</span>; <span class="c">/* stays on top of everything */</span>
+}
+
+<span class="c">/* Fixed removes the element from flow — add padding-top
+  to the body equal to navbar height to prevent content overlap */</span>
+<span class="sel">body</span> { <span class="prop">padding-top</span>: <span class="val">60px</span>; }</code></div>
+ </div>
+
+ <h3>sticky — Scrolls Then Sticks</h3>
+
+ <p>Sticky is a hybrid: the element scrolls normally until it hits a defined offset from the viewport edge, then it sticks in place. The most common use is section headers that stick while their section is in view.</p>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">styles.css</div>
+   <div class="code-lang">CSS · position: sticky</div>
+  </div>
+  <div class="code-body"><code><span class="c">/* Scrolls normally, then sticks when it hits top: 0 */</span>
+<span class="sel-class">.section-header</span> {
+ <span class="prop">position</span>: <span class="val">sticky</span>;
+ <span class="prop">top</span>: <span class="val">0</span>;
+ <span class="prop">background</span>: <span class="val">#0a0a0f</span>; <span class="c">/* needs a background or content shows through */</span>
+ <span class="prop">z-index</span>: <span class="val">10</span>;
+}
+
+<span class="c">/* sticky only works within its scroll container —
+  the parent must have overflow: scroll or auto,
+  or be the page itself */</span></code></div>
+ </div>
+
+ <h3>z-index — Controlling Stack Order</h3>
+
+ <p>When positioned elements overlap, <span class="il">z-index</span> controls which one sits on top. Higher number = closer to the viewer. Only works on elements that have a position other than <span class="il">static</span>.</p>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">styles.css</div>
+   <div class="code-lang">CSS · z-index</div>
+  </div>
+  <div class="code-body"><code><span class="sel-class">.modal</span>  { <span class="prop">position</span>: <span class="val">fixed</span>;  <span class="prop">z-index</span>: <span class="val">1000</span>; } <span class="c">/* on top */</span>
+<span class="sel-class">.overlay</span> { <span class="prop">position</span>: <span class="val">fixed</span>;  <span class="prop">z-index</span>: <span class="val">900</span>; } <span class="c">/* below modal */</span>
+<span class="sel-class">.navbar</span> { <span class="prop">position</span>: <span class="val">fixed</span>;  <span class="prop">z-index</span>: <span class="val">100</span>; } <span class="c">/* below overlay */</span>
+<span class="sel-class">.tooltip</span> { <span class="prop">position</span>: <span class="val">absolute</span>; <span class="prop">z-index</span>: <span class="val">50</span>; }  <span class="c">/* above card */</span>
+<span class="sel-class">.card</span>  { <span class="prop">position</span>: <span class="val">relative</span>; <span class="prop">z-index</span>: <span class="val">1</span>; }  <span class="c">/* base layer */</span>
+
+<span class="c">/* z-index doesn't work on position: static elements */</span></code></div>
+ </div>
+
+ <h3>Quick Reference</h3>
+
+ <div class="ref-table-wrap">
+  <table class="ref-table">
+   <thead>
+    <tr><th>Value</th><th>In flow?</th><th>Positioned relative to</th><th>Classic use case</th></tr>
+   </thead>
+   <tbody>
+    <tr><td><span class="il">static</span></td><td>✓ Yes</td><td>—</td><td>Default. Everything starts here.</td></tr>
+    <tr><td><span class="il">relative</span></td><td>✓ Yes</td><td>Its own normal position</td><td>Minor nudges; creating context for absolute children</td></tr>
+    <tr><td><span class="il">absolute</span></td><td>✗ No</td><td>Nearest positioned ancestor</td><td>Badges, tooltips, dropdowns, overlays</td></tr>
+    <tr><td><span class="il">fixed</span></td><td>✗ No</td><td>Viewport</td><td>Sticky navbars, floating buttons, cookie banners</td></tr>
+    <tr><td><span class="il">sticky</span></td><td>✓ Yes</td><td>Scroll container + threshold</td><td>Section headers, in-page navigation</td></tr>
+   </tbody>
+  </table>
+ </div>
+
+ <div class="sep"></div>
+
+ <div class="mini-build">
+  <div class="mini-build-header">
+   <span style="font-size:22px;">🛠</span>
+   <h3>Mini Build: Card with a Badge + Horizontal Nav</h3>
+  </div>
+  <div class="mini-build-body">
+   <p>Two builds in one. First: a card with an absolutely positioned badge. Second: a horizontal navigation using <span class="il">inline-block</span>. Both use positioning intentionally.</p>
+
+   <div class="step">
+    <div class="step-num">01</div>
+    <div class="step-text">
+     <p><strong>The card with a badge.</strong> Parent gets <span class="il">position: relative</span>. Badge gets <span class="il">position: absolute</span> and snaps to the corner.</p>
+    </div>
+   </div>
+
+   <div class="code-window">
+    <div class="code-topbar">
+     <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+     <div class="code-filename">index.html + styles.css</div>
+     <div class="code-lang">HTML + CSS</div>
+    </div>
+    <div class="code-body"><code><span class="c">&lt;!-- HTML --&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"card"</span><span class="t">&gt;</span>
+ <span class="t">&lt;span</span> <span class="a">class</span>=<span class="s">"badge"</span><span class="t">&gt;</span>New<span class="t">&lt;/span&gt;</span>
+ <span class="t">&lt;h3</span> <span class="a">class</span>=<span class="s">"card-title"</span><span class="t">&gt;</span>Post Title<span class="t">&lt;/h3&gt;</span>
+ <span class="t">&lt;p</span> <span class="a">class</span>=<span class="s">"card-text"</span><span class="t">&gt;</span>Description goes here.<span class="t">&lt;/p&gt;</span>
+<span class="t">&lt;/div&gt;</span>
+
+<span class="c">/* CSS */</span>
+<span class="sel-class">.card</span> {
+ <span class="prop">position</span>: <span class="val">relative</span>; <span class="c">/* ← creates the context */</span>
+ <span class="prop">background</span>: <span class="val">#12121a</span>;
+ <span class="prop">border-radius</span>: <span class="val">12px</span>;
+ <span class="prop">padding</span>: <span class="val">24px</span>;
+ <span class="prop">max-width</span>: <span class="val">320px</span>;
+}
+
+<span class="sel-class">.badge</span> {
+ <span class="prop">position</span>: <span class="val">absolute</span>; <span class="c">/* ← breaks out of flow */</span>
+ <span class="prop">top</span>: <span class="val">14px</span>;
+ <span class="prop">right</span>: <span class="val">14px</span>;
+ <span class="prop">background</span>: <span class="val">#ff69b4</span>;
+ <span class="prop">color</span>: <span class="val">#fff</span>;
+ <span class="prop">font-size</span>: <span class="val">0.7rem</span>;
+ <span class="prop">font-weight</span>: <span class="val">700</span>;
+ <span class="prop">text-transform</span>: <span class="val">uppercase</span>;
+ <span class="prop">letter-spacing</span>: <span class="val">1px</span>;
+ <span class="prop">padding</span>: <span class="val">3px 10px</span>;
+ <span class="prop">border-radius</span>: <span class="val">20px</span>;
+}</code></div>
+   </div>
+
+   <div class="step">
+    <div class="step-num">02</div>
+    <div class="step-text">
+     <p><strong>The horizontal navigation.</strong> Use <span class="il">inline-block</span> on the nav items so they sit side by side while still accepting padding and hover states.</p>
+    </div>
+   </div>
+
+   <div class="code-window">
+    <div class="code-topbar">
+     <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+     <div class="code-filename">index.html + styles.css</div>
+     <div class="code-lang">HTML + CSS</div>
+    </div>
+    <div class="code-body"><code><span class="c">&lt;!-- HTML --&gt;</span>
+<span class="t">&lt;nav</span> <span class="a">class</span>=<span class="s">"nav"</span><span class="t">&gt;</span>
+ <span class="t">&lt;a</span> <span class="a">class</span>=<span class="s">"nav-item"</span> <span class="a">href</span>=<span class="s">"#"</span><span class="t">&gt;</span>Home<span class="t">&lt;/a&gt;</span>
+ <span class="t">&lt;a</span> <span class="a">class</span>=<span class="s">"nav-item"</span> <span class="a">href</span>=<span class="s">"#"</span><span class="t">&gt;</span>About<span class="t">&lt;/a&gt;</span>
+ <span class="t">&lt;a</span> <span class="a">class</span>=<span class="s">"nav-item"</span> <span class="a">href</span>=<span class="s">"#"</span><span class="t">&gt;</span>Work<span class="t">&lt;/a&gt;</span>
+<span class="t">&lt;/nav&gt;</span>
+
+<span class="c">/* CSS */</span>
+<span class="sel-class">.nav</span> {
+ <span class="prop">background</span>: <span class="val">#12121a</span>;
+ <span class="prop">padding</span>: <span class="val">0 24px</span>;
+}
+
+<span class="sel-class">.nav-item</span> {
+ <span class="prop">display</span>: <span class="val">inline-block</span>; <span class="c">/* side by side */</span>
+ <span class="prop">padding</span>: <span class="val">16px 20px</span>;  <span class="c">/* clickable area */</span>
+ <span class="prop">color</span>: <span class="val">#9595a8</span>;
+ <span class="prop">text-decoration</span>: <span class="val">none</span>;
+ <span class="prop">font-size</span>: <span class="val">0.9rem</span>;
+ <span class="prop">transition</span>: <span class="val">color 0.2s</span>;
+}
+
+<span class="sel-class">.nav-item</span><span style="color:var(--purple)">:hover</span> {
+ <span class="prop">color</span>: <span class="val">#ff69b4</span>;
+}</code></div>
+   </div>
+
+   <div class="callout info" style="margin-top:24px; margin-bottom:0;">
+    <div class="callout-title">ℹ️ inline-block vs Flexbox</div>
+    <p>For navigation, most modern projects now use Flexbox instead of <span class="il">inline-block</span>. Flexbox gives you better alignment control and simpler code. But <span class="il">inline-block</span> is worth knowing — it predates Flexbox and you'll see it constantly in older codebases — knowing it makes you a better code reader. Next: Post 07 — Flexbox, the modern layout system that makes the old inline-block tricks unnecessary.</p>
+   </div>
+  </div>
+ </div>
+
+ <div class="confidence-close">
+  <h2>💛 Layout Is Starting to Make Sense</h2>
+  <p>Once you understand normal flow and how <span class="il">position</span> interacts with it, a huge chunk of CSS confusion disappears. You're no longer fighting the layout system — you're working with it.</p>
+  <ul class="recap-list">
+   <li><span class="il">block</span> elements stack vertically and fill width. <span class="il">inline</span> flows like text. <span class="il">inline-block</span> is the hybrid.</li>
+   <li><span class="il">display: none</span> removes an element from the page entirely — space and all</li>
+   <li><span class="il">position: relative</span> makes an element a positioning context for its children</li>
+   <li><span class="il">position: absolute</span> breaks out of flow — always set the parent to <span class="il">relative</span> first</li>
+   <li><span class="il">position: fixed</span> sticks to the viewport. <span class="il">sticky</span> scrolls then sticks.</li>
+   <li><span class="il">z-index</span> only works on positioned elements — not static ones</li>
+  </ul>
+  <p>Next: Flexbox — the modern layout system that makes all the old <span class="il">inline-block</span> tricks obsolete. Centering, spacing, distributing items — done properly, in one property.</p>
+ </div>
+
+ <div class="sep"></div>
+
+ <div class="devfession">
+  <div class="devfession-header">🧾 DevFession</div>
+  <div class="devfession-body">
+   <p>I once spent two hours trying to center something using <span class="il">position: absolute</span> with <span class="il">top: 50%; left: 50%</span> and a <span class="il">margin: -50px</span> hack. It almost worked. Almost.</p>
+   <p>Then I learned Flexbox and did it in two lines. Two. I stared at the screen for a while afterward processing the grief.</p>
+   <p>Positioning is powerful and you absolutely need to know it — badges, modals, tooltips, sticky headers — all of that needs <span class="il">position</span>. But for centering content and building multi-column layouts, Flexbox is what you actually want. Learn both. Use each for its job.</p>
+  </div></div>
+
+
+ <nav class="post-nav">
+  <a href="05-colors-and-units.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">CSS Colors and Units</span></a>
+    <a href="07-flexbox.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">CSS Flexbox</span></a>
+ </nav>
+ <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+ <div id="site-footer"></div>
+ <script src="../../assets/js/main.js"></script>
+</body>
+</html>

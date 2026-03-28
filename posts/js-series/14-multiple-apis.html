@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fetching From Multiple APIs in JavaScript: Parallel, Sequential & Error Patterns | CodeHerWay</title>
+<meta name="description" content="Fetch from multiple sources in parallel and sequence, handle independent errors, and build a data transformation layer. CodeHerWay.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Async</span> Post 08 of 10</div>
+  <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+  <div class="series-line"><span class="series-label">⚡ JavaScript, But Make It Async</span><span class="post-number">Post 08 of 10</span></div>
+  <h1 class="post-title">Fetching From Multiple APIs in JavaScript</h1>
+  <p class="post-subtitle">Combining data from different sources, sequential vs parallel fetching, data transformation, and building a unified layer over messy APIs.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 12 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Intermediate</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+<main>
+  <div class="back-ref"><span class="br-arrow">←</span> Builds on <strong>JS Async — Post 13</strong>: Debounce &amp; Throttle</div>
+
+  <div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">Real Apps Need Data From Multiple Places</h2><div class="section-line"></div></div>
+  <p>Almost every real-world feature pulls from more than one API. A user profile page needs the user record, their posts, and their follower count — potentially from three different endpoints. A product listing needs product data, inventory, and pricing from different services. A weather dashboard needs weather data and location data from different providers.</p>
+  <p>Managing multiple async data sources cleanly is a core skill. This post covers the patterns you'll use every day: parallel fetching, sequential fetching, data merging, fallback data, and building an abstraction layer so your UI doesn't care where the data comes from.</p>
+
+  <div class="section-header"><span class="section-icon">🔀</span><h2 class="section-title">Pattern 1: Independent Parallel Fetch</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>The decision between parallel and sequential fetch comes down to one question: does request B need data from request A? If yes, they must be sequential. If no, they should always run in parallel. Running independent requests sequentially is one of the most common (and invisible) performance mistakes in production apps.</p>
+  </div>
+
+</div>
+  <p>When the sources don't depend on each other, run them simultaneously. You've seen this pattern in Post 06 — applying it specifically to multi-API scenarios.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — parallel-apis.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// Three independent APIs — run all at once, merge the results</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">loadDashboard</span>(<span class="sy-plain">userId</span>) {
+  <span class="sy-kw">const</span> [<span class="sy-plain">user</span>, <span class="sy-plain">stats</span>, <span class="sy-plain">notifications</span>] = <span class="sy-kw">await</span> <span class="sy-method">Promise</span>.<span class="sy-fn">all</span>([
+    <span class="sy-fn">fetch</span>(<span class="sy-str">`/api/users/</span>${<span class="sy-plain">userId</span>}<span class="sy-str">`</span>).<span class="sy-fn">then</span>(<span class="sy-plain">r</span> => <span class="sy-plain">r</span>.<span class="sy-fn">json</span>()),
+    <span class="sy-fn">fetch</span>(<span class="sy-str">`/api/users/</span>${<span class="sy-plain">userId</span>}<span class="sy-str">/stats`</span>).<span class="sy-fn">then</span>(<span class="sy-plain">r</span> => <span class="sy-plain">r</span>.<span class="sy-fn">json</span>()),
+    <span class="sy-fn">fetch</span>(<span class="sy-str">`/api/users/</span>${<span class="sy-plain">userId</span>}<span class="sy-str">/notifications`</span>).<span class="sy-fn">then</span>(<span class="sy-plain">r</span> => <span class="sy-plain">r</span>.<span class="sy-fn">json</span>())
+  ])
+
+  <span class="sy-kw">return</span> {
+    <span class="sy-prop">name</span>:          <span class="sy-plain">user</span>.<span class="sy-prop">name</span>,
+    <span class="sy-prop">email</span>:         <span class="sy-plain">user</span>.<span class="sy-prop">email</span>,
+    <span class="sy-prop">postsCount</span>:    <span class="sy-plain">stats</span>.<span class="sy-prop">posts</span>,
+    <span class="sy-prop">followersCount</span>:<span class="sy-plain">stats</span>.<span class="sy-prop">followers</span>,
+    <span class="sy-prop">unread</span>:        <span class="sy-plain">notifications</span>.<span class="sy-fn">filter</span>(<span class="sy-plain">n</span> => !<span class="sy-plain">n</span>.<span class="sy-prop">read</span>).<span class="sy-prop">length</span>
+  }
+}</pre></div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🔗</span><h2 class="section-title">Pattern 2: Sequential Dependent Fetch</h2><div class="section-line"></div></div>
+  <p>When each source needs data from the previous one. Geolocation → city name → weather is the classic example — you can't skip a step.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — sequential-apis.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// Three APIs in sequence — each depends on the previous result</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">getLocalWeather</span>() {
+  <span class="sy-comment">// Step 1: Get coordinates from browser geolocation</span>
+  <span class="sy-kw">const</span> <span class="sy-plain">position</span> = <span class="sy-kw">await</span> <span class="sy-kw">new</span> <span class="sy-fn">Promise</span>((<span class="sy-plain">resolve</span>, <span class="sy-plain">reject</span>) => {
+    <span class="sy-plain">navigator</span>.<span class="sy-prop">geolocation</span>.<span class="sy-fn">getCurrentPosition</span>(<span class="sy-plain">resolve</span>, <span class="sy-plain">reject</span>)
+  })
+  <span class="sy-kw">const</span> { <span class="sy-plain">latitude</span>, <span class="sy-plain">longitude</span> } = <span class="sy-plain">position</span>.<span class="sy-prop">coords</span>
+
+  <span class="sy-comment">// Step 2: Reverse geocode coordinates → city name</span>
+  <span class="sy-kw">const</span> <span class="sy-plain">geoRes</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(
+    <span class="sy-str">`https://nominatim.openstreetmap.org/reverse?lat=</span>${<span class="sy-plain">latitude</span>}<span class="sy-str">&lon=</span>${<span class="sy-plain">longitude</span>}<span class="sy-str">&format=json`</span>
+  )
+  <span class="sy-kw">const</span> <span class="sy-plain">geo</span>      = <span class="sy-kw">await</span> <span class="sy-plain">geoRes</span>.<span class="sy-fn">json</span>()
+  <span class="sy-kw">const</span> <span class="sy-plain">city</span>     = <span class="sy-plain">geo</span>.<span class="sy-prop">address</span>.<span class="sy-prop">city</span> || <span class="sy-plain">geo</span>.<span class="sy-prop">address</span>.<span class="sy-prop">town</span>
+
+  <span class="sy-comment">// Step 3: Fetch weather for those coordinates</span>
+  <span class="sy-kw">const</span> <span class="sy-plain">params</span>   = <span class="sy-kw">new</span> <span class="sy-fn">URLSearchParams</span>({
+    <span class="sy-prop">latitude</span>, <span class="sy-prop">longitude</span>,
+    <span class="sy-prop">current</span>: <span class="sy-str">"temperature_2m,weather_code,wind_speed_10m"</span>,
+    <span class="sy-prop">temperature_unit</span>: <span class="sy-str">"fahrenheit"</span>
+  })
+  <span class="sy-kw">const</span> <span class="sy-plain">weatherRes</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">`https://api.open-meteo.com/v1/forecast?</span>${<span class="sy-plain">params</span>}<span class="sy-str">`</span>)
+  <span class="sy-kw">const</span> <span class="sy-plain">weather</span>    = <span class="sy-kw">await</span> <span class="sy-plain">weatherRes</span>.<span class="sy-fn">json</span>()
+
+  <span class="sy-kw">return</span> { <span class="sy-plain">city</span>, <span class="sy-prop">temp</span>: <span class="sy-plain">weather</span>.<span class="sy-prop">current</span>.<span class="sy-prop">temperature_2m</span> }
+}</pre></div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🛡️</span><h2 class="section-title">Pattern 3: Parallel With Independent Error Handling</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>The data transformation layer is the professional move that separates 'I fetched data and used it' from 'I fetched data and made it mine.' API responses are shaped for the API's convenience, not yours. Normalizing them into your own consistent format means the rest of your app doesn't need to know how the API works — just how your data looks.</p>
+  </div>
+
+</div>
+  <p>When APIs are independent but some may fail — use <span class="il">Promise.allSettled()</span> and render partial results. Don't let one broken endpoint take down the whole page.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — resilient-multi-api.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// Fetch from multiple sources — show what succeeds, note what fails</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">loadWeatherDashboard</span>(<span class="sy-plain">lat</span>, <span class="sy-plain">lon</span>) {
+  <span class="sy-kw">const</span> <span class="sy-plain">results</span> = <span class="sy-kw">await</span> <span class="sy-method">Promise</span>.<span class="sy-fn">allSettled</span>([
+    <span class="sy-fn">fetchCurrentWeather</span>(<span class="sy-plain">lat</span>, <span class="sy-plain">lon</span>),
+    <span class="sy-fn">fetchWeeklyForecast</span>(<span class="sy-plain">lat</span>, <span class="sy-plain">lon</span>),
+    <span class="sy-fn">fetchAirQuality</span>(<span class="sy-plain">lat</span>, <span class="sy-plain">lon</span>)
+  ])
+
+  <span class="sy-kw">const</span> [<span class="sy-plain">current</span>, <span class="sy-plain">forecast</span>, <span class="sy-plain">airQuality</span>] = <span class="sy-plain">results</span>
+
+  <span class="sy-kw">return</span> {
+    <span class="sy-prop">current</span>:    <span class="sy-plain">current</span>.<span class="sy-prop">status</span>    === <span class="sy-str">"fulfilled"</span> ? <span class="sy-plain">current</span>.<span class="sy-prop">value</span>    : <span class="sy-bool">null</span>,
+    <span class="sy-prop">forecast</span>:   <span class="sy-plain">forecast</span>.<span class="sy-prop">status</span>   === <span class="sy-str">"fulfilled"</span> ? <span class="sy-plain">forecast</span>.<span class="sy-prop">value</span>   : <span class="sy-bool">null</span>,
+    <span class="sy-prop">airQuality</span>: <span class="sy-plain">airQuality</span>.<span class="sy-prop">status</span> === <span class="sy-str">"fulfilled"</span> ? <span class="sy-plain">airQuality</span>.<span class="sy-prop">value</span> : <span class="sy-bool">null</span>,
+    <span class="sy-prop">errors</span>: <span class="sy-plain">results</span>
+      .<span class="sy-fn">filter</span>(<span class="sy-plain">r</span> => <span class="sy-plain">r</span>.<span class="sy-prop">status</span> === <span class="sy-str">"rejected"</span>)
+      .<span class="sy-fn">map</span>(<span class="sy-plain">r</span> => <span class="sy-plain">r</span>.<span class="sy-prop">reason</span>.<span class="sy-prop">message</span>)
+  }
+}
+
+<span class="sy-comment">// Render — shows what it has, gracefully notes what's missing</span>
+<span class="sy-kw">const</span> { <span class="sy-plain">current</span>, <span class="sy-plain">forecast</span>, <span class="sy-plain">airQuality</span>, <span class="sy-plain">errors</span> } = <span class="sy-kw">await</span> <span class="sy-fn">loadWeatherDashboard</span>(<span class="sy-num">41.85</span>, -<span class="sy-num">87.65</span>)
+
+<span class="sy-kw">if</span> (<span class="sy-plain">current</span>)    <span class="sy-fn">renderCurrentWeather</span>(<span class="sy-plain">current</span>)
+<span class="sy-kw">if</span> (<span class="sy-plain">forecast</span>)   <span class="sy-fn">renderForecast</span>(<span class="sy-plain">forecast</span>)
+<span class="sy-kw">if</span> (<span class="sy-plain">airQuality</span>) <span class="sy-fn">renderAirQuality</span>(<span class="sy-plain">airQuality</span>)
+<span class="sy-kw">if</span> (<span class="sy-plain">errors</span>.<span class="sy-prop">length</span>) <span class="sy-fn">showPartialErrorBanner</span>(<span class="sy-plain">errors</span>)</pre></div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🧱</span><h2 class="section-title">Pattern 4: The Data Transformation Layer</h2><div class="section-line"></div></div>
+  <p>Different APIs return data in different shapes. Normalizing it into a consistent format before it reaches your UI means the UI only has to understand one shape — yours.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — data-transform.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// Raw API responses have different shapes — normalize them</span>
+
+<span class="sy-comment">// Open-Meteo returns this:</span>
+<span class="sy-comment">// { current: { temperature_2m: 72, wind_speed_10m: 12, weather_code: 3 } }</span>
+
+<span class="sy-comment">// Nominatim returns this:</span>
+<span class="sy-comment">// { address: { city: "Chicago", state: "Illinois", country: "United States" } }</span>
+
+<span class="sy-comment">// Your UI wants this — one clean object:</span>
+<span class="sy-kw">function</span> <span class="sy-fn">normalizeWeatherData</span>(<span class="sy-plain">weatherRaw</span>, <span class="sy-plain">locationRaw</span>) {
+  <span class="sy-kw">const</span> <span class="sy-plain">weather</span>  = <span class="sy-plain">weatherRaw</span>.<span class="sy-prop">current</span>
+  <span class="sy-kw">const</span> <span class="sy-plain">address</span>  = <span class="sy-plain">locationRaw</span>.<span class="sy-prop">address</span>
+
+  <span class="sy-kw">return</span> {
+    <span class="sy-prop">city</span>:        <span class="sy-plain">address</span>.<span class="sy-prop">city</span> || <span class="sy-plain">address</span>.<span class="sy-prop">town</span> || <span class="sy-str">"Unknown"</span>,
+    <span class="sy-prop">region</span>:      <span class="sy-plain">address</span>.<span class="sy-prop">state</span>,
+    <span class="sy-prop">country</span>:     <span class="sy-plain">address</span>.<span class="sy-prop">country</span>,
+    <span class="sy-prop">tempF</span>:       <span class="sy-method">Math</span>.<span class="sy-fn">round</span>(<span class="sy-plain">weather</span>.<span class="sy-prop">temperature_2m</span>),
+    <span class="sy-prop">windMph</span>:     <span class="sy-method">Math</span>.<span class="sy-fn">round</span>(<span class="sy-plain">weather</span>.<span class="sy-prop">wind_speed_10m</span>),
+    <span class="sy-prop">condition</span>:   <span class="sy-fn">getConditionLabel</span>(<span class="sy-plain">weather</span>.<span class="sy-prop">weather_code</span>),
+    <span class="sy-prop">fetchedAt</span>:   <span class="sy-kw">new</span> <span class="sy-fn">Date</span>().<span class="sy-fn">toISOString</span>()
+  }
+}
+
+<span class="sy-comment">// Now the UI just uses .city, .tempF, .condition — never touches raw API shapes</span>
+<span class="sy-kw">function</span> <span class="sy-fn">getConditionLabel</span>(<span class="sy-plain">code</span>) {
+  <span class="sy-kw">if</span> (<span class="sy-plain">code</span> === <span class="sy-num">0</span>)            <span class="sy-kw">return</span> <span class="sy-str">"Clear"</span>
+  <span class="sy-kw">if</span> (<span class="sy-plain">code</span> <= <span class="sy-num">3</span>)            <span class="sy-kw">return</span> <span class="sy-str">"Partly cloudy"</span>
+  <span class="sy-kw">if</span> (<span class="sy-plain">code</span> >= <span class="sy-num">61</span> && <span class="sy-plain">code</span> <= <span class="sy-num">67</span>) <span class="sy-kw">return</span> <span class="sy-str">"Rain"</span>
+  <span class="sy-kw">if</span> (<span class="sy-plain">code</span> >= <span class="sy-num">71</span> && <span class="sy-plain">code</span> <= <span class="sy-num">77</span>) <span class="sy-kw">return</span> <span class="sy-str">"Snow"</span>
+  <span class="sy-kw">if</span> (<span class="sy-plain">code</span> >= <span class="sy-num">95</span>)            <span class="sy-kw">return</span> <span class="sy-str">"Thunderstorm"</span>
+  <span class="sy-kw">return</span> <span class="sy-str">"Cloudy"</span>
+}</pre></div>
+  </div>
+  <div class="callout callout-mindset">
+    <div class="callout-title">🧠 Mindset Shift</div>
+    <p>The transformation layer is a separation of concerns. Your data layer speaks API. Your UI layer speaks your app's internal format. When an API changes its response shape, you update one normalization function — not every place in your UI that touches that data. This is how real codebases stay maintainable as they grow.</p>
+  </div>
+
+  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body">
+      <p>I once integrated a third-party API directly into my UI — no normalization layer. Their field was <span class="il" style="font-style:normal;">temp_celsius</span>. I referenced it in twelve places. Then they renamed it to <span class="il" style="font-style:normal;">temperature_c</span> in a breaking version update. I had to find and fix twelve spots. If I'd written a normalize function and referenced <span class="il" style="font-style:normal;">weatherData.temp</span> everywhere, I'd have fixed one line. The API changed once. My suffering was twelve times more than it needed to be.</p>
+    </div>
+  </div>
+
+  <div class="mini-build">
+    <div class="mini-build-header"><span class="trophy">🔬</span><span class="mb-title">MINI BUILD — Location-Based Weather Dashboard</span></div>
+    <div class="mini-build-body">
+      <p>Chain three real APIs: Geolocation API → Nominatim reverse geocoding → Open-Meteo weather. Normalize the combined result into one clean data object before rendering.</p>
+      <div class="goal-label">Exercises:</div>
+      <ul class="step-list">
+        <li><span class="step-num">01</span> Promisify <span class="il">navigator.geolocation.getCurrentPosition()</span></li>
+        <li><span class="step-num">02</span> Fetch city name from Nominatim using the returned coordinates</li>
+        <li><span class="step-num">03</span> Fetch weather from Open-Meteo using the same coordinates</li>
+        <li><span class="step-num">04</span> Write <span class="il">normalizeWeatherData(weatherRaw, locationRaw)</span> to merge both into one object</li>
+        <li><span class="step-num">05</span> Render city, temperature, wind speed, and condition label</li>
+        <li><span class="step-num">06</span> Add <span class="il">Promise.allSettled()</span> so the page still renders if Nominatim is slow — show "Your location" as fallback city name</li>
+        <li><span class="step-num">07</span> Cache the result in localStorage for 5 minutes using the Post 11 pattern</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="confidence-close">
+    <div class="cc-icon">⚡</div>
+    <div class="cc-heading">You Can Coordinate Real Data Pipelines Now</div>
+    <p>Parallel fetching, sequential chains, resilient allSettled patterns, and normalization layers — this is the architecture behind every dashboard and data-rich feature ever built. Next two posts: async patterns in real codebases, and how to ace async questions in interviews.</p>
+  </div>
+  <a class="next-post" href="#"><div><div class="next-label">// next post →</div><div class="next-title">Post 15 — Async Patterns in the Wild, Part 1</div></div><div class="next-arrow">→</div></a>
+
+  <nav class="post-nav">
+    <a href="13-debounce-throttle.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Debounce vs Throttle</span></a>
+    <a href="15-patterns-wild-1.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Async Patterns in Real Apps</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSS Capstone Project: Build a Full Responsive Portfolio Page from Scratch — CodeHerWay</title>
+<meta name="description" content="You've learned 13 posts of CSS. Now build something that proves it. A personal brand landing page — from blank file to polished, responsive, production-quality CSS — no hand-holding.">
+  <link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.tag.capstone{border-color: rgba(255,211,105,0.3); color: var(--gold);}
+.prop{color: var(--sky-blue);}
+.val{color: var(--mint-green);}
+.sel{color: var(--pink);}
+.sel-class{color: var(--gold);}
+.callout.gold{background: rgba(255,211,105,0.06); border-color: var(--gold);}
+.callout.gold .callout-title{color: var(--gold);}
+.check-section{margin-bottom: 20px;}
+.check-section:last-child{margin-bottom: 0;}
+.check-section h4{font-family: 'Fira Code', monospace; font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;}
+.check-item{display: flex; align-items: flex-start; gap: 10px; padding: 5px 0; font-size: 15px; color: var(--text-secondary);}
+.check-item::before{content: '☐'; font-family: 'Fira Code', monospace; color: var(--text-muted); flex-shrink: 0; margin-top: 1px; font-size: 14px;}
+.phase-grid{display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 28px 0;}
+.phase-grid{display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 28px 0;}
+.phase-card{background: var(--bg-code); border-radius: 12px; padding: 22px; border: 1px solid rgba(255,255,255,0.06);}
+.phase-num{font-family: 'Fira Code', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px;}
+.phase-title{font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 10px;}
+.phase-list{list-style: none; padding: 0;}
+.phase-list li{font-size: 14px; color: var(--text-secondary); padding: 3px 0; display: flex; gap: 8px;}
+.phase-list li::before{content: '→'; font-family: 'Fira Code', monospace; color: var(--text-muted); flex-shrink: 0;}
+.phase-card:nth-child(1){border-color: rgba(255,105,180,0.15);}
+.phase-card:nth-child(1) .phase-num{color: var(--pink);}
+.phase-card:nth-child(2){border-color: rgba(180,74,255,0.15);}
+.phase-card:nth-child(2) .phase-num{color: var(--purple);}
+.phase-card:nth-child(3){border-color: rgba(105,210,231,0.15);}
+.phase-card:nth-child(3) .phase-num{color: var(--sky-blue);}
+.phase-card:nth-child(4){border-color: rgba(125,255,179,0.15);}
+.phase-card:nth-child(4) .phase-num{color: var(--mint-green);}
+.series-recap{background: var(--bg-code); border-radius: 12px; margin: 32px 0; border: 1px solid rgba(255,255,255,0.06); overflow: hidden;}
+.series-recap-head{padding: 14px 22px; background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.05); font-family: 'Fira Code', monospace; font-size: 12px; color: var(--text-muted);}
+.recap-num{font-family: 'Fira Code', monospace; font-size: 11px; color: var(--text-muted); width: 50px; flex-shrink: 0;}
+.recap-badge{font-family: 'Fira Code', monospace; font-size: 11px; padding: 3px 10px; border-radius: 4px; background: rgba(61,220,132,0.1); color: var(--green-tip); white-space: nowrap;}
+@media (max-width: 480px){
+      .code-body { font-size: 11.5px; padding: 12px; }
+      .hero h1 { font-size: clamp(24px, 9vw, 32px); }
+      .il { white-space: normal; word-break: break-word; }
+      .unit-grid, .compare-2, .before-after, .phase-grid,
+      .lh-demo, .pair-grid, .ba-grid, .font-compare { grid-template-columns: 1fr; }
+      .shadow-grid { grid-template-columns: 1fr 1fr; }
+      .swatch-row { gap: 8px; }
+      .swatch { min-width: 90px; }
+      .pyramid-row { flex-direction: column; gap: 6px; align-items: flex-start; }
+      .score-row { flex-direction: column; gap: 6px; }
+      .score-sel { min-width: unset; }
+      .recap-item { flex-wrap: wrap; gap: 4px; }
+      .recap-title { width: 100%; }
+      .checklist { padding: 14px; }
+      .demo-row { padding: 16px 12px; gap: 12px; }
+      .series-nav-divider { display: none; }
+      .connect-arrow { display: none; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .layer-margin { padding: 20px; }
+      .layer-border { padding: 16px; }
+    }
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+
+<div class="hero">
+  <div class="post-label"><span class="series-tag">CSS, But Make It Powerful</span> Post 14 of 14</div>
+  <div class="post-number">CSS Series · Post 14</div>
+  <h1>The CSS Capstone<br><span class="gradient-text">Build It From Scratch</span></h1>
+  <p class="hero-sub">Fourteen posts of CSS knowledge. One build to synthesize it all. No hand-holding — just a brief, a checklist, and everything you've already learned.</p>
+  <div class="tag-row">
+    <span class="tag css">CSS</span>
+    <span class="tag capstone">Capstone</span>
+    <span class="tag series">Series: Post 14</span>
+    <span class="tag">The Final Build</span>
+  </div>
+</div>
+
+<main class="article">
+
+  <h2>💬 "I Want to Know If I Actually Learned This"</h2>
+
+  <p>There's a difference between following along with a tutorial and being able to build something on your own. The capstone tests the second one. No starter code. No color values provided. No layout given to you. Just a brief, a checklist of what to include, and your blank <span class="il">styles.css</span>.</p>
+
+  <p><span class="key">This is the build that proves it to yourself.</span> Not to a portfolio reviewer, not to an interviewer — to you. The moment you open it in a browser and it looks like something you <em>designed</em> — not something you followed — is the moment the whole series clicks into place.</p>
+
+  <div class="callout gold">
+    <div class="callout-title">🏆 The Brief</div>
+    <p>Build a <strong>personal brand landing page</strong> for a developer. It should have a navbar, a hero section, a card grid showcasing three "projects" or posts, and a footer. It must be fully responsive and look intentional on mobile and desktop. No frameworks. Pure HTML + CSS.</p>
+  </div>
+
+  <h2>🧱 The Requirements</h2>
+
+  <div class="checklist">
+    <div class="check-section">
+      <h4>Foundation</h4>
+      <div class="check-item">Design tokens defined as CSS variables on <span class="il">:root</span> — colors, spacing, font stacks</div>
+      <div class="check-item">Reset + box-sizing: border-box applied globally</div>
+      <div class="check-item">Stylesheet organized in sections with comments</div>
+      <div class="check-item">BEM or consistent naming convention throughout</div>
+    </div>
+    <div class="check-section">
+      <h4>Typography</h4>
+      <div class="check-item">Google Font imported and applied to body</div>
+      <div class="check-item">Fluid headline using <span class="il">clamp()</span></div>
+      <div class="check-item">At least three distinct text styles (heading, body, label/tag)</div>
+      <div class="check-item">Proper <span class="il">line-height</span> for body text (1.6–1.8)</div>
+    </div>
+    <div class="check-section">
+      <h4>Layout</h4>
+      <div class="check-item">Navbar using Flexbox (logo left, links right)</div>
+      <div class="check-item">Hero section centered with Flexbox or Grid</div>
+      <div class="check-item">Card grid using CSS Grid with <span class="il">auto-fill</span> + <span class="il">minmax()</span></div>
+      <div class="check-item">Footer using Flexbox</div>
+      <div class="check-item">Max-width container centered with <span class="il">margin: 0 auto</span></div>
+    </div>
+    <div class="check-section">
+      <h4>Visual Polish</h4>
+      <div class="check-item">Layered <span class="il">box-shadow</span> on cards</div>
+      <div class="check-item">Hover transition on cards (lift + border color change)</div>
+      <div class="check-item">At least one pseudo-element (<span class="il">::before</span> or <span class="il">::after</span>)</div>
+      <div class="check-item">Consistent spacing from a scale (4px or 8px base)</div>
+    </div>
+    <div class="check-section">
+      <h4>Responsive</h4>
+      <div class="check-item">Viewport meta tag in HTML</div>
+      <div class="check-item">Mobile-first base styles (single column, stacked nav)</div>
+      <div class="check-item">Tablet breakpoint at 640px — two columns</div>
+      <div class="check-item">Desktop breakpoint at 1024px — three columns</div>
+      <div class="check-item">Tested at 320px, 768px, and 1280px in DevTools</div>
+    </div>
+  </div>
+
+  <h2>🧱 How to Approach It</h2>
+
+  <p>Don't open a blank file and start writing CSS. Start with a plan. The four phases below turn an intimidating blank canvas into a manageable sequence.</p>
+
+  <div class="phase-grid">
+    <div class="phase-card">
+      <div class="phase-num">Phase 01</div>
+      <div class="phase-title">Design Tokens First</div>
+      <ul class="phase-list">
+        <li>Define all CSS variables</li>
+        <li>Choose your color palette</li>
+        <li>Set spacing scale</li>
+        <li>Pick your fonts</li>
+      </ul>
+    </div>
+    <div class="phase-card">
+      <div class="phase-num">Phase 02</div>
+      <div class="phase-title">HTML Structure</div>
+      <ul class="phase-list">
+        <li>Write all HTML first</li>
+        <li>Use semantic elements</li>
+        <li>Add all classes — no IDs</li>
+        <li>No CSS yet</li>
+      </ul>
+    </div>
+    <div class="phase-card">
+      <div class="phase-num">Phase 03</div>
+      <div class="phase-title">Base → Layout → Components</div>
+      <ul class="phase-list">
+        <li>Reset + body first</li>
+        <li>Layout containers next</li>
+        <li>Components last</li>
+        <li>Responsive at the end</li>
+      </ul>
+    </div>
+    <div class="phase-card">
+      <div class="phase-num">Phase 04</div>
+      <div class="phase-title">Polish + Responsive</div>
+      <ul class="phase-list">
+        <li>Add shadows and transitions</li>
+        <li>Add hover states</li>
+        <li>Add breakpoints</li>
+        <li>Test in DevTools</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>🧱 The Starter Scaffold</h2>
+
+  <p>Only the bare HTML structure — no class names filled in, no CSS written. Everything else is yours to build. Notice there are no classes here — that's deliberate. Naming things is part of the build. Your class names should reflect your own project, not a template.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">index.html</div>
+      <div class="code-lang">HTML · Starter</div>
+    </div>
+    <div class="code-body"><code><span class="t">&lt;!DOCTYPE html&gt;</span>
+<span class="t">&lt;html</span> <span class="a">lang</span>=<span class="s">"en"</span><span class="t">&gt;</span>
+<span class="t">&lt;head&gt;</span>
+  <span class="t">&lt;meta</span> <span class="a">charset</span>=<span class="s">"UTF-8"</span><span class="t">&gt;</span>
+  <span class="t">&lt;meta</span> <span class="a">name</span>=<span class="s">"viewport"</span> <span class="a">content</span>=<span class="s">"width=device-width, initial-scale=1.0"</span><span class="t">&gt;</span>
+  <span class="t">&lt;title&gt;</span>Your Name — Developer<span class="t">&lt;/title&gt;</span>
+  <span class="c">&lt;!-- Google Fonts link goes here --&gt;</span>
+  <span class="t">&lt;link</span> <span class="a">rel</span>=<span class="s">"stylesheet"</span> <span class="a">href</span>=<span class="s">"styles.css"</span><span class="t">&gt;</span>
+<span class="t">&lt;/head&gt;</span>
+<span class="t">&lt;body&gt;</span>
+
+  <span class="t">&lt;nav&gt;</span>
+    <span class="t">&lt;div&gt;</span>YourBrand<span class="t">&lt;/div&gt;</span>
+    <span class="t">&lt;ul&gt;</span>
+      <span class="t">&lt;li&gt;&lt;a</span> <span class="a">href</span>=<span class="s">"#work"</span><span class="t">&gt;</span>Work<span class="t">&lt;/a&gt;&lt;/li&gt;</span>
+      <span class="t">&lt;li&gt;&lt;a</span> <span class="a">href</span>=<span class="s">"#about"</span><span class="t">&gt;</span>About<span class="t">&lt;/a&gt;&lt;/li&gt;</span>
+      <span class="t">&lt;li&gt;&lt;a</span> <span class="a">href</span>=<span class="s">"#contact"</span><span class="t">&gt;</span>Contact<span class="t">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="t">&lt;/ul&gt;</span>
+  <span class="t">&lt;/nav&gt;</span>
+
+  <span class="t">&lt;section</span> <span class="a">id</span>=<span class="s">"hero"</span><span class="t">&gt;</span>
+    <span class="t">&lt;span&gt;</span>Frontend Developer<span class="t">&lt;/span&gt;</span>
+    <span class="t">&lt;h1&gt;</span>Your Name Here<span class="t">&lt;/h1&gt;</span>
+    <span class="t">&lt;p&gt;</span>A one-sentence description of what you build and who you build it for.<span class="t">&lt;/p&gt;</span>
+    <span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"#work"</span><span class="t">&gt;</span>See My Work<span class="t">&lt;/a&gt;</span>
+  <span class="t">&lt;/section&gt;</span>
+
+  <span class="t">&lt;section</span> <span class="a">id</span>=<span class="s">"work"</span><span class="t">&gt;</span>
+    <span class="t">&lt;h2&gt;</span>Projects<span class="t">&lt;/h2&gt;</span>
+    <span class="t">&lt;div&gt;</span> <span class="c">&lt;!-- card grid --&gt;</span>
+
+      <span class="t">&lt;article&gt;</span>
+        <span class="t">&lt;span&gt;</span>CSS<span class="t">&lt;/span&gt;</span>
+        <span class="t">&lt;h3&gt;</span>Project One<span class="t">&lt;/h3&gt;</span>
+        <span class="t">&lt;p&gt;</span>What this project does and what you learned building it.<span class="t">&lt;/p&gt;</span>
+        <span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"#"</span><span class="t">&gt;</span>View →<span class="t">&lt;/a&gt;</span>
+      <span class="t">&lt;/article&gt;</span>
+
+      <span class="t">&lt;article&gt;</span>
+        <span class="t">&lt;span&gt;</span>HTML + CSS<span class="t">&lt;/span&gt;</span>
+        <span class="t">&lt;h3&gt;</span>Project Two<span class="t">&lt;/h3&gt;</span>
+        <span class="t">&lt;p&gt;</span>What this project does and what you learned building it.<span class="t">&lt;/p&gt;</span>
+        <span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"#"</span><span class="t">&gt;</span>View →<span class="t">&lt;/a&gt;</span>
+      <span class="t">&lt;/article&gt;</span>
+
+      <span class="t">&lt;article&gt;</span>
+        <span class="t">&lt;span&gt;</span>Responsive<span class="t">&lt;/span&gt;</span>
+        <span class="t">&lt;h3&gt;</span>Project Three<span class="t">&lt;/h3&gt;</span>
+        <span class="t">&lt;p&gt;</span>What this project does and what you learned building it.<span class="t">&lt;/p&gt;</span>
+        <span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"#"</span><span class="t">&gt;</span>View →<span class="t">&lt;/a&gt;</span>
+      <span class="t">&lt;/article&gt;</span>
+
+    <span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;/section&gt;</span>
+
+  <span class="t">&lt;footer&gt;</span>
+    <span class="t">&lt;span&gt;</span>© 2025 Your Name<span class="t">&lt;/span&gt;</span>
+    <span class="t">&lt;div&gt;</span>
+      <span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"#"</span><span class="t">&gt;</span>GitHub<span class="t">&lt;/a&gt;</span>
+      <span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"#"</span><span class="t">&gt;</span>LinkedIn<span class="t">&lt;/a&gt;</span>
+    <span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;/footer&gt;</span>
+
+<span class="t">&lt;/body&gt;</span>
+<span class="t">&lt;/html&gt;</span></code></div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">✦ Where to Start Your CSS</div>
+    <p>Open <span class="il">styles.css</span> and write this first, before anything else. It sets the foundation that every other rule builds on. Once your tokens and reset are in place, the rest flows naturally section by section.</p>
+  </div>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">styles.css</div>
+      <div class="code-lang">CSS · Starting Point</div>
+    </div>
+    <div class="code-body"><code><span class="c">/* ════════════════════════
+   1. TOKENS — fill these in
+   ════════════════════════ */</span>
+<span class="sel">:root</span> {
+  <span class="a">--bg</span>:       <span class="c">/* your background color */</span>;
+  <span class="a">--surface</span>:  <span class="c">/* card/component background */</span>;
+  <span class="a">--text</span>:     <span class="c">/* primary text color */</span>;
+  <span class="a">--muted</span>:    <span class="c">/* secondary/dimmed text */</span>;
+  <span class="a">--accent</span>:   <span class="c">/* your brand color */</span>;
+  <span class="a">--glow</span>:     <span class="c">/* rgba version of accent at ~12% */</span>;
+  <span class="a">--font-body</span>: <span class="c">/* your chosen Google Font */</span>;
+  <span class="a">--radius</span>:   12px;
+  <span class="a">--transition</span>: 0.3s ease;
+}
+
+<span class="c">/* ════════════════════════
+   2. RESET
+   ════════════════════════ */</span>
+<span class="sel">*</span>    { <span class="prop">margin</span>: <span class="val">0</span>; <span class="prop">padding</span>: <span class="val">0</span>; <span class="prop">box-sizing</span>: <span class="val">border-box</span>; }
+<span class="sel">body</span> {
+  <span class="prop">background</span>: <span class="val">var(--bg)</span>;
+  <span class="prop">color</span>: <span class="val">var(--text)</span>;
+  <span class="prop">font-family</span>: <span class="val">var(--font-body)</span>;
+  <span class="prop">font-size</span>: <span class="val">1rem</span>;
+  <span class="prop">line-height</span>: <span class="val">1.75</span>;
+}
+
+<span class="c">/* Continue building section by section... */</span></code></div>
+  </div>
+
+  <h2>🧱 Full Series Recap</h2>
+
+  <p>Every tool you used on this build — trace it back to the post it came from. This is the point where everything stops being 14 separate concepts and becomes one unified skill set.</p>
+
+  <div class="series-recap">
+    <div class="series-recap-head">CSS, But Make It Powerful — all 14 posts</div>
+    <div class="recap-item"><div class="recap-num">Post 01</div><div class="recap-title">What CSS Actually Does</div><div class="recap-badge">foundation</div></div>
+    <div class="recap-item"><div class="recap-num">Post 02</div><div class="recap-title">Selectors</div><div class="recap-badge">targeting</div></div>
+    <div class="recap-item"><div class="recap-num">Post 03</div><div class="recap-title">The Box Model</div><div class="recap-badge">spacing</div></div>
+    <div class="recap-item"><div class="recap-num">Post 04</div><div class="recap-title">Typography</div><div class="recap-badge">readability</div></div>
+    <div class="recap-item"><div class="recap-num">Post 05</div><div class="recap-title">Colors &amp; Units</div><div class="recap-badge">visual</div></div>
+    <div class="recap-item"><div class="recap-num">Post 06</div><div class="recap-title">Display &amp; Positioning</div><div class="recap-badge">placement</div></div>
+    <div class="recap-item"><div class="recap-num">Post 07</div><div class="recap-title">Flexbox</div><div class="recap-badge">layout</div></div>
+    <div class="recap-item"><div class="recap-num">Post 08</div><div class="recap-title">CSS Grid</div><div class="recap-badge">layout</div></div>
+    <div class="recap-item"><div class="recap-num">Post 09</div><div class="recap-title">Responsive Design</div><div class="recap-badge">all screens</div></div>
+    <div class="recap-item"><div class="recap-num">Post 10</div><div class="recap-title">Specificity &amp; The Cascade</div><div class="recap-badge">debugging</div></div>
+    <div class="recap-item"><div class="recap-num">Post 11</div><div class="recap-title">Transitions, Transforms &amp; Variables</div><div class="recap-badge">motion</div></div>
+    <div class="recap-item"><div class="recap-num">Post 12</div><div class="recap-title">Shadows, Depth &amp; Advanced Selectors</div><div class="recap-badge">polish</div></div>
+    <div class="recap-item"><div class="recap-num">Post 13</div><div class="recap-title">Architecture &amp; DevTools</div><div class="recap-badge">maintainability</div></div>
+    <div class="recap-item"><div class="recap-num">Post 14</div><div class="recap-title">CSS Capstone</div><div class="recap-badge">you are here</div></div>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="confidence-close">
+    <h2>💛 You Did It. All of It.</h2>
+    <p>Think about where you started. CSS felt like a guessing game — styling something and hoping for the best, fighting with spacing you didn't understand, centering things by accident, adding <span class="il">!important</span> and hoping the bleeding stopped.</p>
+    <p>Now you have a system. You know what the cascade is and how to win it. You understand why spacing is weird and how to make it consistent. You can build a layout in Flexbox <em>or</em> Grid and choose correctly between them. You can make things move, fade, lift, and glow — all in CSS, no JavaScript.</p>
+    <p>You know how to debug. How to organize. How to name things so future you isn't terrified of the stylesheet. You know how to make it work on a 320px phone and a 2560px monitor — and it looks right on both.</p>
+    <p>That's not decoration. That's engineering. That's the full presentation layer of the web — understood, controlled, and yours.</p>
+    <p style="margin-top: 20px; font-weight: 600; color: var(--text-primary);">Build the capstone. Share it. It counts.</p>
+  </div>
+
+
+  <nav class="post-nav" style="grid-template-columns:1fr">
+    <a href="13-architecture-and-devtools.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">CSS Architecture and DevTools</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

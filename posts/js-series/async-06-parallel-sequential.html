@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Async JavaScript Performance: Sequential vs Parallel Requests with Promise.all() | CodeHerWay</title>
+<meta name="description" content="The performance trap that slows down real apps: awaiting in sequence when you could run in parallel. Fix it every time. CodeHerWay.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.timing-compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:28px 0;}
+@media(max-width:600px){.timing-compare{grid-template-columns:1fr;}}
+.timing-card{background:var(--bg-card);border-radius:12px;padding:20px;}
+.timing-slow{border:1px solid rgba(255,107,107,.25);border-top:3px solid var(--coral);}
+.timing-fast{border:1px solid rgba(61,220,132,.25);border-top:3px solid var(--green-tip);}
+.timing-label{font-family:'Fira Code',monospace;font-size:12px;font-weight:700;margin-bottom:12px;}
+.timing-slow .timing-label{color:var(--coral);}
+.timing-fast .timing-label{color:var(--green-tip);}
+.timing-bar-wrap{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;}
+.timing-bar{height:20px;border-radius:4px;display:flex;align-items:center;padding:0 8px;font-family:'Fira Code',monospace;font-size:11px;font-weight:700;color:#fff;}
+.bar-req1{background:rgba(180,74,255,.6);}
+.bar-req2{background:rgba(0,229,255,.5);}
+.bar-req3{background:rgba(61,220,132,.5);}
+.timing-total{font-family:'Fira Code',monospace;font-size:12px;padding:6px 10px;border-radius:6px;text-align:center;}
+.timing-slow .timing-total{background:rgba(255,107,107,.1);color:var(--coral);}
+.timing-fast .timing-total{background:rgba(61,220,132,.1);color:var(--green-tip);}
+.loop-compare{display:grid;grid-template-columns:1fr;gap:12px;margin:24px 0;}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Async</span> Post 06 of 16</div>
+  <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+  <div class="series-line"><span class="series-label">⚡ JavaScript, But Make It Async</span><span class="post-number">Post 06 of 18</span></div>
+  <h1 class="post-title">Async JavaScript Performance</h1>
+  <p class="post-subtitle">The performance trap that silently slows down real apps — and exactly how to fix it every time.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 10 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Intermediate</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+<main>
+  <div class="back-ref"><span class="br-arrow">←</span> Builds on <strong>JS Async — Post 05</strong>: async/await: The Full Picture</div>
+
+  <div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">The Most Expensive Mistake in Async Code</h2><div class="section-line"></div></div>
+  <p>You can write perfectly correct async/await code that still makes your app feel slow. Not because of bugs — because of how you're ordering your awaits. This is the single most common performance mistake in JavaScript codebases, and it's invisible unless you know to look for it.</p>
+  <p>The issue is the difference between running Promises <span class="highlight">sequentially</span> — one after another, each waiting for the last — and running them <span class="highlight">in parallel</span> — all at once, waiting for all to finish. The result is identical. The time taken is dramatically different.</p>
+
+  <div class="section-header"><span class="section-icon">⏱️</span><h2 class="section-title">Sequential vs Parallel — The Visual</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>The sequential trap looks like correct code. Each await works. Each request succeeds. But each one waits for the previous to finish before starting — so if you have three requests that each take 1 second, sequential execution takes 3 seconds. Parallel execution takes 1 second. For a loading screen that difference is everything.</p>
+  </div>
+
+</div>
+  <div class="timing-compare">
+    <div class="timing-card timing-slow">
+      <div class="timing-label">❌ Sequential (await one by one)</div>
+      <div class="timing-bar-wrap">
+        <div class="timing-bar bar-req1" style="width:100%">Request 1 — 300ms</div>
+        <div class="timing-bar bar-req2" style="width:100%;margin-top:2px">Request 2 — 300ms</div>
+        <div class="timing-bar bar-req3" style="width:100%;margin-top:2px">Request 3 — 300ms</div>
+      </div>
+      <div class="timing-total">Total: ~900ms (sum of all)</div>
+    </div>
+    <div class="timing-card timing-fast">
+      <div class="timing-label">✅ Parallel (Promise.all)</div>
+      <div class="timing-bar-wrap">
+        <div style="display:flex;gap:4px;height:20px;">
+          <div class="timing-bar bar-req1" style="flex:1">Req 1</div>
+          <div class="timing-bar bar-req2" style="flex:1">Req 2</div>
+          <div class="timing-bar bar-req3" style="flex:1">Req 3</div>
+        </div>
+      </div>
+      <div class="timing-total">Total: ~300ms (slowest only)</div>
+    </div>
+  </div>
+
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — sequential-vs-parallel.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// ❌ Sequential — each await blocks the next from starting</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">loadSequential</span>() {
+  <span class="sy-kw">const</span> <span class="sy-plain">user</span>  = <span class="sy-kw">await</span> <span class="sy-fn">fetchUser</span>()   <span class="sy-comment">// waits 300ms</span>
+  <span class="sy-kw">const</span> <span class="sy-plain">posts</span>  = <span class="sy-kw">await</span> <span class="sy-fn">fetchPosts</span>()  <span class="sy-comment">// waits ANOTHER 300ms</span>
+  <span class="sy-kw">const</span> <span class="sy-plain">photos</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetchPhotos</span>() <span class="sy-comment">// waits ANOTHER 300ms</span>
+  <span class="sy-comment">// total: ~900ms — and none of these depended on each other!</span>
+  <span class="sy-kw">return</span> { <span class="sy-plain">user</span>, <span class="sy-plain">posts</span>, <span class="sy-plain">photos</span> }
+}
+
+<span class="sy-comment">// ✅ Parallel — all three start at the same time</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">loadParallel</span>() {
+  <span class="sy-kw">const</span> [<span class="sy-plain">user</span>, <span class="sy-plain">posts</span>, <span class="sy-plain">photos</span>] = <span class="sy-kw">await</span> <span class="sy-method">Promise</span>.<span class="sy-fn">all</span>([
+    <span class="sy-fn">fetchUser</span>(),
+    <span class="sy-fn">fetchPosts</span>(),
+    <span class="sy-fn">fetchPhotos</span>()
+  ])
+  <span class="sy-comment">// total: ~300ms — same result, 3x faster</span>
+  <span class="sy-kw">return</span> { <span class="sy-plain">user</span>, <span class="sy-plain">posts</span>, <span class="sy-plain">photos</span> }
+}
+
+<span class="sy-comment">// When IS sequential correct?</span>
+<span class="sy-comment">// When each request DEPENDS on the result of the previous one</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">loadDependentData</span>() {
+  <span class="sy-kw">const</span> <span class="sy-plain">user</span>  = <span class="sy-kw">await</span> <span class="sy-fn">fetchUser</span>()           <span class="sy-comment">// need user first</span>
+  <span class="sy-kw">const</span> <span class="sy-plain">posts</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetchPosts</span>(<span class="sy-plain">user</span>.<span class="sy-prop">id</span>)  <span class="sy-comment">// needs user.id — sequential is correct</span>
+  <span class="sy-kw">return</span> { <span class="sy-plain">user</span>, <span class="sy-plain">posts</span> }
+}</pre></div>
+  </div>
+
+  <div class="callout callout-accent">
+    <div class="callout-title">⚡ The Rule</div>
+    <p>If your async operations <strong>don't depend on each other's results</strong>, they should run in parallel. If they <strong>do depend on each other</strong> — where step 2 needs the result of step 1 — they must be sequential. Most of the time, you can run more in parallel than you think.</p>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🔁</span><h2 class="section-title">await in Loops — The Silent Performance Killer</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>Controlled concurrency is the nuanced middle ground that comes up in real projects. You have 50 items to process but you don't want to fire 50 requests simultaneously — rate limits, server load, and memory all push back. Process them in batches of 5 using <code class='il'>Promise.all()</code> on slices. It's not complex code, but it shows genuine understanding of async patterns.</p>
+  </div>
+
+</div>
+  <p>One of the most common places developers accidentally serialize async operations is inside loops. Using <span class="il">await</span> inside a <span class="il">for</span> loop makes each iteration wait for the previous one to complete — even when they don't need to.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — async-in-loops.js</div></div>
+    <div class="code-body"><pre><span class="sy-kw">const</span> <span class="sy-plain">ids</span> = [<span class="sy-num">1</span>, <span class="sy-num">2</span>, <span class="sy-num">3</span>, <span class="sy-num">4</span>, <span class="sy-num">5</span>]
+
+<span class="sy-comment">// ❌ Sequential loop — one request at a time, 5 trips total</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">fetchAllSequential</span>() {
+  <span class="sy-kw">const</span> <span class="sy-plain">results</span> = []
+  <span class="sy-kw">for</span> (<span class="sy-kw">const</span> <span class="sy-plain">id</span> <span class="sy-kw">of</span> <span class="sy-plain">ids</span>) {
+    <span class="sy-kw">const</span> <span class="sy-plain">res</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">`/api/user/</span>${<span class="sy-plain">id</span>}<span class="sy-str">`</span>)  <span class="sy-comment">// each waits for prev</span>
+    <span class="sy-plain">results</span>.<span class="sy-fn">push</span>(<span class="sy-kw">await</span> <span class="sy-plain">res</span>.<span class="sy-fn">json</span>())
+  }
+  <span class="sy-kw">return</span> <span class="sy-plain">results</span>
+}
+
+<span class="sy-comment">// ✅ Parallel loop — all 5 start at once</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">fetchAllParallel</span>() {
+  <span class="sy-kw">const</span> <span class="sy-plain">promises</span> = <span class="sy-plain">ids</span>.<span class="sy-fn">map</span>(<span class="sy-plain">id</span> =>
+    <span class="sy-fn">fetch</span>(<span class="sy-str">`/api/user/</span>${<span class="sy-plain">id</span>}<span class="sy-str">`</span>).<span class="sy-fn">then</span>(<span class="sy-plain">r</span> => <span class="sy-plain">r</span>.<span class="sy-fn">json</span>())
+  )
+  <span class="sy-kw">return</span> <span class="sy-method">Promise</span>.<span class="sy-fn">all</span>(<span class="sy-plain">promises</span>)  <span class="sy-comment">// wait for all at once</span>
+}
+
+<span class="sy-comment">// ❌ async forEach — looks async, isn't awaited by the loop</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">brokenForEach</span>() {
+  <span class="sy-plain">ids</span>.<span class="sy-fn">forEach</span>(<span class="sy-kw">async</span> (<span class="sy-plain">id</span>) => {
+    <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">`/api/user/</span>${<span class="sy-plain">id</span>}<span class="sy-str">`</span>)
+    <span class="sy-comment">// forEach returns void — it doesn't await your async callback</span>
+    <span class="sy-comment">// The function returns before any fetches complete</span>
+  })
+  <span class="sy-comment">// You can't know when this is done — the Promises are just floating</span>
+}
+
+<span class="sy-comment">// ✅ When you want sequential-but-controlled — for...of with await</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">sequential</span>() {
+  <span class="sy-kw">for</span> (<span class="sy-kw">const</span> <span class="sy-plain">id</span> <span class="sy-kw">of</span> <span class="sy-plain">ids</span>) {
+    <span class="sy-kw">await</span> <span class="sy-fn">processUser</span>(<span class="sy-plain">id</span>)  <span class="sy-comment">// intentional sequencing</span>
+    <span class="sy-comment">// good when order matters or server rate-limits you</span>
+  }
+}</pre></div>
+  </div>
+
+  <div class="callout callout-warn">
+    <div class="callout-title">⚠️ Never Use async forEach</div>
+    <p><span class="il">Array.forEach()</span> does not await async callbacks. It fires them all and moves on — you get no way to know when they finish, and errors get swallowed. Use <span class="il">for...of</span> for sequential async iteration. Use <span class="il">.map()</span> + <span class="il">Promise.all()</span> for parallel. Never <span class="il">forEach</span> with async.</p>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🎛️</span><h2 class="section-title">Controlled Concurrency — When Full Parallel Is Too Much</h2><div class="section-line"></div></div>
+  <p>Running 1000 requests at once would overwhelm a server (and likely get you rate-limited). Sometimes you need a middle ground: run N at a time, rolling as each completes.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — batch-parallel.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// Process items in batches of N simultaneously</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">processInBatches</span>(<span class="sy-plain">items</span>, <span class="sy-plain">batchSize</span>, <span class="sy-plain">processItem</span>) {
+  <span class="sy-kw">const</span> <span class="sy-plain">results</span> = []
+
+  <span class="sy-kw">for</span> (<span class="sy-kw">let</span> <span class="sy-plain">i</span> = <span class="sy-num">0</span>; <span class="sy-plain">i</span> < <span class="sy-plain">items</span>.<span class="sy-prop">length</span>; <span class="sy-plain">i</span> += <span class="sy-plain">batchSize</span>) {
+    <span class="sy-kw">const</span> <span class="sy-plain">batch</span> = <span class="sy-plain">items</span>.<span class="sy-fn">slice</span>(<span class="sy-plain">i</span>, <span class="sy-plain">i</span> + <span class="sy-plain">batchSize</span>)
+    <span class="sy-kw">const</span> <span class="sy-plain">batchResults</span> = <span class="sy-kw">await</span> <span class="sy-method">Promise</span>.<span class="sy-fn">all</span>(<span class="sy-plain">batch</span>.<span class="sy-fn">map</span>(<span class="sy-plain">processItem</span>))
+    <span class="sy-plain">results</span>.<span class="sy-fn">push</span>(...<span class="sy-plain">batchResults</span>)
+  }
+
+  <span class="sy-kw">return</span> <span class="sy-plain">results</span>
+}
+
+<span class="sy-comment">// Process 100 users, 5 at a time</span>
+<span class="sy-kw">const</span> <span class="sy-plain">users</span> = <span class="sy-kw">await</span> <span class="sy-fn">processInBatches</span>(
+  <span class="sy-plain">userIds</span>,
+  <span class="sy-num">5</span>,
+  <span class="sy-plain">id</span> => <span class="sy-fn">fetch</span>(<span class="sy-str">`/api/user/</span>${<span class="sy-plain">id</span>}<span class="sy-str">`</span>).<span class="sy-fn">then</span>(<span class="sy-plain">r</span> => <span class="sy-plain">r</span>.<span class="sy-fn">json</span>())
+)</pre></div>
+  </div>
+  <div class="callout callout-tip">
+    <div class="callout-title">💡 Pro Tip</div>
+    <p>The batch pattern is useful for more than just rate-limiting. It's also how you handle large datasets without memory issues — you process a manageable chunk at a time instead of loading everything into memory simultaneously.</p>
+  </div>
+
+  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body">
+      <p>I built a data migration script that processed 500 records by awaiting each one inside a loop. It took 8 minutes to run. My senior dev looked at it for about 10 seconds, pointed at the await inside the for loop, and said "there's your problem." I switched to batches of 20 using <span class="il" style="font-style:normal;">Promise.all()</span>. It ran in 23 seconds. I genuinely did not believe it was the same script. That was the day I started actually thinking about async execution strategy instead of just making code that worked.</p>
+    </div>
+  </div>
+
+  <div class="mini-build">
+    <div class="mini-build-header"><span class="trophy">🔬</span><span class="mb-title">MINI BUILD — Time Your Sequential vs Parallel Code</span></div>
+    <div class="mini-build-body">
+      <p>Make the performance difference visible with actual timing measurements. Use <span class="il">console.time()</span> and <span class="il">console.timeEnd()</span> to see the difference with your own eyes.</p>
+      <div class="goal-label">Exercises:</div>
+      <ul class="step-list">
+        <li><span class="step-num">01</span> Build a <span class="il">delay(ms)</span> function that returns a Promise resolving after <span class="il">ms</span></li>
+        <li><span class="step-num">02</span> Write <span class="il">runSequential()</span> — await three <span class="il">delay(300)</span> calls one by one. Time it.</li>
+        <li><span class="step-num">03</span> Write <span class="il">runParallel()</span> — <span class="il">Promise.all()</span> three <span class="il">delay(300)</span> calls. Time it.</li>
+        <li><span class="step-num">04</span> Compare. Confirm sequential takes ~900ms, parallel ~300ms.</li>
+        <li><span class="step-num">05</span> Write the broken <span class="il">async forEach</span> version — add a <span class="il">console.log</span> after the forEach and confirm it logs before the fetches complete</li>
+        <li><span class="step-num">06</span> Bonus: build <span class="il">processInBatches()</span> and test it with 9 items in batches of 3</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="confidence-close">
+    <div class="cc-icon">⚡</div>
+    <div class="cc-heading">You Just Found 3x Performance — For Free</div>
+    <p>Sequential vs parallel is one of the highest-leverage async concepts you can learn. You don't change what you fetch — just how you fetch it. Next: going deep on the Fetch API itself — headers, methods, request options, and everything fetch() can actually do.</p>
+  </div>
+  <a class="next-post" href="#"><div><div class="next-label">// next post →</div><div class="next-title">Post 07 — Fetch: Beyond the Basics</div></div><div class="next-arrow">→</div></a>
+
+  <nav class="post-nav">
+    <a href="async-05-async-await.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">async/await</span></a>
+    <a href="async-07-fetch.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">fetch() API</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <title>The CSS Box Model Explained: Why Your Spacing Is Weird (And How to Fix It) — CodeHerWay</title>
+<meta name="description" content="Every layout problem you've ever had probably traces back to the box model. Learn padding, border, margin, box-sizing, and how to use a spacing scale in this beginner CSS tutorial.">
+ <link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.green-key{color: var(--mint-green); font-weight: 700;}
+.prop{color: var(--sky-blue);}
+.val{color: var(--mint-green);}
+.sel{color: var(--pink);}
+.sel-class{color: var(--gold);}
+.num{color: var(--coral);}
+.callout.psych{background: rgba(255,105,180,0.05); border-color: var(--pink);}
+.callout.psych .callout-title{color: var(--pink);}
+.box-diagram-wrap{margin: 36px 0;}
+.box-diagram-wrap h3{margin-bottom: 20px;}
+.box-diagram{position: relative;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   border-radius: 12px;
+   overflow: hidden;}
+.layer-margin{background: rgba(255,105,180,0.08); border: 2px dashed rgba(255,105,180,0.35); border-radius: 12px; padding: 32px; width: 100%; position: relative;}
+.layer-border{background: rgba(255,211,105,0.08); border: 4px solid rgba(255,211,105,0.5); border-radius: 8px; padding: 28px; position: relative;}
+.layer-padding{background: rgba(125,255,179,0.07); border: 2px dashed rgba(125,255,179,0.35); border-radius: 6px; padding: 28px; position: relative;}
+.layer-content{background: rgba(105,210,231,0.12); border: 2px solid rgba(105,210,231,0.4); border-radius: 6px; padding: 22px 28px; text-align: center; position: relative;}
+.layer-label{position: absolute;
+   top: 8px; left: 12px;
+   font-family: 'Fira Code', monospace;
+   font-size: 11px;
+   font-weight: 700;
+   letter-spacing: 1px;
+   text-transform: uppercase;
+   padding: 2px 10px;
+   border-radius: 4px;}
+.layer-margin .layer-label{color: var(--pink);    background: rgba(255,105,180,0.12);}
+.layer-border .layer-label{color: var(--gold);    background: rgba(255,211,105,0.12);}
+.layer-padding .layer-label{color: var(--mint-green); background: rgba(125,255,179,0.12);}
+.layer-content .layer-label{color: var(--sky-blue);  background: rgba(105,210,231,0.12);}
+.layer-content .content-text{font-family: 'Fira Code', monospace;
+   font-size: 13px;
+   color: var(--sky-blue);
+   font-weight: 600;}
+.layer-content .content-sub{font-size: 12px;
+   color: var(--text-muted);
+   margin-top: 4px;}
+.box-legend{display: flex;
+   gap: 12px;
+   flex-wrap: wrap;
+   margin-top: 20px;
+   padding: 18px 20px;
+   background: var(--bg-code);
+   border-radius: 10px;
+   border: 1px solid rgba(255,255,255,0.05);}
+.legend-item{display: flex;
+   align-items: center;
+   gap: 8px;
+   font-family: 'Fira Code', monospace;
+   font-size: 12px;}
+.legend-dot{width: 10px; height: 10px;
+   border-radius: 2px;
+   flex-shrink: 0;}
+.before-after{display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 32px 0;}
+.before-after{display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 32px 0;}
+.ba-panel{background: var(--bg-code); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06);}
+.ba-label{padding: 10px 18px; font-family: 'Fira Code', monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; border-bottom: 1px solid rgba(255,255,255,0.05);}
+.ba-label.bad{color: var(--coral);   background: rgba(255,107,107,0.07);}
+.ba-label.good{color: var(--mint-green); background: rgba(125,255,179,0.07);}
+.ba-stage{padding: 28px; display: flex; justify-content: center;}
+.card-broken{width: 200px; background: #1e1e2e; border: 2px solid var(--coral); padding: 20px; color: var(--text-secondary); font-size: 13px;}
+.card-fixed{width: 200px; background: #1e1e2e; border: 2px solid var(--mint-green); padding: 20px; box-sizing: border-box; color: var(--text-secondary); font-size: 13px; border-radius: 8px;}
+.card-broken strong, .card-fixed strong{display: block; color: #fff; font-size: 14px; margin-bottom: 6px;}
+.size-tag{display: inline-block; font-family: 'Fira Code', monospace; font-size: 10px; padding: 2px 8px; border-radius: 4px; margin-top: 10px;}
+.size-bad{background: rgba(255,107,107,0.15); color: var(--coral);}
+.size-good{background: rgba(125,255,179,0.15); color: var(--mint-green);}
+.spacing-scale{background: var(--bg-code); border-radius: 12px; border: 1px solid rgba(255,255,255,0.06); padding: 28px 24px; margin: 32px 0;}
+.spacing-scale h4{font-family: 'Fira Code', monospace; font-size: 13px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px;}
+.scale-row{display: flex; align-items: center; gap: 14px; margin-bottom: 14px;}
+.scale-label{font-family: 'Fira Code', monospace; font-size: 12px; color: var(--text-muted); width: 42px; flex-shrink: 0;}
+.scale-bar-wrap{flex: 1; background: rgba(255,255,255,0.04); border-radius: 4px; height: 20px; overflow: hidden;}
+.scale-bar{height: 100%; border-radius: 4px; display: flex; align-items: center; padding-left: 10px; font-family: 'Fira Code', monospace; font-size: 10px; font-weight: 700; white-space: nowrap; color: var(--sky-blue);}
+.s4{width: 6%; background: rgba(105,210,231,0.3);}
+.s8{width: 12%; background: rgba(105,210,231,0.4);}
+.s12{width: 18%; background: rgba(105,210,231,0.5);}
+.s16{width: 24%; background: rgba(105,210,231,0.55);}
+.s24{width: 36%; background: rgba(105,210,231,0.6);}
+.s32{width: 48%; background: rgba(105,210,231,0.65);}
+.s48{width: 68%; background: rgba(105,210,231,0.7);}
+.s64{width: 90%; background: rgba(105,210,231,0.75);}
+.card-grid-demo{display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; margin: 28px 0; padding: 32px; background: #0d0d18; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);}
+.demo-card-box{width: 220px; background: #12121a; border-radius: 12px; padding: 24px; border: 1px solid rgba(255,255,255,0.07); transition: all 0.3s ease; cursor: default; box-sizing: border-box;}
+.demo-card-box:hover{border-color: rgba(255,105,180,0.35); transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.4);}
+.demo-card-box .dc-tag{font-family: 'Fira Code', monospace; font-size: 11px; color: var(--pink); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; display: block;}
+.demo-card-box .dc-title{font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 8px;}
+.demo-card-box .dc-body{font-size: 13px; color: var(--text-muted); line-height: 1.6;}
+@media(max-width:640px){.code-body { font-size: 12px; padding: 14px; } .code-topbar { padding: 10px 14px; } .code-lang { font-size: 10px; padding: 2px 8px; } .code-filename { font-size: 10px; } .hero h1 { font-size: clamp(26px, 8vw, 40px); } .hero-sub { font-size: 16px; } .hero { padding: 32px 16px 28px; } .article { padding: 0 16px 60px; } .article h2 { font-size: 22px; margin: 40px 0 14px; } .article h3 { font-size: 18px; margin: 28px 0 12px; } .callout { padding: 18px; } .devfession-body { padding: 20px; } .devfession-header { font-size: 15px; padding: 14px 20px; } .devfession-footer { flex-direction: column; gap: 4px; font-size: 11px; padding: 12px 20px; } .mini-build-body { padding: 20px; } .mini-build-header { padding: 14px 20px; } .mini-build-header h3 { font-size: 17px; } .confidence-close { padding: 22px 20px; } .confidence-close::before { display: none; } .step { gap: 10px; } .step-num { width: 26px; height: 26px; font-size: 12px; flex-shrink: 0; } .tag { font-size: 11px; padding: 4px 10px; } .post-number { font-size: 11px; letter-spacing: 1px; } .sep { margin: 32px 0; } .layer-margin { padding: 20px; } .layer-border { padding: 16px; } .layer-padding { padding: 16px; } .before-after { grid-template-columns: 1fr; }}
+@media (max-width: 480px){
+   .code-body { font-size: 11.5px; padding: 12px; }
+   .hero h1 { font-size: clamp(24px, 9vw, 32px); }
+   .il { white-space: normal; word-break: break-word; }
+   .unit-grid, .compare-2, .before-after, .phase-grid,
+   .lh-demo, .pair-grid, .ba-grid, .font-compare { grid-template-columns: 1fr; }
+   .shadow-grid { grid-template-columns: 1fr 1fr; }
+   .swatch-row { gap: 8px; }
+   .swatch { min-width: 90px; }
+   .pyramid-row { flex-direction: column; gap: 6px; align-items: flex-start; }
+   .score-row { flex-direction: column; gap: 6px; }
+   .score-sel { min-width: unset; }
+   .recap-item { flex-wrap: wrap; gap: 4px; }
+   .recap-title { width: 100%; }
+   .checklist { padding: 14px; }
+   .demo-row { padding: 16px 12px; gap: 12px; }
+   .series-nav-divider { display: none; }
+   .connect-arrow { display: none; }
+   .compare-grid { grid-template-columns: 1fr; }
+   .layer-margin { padding: 20px; }
+   .layer-border { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+ <div id="site-header"></div>
+<!-- ─── HERO ─── -->
+<div class="hero">
+ <div class="post-label"><span class="series-tag">CSS, But Make It Powerful</span> Post 03 of 14 </div>
+ <div class="post-number">CSS Series · Post 03</div>
+ <h1>The Box Model<br><span class="gradient-text">(Why Your Spacing Is Weird)</span></h1>
+ <p class="hero-sub">Every layout problem you've ever had probably traces back to this. The box model isn't a bug — it's the rule. Learn it once and spacing will never confuse you the same way again.</p>
+ <div class="tag-row">
+  <span class="tag css">CSS</span>
+  <span class="tag beginner">Beginner</span>
+  <span class="tag series">Series: Post 03</span>
+  <span class="tag">~12 min read</span>
+ </div>
+</div>
+
+<!-- ─── ARTICLE ─── -->
+<main class="article">
+
+ <!-- 💬 RELATABLE INTRO -->
+ <h2>💬 "Why Is There So Much Space There?"</h2>
+
+ <p>You've been there. You set a width of <span class="il">300px</span>. The element spills out of its container. You add some padding and suddenly the whole layout shifts. You remove a margin and something else breaks. You're refreshing the browser every 30 seconds like it's going to magically fix itself.</p>
+
+ <p>It's not a glitch. It's not your fault. And it's definitely not a sign that CSS hates you personally.</p>
+
+ <p><span class="key">It's the box model — and once you understand it, every layout problem becomes diagnosable.</span> Not just "it looks wrong." But actually: why it's wrong, and exactly how to fix it.</p>
+
+ <div class="callout psych">
+  <div class="callout-title">🧠 Psychology Check</div>
+  <p>Layout frustration is one of the most common reasons beginners think they "can't do CSS." But the frustration isn't about you — it's about not yet having this one mental model. You're not bad at CSS. You just haven't been told how CSS thinks about space yet. That's what this post fixes.</p>
+ </div>
+
+ <!-- 🧠 CONCEPT -->
+ <h2>🧠 The Concept: Everything Is a Box</h2>
+
+ <p>Here's the foundational truth of CSS layout: <span class="pink-key">every single element on a webpage is a rectangular box.</span> Headings. Paragraphs. Images. Divs. Buttons. Links. Doesn't matter. They're all boxes.</p>
+
+ <p>And every box has four layers, stacked from the inside out:</p>
+
+ <div style="display: flex; flex-direction: column; gap: 10px; margin: 28px 0;">
+  <div style="display: flex; align-items: center; gap: 16px; padding: 14px 20px; background: rgba(105,210,231,0.07); border-radius: 10px; border: 1px solid rgba(105,210,231,0.15);">
+   <span style="font-family:'Fira Code',monospace; font-size:13px; font-weight:700; color:var(--sky-blue); width:70px; flex-shrink:0;">Content</span>
+   <span style="color:var(--text-secondary); font-size:15px;">The actual text, image, or element. This is what you're displaying.</span>
+  </div>
+  <div style="display: flex; align-items: center; gap: 16px; padding: 14px 20px; background: rgba(125,255,179,0.06); border-radius: 10px; border: 1px solid rgba(125,255,179,0.15);">
+   <span style="font-family:'Fira Code',monospace; font-size:13px; font-weight:700; color:var(--mint-green); width:70px; flex-shrink:0;">Padding</span>
+   <span style="color:var(--text-secondary); font-size:15px;">Space <em>inside</em> the element, between the content and the border.</span>
+  </div>
+  <div style="display: flex; align-items: center; gap: 16px; padding: 14px 20px; background: rgba(255,211,105,0.06); border-radius: 10px; border: 1px solid rgba(255,211,105,0.15);">
+   <span style="font-family:'Fira Code',monospace; font-size:13px; font-weight:700; color:var(--gold); width:70px; flex-shrink:0;">Border</span>
+   <span style="color:var(--text-secondary); font-size:15px;">The line wrapping the element. Can be visible or invisible (0px).</span>
+  </div>
+  <div style="display: flex; align-items: center; gap: 16px; padding: 14px 20px; background: rgba(255,105,180,0.06); border-radius: 10px; border: 1px solid rgba(255,105,180,0.15);">
+   <span style="font-family:'Fira Code',monospace; font-size:13px; font-weight:700; color:var(--pink); width:70px; flex-shrink:0;">Margin</span>
+   <span style="color:var(--text-secondary); font-size:15px;">Space <em>outside</em> the element, pushing other elements away.</span>
+  </div>
+ </div>
+
+ <p>Think of it like a framed photo on a wall. <span class="callout-inline"><em>Note: The mini build in this post uses <code>.card</code> class selectors — we cover selectors in full in Post 02. For now, just know that <code>.card</code> means "target any element with <code>class="card"</code>."</em></span> The photo itself is the <span class="sky-key">content</span>. The foam matting between the photo and frame is the <span class="green-key">padding</span>. The frame is the <span class="gold-key">border</span>. The gap between your frame and the next one on the wall is the <span class="pink-key">margin</span>.</p>
+
+ <!-- 🧱 TECHNICAL BREAKDOWN -->
+ <h2>🧱 The Box Model, Layer by Layer</h2>
+
+ <!-- INTERACTIVE DIAGRAM -->
+ <div class="box-diagram-wrap">
+  <div class="box-diagram">
+   <div class="layer-margin">
+    <span class="layer-label">Margin</span>
+    <div class="layer-border">
+     <span class="layer-label">Border</span>
+     <div class="layer-padding">
+      <span class="layer-label">Padding</span>
+      <div class="layer-content">
+       <span class="layer-label">Content</span>
+       <div class="content-text">Your text or image lives here</div>
+       <div class="content-sub">width × height</div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <div class="box-legend">
+   <div class="legend-item">
+    <div class="legend-dot" style="background: rgba(105,210,231,0.5); border: 1px solid rgba(105,210,231,0.4);"></div>
+    <span style="color:var(--sky-blue);">Content</span>
+   </div>
+   <div class="legend-item">
+    <div class="legend-dot" style="background: rgba(125,255,179,0.4); border: 1px dashed rgba(125,255,179,0.5);"></div>
+    <span style="color:var(--mint-green);">Padding — inner breathing room</span>
+   </div>
+   <div class="legend-item">
+    <div class="legend-dot" style="background: rgba(255,211,105,0.5); border: 2px solid rgba(255,211,105,0.6);"></div>
+    <span style="color:var(--gold);">Border — the visible line</span>
+   </div>
+   <div class="legend-item">
+    <div class="legend-dot" style="background: rgba(255,105,180,0.3); border: 1px dashed rgba(255,105,180,0.4);"></div>
+    <span style="color:var(--pink);">Margin — outer push-away space</span>
+   </div>
+  </div>
+ </div>
+
+ <h3>Content — What You're Actually Showing</h3>
+
+ <p>The content area is sized by <span class="il">width</span> and <span class="il">height</span>. By default in CSS, when you set <span class="il">width: 300px</span> you're setting the size of the content area only — not the whole element. Padding and border get added on top of that. This is where beginner confusion begins.</p>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">styles.css</div>
+   <div class="code-lang">CSS · Content</div>
+  </div>
+  <div class="code-body"><code><span class="sel-class">.card</span> {
+ <span class="prop">width</span>: <span class="val">300px</span>;  <span class="c">/* content area is 300px wide */</span>
+ <span class="prop">height</span>: <span class="val">200px</span>; <span class="c">/* content area is 200px tall */</span>
+
+ <span class="c">/* BUT the element on screen may be LARGER than this,
+   because padding + border get added ON TOP by default */</span>
+}</code></div>
+ </div>
+
+ <h3>Padding — Breathing Room Inside</h3>
+
+ <p>Padding is the space between your content and the border. It pushes your text away from the edges of the element. <span class="key">It's inside the element</span> — so it picks up the element's background color, unlike margin.</p>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">styles.css</div>
+   <div class="code-lang">CSS · Padding</div>
+  </div>
+  <div class="code-body"><code><span class="sel-class">.card</span> {
+ <span class="c">/* All four sides at once */</span>
+ <span class="prop">padding</span>: <span class="val">24px</span>;
+
+ <span class="c">/* Vertical | Horizontal */</span>
+ <span class="prop">padding</span>: <span class="val">16px 24px</span>;
+
+ <span class="c">/* Top | Right | Bottom | Left (clockwise) */</span>
+ <span class="prop">padding</span>: <span class="val">16px 24px 16px 24px</span>;
+
+ <span class="c">/* Individual sides */</span>
+ <span class="prop">padding-top</span>: <span class="val">16px</span>;
+ <span class="prop">padding-right</span>: <span class="val">24px</span>;
+ <span class="prop">padding-bottom</span>: <span class="val">16px</span>;
+ <span class="prop">padding-left</span>: <span class="val">24px</span>;
+}</code></div>
+ </div>
+
+ <div class="callout tip">
+  <div class="callout-title">✦ The Clockwise Rule</div>
+  <p>When you use shorthand with multiple values, they always go <strong>Top → Right → Bottom → Left</strong> — clockwise from the top. If you give two values (<span class="il">padding: 16px 24px</span>), the first is top/bottom and the second is left/right. Two values, two pairs. Four values, each side individually.</p>
+ </div>
+
+ <h3>Border — The Element's Edge</h3>
+
+ <p>Border wraps around the padding and content. A border has three parts: width, style, and color. All three must be set for a border to show. And importantly — border adds to the element's total size unless you fix that with <span class="il">box-sizing</span>.</p>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">styles.css</div>
+   <div class="code-lang">CSS · Border</div>
+  </div>
+  <div class="code-body"><code><span class="sel-class">.card</span> {
+ <span class="c">/* Shorthand: width | style | color */</span>
+ <span class="prop">border</span>: <span class="val">1px solid rgba(255,255,255,0.08)</span>;
+
+ <span class="c">/* Individual properties */</span>
+ <span class="prop">border-width</span>: <span class="val">2px</span>;
+ <span class="prop">border-style</span>: <span class="val">solid</span>;  <span class="c">/* solid | dashed | dotted */</span>
+ <span class="prop">border-color</span>: <span class="val">#ff69b4</span>;
+
+ <span class="c">/* Border on one side only */</span>
+ <span class="prop">border-left</span>: <span class="val">4px solid #b44aff</span>;
+
+ <span class="c">/* Rounded corners — separate from border */</span>
+ <span class="prop">border-radius</span>: <span class="val">12px</span>;
+}</code></div>
+ </div>
+
+ <h3>Margin — Space Outside the Element</h3>
+
+ <p>Margin is the space <em>outside</em> the border — the gap between this element and whatever is next to it. <span class="pink-key">Margin is transparent</span>: it never shows a background color. It just creates distance.</p>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">styles.css</div>
+   <div class="code-lang">CSS · Margin</div>
+  </div>
+  <div class="code-body"><code><span class="sel-class">.card</span> {
+ <span class="c">/* Same shorthand as padding — clockwise */</span>
+ <span class="prop">margin</span>: <span class="val">24px</span>;      <span class="c">/* all sides */</span>
+ <span class="prop">margin</span>: <span class="val">0 auto</span>;     <span class="c">/* top/bottom 0, center horizontally */</span>
+ <span class="prop">margin-bottom</span>: <span class="val">32px</span>;  <span class="c">/* push next element down */</span>
+}
+
+<span class="c">/* margin: 0 auto — the centering trick
+  Works on block elements with a set width.
+  auto splits the remaining space equally left and right. */</span>
+<span class="sel-class">.container</span> {
+ <span class="prop">width</span>: <span class="val">860px</span>;
+ <span class="prop">margin</span>: <span class="val">0 auto</span>; <span class="c">/* centers the container on the page */</span>
+}</code></div>
+ </div>
+
+ <div class="callout info">
+  <div class="callout-title">ℹ️ Margin Collapse</div>
+  <p>Here's a quirk worth knowing: when two vertical margins touch, they don't add together — the larger one wins. If one element has <span class="il">margin-bottom: 32px</span> and the next has <span class="il">margin-top: 16px</span>, the space between them is <span class="il">32px</span>, not <span class="il">48px</span>. This is called <strong>margin collapse</strong> and it catches every developer by surprise the first time — including the ones who teach CSS for a living.</p>
+ </div>
+
+ <h3>The Big Fix: <span style="color:var(--pink)">box-sizing: border-box</span></h3>
+
+ <p>By default, CSS calculates element size like this:</p>
+
+ <p style="text-align:center; font-family:'Fira Code',monospace; font-size:15px; padding: 16px; background: rgba(255,107,107,0.07); border-radius: 8px; color: var(--coral);">
+  total width = content width + padding + border
+ </p>
+
+ <p>So a <span class="il">width: 300px</span> card with <span class="il">padding: 24px</span> and a <span class="il">border: 2px</span> actually renders at <strong>350px wide</strong>. Not 300. That's the source of the "why is this overflowing" confusion.</p>
+
+ <p>The fix is one line — and most developers put it at the very top of every stylesheet:</p>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">styles.css</div>
+   <div class="code-lang">CSS · The Universal Fix</div>
+  </div>
+  <div class="code-body"><code><span class="c">/* Put this at the TOP of every CSS file you ever write.
+  It changes how width and height are calculated — forever. */</span>
+
+<span class="sel">*</span> {
+ <span class="prop">box-sizing</span>: <span class="val">border-box</span>;
+}
+
+<span class="c">/* With border-box:
+  width = the TOTAL width including padding + border
+  content area shrinks to fit — the element stays at declared size.
+
+  Without it (content-box, the default):
+  width = content only, padding + border expand the element outward. */</span></code></div>
+ </div>
+
+ <p>See the difference this makes on the exact same card:</p>
+
+ <div class="before-after">
+  <div class="ba-panel">
+   <div class="ba-label bad">✗ Without border-box (default)</div>
+   <div class="ba-stage">
+    <div>
+     <div class="card-broken">
+      <strong>Card Title</strong>
+      width: 200px declared,<br>but renders wider due to padding + border.
+      <div><span class="size-tag size-bad">actual: 244px</span></div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <div class="ba-panel">
+   <div class="ba-label good">✓ With box-sizing: border-box</div>
+   <div class="ba-stage">
+    <div>
+     <div class="card-fixed">
+      <strong>Card Title</strong>
+      width: 200px declared<br>and renders at exactly 200px.
+      <div><span class="size-tag size-good">actual: 200px</span></div>
+     </div>
+    </div>
+   </div>
+  </div>
+ </div>
+
+ <p>With <span class="il">box-sizing: border-box</span>, when you say <span class="il">width: 300px</span> — the element is <span class="key">300px, period</span>. Padding and border live inside that number. Predictable. Consistent. Sane.</p>
+
+ <h3>Consistent Spacing: Using a Scale</h3>
+
+ <p>Random spacing values lead to layouts that feel off without you being able to explain why. The fix is using a <strong>spacing scale</strong> — a set of consistent values based on a base unit (usually 4px or 8px). Everything is a multiple.</p>
+
+ <div class="spacing-scale">
+  <h4>4px Spacing Scale</h4>
+  <div class="scale-row">
+   <div class="scale-label">4px</div>
+   <div class="scale-bar-wrap"><div class="scale-bar s4">micro</div></div>
+  </div>
+  <div class="scale-row">
+   <div class="scale-label">8px</div>
+   <div class="scale-bar-wrap"><div class="scale-bar s8">tight</div></div>
+  </div>
+  <div class="scale-row">
+   <div class="scale-label">12px</div>
+   <div class="scale-bar-wrap"><div class="scale-bar s12">snug</div></div>
+  </div>
+  <div class="scale-row">
+   <div class="scale-label">16px</div>
+   <div class="scale-bar-wrap"><div class="scale-bar s16">base</div></div>
+  </div>
+  <div class="scale-row">
+   <div class="scale-label">24px</div>
+   <div class="scale-bar-wrap"><div class="scale-bar s24">comfortable</div></div>
+  </div>
+  <div class="scale-row">
+   <div class="scale-label">32px</div>
+   <div class="scale-bar-wrap"><div class="scale-bar s32">roomy</div></div>
+  </div>
+  <div class="scale-row">
+   <div class="scale-label">48px</div>
+   <div class="scale-bar-wrap"><div class="scale-bar s48">section gap</div></div>
+  </div>
+  <div class="scale-row">
+   <div class="scale-label">64px</div>
+   <div class="scale-bar-wrap"><div class="scale-bar s64">hero / hero-level breathing room</div></div>
+  </div>
+ </div>
+
+ <p>When all your spacing values come from the same scale, layouts feel intentional and cohesive — even before you've refined the design. Pick a scale and stick to it. If you're not sure which to start with, go with 8px — it's the most common base in production UI.</p>
+
+ <div class="sep"></div>
+
+ <!-- 🛠 MINI BUILD -->
+ <div class="mini-build">
+  <div class="mini-build-header">
+   <span style="font-size:22px;">🛠</span>
+   <h3>Mini Build: Three Cards with Consistent Spacing</h3>
+  </div>
+  <div class="mini-build-body">
+   <p>You're going to build three cards that look visually balanced — same padding, same spacing, no layout surprises. You'll use <span class="il">box-sizing: border-box</span> from the start so widths behave the way you expect.</p>
+
+   <div class="step">
+    <div class="step-num">01</div>
+    <div class="step-text">
+     <p><strong>Start your CSS with the universal reset.</strong> Before anything else, add this to the top of your <span class="il">styles.css</span>. This one rule will save you from a hundred layout headaches.</p>
+    </div>
+   </div>
+
+   <div class="code-window">
+    <div class="code-topbar">
+     <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+     <div class="code-filename">styles.css</div>
+     <div class="code-lang">CSS</div>
+    </div>
+    <div class="code-body"><code><span class="c">/* Always goes first — box model sanity */</span>
+<span class="sel">*</span> {
+ <span class="prop">margin</span>: <span class="val">0</span>;
+ <span class="prop">padding</span>: <span class="val">0</span>;
+ <span class="prop">box-sizing</span>: <span class="val">border-box</span>;
+}
+
+<span class="sel">body</span> {
+ <span class="prop">background</span>: <span class="val">#0a0a0f</span>;
+ <span class="prop">color</span>: <span class="val">#e0e0e8</span>;
+ <span class="prop">font-family</span>: <span class="val">sans-serif</span>;
+ <span class="prop">padding</span>: <span class="val">48px 24px</span>;
+}</code></div>
+   </div>
+
+   <div class="step">
+    <div class="step-num">02</div>
+    <div class="step-text">
+     <p><strong>Write the HTML for three cards.</strong> All three share the same class structure — that's the point. Different content, identical spacing.</p>
+    </div>
+   </div>
+
+   <div class="code-window">
+    <div class="code-topbar">
+     <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+     <div class="code-filename">index.html</div>
+     <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-body"><code><span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"card-grid"</span><span class="t">&gt;</span>
+
+ <span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"card"</span><span class="t">&gt;</span>
+  <span class="t">&lt;span</span> <span class="a">class</span>=<span class="s">"card-tag"</span><span class="t">&gt;</span>Post 01<span class="t">&lt;/span&gt;</span>
+  <span class="t">&lt;h3</span> <span class="a">class</span>=<span class="s">"card-title"</span><span class="t">&gt;</span>What CSS Actually Does<span class="t">&lt;/h3&gt;</span>
+  <span class="t">&lt;p</span> <span class="a">class</span>=<span class="s">"card-text"</span><span class="t">&gt;</span>CSS is presentation logic, not decoration.<span class="t">&lt;/p&gt;</span>
+ <span class="t">&lt;/div&gt;</span>
+
+ <span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"card"</span><span class="t">&gt;</span>
+  <span class="t">&lt;span</span> <span class="a">class</span>=<span class="s">"card-tag"</span><span class="t">&gt;</span>Post 02<span class="t">&lt;/span&gt;</span>
+  <span class="t">&lt;h3</span> <span class="a">class</span>=<span class="s">"card-title"</span><span class="t">&gt;</span>Selectors<span class="t">&lt;/h3&gt;</span>
+  <span class="t">&lt;p</span> <span class="a">class</span>=<span class="s">"card-text"</span><span class="t">&gt;</span>How CSS knows exactly what to style.<span class="t">&lt;/p&gt;</span>
+ <span class="t">&lt;/div&gt;</span>
+
+ <span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"card"</span><span class="t">&gt;</span>
+  <span class="t">&lt;span</span> <span class="a">class</span>=<span class="s">"card-tag"</span><span class="t">&gt;</span>Post 03<span class="t">&lt;/span&gt;</span>
+  <span class="t">&lt;h3</span> <span class="a">class</span>=<span class="s">"card-title"</span><span class="t">&gt;</span>The Box Model<span class="t">&lt;/h3&gt;</span>
+  <span class="t">&lt;p</span> <span class="a">class</span>=<span class="s">"card-text"</span><span class="t">&gt;</span>Why spacing works — and how to control it.<span class="t">&lt;/p&gt;</span>
+ <span class="t">&lt;/div&gt;</span>
+
+<span class="t">&lt;/div&gt;</span></code></div>
+   </div>
+
+   <div class="step">
+    <div class="step-num">03</div>
+    <div class="step-text">
+     <p><strong>Style the cards using box model properties.</strong> Every value comes from the spacing scale. Nothing is random.</p>
+    </div>
+   </div>
+
+   <div class="code-window">
+    <div class="code-topbar">
+     <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+     <div class="code-filename">styles.css</div>
+     <div class="code-lang">CSS</div>
+    </div>
+    <div class="code-body"><code><span class="c">/* Card wrapper — simple stacked layout for now */</span>
+<span class="sel-class">.card-grid</span> {
+ <span class="prop">display</span>: <span class="val">flex</span>;
+ <span class="prop">flex-direction</span>: <span class="val">column</span>;
+ <span class="prop">gap</span>: <span class="val">24px</span>;   <span class="c">/* consistent spacing between cards */</span>
+ <span class="prop">max-width</span>: <span class="val">400px</span>;
+}
+
+<span class="sel-class">.card</span> {
+ <span class="c">/* Content + visual treatment */</span>
+ <span class="prop">background</span>: <span class="val">#12121a</span>;
+ <span class="prop">border-radius</span>: <span class="val">12px</span>;
+
+ <span class="c">/* Padding — inner breathing room */</span>
+ <span class="prop">padding</span>: <span class="val">24px</span>;
+
+ <span class="c">/* Border — adds visual edge */</span>
+ <span class="prop">border</span>: <span class="val">1px solid rgba(255,255,255,0.07)</span>;
+
+ <span class="c">/* With border-box, width stays exactly 400px
+   regardless of padding or border. No surprises. */</span>
+ <span class="prop">transition</span>: <span class="val">all 0.3s ease</span>;
+}
+
+<span class="sel-class">.card</span><span style="color:var(--purple)">:hover</span> {
+ <span class="prop">border-color</span>: <span class="val">rgba(255,105,180,0.35)</span>;
+ <span class="prop">transform</span>: <span class="val">translateY(-3px)</span>;
+}
+
+<span class="sel-class">.card-tag</span> {
+ <span class="prop">display</span>: <span class="val">block</span>;
+ <span class="prop">font-size</span>: <span class="val">12px</span>;
+ <span class="prop">color</span>: <span class="val">#ff69b4</span>;
+ <span class="prop">letter-spacing</span>: <span class="val">1px</span>;
+ <span class="prop">text-transform</span>: <span class="val">uppercase</span>;
+ <span class="prop">margin-bottom</span>: <span class="val">8px</span>; <span class="c">/* spacing scale: 8px */</span>
+}
+
+<span class="sel-class">.card-title</span> {
+ <span class="prop">color</span>: <span class="val">#ffffff</span>;
+ <span class="prop">font-size</span>: <span class="val">18px</span>;
+ <span class="prop">margin-bottom</span>: <span class="val">8px</span>; <span class="c">/* spacing scale: 8px */</span>
+}
+
+<span class="sel-class">.card-text</span> {
+ <span class="prop">color</span>: <span class="val">#9595a8</span>;
+ <span class="prop">font-size</span>: <span class="val">14px</span>;
+ <span class="prop">line-height</span>: <span class="val">1.7</span>;
+}</code></div>
+   </div>
+
+   <div class="step">
+    <div class="step-num">04</div>
+    <div class="step-text">
+     <p><strong>Open in browser and inspect the box model.</strong> Right-click one of your cards → Inspect → find the element in DevTools. (We do a full DevTools deep-dive in Post 13 — Architecture &amp; DevTools.) At the bottom of the Styles panel (or the Computed tab) you'll see the box model diagram showing your content, padding, border, and margin values visually. This is the most useful tool in your arsenal for debugging layout — and we do a full deep-dive on the DevTools workflow in Post 13.</p>
+    </div>
+   </div>
+
+   <!-- LIVE PREVIEW -->
+   <div class="card-grid-demo">
+    <div class="demo-card-box">
+     <span class="dc-tag">Post 01</span>
+     <div class="dc-title">What CSS Actually Does</div>
+     <div class="dc-body">CSS is presentation logic, not decoration.</div>
+    </div>
+    <div class="demo-card-box">
+     <span class="dc-tag">Post 02</span>
+     <div class="dc-title">Selectors</div>
+     <div class="dc-body">How CSS knows exactly what to style.</div>
+    </div>
+    <div class="demo-card-box">
+     <span class="dc-tag">Post 03</span>
+     <div class="dc-title">The Box Model</div>
+     <div class="dc-body">Why spacing works — and how to control it.</div>
+    </div>
+   </div>
+   <p style="text-align:center; font-size: 13px; color: var(--text-muted); margin-top: -10px; font-family: 'Fira Code', monospace;">↑ your finished result — hover the cards</p>
+
+   <div class="callout tip" style="margin-top: 24px; margin-bottom: 0;">
+    <div class="callout-title">✦ What You Just Did</div>
+    <p>Every spacing value in those cards came from a decision, not a guess. You used <span class="il">box-sizing: border-box</span> so widths behave predictably. You used consistent padding from a scale. You used <span class="il">gap</span> instead of random margins. That's how production CSS is written.</p>
+   </div>
+  </div>
+ </div>
+
+ <!-- 💛 CONFIDENCE CLOSE -->
+ <div class="confidence-close">
+  <h2>💛 The Spacing Was Never Random. It Was Just Unexplained.</h2>
+  <p>Every developer who's ever stared at a broken layout wondering "why is there space there" had the same experience you just had — before they understood the box model. The frustration isn't about ability. It's about not yet having this one mental model.</p>
+  <p>Now you have it. Here's what you can now see that you couldn't before:</p>
+  <ul class="recap-list">
+   <li>Every element is a box with four layers: content, padding, border, margin</li>
+   <li>Padding is inside (picks up background color). Margin is outside (always transparent).</li>
+   <li>By default, <span class="il">width</span> only sets the content — padding and border add on top</li>
+   <li><span class="il">box-sizing: border-box</span> fixes this — width means the whole element, every time</li>
+   <li>Using a spacing scale makes layouts feel cohesive without you having to think about it</li>
+   <li>DevTools lets you see the box model of any element on any website, including yours</li>
+  </ul>
+  <p>Next up: Typography — the CSS properties that control how text looks, reads, and feels. Because spacing and fonts together? That's where a design starts to feel like it was made by someone who knows what they're doing.</p>
+ </div>
+
+ <div class="sep"></div>
+
+ <!-- 🧾 DEVFESSION -->
+ <div class="devfession">
+  <div class="devfession-header">🧾 DevFession</div>
+  <div class="devfession-body">
+   <p>I need to confess something. For an embarrassingly long time, I thought the box model was just one of those things developers said to sound smart. Like, sure, everything is a box, very poetic, but what does that actually <em>do</em>?</p>
+   <p>So I ignored it. I just kept adding and removing padding values until things "looked right." Sometimes I'd subtract random pixels. Sometimes I'd type <span class="il">margin: -8px</span> and hold my breath. My CSS was basically a negotiation with the browser where neither of us really knew what the other one wanted.</p>
+   <p>Then I actually sat down and learned the box model properly — took maybe 20 minutes. And I want you to know: I went back and fixed five projects in one afternoon. Layouts that had been "close enough but slightly off" for months suddenly made perfect sense. Things I'd assumed were broken by CSS being weird were actually just me not understanding how width was being calculated.</p>
+   <p>The box model isn't advanced knowledge. It's foundational knowledge that nobody told you was foundational. Now you know. And your layouts will quietly show it.</p>
+  </div></div>
+  </div>
+  <div style="text-align: center;">
+  </div>
+  <div style="text-align: right;">
+  </div>
+ </div>
+
+
+ <nav class="post-nav">
+  <a href="02-selectors.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">CSS Selectors Explained</span></a>
+  <a href="04-typography.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">CSS Typography</span></a>
+ </nav>
+ <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+ <div id="site-footer"></div>
+ <script src="../../assets/js/main.js"></script>
+</body>
+</html>

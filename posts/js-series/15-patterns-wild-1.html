@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Async Patterns in Real JavaScript Apps: Polling, Optimistic Updates & Deduplication | CodeHerWay</title>
+<meta name="description" content="Polling, optimistic updates, request deduplication, and loading skeletons — the patterns that separate tutorial code from production. CodeHerWay.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.container{max-width: 860px; margin: 0 auto; padding: 0 24px 80px;}
+.code-block{background: var(--bg-code); border: 1px solid #2a2a3e; border-radius: 10px; margin: 24px 0; overflow: hidden;}
+.code-header{background: #12121a; padding: 10px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #2a2a3e;}
+.code-label{font-family: 'Fira Code', monospace; font-size: 0.78rem; color: var(--muted); margin-left: auto;}
+.c-comment{color: #ffffff; font-style: italic;}
+.c-keyword{color: var(--purple);}
+.c-fn{color: var(--sky-blue);}
+.c-string{color: var(--mint-green);}
+.c-num{color: var(--gold);}
+.c-cyan{color: var(--cyan);}
+.c-pink{color: var(--pink);}
+.pattern-grid{display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 24px 0;}
+.pattern-card{background: var(--bg-card); border: 1px solid #2a2a3e; border-radius: 10px; padding: 20px;}
+.pattern-card .p-name{font-size: 0.85rem; font-weight: 700; color: var(--cyan); font-family: 'Fira Code', monospace; margin-bottom: 6px;}
+.pattern-card .p-use{font-size: 0.88rem; color: var(--muted); margin-bottom: 8px;}
+.pattern-card .p-example{font-size: 0.82rem; color: var(--mint-green); font-family: 'Fira Code', monospace;}
+.step-row{display: flex; align-items: flex-start; gap: 0; margin-bottom: 16px;}
+.step-content{flex: 1;}
+.step-content strong{color: #fff; display: block; margin-bottom: 4px;}
+.step-content p{margin: 0; color: var(--muted); font-size: 0.9rem;}
+.mini-build-header .build-title{font-size: 0.85rem; font-weight: 700; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.05em;}
+.mini-build-header .build-desc{font-size: 0.9rem; color: var(--text); margin-top: 4px;}
+.devfession-label{font-size: 0.75rem; font-weight: 700; color: var(--purple); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;}
+.next-post .label{font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;}
+.next-post .title{font-weight: 700; color: #fff; font-size: 1.05rem;}
+.next-btn{background: var(--cyan); color: #000; font-weight: 700; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-size: 0.9rem; white-space: nowrap;}
+@media (max-width: 600px){ .pattern-grid { grid-template-columns: 1fr; } .compare-grid { grid-template-columns: 1fr; } }
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="container">
+
+  <!-- HERO -->
+  <div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Async</span> Post 09 of 10</div>
+    <a href="/" class="chw-logo">
+      <span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span>
+    </a>
+    <div class="series-line">
+      <span class="series-label">⚡ JavaScript, But Make It Async</span>
+      <span class="post-number">Post 09 of 10</span>
+    </div>
+    <h1 class="post-title">Async Patterns in Real JavaScript Apps</h1>
+    <p class="post-subtitle">Polling, optimistic updates, and request deduplication — the patterns that separate tutorial code from real production code.</p>
+    <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 15 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Intermediate</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+  </div>
+
+  <div class="back-ref">
+    <strong>📚 Series continues from:</strong> Post 14 (Working With Multiple APIs) — all patterns we've built are fair game here.
+  </div>
+
+  <p>You've made it to the "but how does it actually work in the real world" section. Congrats. This is where tutorial code meets production code and one of them has a breakdown.</p>
+
+  <p>The patterns in this post aren't exotic. They're the stuff you'll find in codebases everywhere — the stuff senior devs reach for automatically because they've been burned enough times to know better. Let's talk about four of them.</p>
+
+  <div class="callout-accent">
+    <div class="callout-title">⚡ What We're Covering</div>
+    <p><strong>Part 1 (this post):</strong> Polling, Optimistic Updates, Request Deduplication, Loading Skeletons<br>
+    <strong>Part 2 (next post):</strong> Stale-While-Revalidate, Infinite Scroll, Prefetching, Background Sync</p>
+  </div>
+
+  <!-- PATTERN 1: POLLING -->
+  <h2>Pattern 1: <span class="accent">Polling</span></h2>
+
+  <p>Sometimes an API doesn't push updates to you — you have to go ask it repeatedly. This is polling, and it's older than most of us and still completely relevant.</p>
+
+  <p>Think: checking order status, monitoring a background job, watching for new messages in a system that doesn't have websockets. You ping the server every N seconds until something changes.</p>
+
+  <div class="pattern-grid">
+    <div class="pattern-card">
+      <div class="p-name">Short Polling</div>
+      <div class="p-use">Ask every N seconds, no matter what</div>
+      <div class="p-example">setInterval → fetch → update UI</div>
+    </div>
+    <div class="pattern-card">
+      <div class="p-name">Long Polling</div>
+      <div class="p-use">Ask, server holds until answer, repeat</div>
+      <div class="p-example">fetch → wait → fetch again on resolve</div>
+    </div>
+    <div class="pattern-card">
+      <div class="p-name">Adaptive Polling</div>
+      <div class="p-use">Speed up when active, slow down when idle</div>
+      <div class="p-example">Dynamic interval based on activity</div>
+    </div>
+    <div class="pattern-card">
+      <div class="p-name">Polling with Backoff</div>
+      <div class="p-use">Back off on errors, retry exponentially</div>
+      <div class="p-example">Error → double interval → try again</div>
+    </div>
+  </div>
+
+  <h3>Basic Polling — The Wrong Way First</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-label">naive-polling.js</span></div>
+    <div class="code-body"><span class="c-comment">// ❌ The naive version — every junior dev writes this first</span>
+<span class="c-keyword">setInterval</span>(<span class="c-keyword">async</span> () => {
+  <span class="c-keyword">const</span> data = <span class="c-keyword">await</span> <span class="c-fn">fetch</span>(<span class="c-string">'/api/order/status'</span>).<span class="c-fn">then</span>(r => r.<span class="c-fn">json</span>());
+  <span class="c-fn">updateUI</span>(data);
+}, <span class="c-num">3000</span>);
+
+<span class="c-comment">// Problems:
+// 1. Keeps running forever, even after order is complete
+// 2. No error handling — one failure, next request still fires
+// 3. Requests can overlap if response takes longer than interval
+// 4. Can't be stopped
+// 5. Memory leak city if component unmounts</span></div>
+  </div>
+
+  <h3>Polling Done Right</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-label">smart-polling.js</span></div>
+    <div class="code-body"><span class="c-keyword">function</span> <span class="c-fn">createPoller</span>({ url, interval = <span class="c-num">3000</span>, onData, onError, shouldStop }) {
+  <span class="c-keyword">let</span> timeoutId = <span class="c-keyword">null</span>;
+  <span class="c-keyword">let</span> active = <span class="c-keyword">false</span>;
+  <span class="c-keyword">let</span> currentInterval = interval;
+
+  <span class="c-keyword">async function</span> <span class="c-fn">poll</span>() {
+    <span class="c-keyword">if</span> (!active) <span class="c-keyword">return</span>;
+
+    <span class="c-keyword">try</span> {
+      <span class="c-keyword">const</span> response = <span class="c-keyword">await</span> <span class="c-fn">fetch</span>(url);
+      <span class="c-keyword">if</span> (!response.ok) <span class="c-keyword">throw new</span> <span class="c-fn">Error</span>(<span class="c-string">`HTTP </span>${response.status}<span class="c-string">`</span>);
+      <span class="c-keyword">const</span> data = <span class="c-keyword">await</span> response.<span class="c-fn">json</span>();
+
+      <span class="c-comment">// Reset interval on success</span>
+      currentInterval = interval;
+      <span class="c-fn">onData</span>(data);
+
+      <span class="c-comment">// Check if we should stop</span>
+      <span class="c-keyword">if</span> (<span class="c-fn">shouldStop</span>?.(data)) {
+        <span class="c-fn">stop</span>();
+        <span class="c-keyword">return</span>;
+      }
+
+    } <span class="c-keyword">catch</span> (err) {
+      <span class="c-comment">// Exponential backoff on error, cap at 30s</span>
+      currentInterval = <span class="c-fn">Math.min</span>(currentInterval * <span class="c-num">2</span>, <span class="c-num">30000</span>);
+      <span class="c-fn">onError</span>?.(err);
+    }
+
+    <span class="c-comment">// Schedule next poll (never overlaps — sequential, not parallel)</span>
+    <span class="c-keyword">if</span> (active) {
+      timeoutId = <span class="c-fn">setTimeout</span>(poll, currentInterval);
+    }
+  }
+
+  <span class="c-keyword">function</span> <span class="c-fn">start</span>() {
+    active = <span class="c-keyword">true</span>;
+    <span class="c-fn">poll</span>(); <span class="c-comment">// Immediate first poll</span>
+  }
+
+  <span class="c-keyword">function</span> <span class="c-fn">stop</span>() {
+    active = <span class="c-keyword">false</span>;
+    <span class="c-fn">clearTimeout</span>(timeoutId);
+  }
+
+  <span class="c-keyword">return</span> { start, stop };
+}
+
+<span class="c-comment">// Usage — order status tracker</span>
+<span class="c-keyword">const</span> poller = <span class="c-fn">createPoller</span>({
+  url: <span class="c-string">`/api/orders/</span>${orderId}<span class="c-string">/status`</span>,
+  interval: <span class="c-num">3000</span>,
+  <span class="c-fn">onData</span>(data) {
+    <span class="c-fn">updateOrderStatus</span>(data.status);
+  },
+  <span class="c-fn">shouldStop</span>(data) {
+    <span class="c-comment">// Stop once order is terminal</span>
+    <span class="c-keyword">return</span> [<span class="c-string">'delivered'</span>, <span class="c-string">'cancelled'</span>, <span class="c-string">'failed'</span>].<span class="c-fn">includes</span>(data.status);
+  },
+  <span class="c-fn">onError</span>(err) {
+    <span class="c-fn">console</span>.<span class="c-fn">warn</span>(<span class="c-string">'Poll failed, backing off:'</span>, err.message);
+  }
+});
+
+poller.<span class="c-fn">start</span>();
+
+<span class="c-comment">// Clean up when user leaves the page</span>
+window.<span class="c-fn">addEventListener</span>(<span class="c-string">'beforeunload'</span>, () => poller.<span class="c-fn">stop</span>());</div>
+  </div>
+
+  <div class="callout-tip">
+    <div class="callout-title">✅ Key Design Decisions</div>
+    <p>Using <code>setTimeout</code> instead of <code>setInterval</code> means requests never overlap — the next one only fires after the previous one finishes. This is almost always what you want.</p>
+  </div>
+
+  <!-- PATTERN 2: OPTIMISTIC UPDATES -->
+  <h2>Pattern 2: <span class="accent">Optimistic Updates</span></h2>
+
+  <p>Here's the vibe: user clicks "like." Instead of making them stare at a spinner while you hit the API, you <em>immediately</em> update the UI as if it worked, then sync with the server in the background. If the server fails, you roll back.</p>
+
+  <p>Twitter does this. GitHub does this. Every app you love does this. It's the difference between "feels snappy" and "feels like a 2009 government website."</p>
+
+  <div class="compare-grid">
+    <div class="compare-card">
+      <div class="compare-header bad">❌ Pessimistic (wait for server)</div>
+      <div class="compare-body"><span class="c-comment">// User clicks like</span>
+<span class="c-keyword">async function</span> <span class="c-fn">handleLike</span>(postId) {
+  <span class="c-comment">// Show spinner</span>
+  <span class="c-fn">setLoading</span>(<span class="c-keyword">true</span>);
+
+  <span class="c-keyword">await</span> <span class="c-fn">fetch</span>(<span class="c-string">`/api/posts/</span>${postId}<span class="c-string">/like`</span>, {
+    method: <span class="c-string">'POST'</span>
+  });
+
+  <span class="c-comment">// Now update UI</span>
+  <span class="c-fn">setLiked</span>(<span class="c-keyword">true</span>);
+  <span class="c-fn">setLoading</span>(<span class="c-keyword">false</span>);
+  <span class="c-comment">// 300ms of watching a spinner</span>
+  <span class="c-comment">// for a button click. brutal.</span>
+}</div>
+    </div>
+    <div class="compare-card">
+      <div class="compare-header good">✅ Optimistic (update now, sync later)</div>
+      <div class="compare-body"><span class="c-keyword">async function</span> <span class="c-fn">handleLike</span>(postId) {
+  <span class="c-comment">// Snapshot for rollback</span>
+  <span class="c-keyword">const</span> prev = liked;
+
+  <span class="c-comment">// Update immediately ✨</span>
+  <span class="c-fn">setLiked</span>(!liked);
+  <span class="c-fn">setCount</span>(c => liked ? c - <span class="c-num">1</span> : c + <span class="c-num">1</span>);
+
+  <span class="c-keyword">try</span> {
+    <span class="c-keyword">await</span> <span class="c-fn">fetch</span>(<span class="c-string">`/api/posts/</span>${postId}<span class="c-string">/like`</span>, {
+      method: <span class="c-string">'POST'</span>
+    });
+  } <span class="c-keyword">catch</span> {
+    <span class="c-comment">// Roll back if it failed</span>
+    <span class="c-fn">setLiked</span>(prev);
+    <span class="c-fn">setCount</span>(c => liked ? c + <span class="c-num">1</span> : c - <span class="c-num">1</span>);
+    <span class="c-fn">showToast</span>(<span class="c-string">'Failed to save'</span>);
+  }
+}</div>
+    </div>
+  </div>
+
+  <h3>Optimistic Updates for a List (Add + Delete)</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-label">optimistic-list.js</span></div>
+    <div class="code-body"><span class="c-comment">// Adding an item optimistically</span>
+<span class="c-keyword">async function</span> <span class="c-fn">addTodo</span>(text) {
+  <span class="c-comment">// Create a temporary item with a fake ID</span>
+  <span class="c-keyword">const</span> tempId = <span class="c-string">`temp-</span>${<span class="c-fn">Date</span>.<span class="c-fn">now</span>()}<span class="c-string">`</span>;
+  <span class="c-keyword">const</span> optimisticItem = { id: tempId, text, status: <span class="c-string">'saving...'</span> };
+
+  <span class="c-comment">// Add to UI immediately</span>
+  <span class="c-fn">setTodos</span>(prev => [...prev, optimisticItem]);
+
+  <span class="c-keyword">try</span> {
+    <span class="c-keyword">const</span> response = <span class="c-keyword">await</span> <span class="c-fn">fetch</span>(<span class="c-string">'/api/todos'</span>, {
+      method: <span class="c-string">'POST'</span>,
+      headers: { <span class="c-string">'Content-Type'</span>: <span class="c-string">'application/json'</span> },
+      body: <span class="c-fn">JSON.stringify</span>({ text })
+    });
+    <span class="c-keyword">const</span> realItem = <span class="c-keyword">await</span> response.<span class="c-fn">json</span>();
+
+    <span class="c-comment">// Replace temp item with real item from server</span>
+    <span class="c-fn">setTodos</span>(prev =>
+      prev.<span class="c-fn">map</span>(item => item.id === tempId ? realItem : item)
+    );
+
+  } <span class="c-keyword">catch</span> {
+    <span class="c-comment">// Remove the fake item on failure</span>
+    <span class="c-fn">setTodos</span>(prev => prev.<span class="c-fn">filter</span>(item => item.id !== tempId));
+    <span class="c-fn">showToast</span>(<span class="c-string">'Could not add item. Try again.'</span>);
+  }
+}
+
+<span class="c-comment">// Deleting an item optimistically</span>
+<span class="c-keyword">async function</span> <span class="c-fn">deleteTodo</span>(id) {
+  <span class="c-keyword">const</span> snapshot = [...todos]; <span class="c-comment">// Save for rollback</span>
+  <span class="c-fn">setTodos</span>(prev => prev.<span class="c-fn">filter</span>(item => item.id !== id));
+
+  <span class="c-keyword">try</span> {
+    <span class="c-keyword">await</span> <span class="c-fn">fetch</span>(<span class="c-string">`/api/todos/</span>${id}<span class="c-string">`</span>, { method: <span class="c-string">'DELETE'</span> });
+  } <span class="c-keyword">catch</span> {
+    <span class="c-fn">setTodos</span>(snapshot); <span class="c-comment">// Restore the list</span>
+    <span class="c-fn">showToast</span>(<span class="c-string">'Delete failed. Item restored.'</span>);
+  }
+}</div>
+  </div>
+
+  <div class="callout-warn">
+    <div class="callout-title">⚠️ When NOT to Use Optimistic Updates</div>
+    <p>Financial transactions, irreversible actions, anything where "oops I rolled back" would be confusing or dangerous. If the cost of being wrong is high, show a spinner. Optimistic updates are for low-stakes, high-frequency interactions.</p>
+  </div>
+
+  <!-- PATTERN 3: REQUEST DEDUPLICATION -->
+  <h2>Pattern 3: <span class="accent">Request Deduplication</span></h2>
+
+  <p>Classic scenario: you have a user profile component that five different parts of your page all want to load. Without deduplication, you make five identical API calls. With deduplication, you make one and everyone shares the result.</p>
+
+  <p>This also applies to "the user triple-clicked the search button" situations. You want to make one request, not three.</p>
+
+  <h3>In-Flight Request Cache</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-label">dedup-cache.js</span></div>
+    <div class="code-body"><span class="c-comment">// Map of in-flight requests by URL
+// key: URL string, value: the Promise itself</span>
+<span class="c-keyword">const</span> inFlight = <span class="c-keyword">new</span> <span class="c-fn">Map</span>();
+
+<span class="c-keyword">async function</span> <span class="c-fn">dedupedFetch</span>(url, options = {}) {
+  <span class="c-comment">// Create a cache key from URL + method</span>
+  <span class="c-keyword">const</span> key = <span class="c-string">`</span>${options.method || <span class="c-string">'GET'</span>}<span class="c-string">:</span>${url}<span class="c-string">`</span>;
+
+  <span class="c-comment">// If there's already a request in flight for this URL,
+  // return that same Promise — don't make a new request</span>
+  <span class="c-keyword">if</span> (inFlight.<span class="c-fn">has</span>(key)) {
+    <span class="c-fn">console</span>.<span class="c-fn">log</span>(<span class="c-string">`Deduped: </span>${key}<span class="c-string">`</span>);
+    <span class="c-keyword">return</span> inFlight.<span class="c-fn">get</span>(key);
+  }
+
+  <span class="c-comment">// Create the request Promise</span>
+  <span class="c-keyword">const</span> promise = <span class="c-fn">fetch</span>(url, options)
+    .<span class="c-fn">then</span>(r => r.<span class="c-fn">json</span>())
+    .<span class="c-fn">finally</span>(() => {
+      <span class="c-comment">// Remove from map when done (success or failure)</span>
+      inFlight.<span class="c-fn">delete</span>(key);
+    });
+
+  inFlight.<span class="c-fn">set</span>(key, promise);
+  <span class="c-keyword">return</span> promise;
+}
+
+<span class="c-comment">// These all fire at the same time — only one HTTP request is made</span>
+<span class="c-keyword">const</span> [a, b, c] = <span class="c-keyword">await</span> <span class="c-fn">Promise.all</span>([
+  <span class="c-fn">dedupedFetch</span>(<span class="c-string">'/api/user/profile'</span>),
+  <span class="c-fn">dedupedFetch</span>(<span class="c-string">'/api/user/profile'</span>), <span class="c-comment">// deduped!</span>
+  <span class="c-fn">dedupedFetch</span>(<span class="c-string">'/api/user/profile'</span>)  <span class="c-comment">// deduped!</span>
+]);
+
+<span class="c-comment">// a === b === c (same object, same request)</span></div>
+  </div>
+
+  <h3>Deduplication for Rapid Button Clicks</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-label">button-dedup.js</span></div>
+    <div class="code-body"><span class="c-comment">// A simple "only one active request at a time" guard</span>
+<span class="c-keyword">function</span> <span class="c-fn">createSingleFlight</span>(asyncFn) {
+  <span class="c-keyword">let</span> pending = <span class="c-keyword">null</span>;
+
+  <span class="c-keyword">return async function</span>(...args) {
+    <span class="c-keyword">if</span> (pending) {
+      <span class="c-fn">console</span>.<span class="c-fn">log</span>(<span class="c-string">'Request already in flight, waiting...'</span>);
+      <span class="c-keyword">return</span> pending;
+    }
+
+    pending = <span class="c-fn">asyncFn</span>(...args).<span class="c-fn">finally</span>(() => {
+      pending = <span class="c-keyword">null</span>;
+    });
+
+    <span class="c-keyword">return</span> pending;
+  };
+}
+
+<span class="c-comment">// Wrap any async function</span>
+<span class="c-keyword">const</span> safeSave = <span class="c-fn">createSingleFlight</span>(<span class="c-keyword">async</span> (data) => {
+  <span class="c-keyword">const</span> response = <span class="c-keyword">await</span> <span class="c-fn">fetch</span>(<span class="c-string">'/api/save'</span>, {
+    method: <span class="c-string">'POST'</span>,
+    body: <span class="c-fn">JSON.stringify</span>(data)
+  });
+  <span class="c-keyword">return</span> response.<span class="c-fn">json</span>();
+});
+
+<span class="c-comment">// User spam-clicks save — only one request fires</span>
+saveBtn.<span class="c-fn">addEventListener</span>(<span class="c-string">'click'</span>, () => <span class="c-fn">safeSave</span>(formData));</div>
+  </div>
+
+  <!-- PATTERN 4: LOADING SKELETONS -->
+  <h2>Pattern 4: <span class="accent">Loading Skeletons</span></h2>
+
+  <p>Spinners say "something is happening, who knows what." Skeletons say "your content is coming and it looks like this." The second one feels dramatically better, even when the load time is identical.</p>
+
+  <p>This isn't just aesthetics — skeletons also reduce layout shift, which is a Core Web Vital that affects your SEO. So now you have an excuse to tell your PM it's a performance issue.</p>
+
+  <h3>CSS Skeleton Component</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-label">skeleton.css</span></div>
+    <div class="code-body"><span class="c-comment">/* The shimmer animation */</span>
+@<span class="c-keyword">keyframes</span> shimmer {
+  <span class="c-num">0%</span>   { background-position: -<span class="c-num">200%</span> <span class="c-num">0</span>; }
+  <span class="c-num">100%</span> { background-position:  <span class="c-num">200%</span> <span class="c-num">0</span>; }
+}
+
+.<span class="c-fn">skeleton</span> {
+  background: <span class="c-fn">linear-gradient</span>(
+    <span class="c-num">90</span>deg,
+    #<span class="c-num">1e1e2e</span> <span class="c-num">25%</span>,
+    #<span class="c-num">2a2a3e</span> <span class="c-num">50%</span>,
+    #<span class="c-num">1e1e2e</span> <span class="c-num">75%</span>
+  );
+  background-size: <span class="c-num">200%</span> <span class="c-num">100%</span>;
+  animation: shimmer <span class="c-num">1.5</span>s infinite;
+  border-radius: <span class="c-num">4px</span>;
+}
+
+<span class="c-comment">/* Reusable shape utilities */</span>
+.<span class="c-fn">skeleton-text</span>  { height: <span class="c-num">16px</span>; margin-bottom: <span class="c-num">8px</span>; }
+.<span class="c-fn">skeleton-title</span> { height: <span class="c-num">28px</span>; margin-bottom: <span class="c-num">16px</span>; }
+.<span class="c-fn">skeleton-avatar</span> { width: <span class="c-num">48px</span>; height: <span class="c-num">48px</span>; border-radius: <span class="c-num">50%</span>; }
+.<span class="c-fn">skeleton-card</span>  { height: <span class="c-num">200px</span>; border-radius: <span class="c-num">12px</span>; }</div>
+  </div>
+
+  <h3>Skeleton Card HTML</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-label">skeleton-card.html</span></div>
+    <div class="code-body"><span class="c-comment">&lt;!-- While loading --&gt;</span>
+&lt;<span class="c-keyword">div</span> class=<span class="c-string">"user-card"</span>&gt;
+  &lt;<span class="c-keyword">div</span> class=<span class="c-string">"skeleton skeleton-avatar"</span>&gt;&lt;/<span class="c-keyword">div</span>&gt;
+  &lt;<span class="c-keyword">div</span> class=<span class="c-string">"card-body"</span>&gt;
+    &lt;<span class="c-keyword">div</span> class=<span class="c-string">"skeleton skeleton-title"</span> style=<span class="c-string">"width: 60%"</span>&gt;&lt;/<span class="c-keyword">div</span>&gt;
+    &lt;<span class="c-keyword">div</span> class=<span class="c-string">"skeleton skeleton-text"</span> style=<span class="c-string">"width: 100%"</span>&gt;&lt;/<span class="c-keyword">div</span>&gt;
+    &lt;<span class="c-keyword">div</span> class=<span class="c-string">"skeleton skeleton-text"</span> style=<span class="c-string">"width: 80%"</span>&gt;&lt;/<span class="c-keyword">div</span>&gt;
+    &lt;<span class="c-keyword">div</span> class=<span class="c-string">"skeleton skeleton-text"</span> style=<span class="c-string">"width: 40%"</span>&gt;&lt;/<span class="c-keyword">div</span>&gt;
+  &lt;/<span class="c-keyword">div</span>&gt;
+&lt;/<span class="c-keyword">div</span>&gt;</div>
+  </div>
+
+  <h3>Swapping Skeleton ↔ Real Content</h3>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-label">skeleton-swap.js</span></div>
+    <div class="code-body"><span class="c-keyword">async function</span> <span class="c-fn">loadUserCard</span>(userId) {
+  <span class="c-keyword">const</span> container = document.<span class="c-fn">getElementById</span>(<span class="c-string">'user-card'</span>);
+
+  <span class="c-comment">// Show skeleton immediately</span>
+  container.innerHTML = <span class="c-fn">renderSkeleton</span>();
+
+  <span class="c-keyword">try</span> {
+    <span class="c-keyword">const</span> user = <span class="c-keyword">await</span> <span class="c-fn">fetch</span>(<span class="c-string">`/api/users/</span>${userId}<span class="c-string">`</span>).<span class="c-fn">then</span>(r => r.<span class="c-fn">json</span>());
+
+    <span class="c-comment">// Swap in real content</span>
+    container.innerHTML = <span class="c-fn">renderUser</span>(user);
+
+  } <span class="c-keyword">catch</span> (err) {
+    container.innerHTML = <span class="c-fn">renderError</span>(<span class="c-string">'Could not load user'</span>);
+  }
+}
+
+<span class="c-keyword">function</span> <span class="c-fn">renderSkeleton</span>() {
+  <span class="c-keyword">return</span> <span class="c-string">`
+    &lt;div class="user-card"&gt;
+      &lt;div class="skeleton skeleton-avatar"&gt;&lt;/div&gt;
+      &lt;div class="card-body"&gt;
+        &lt;div class="skeleton skeleton-title" style="width:60%"&gt;&lt;/div&gt;
+        &lt;div class="skeleton skeleton-text" style="width:90%"&gt;&lt;/div&gt;
+        &lt;div class="skeleton skeleton-text" style="width:70%"&gt;&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  `</span>;
+}
+
+<span class="c-keyword">function</span> <span class="c-fn">renderUser</span>(user) {
+  <span class="c-keyword">return</span> <span class="c-string">`
+    &lt;div class="user-card"&gt;
+      &lt;img src="</span>${user.avatar}<span class="c-string">" class="avatar" alt="</span>${user.name}<span class="c-string">"&gt;
+      &lt;div class="card-body"&gt;
+        &lt;h3&gt;</span>${user.name}<span class="c-string">&lt;/h3&gt;
+        &lt;p&gt;</span>${user.bio}<span class="c-string">&lt;/p&gt;
+        &lt;span class="badge"&gt;</span>${user.role}<span class="c-string">&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  `</span>;
+}</div>
+  </div>
+
+  <div class="callout-tip">
+    <div class="callout-title">✅ Skeleton Best Practices</div>
+    <p>Match the shape of your real content as closely as possible. A skeleton that's the wrong dimensions makes the layout jump when the real content loads — which defeats the entire purpose. Measure your real card, copy those dimensions.</p>
+  </div>
+
+  <!-- MINI BUILD -->
+  <h2>Mini Build: <span class="accent">Order Tracker</span></h2>
+
+  <p>Let's combine polling + skeleton into a mini order status tracker. This is the kind of thing you'd build for a food delivery or e-commerce app.</p>
+
+  <div class="mini-build-header">
+    <div class="build-title">🔨 Mini Build</div>
+    <div class="build-desc">Order tracker with skeleton loading + polling for status updates</div>
+  </div>
+  <div class="mini-build-body"><span class="c-comment">// Simulated API (replace with real endpoint)</span>
+<span class="c-keyword">async function</span> <span class="c-fn">fetchOrderStatus</span>(orderId) {
+  <span class="c-keyword">const</span> statuses = [<span class="c-string">'processing'</span>, <span class="c-string">'preparing'</span>, <span class="c-string">'out_for_delivery'</span>, <span class="c-string">'delivered'</span>];
+  <span class="c-keyword">const</span> i = <span class="c-fn">Math.floor</span>(<span class="c-fn">Math.random</span>() * statuses.length);
+  <span class="c-keyword">return</span> { status: statuses[i], orderId, updatedAt: <span class="c-keyword">new</span> <span class="c-fn">Date</span>().<span class="c-fn">toISOString</span>() };
+}
+
+<span class="c-keyword">const</span> STATUS_LABELS = {
+  processing:        { label: <span class="c-string">'Order Received'</span>,     icon: <span class="c-string">'📋'</span> },
+  preparing:         { label: <span class="c-string">'Being Prepared'</span>,     icon: <span class="c-string">'👩‍🍳'</span> },
+  out_for_delivery:  { label: <span class="c-string">'Out for Delivery'</span>,   icon: <span class="c-string">'🛵'</span> },
+  delivered:         { label: <span class="c-string">'Delivered!'</span>,         icon: <span class="c-string">'✅'</span> }
+};
+
+<span class="c-keyword">const</span> container = document.<span class="c-fn">getElementById</span>(<span class="c-string">'order-status'</span>);
+
+<span class="c-comment">// Step 1: Show skeleton</span>
+container.innerHTML = <span class="c-string">`
+  &lt;div class="status-card"&gt;
+    &lt;div class="skeleton skeleton-title" style="width:50%"&gt;&lt;/div&gt;
+    &lt;div class="skeleton skeleton-text" style="width:80%"&gt;&lt;/div&gt;
+  &lt;/div&gt;
+`</span>;
+
+<span class="c-comment">// Step 2: Create poller</span>
+<span class="c-keyword">const</span> poller = <span class="c-fn">createPoller</span>({
+  url: <span class="c-string">'/api/orders/12345/status'</span>,
+  interval: <span class="c-num">4000</span>,
+  <span class="c-fn">onData</span>(data) {
+    <span class="c-keyword">const</span> info = STATUS_LABELS[data.status];
+    container.innerHTML = <span class="c-string">`
+      &lt;div class="status-card"&gt;
+        &lt;div class="status-icon"&gt;</span>${info.icon}<span class="c-string">&lt;/div&gt;
+        &lt;h3&gt;</span>${info.label}<span class="c-string">&lt;/h3&gt;
+        &lt;p&gt;Last updated: </span>${<span class="c-keyword">new</span> <span class="c-fn">Date</span>(data.updatedAt).<span class="c-fn">toLocaleTimeString</span>()}<span class="c-string">&lt;/p&gt;
+      &lt;/div&gt;
+    `</span>;
+  },
+  <span class="c-fn">shouldStop</span>(data) {
+    <span class="c-keyword">return</span> data.status === <span class="c-string">'delivered'</span>;
+  }
+});
+
+poller.<span class="c-fn">start</span>();</div>
+
+  <div class="devfession">
+    <div class="devfession-label">💜 Dev_Fession</div>
+    <p>I spent two hours debugging why my poller was making 47 requests per second before I realized I'd called <code>setInterval</code> inside an event listener that fired on every keypress. The server logs looked like a DDoS. The server was not happy. I was not happy. Nobody was happy.</p>
+  </div>
+
+  <div class="callout-accent">
+    <div class="callout-title">⚡ Quick Recap</div>
+    <p>
+      <strong>Polling:</strong> setTimeout > setInterval, add backoff, always have a stop condition.<br>
+      <strong>Optimistic updates:</strong> Snapshot → update → sync → rollback on error.<br>
+      <strong>Deduplication:</strong> Cache the Promise itself, not just the result.<br>
+      <strong>Skeletons:</strong> Match the shape of real content, swap on resolve or error.
+    </p>
+  </div>
+
+  <div class="next-post">
+    <div>
+      <div class="label">Up Next — Post 09 of 10</div>
+      <div class="title">Async Patterns in the Wild, Part 2</div>
+    </div>
+    <a href="async-post16-patterns-wild-2.html" class="next-btn">Next Post →</a>
+  </div>
+
+</div>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

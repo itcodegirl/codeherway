@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>async/await Explained: Error Handling Patterns, Return Values & Common Mistakes | CodeHerWay</title>
+<meta name="description" content="Beyond the syntax — error handling patterns, where async functions live, and the mistakes everyone makes with async/await. CodeHerWay.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.async-contexts{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:24px 0;}
+@media(max-width:600px){.async-contexts{grid-template-columns:1fr;}}
+.ctx-card{background:var(--bg-card);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:16px;}
+.ctx-label{font-family:'Fira Code',monospace;font-size:12px;font-weight:700;color:var(--accent);margin-bottom:8px;}
+.ctx-code{font-family:'Fira Code',monospace;font-size:13px;color:var(--text-secondary);line-height:1.7;white-space:pre;}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Async</span> Post 05 of 16</div>
+  <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+  <div class="series-line"><span class="series-label">⚡ JavaScript, But Make It Async</span><span class="post-number">Post 05 of 18</span></div>
+  <h1 class="post-title">async/await Explained</h1>
+  <p class="post-subtitle">Beyond the syntax — error handling patterns, where async functions can live, what they actually return, and the mistakes everyone makes.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 11 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Intermediate</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+<main>
+  <div class="bridge-banner">
+    <div class="bridge-icon">←</div>
+    <div class="bridge-content">
+      <div class="bridge-label">← Promises Still Fuzzy?</div>
+      <div class="bridge-title">async/await IS Promises — just prettier syntax</div>
+      <p class="bridge-desc">If Promises still feel unclear, re-read Posts 03 and 04 before continuing. This post assumes you understand what a Promise is and how .then() works. Everything here builds on that foundation.</p>
+      <a class="bridge-btn" href="async-post03-promises-basics.html">Read it →</a>
+    </div>
+  </div>
+
+  <div class="back-ref"><span class="br-arrow">←</span> Builds on <strong>JS Async — Post 04</strong>: Promises, Part 2: Chaining &amp; Composition</div>
+  <div class="back-ref"><span class="br-arrow">←</span> First introduced in <strong>JS Click — Post 14</strong>: Async JavaScript: Fetch, Promises &amp; async/await</div>
+
+  <div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">async/await Is Still Promises — Just Prettier</h2><div class="section-line"></div></div>
+  <p>You've used async/await since the JS Click series. You know the syntax. This post is about understanding what's actually happening underneath — because async/await is not a replacement for Promises. It's syntax built <em>on top</em> of Promises. Every async function returns a Promise. Every await unwraps one. The better you understand Promises, the better you write async/await.</p>
+
+  <div class="section-header"><span class="section-icon">🔄</span><h2 class="section-title">What async Actually Does to a Function</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p><code class='il'>async</code> functions always return a Promise — even if you return a plain value. This means calling an async function gives you a Promise back, which you either <code class='il'>await</code> or chain with <code class='il'>.then()</code>. This is why you can't just do <code class='il'>const result = myAsyncFn()</code> and expect <code class='il'>result</code> to be the value — it'll be a Promise.</p>
+  </div>
+
+</div>
+  <p>Marking a function <span class="il">async</span> does two things: it allows <span class="il">await</span> to be used inside it, and it wraps the return value in a Promise automatically — even if you return a plain value.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — async-returns.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// async functions ALWAYS return a Promise</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">getValue</span>() {
+  <span class="sy-kw">return</span> <span class="sy-num">42</span>  <span class="sy-comment">// plain number</span>
+}
+
+<span class="sy-comment">// But you get a Promise back, not the number</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-fn">getValue</span>())  <span class="sy-comment">// Promise { 42 }</span>
+
+<span class="sy-comment">// To get the value out you need .then() or await</span>
+<span class="sy-fn">getValue</span>().<span class="sy-fn">then</span>(<span class="sy-plain">v</span> => <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">v</span>))  <span class="sy-comment">// 42</span>
+
+<span class="sy-comment">// Or inside another async function</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">main</span>() {
+  <span class="sy-kw">const</span> <span class="sy-plain">v</span> = <span class="sy-kw">await</span> <span class="sy-fn">getValue</span>()
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">v</span>)  <span class="sy-comment">// 42</span>
+}
+
+<span class="sy-comment">// Thrown errors become rejected Promises</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">fail</span>() {
+  <span class="sy-kw">throw</span> <span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-str">"Boom"</span>)
+}
+<span class="sy-fn">fail</span>().<span class="sy-fn">catch</span>(<span class="sy-plain">e</span> => <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">e</span>.<span class="sy-prop">message</span>))  <span class="sy-comment">// "Boom"</span></pre></div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">📍</span><h2 class="section-title">Where async Functions Can Live</h2><div class="section-line"></div></div>
+  <p>You can put <span class="il">async</span> in front of almost any function form. Knowing all the contexts matters — you'll see them all in real code.</p>
+  <div class="async-contexts">
+    <div class="ctx-card"><div class="ctx-label">Function Declaration</div><div class="ctx-code"><span class="sy-kw">async function</span> <span class="sy-fn">load</span>() {
+  <span class="sy-kw">return await</span> <span class="sy-fn">fetch</span>(url)
+}</div></div>
+    <div class="ctx-card"><div class="ctx-label">Arrow Function</div><div class="ctx-code"><span class="sy-kw">const</span> <span class="sy-fn">load</span> = <span class="sy-kw">async</span> () => {
+  <span class="sy-kw">return await</span> <span class="sy-fn">fetch</span>(url)
+}</div></div>
+    <div class="ctx-card"><div class="ctx-label">Object Method</div><div class="ctx-code"><span class="sy-kw">const</span> api = {
+  <span class="sy-kw">async</span> <span class="sy-fn">getUser</span>() {
+    <span class="sy-kw">return await</span> <span class="sy-fn">fetch</span>(url)
+  }
+}</div></div>
+    <div class="ctx-card"><div class="ctx-label">IIFE (Immediately Invoked)</div><div class="ctx-code">(<span class="sy-kw">async</span> () => {
+  <span class="sy-kw">const</span> data = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(url)
+  <span class="sy-comment">// top-level await workaround</span>
+})()</div></div>
+  </div>
+  <div class="callout callout-info">
+    <div class="callout-title">ℹ️ Top-Level await</div>
+    <p>Modern JavaScript modules support top-level <span class="il">await</span> — you can use <span class="il">await</span> outside of any function in a <span class="il">.mjs</span> file or in a module-type script. This makes the IIFE pattern less necessary in modern code. But in classic scripts you still need an async wrapper.</p>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🛡️</span><h2 class="section-title">Error Handling Patterns</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>The 'forget await' bug is one of the most common and confusing async mistakes. You call an async function but forget <code class='il'>await</code>, and instead of getting the value back, you get a Promise object. Your code tries to use a Promise like a string or number, and everything breaks in ways that look unrelated to the actual mistake. If something looks right but behaves wrong in async code, check for missing <code class='il'>await</code> first.</p>
+  </div>
+
+</div>
+  <p>There are three common patterns for handling errors in async/await code. Each has its place.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — error-patterns.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// PATTERN 1: try/catch — most common, cleanest for complex flows</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">loadUser</span>(<span class="sy-plain">id</span>) {
+  <span class="sy-kw">try</span> {
+    <span class="sy-kw">const</span> <span class="sy-plain">res</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">`/api/users/</span>${<span class="sy-plain">id</span>}<span class="sy-str">`</span>)
+    <span class="sy-kw">if</span> (!<span class="sy-plain">res</span>.<span class="sy-prop">ok</span>) <span class="sy-kw">throw</span> <span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-plain">res</span>.<span class="sy-prop">status</span>)
+    <span class="sy-kw">return</span> <span class="sy-kw">await</span> <span class="sy-plain">res</span>.<span class="sy-fn">json</span>()
+  } <span class="sy-kw">catch</span> (<span class="sy-plain">err</span>) {
+    <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Failed:"</span>, <span class="sy-plain">err</span>.<span class="sy-prop">message</span>)
+    <span class="sy-kw">return</span> <span class="sy-bool">null</span>  <span class="sy-comment">// return fallback so caller doesn't crash</span>
+  }
+}
+
+<span class="sy-comment">// PATTERN 2: .catch() on the awaited Promise</span>
+<span class="sy-comment">// Useful for handling one specific failure inline</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">loadUser2</span>(<span class="sy-plain">id</span>) {
+  <span class="sy-kw">const</span> <span class="sy-plain">res</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">`/api/users/</span>${<span class="sy-plain">id</span>}<span class="sy-str">`</span>)
+    .<span class="sy-fn">catch</span>(() => <span class="sy-bool">null</span>)  <span class="sy-comment">// null on network failure</span>
+  <span class="sy-kw">if</span> (!<span class="sy-plain">res</span>) <span class="sy-kw">return</span> <span class="sy-bool">null</span>
+  <span class="sy-kw">return</span> <span class="sy-plain">res</span>.<span class="sy-fn">json</span>()
+}
+
+<span class="sy-comment">// PATTERN 3: Go/Error tuple — inspired by Go lang</span>
+<span class="sy-comment">// Returns [data, null] on success, [null, error] on failure</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">tryCatch</span>(<span class="sy-plain">promise</span>) {
+  <span class="sy-kw">try</span> {
+    <span class="sy-kw">const</span> <span class="sy-plain">data</span> = <span class="sy-kw">await</span> <span class="sy-plain">promise</span>
+    <span class="sy-kw">return</span> [<span class="sy-plain">data</span>, <span class="sy-bool">null</span>]
+  } <span class="sy-kw">catch</span> (<span class="sy-plain">err</span>) {
+    <span class="sy-kw">return</span> [<span class="sy-bool">null</span>, <span class="sy-plain">err</span>]
+  }
+}
+
+<span class="sy-comment">// Usage — very clean caller code</span>
+<span class="sy-kw">const</span> [<span class="sy-plain">user</span>, <span class="sy-plain">err</span>] = <span class="sy-kw">await</span> <span class="sy-fn">tryCatch</span>(<span class="sy-fn">fetch</span>(<span class="sy-str">"/api/user"</span>).<span class="sy-fn">then</span>(<span class="sy-plain">r</span> => <span class="sy-plain">r</span>.<span class="sy-fn">json</span>()))
+<span class="sy-kw">if</span> (<span class="sy-plain">err</span>) <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Error:"</span>, <span class="sy-plain">err</span>.<span class="sy-prop">message</span>)
+<span class="sy-kw">else</span> <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"User:"</span>, <span class="sy-plain">user</span>)</pre></div>
+  </div>
+  <div class="callout callout-mindset">
+    <div class="callout-title">🧠 Mindset Shift</div>
+    <p>The Go-style tuple pattern is polarizing — some teams love it, some hate it. The point is: <strong>there is no single right way</strong> to handle async errors. Pick a pattern, apply it consistently across your codebase, and document it. Consistency matters more than which pattern you chose.</p>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🚫</span><h2 class="section-title">The Mistakes Everyone Makes</h2><div class="section-line"></div></div>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — async-mistakes.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// ❌ MISTAKE 1: Not awaiting a Promise</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">bad</span>() {
+  <span class="sy-kw">const</span> <span class="sy-plain">data</span> = <span class="sy-fn">fetch</span>(<span class="sy-str">"/api/user"</span>)  <span class="sy-comment">// forgot await!</span>
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">data</span>)  <span class="sy-comment">// Promise { pending } — not the data</span>
+}
+
+<span class="sy-comment">// ✅ Always await async operations</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">good</span>() {
+  <span class="sy-kw">const</span> <span class="sy-plain">res</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">"/api/user"</span>)
+  <span class="sy-kw">const</span> <span class="sy-plain">data</span> = <span class="sy-kw">await</span> <span class="sy-plain">res</span>.<span class="sy-fn">json</span>()
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">data</span>)  <span class="sy-comment">// actual data ✓</span>
+}
+
+<span class="sy-comment">// ❌ MISTAKE 2: Using await in a non-async function</span>
+<span class="sy-kw">function</span> <span class="sy-fn">notAsync</span>() {
+  <span class="sy-kw">const</span> <span class="sy-plain">data</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">"/api"</span>)  <span class="sy-comment">// SyntaxError!</span>
+}
+
+<span class="sy-comment">// ❌ MISTAKE 3: Expecting await to catch sync errors</span>
+<span class="sy-comment">// await only catches rejected Promises, not thrown sync errors</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">example</span>() {
+  <span class="sy-kw">const</span> <span class="sy-plain">data</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">"/api"</span>)  <span class="sy-comment">// network errors become rejected Promises ✓</span>
+  <span class="sy-kw">const</span> <span class="sy-plain">parsed</span> = <span class="sy-method">JSON</span>.<span class="sy-fn">parse</span>(<span class="sy-str">"bad json"</span>)  <span class="sy-comment">// throws sync — caught by try/catch ✓</span>
+  <span class="sy-comment">// Both are caught by a wrapping try/catch — but for different reasons</span>
+}
+
+<span class="sy-comment">// ❌ MISTAKE 4: Async forEach — await inside doesn't work</span>
+<span class="sy-kw">const</span> <span class="sy-plain">ids</span> = [<span class="sy-num">1</span>, <span class="sy-num">2</span>, <span class="sy-num">3</span>]
+<span class="sy-plain">ids</span>.<span class="sy-fn">forEach</span>(<span class="sy-kw">async</span> (<span class="sy-plain">id</span>) => {
+  <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">`/api/</span>${<span class="sy-plain">id</span>}<span class="sy-str">`</span>)  <span class="sy-comment">// awaits are NOT awaited by forEach</span>
+})
+<span class="sy-comment">// forEach doesn't wait — all requests fire but you can't know when they finish</span>
+<span class="sy-comment">// We cover this deeply in Post 06 — it's a big topic</span></pre></div>
+  </div>
+  <div class="callout callout-warn">
+    <div class="callout-title">⚠️ async forEach — A Whole Post Worth of Trouble</div>
+    <p>The async forEach issue is so common and so misunderstood that Post 06 is dedicated entirely to it — async in loops, parallel vs sequential execution, and the performance implications. It's one of the most important things a JavaScript developer needs to internalize. Don't skip it.</p>
+  </div>
+
+  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body">
+      <p>I once spent an entire afternoon debugging a feature because I'd written <span class="il" style="font-style:normal;">const data = fetch("/api/user")</span> — no await. Then I passed <span class="il" style="font-style:normal;">data</span> to another function. That function received a pending Promise object, tried to access <span class="il" style="font-style:normal;">data.name</span>, got <span class="il" style="font-style:normal;">undefined</span>, and everything silently fell apart. No error. Just wrong data everywhere. Adding the missing <span class="il" style="font-style:normal;">await</span> fixed all of it. Two characters. Four hours. I now read every async function I write out loud to catch missing awaits before they ruin my afternoon.</p>
+    </div>
+  </div>
+
+  <div class="mini-build">
+    <div class="mini-build-header"><span class="trophy">🔬</span><span class="mb-title">MINI BUILD — Async Error Pattern Comparison</span></div>
+    <div class="mini-build-body">
+      <p>Write the same fetch operation three times — once with each error handling pattern. Compare how each reads and handles edge cases.</p>
+      <div class="goal-label">Exercises:</div>
+      <ul class="step-list">
+        <li><span class="step-num">01</span> Write <span class="il">loadUser(id)</span> using try/catch — handle network error and bad status separately</li>
+        <li><span class="step-num">02</span> Rewrite it using the <span class="il">.catch()</span> on the awaited Promise pattern</li>
+        <li><span class="step-num">03</span> Build the <span class="il">tryCatch(promise)</span> utility function and rewrite using that</li>
+        <li><span class="step-num">04</span> Call each version with a valid URL and a broken URL — confirm both handle errors correctly</li>
+        <li><span class="step-num">05</span> Intentionally forget <span class="il">await</span> on a fetch — log the result and see what you get</li>
+        <li><span class="step-num">06</span> Try using <span class="il">await</span> in a regular (non-async) function — read the error message carefully</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="confidence-close">
+    <div class="cc-icon">⚡</div>
+    <div class="cc-heading">You Know async/await at a Deeper Level Now</div>
+    <p>You understand what async functions actually return, where they can live, three ways to handle errors, and the classic mistakes to avoid. Next post tackles one of the most common async performance bugs in JavaScript: the difference between sequential and parallel execution — and why it matters more than you think.</p>
+  </div>
+  <a class="next-post" href="#"><div><div class="next-label">// next post →</div><div class="next-title">Post 06 — async/await: Parallel vs Sequential</div></div><div class="next-arrow">→</div></a>
+
+  <nav class="post-nav">
+    <a href="async-04-promises-chaining.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Promise Chaining</span></a>
+    <a href="async-06-parallel-sequential.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Parallel vs Sequential</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

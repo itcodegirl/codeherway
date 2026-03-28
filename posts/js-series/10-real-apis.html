@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Working With Real APIs in JavaScript: Auth, Pagination, Rate Limits & API Keys | CodeHerWay</title>
+<meta name="description" content="Auth headers, query parameters, pagination, rate limits, and reading API docs. Move past JSONPlaceholder to real APIs. CodeHerWay.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.api-patterns{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:24px 0;}
+@media(max-width:600px){.api-patterns{grid-template-columns:1fr;}}
+.api-card{background:var(--bg-card);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:16px;}
+.api-card-title{font-family:'Fira Code',monospace;font-size:13px;font-weight:700;color:var(--accent);margin-bottom:6px;}
+.api-card-desc{font-size:13px;color:var(--text-muted);line-height:1.6;}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Async</span> Post 04 of 10</div>
+  <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+  <div class="series-line"><span class="series-label">⚡ JavaScript, But Make It Async</span><span class="post-number">Post 04 of 10</span></div>
+  <h1 class="post-title">Working With Real APIs in JavaScript</h1>
+  <p class="post-subtitle">Authentication headers, query parameters, pagination, rate limits, and reading API documentation like you've been doing it for years.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 14 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Intermediate</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+<main>
+  <div class="back-ref"><span class="br-arrow">←</span> Builds on <strong>JS Async — Post 09</strong>: AbortController: Cancelling Requests</div>
+
+  <div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">JSONPlaceholder Was Training Wheels. Here's the Real Bike.</h2><div class="section-line"></div></div>
+  <p>JSONPlaceholder is great for learning — no auth, no rate limits, no surprises. Real APIs are different. They require authentication. They paginate their responses. They have rate limits. They return data in formats you have to read documentation to understand. This post is your field guide to navigating all of it.</p>
+
+  <div class="section-header"><span class="section-icon">🔑</span><h2 class="section-title">Authentication Patterns</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>API documentation is a skill in itself. Every API is different, but they all tell you the same things: the base URL, what parameters are accepted, what the response shape looks like, and what authentication is required. The fastest path through unfamiliar docs: find the authentication section first, then find the simplest endpoint (usually something like <code class='il'>/users</code> or <code class='il'>/posts</code>), and make one working request before building anything.</p>
+  </div>
+
+</div>
+  <p>Most real APIs require you to prove who you are. There are a few common patterns:</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — auth-patterns.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// PATTERN 1: API Key in header (most common for public APIs)</span>
+<span class="sy-kw">const</span> <span class="sy-plain">res</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">"https://api.example.com/data"</span>, {
+  <span class="sy-prop">headers</span>: {
+    <span class="sy-str">"X-API-Key"</span>: <span class="sy-str">"your-api-key-here"</span>
+  }
+})
+
+<span class="sy-comment">// PATTERN 2: Bearer token (OAuth, JWTs)</span>
+<span class="sy-kw">const</span> <span class="sy-plain">res</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">"https://api.example.com/data"</span>, {
+  <span class="sy-prop">headers</span>: {
+    <span class="sy-str">"Authorization"</span>: <span class="sy-str">`Bearer </span>${<span class="sy-plain">token</span>}<span class="sy-str">`</span>
+  }
+})
+
+<span class="sy-comment">// PATTERN 3: API key in query string (some older APIs)</span>
+<span class="sy-kw">const</span> <span class="sy-plain">res</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(
+  <span class="sy-str">`https://api.example.com/data?api_key=</span>${<span class="sy-plain">API_KEY</span>}<span class="sy-str">`</span>
+)
+
+<span class="sy-comment">// ⚠️ NEVER hardcode API keys in frontend JS</span>
+<span class="sy-comment">// They are visible to anyone who opens DevTools.</span>
+<span class="sy-comment">// For keys that must stay secret, use a backend proxy.</span>
+<span class="sy-comment">// For public read-only keys — fine to include, just don't commit them.</span>
+<span class="sy-comment">// Use environment variables: process.env.API_KEY or import.meta.env.VITE_KEY</span></pre></div>
+  </div>
+  <div class="callout callout-warn">
+    <div class="callout-title">⚠️ API Keys in Frontend Code</div>
+    <p>Any API key you put in your JavaScript is visible to users who open DevTools. For truly secret keys (Stripe secret key, private data), you need a backend. For public read-only keys (weather APIs, maps), it's common practice — just make sure the API has domain restrictions so others can't use your key.</p>
+  </div>
+
+    <div class="callout callout-warn" role="alert">
+    <div class="callout-title">⚠️ Never Put API Keys in Client-Side JavaScript</div>
+    <p>Anyone can open DevTools and see every variable, every fetch URL, every header. If your API key is in your JavaScript file, it's public. Full stop.</p>
+    <p style="margin-top:12px;margin-bottom:0">For portfolio projects, use a backend proxy, Netlify/Vercel serverless functions, or a <code class="il">.env</code> file with a build tool. For learning, stick to APIs that don't require keys — like Open-Meteo (covered at the end of this post). Never commit secrets to GitHub.</p>
+  </div>
+
+<div class="section-header"><span class="section-icon">🔍</span><h2 class="section-title">Query Parameters Done Right</h2><div class="section-line"></div></div>
+  <p>Query parameters are how you filter, sort, search, and paginate API responses. Don't build them with string concatenation — use <span class="il">URLSearchParams</span> to handle encoding automatically.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — query-params.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// ❌ Manual string building — breaks with special characters</span>
+<span class="sy-kw">const</span> <span class="sy-plain">url</span> = <span class="sy-str">`/api/search?q=</span>${<span class="sy-plain">query</span>}<span class="sy-str">&page=</span>${<span class="sy-plain">page</span>}<span class="sy-str">`</span>
+<span class="sy-comment">// If query = "C++ basics", url breaks: ?q=C++ basics</span>
+
+<span class="sy-comment">// ✅ URLSearchParams — handles encoding automatically</span>
+<span class="sy-kw">const</span> <span class="sy-plain">params</span> = <span class="sy-kw">new</span> <span class="sy-fn">URLSearchParams</span>({
+  <span class="sy-prop">q</span>:       <span class="sy-str">"C++ basics"</span>,   <span class="sy-comment">// → q=C%2B%2B+basics</span>
+  <span class="sy-prop">page</span>:    <span class="sy-num">1</span>,
+  <span class="sy-prop">limit</span>:   <span class="sy-num">20</span>,
+  <span class="sy-prop">sort</span>:    <span class="sy-str">"date"</span>,
+  <span class="sy-prop">order</span>:   <span class="sy-str">"desc"</span>
+})
+
+<span class="sy-kw">const</span> <span class="sy-plain">res</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">`/api/search?</span>${<span class="sy-plain">params</span>}<span class="sy-str">`</span>)
+
+<span class="sy-comment">// Utility — build URL with params cleanly</span>
+<span class="sy-kw">function</span> <span class="sy-fn">buildURL</span>(<span class="sy-plain">base</span>, <span class="sy-plain">params</span>) {
+  <span class="sy-kw">const</span> <span class="sy-plain">url</span> = <span class="sy-kw">new</span> <span class="sy-fn">URL</span>(<span class="sy-plain">base</span>)
+  <span class="sy-method">Object</span>.<span class="sy-fn">entries</span>(<span class="sy-plain">params</span>).<span class="sy-fn">forEach</span>(([<span class="sy-plain">key</span>, <span class="sy-plain">val</span>]) => {
+    <span class="sy-kw">if</span> (<span class="sy-plain">val</span> !== <span class="sy-bool">null</span> && <span class="sy-plain">val</span> !== <span class="sy-bool">undefined</span>) {
+      <span class="sy-plain">url</span>.<span class="sy-prop">searchParams</span>.<span class="sy-fn">set</span>(<span class="sy-plain">key</span>, <span class="sy-plain">val</span>)
+    }
+  })
+  <span class="sy-kw">return</span> <span class="sy-plain">url</span>.<span class="sy-fn">toString</span>()
+}
+
+<span class="sy-kw">const</span> <span class="sy-plain">searchURL</span> = <span class="sy-fn">buildURL</span>(<span class="sy-str">"https://api.example.com/posts"</span>, {
+  <span class="sy-prop">q</span>: <span class="sy-str">"async javascript"</span>, <span class="sy-prop">page</span>: <span class="sy-num">2</span>, <span class="sy-prop">tag</span>: <span class="sy-bool">null</span>  <span class="sy-comment">// null gets skipped</span>
+})</pre></div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">📄</span><h2 class="section-title">Pagination</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>Rate limiting is real and it will happen to you. The polite engineering response is not to just hammer the endpoint and catch 429 errors — it's to build backoff logic (covered in Post 08) and to cache responses you already have (covered in Post 11). A request that doesn't get made is faster and cheaper than one that does.</p>
+  </div>
+
+</div>
+  <p>Real APIs don't return all their data at once — that would be thousands of records per request. They paginate. There are two common approaches: <span class="highlight">page-based</span> (page 1, page 2...) and <span class="highlight">cursor-based</span> (give me the next N items after this ID).</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — pagination.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// PAGE-BASED PAGINATION</span>
+<span class="sy-comment">// API returns: { data: [...], total: 500, page: 1, perPage: 20 }</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">fetchPage</span>(<span class="sy-plain">page</span> = <span class="sy-num">1</span>) {
+  <span class="sy-kw">const</span> <span class="sy-plain">res</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">`/api/posts?page=</span>${<span class="sy-plain">page</span>}<span class="sy-str">&limit=20`</span>)
+  <span class="sy-kw">return</span> <span class="sy-plain">res</span>.<span class="sy-fn">json</span>()
+}
+
+<span class="sy-comment">// Fetch all pages (careful — could be a LOT of requests)</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">fetchAll</span>() {
+  <span class="sy-kw">let</span> <span class="sy-plain">page</span> = <span class="sy-num">1</span>, <span class="sy-plain">allData</span> = []
+  <span class="sy-kw">while</span> (<span class="sy-bool">true</span>) {
+    <span class="sy-kw">const</span> { <span class="sy-plain">data</span>, <span class="sy-plain">total</span>, <span class="sy-plain">perPage</span> } = <span class="sy-kw">await</span> <span class="sy-fn">fetchPage</span>(<span class="sy-plain">page</span>)
+    <span class="sy-plain">allData</span>.<span class="sy-fn">push</span>(...<span class="sy-plain">data</span>)
+    <span class="sy-kw">if</span> (<span class="sy-plain">allData</span>.<span class="sy-prop">length</span> >= <span class="sy-plain">total</span>) <span class="sy-kw">break</span>
+    <span class="sy-plain">page</span>++
+  }
+  <span class="sy-kw">return</span> <span class="sy-plain">allData</span>
+}
+
+<span class="sy-comment">// CURSOR-BASED PAGINATION (GitHub, Twitter/X style)</span>
+<span class="sy-comment">// API returns: { data: [...], nextCursor: "abc123" | null }</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">fetchWithCursor</span>(<span class="sy-plain">cursor</span> = <span class="sy-bool">null</span>) {
+  <span class="sy-kw">const</span> <span class="sy-plain">params</span> = <span class="sy-kw">new</span> <span class="sy-fn">URLSearchParams</span>({ <span class="sy-prop">limit</span>: <span class="sy-num">20</span> })
+  <span class="sy-kw">if</span> (<span class="sy-plain">cursor</span>) <span class="sy-plain">params</span>.<span class="sy-fn">set</span>(<span class="sy-str">"cursor"</span>, <span class="sy-plain">cursor</span>)
+  <span class="sy-kw">const</span> <span class="sy-plain">res</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">`/api/posts?</span>${<span class="sy-plain">params</span>}<span class="sy-str">`</span>)
+  <span class="sy-kw">return</span> <span class="sy-plain">res</span>.<span class="sy-fn">json</span>()
+}</pre></div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">⏳</span><h2 class="section-title">Rate Limits — Respecting the Server</h2><div class="section-line"></div></div>
+  <p>Most APIs cap how many requests you can make per minute or hour. Exceed the limit and you get a <span class="il">429 Too Many Requests</span> response. The fix is to check the rate limit headers the API returns and back off when needed.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — rate-limits.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// Most APIs return rate limit info in headers</span>
+<span class="sy-kw">const</span> <span class="sy-plain">res</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">"/api/data"</span>)
+
+<span class="sy-comment">// Common header names (vary by API)</span>
+<span class="sy-kw">const</span> <span class="sy-plain">remaining</span> = <span class="sy-plain">res</span>.<span class="sy-prop">headers</span>.<span class="sy-fn">get</span>(<span class="sy-str">"X-RateLimit-Remaining"</span>)
+<span class="sy-kw">const</span> <span class="sy-plain">resetAt</span>   = <span class="sy-plain">res</span>.<span class="sy-prop">headers</span>.<span class="sy-fn">get</span>(<span class="sy-str">"X-RateLimit-Reset"</span>)  <span class="sy-comment">// Unix timestamp</span>
+<span class="sy-kw">const</span> <span class="sy-plain">limit</span>     = <span class="sy-plain">res</span>.<span class="sy-prop">headers</span>.<span class="sy-fn">get</span>(<span class="sy-str">"X-RateLimit-Limit"</span>)
+
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">`</span>${<span class="sy-plain">remaining</span>}<span class="sy-str"> of </span>${<span class="sy-plain">limit</span>}<span class="sy-str"> requests remaining`</span>)
+
+<span class="sy-comment">// Handle 429 — wait and retry</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">fetchRespectingRateLimit</span>(<span class="sy-plain">url</span>) {
+  <span class="sy-kw">const</span> <span class="sy-plain">res</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-plain">url</span>)
+
+  <span class="sy-kw">if</span> (<span class="sy-plain">res</span>.<span class="sy-prop">status</span> === <span class="sy-num">429</span>) {
+    <span class="sy-kw">const</span> <span class="sy-plain">retryAfter</span> = <span class="sy-plain">res</span>.<span class="sy-prop">headers</span>.<span class="sy-fn">get</span>(<span class="sy-str">"Retry-After"</span>) || <span class="sy-num">60</span>
+    <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">`Rate limited. Waiting </span>${<span class="sy-plain">retryAfter</span>}<span class="sy-str">s...`</span>)
+    <span class="sy-kw">await</span> <span class="sy-kw">new</span> <span class="sy-fn">Promise</span>(<span class="sy-plain">r</span> => <span class="sy-fn">setTimeout</span>(<span class="sy-plain">r</span>, <span class="sy-plain">retryAfter</span> * <span class="sy-num">1000</span>))
+    <span class="sy-kw">return</span> <span class="sy-fn">fetchRespectingRateLimit</span>(<span class="sy-plain">url</span>)  <span class="sy-comment">// retry after waiting</span>
+  }
+
+  <span class="sy-kw">return</span> <span class="sy-plain">res</span>.<span class="sy-fn">json</span>()
+}</pre></div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">📖</span><h2 class="section-title">Reading API Documentation</h2><div class="section-line"></div></div>
+  <p>Every API has docs. Knowing what to look for is half the battle — you don't need to read every page, just find the things that matter.</p>
+  <div class="api-patterns">
+    <div class="api-card"><div class="api-card-title">Authentication</div><div class="api-card-desc">How do I prove I'm me? API key? OAuth? Bearer token? Where does it go — header or query param?</div></div>
+    <div class="api-card"><div class="api-card-title">Base URL</div><div class="api-card-desc">What's the root URL for all requests? Is there a versioned path like <span class="il">/v2/</span>? Is there a sandbox vs production URL?</div></div>
+    <div class="api-card"><div class="api-card-title">Rate Limits</div><div class="api-card-desc">How many requests per minute/hour? What headers tell me my current usage? What happens when I exceed it?</div></div>
+    <div class="api-card"><div class="api-card-title">Response Shape</div><div class="api-card-desc">What does the JSON actually look like? Is data nested? Is there a wrapper object like <span class="il">{ data: [...] }</span>? What are the field names?</div></div>
+    <div class="api-card"><div class="api-card-title">Error Format</div><div class="api-card-desc">What does a failed response look like? Is there an error message in the body? What status codes does it use?</div></div>
+    <div class="api-card"><div class="api-card-title">Pagination</div><div class="api-card-desc">Page-based or cursor-based? What params control it? What does the response tell me about whether there's a next page?</div></div>
+  </div>
+  <div class="callout callout-tip">
+    <div class="callout-title">💡 Pro Tip: Read the Error Docs First</div>
+    <p>Most devs skip to the endpoint docs and only read the error section when something goes wrong. Read the error format first. Knowing what a failed response looks like before you write a single line of code will save you hours of debugging.</p>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🌤️</span><h2 class="section-title">A Free API Worth Knowing: Open-Meteo</h2><div class="section-line"></div></div>
+  <p>We'll use the <span class="highlight">Open-Meteo</span> weather API throughout this series — and build a full capstone with it in Post 18. It's free, requires no API key, and returns real weather data.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — open-meteo.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// Open-Meteo — free weather API, no key needed</span>
+<span class="sy-comment">// Docs: open-meteo.com/en/docs</span>
+
+<span class="sy-kw">async function</span> <span class="sy-fn">getWeather</span>(<span class="sy-plain">lat</span>, <span class="sy-plain">lon</span>) {
+  <span class="sy-kw">const</span> <span class="sy-plain">params</span> = <span class="sy-kw">new</span> <span class="sy-fn">URLSearchParams</span>({
+    <span class="sy-prop">latitude</span>:           <span class="sy-plain">lat</span>,
+    <span class="sy-prop">longitude</span>:          <span class="sy-plain">lon</span>,
+    <span class="sy-prop">current</span>:            <span class="sy-str">"temperature_2m,wind_speed_10m,weather_code"</span>,
+    <span class="sy-prop">temperature_unit</span>:   <span class="sy-str">"fahrenheit"</span>,
+    <span class="sy-prop">wind_speed_unit</span>:    <span class="sy-str">"mph"</span>
+  })
+
+  <span class="sy-kw">const</span> <span class="sy-plain">res</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(
+    <span class="sy-str">`https://api.open-meteo.com/v1/forecast?</span>${<span class="sy-plain">params</span>}<span class="sy-str">`</span>
+  )
+  <span class="sy-kw">if</span> (!<span class="sy-plain">res</span>.<span class="sy-prop">ok</span>) <span class="sy-kw">throw</span> <span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-plain">res</span>.<span class="sy-prop">status</span>)
+  <span class="sy-kw">return</span> <span class="sy-plain">res</span>.<span class="sy-fn">json</span>()
+}
+
+<span class="sy-comment">// Chicago, IL</span>
+<span class="sy-kw">const</span> <span class="sy-plain">weather</span> = <span class="sy-kw">await</span> <span class="sy-fn">getWeather</span>(<span class="sy-num">41.85</span>, -<span class="sy-num">87.65</span>)
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">weather</span>.<span class="sy-prop">current</span>.<span class="sy-prop">temperature_2m</span>)  <span class="sy-comment">// temp in °F</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">weather</span>.<span class="sy-prop">current</span>.<span class="sy-prop">wind_speed_10m</span>)  <span class="sy-comment">// wind in mph</span></pre></div>
+  </div>
+
+  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body">
+      <p>My first real API integration was a weather widget. I found an API with great docs, copied the example URL, got data back, felt amazing. Then I noticed my API key was sitting right there in my Git commit. Public repo. On GitHub. For 3 days before I noticed. I rotated the key, added a <span class="il" style="font-style:normal;">.env</span> file, added <span class="il" style="font-style:normal;">.env</span> to <span class="il" style="font-style:normal;">.gitignore</span>, and have never made that mistake since. Learn from mine. Set up <span class="il" style="font-style:normal;">.gitignore</span> before you ever touch an API key.</p>
+    </div>
+  </div>
+
+  <div class="mini-build">
+    <div class="mini-build-header"><span class="trophy">🔬</span><span class="mb-title">MINI BUILD — Real API Practice With Open-Meteo</span></div>
+    <div class="mini-build-body">
+      <p>Fetch real weather data with no API key, no account, no barrier. This is the same API the Post 18 capstone uses.</p>
+      <div class="goal-label">Exercises:</div>
+      <ul class="step-list">
+        <li><span class="step-num">01</span> Write <span class="il">getWeather(lat, lon)</span> using <span class="il">URLSearchParams</span> — request current temperature, wind speed, and weather code</li>
+        <li><span class="step-num">02</span> Log the full response object — explore the shape before building UI</li>
+        <li><span class="step-num">03</span> Display temperature and wind speed in a <span class="il">&lt;div&gt;</span> on the page</li>
+        <li><span class="step-num">04</span> Add a city selector (Chicago, NYC, LA) — use hardcoded lat/lon for each</li>
+        <li><span class="step-num">05</span> Add loading and error states</li>
+        <li><span class="step-num">06</span> Bonus: add <span class="il">AbortController</span> from Post 09 — cancel the previous request when the city changes</li>
+        <li><span class="step-num">07</span> Bonus: use <span class="il">navigator.geolocation</span> to get the user's actual location and fetch weather for it</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="confidence-close">
+    <div class="cc-icon">⚡</div>
+    <div class="cc-heading">You're Ready for Real APIs</div>
+    <p>Auth headers, query params, pagination, rate limits, and reading docs — these are the skills that turn toy fetch calls into real integrations. Next: localStorage and sessionStorage — keeping data alive between page loads without a backend.</p>
+  </div>
+  <a class="next-post" href="#"><div><div class="next-label">// next post →</div><div class="next-title">Post 11 — localStorage &amp; sessionStorage</div></div><div class="next-arrow">→</div></a>
+
+  <nav class="post-nav">
+    <a href="09-abort-controller.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">AbortController</span></a>
+    <a href="11-localstorage.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">localStorage and sessionStorage</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

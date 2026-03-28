@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post 8 — Semantic HTML | CodeHerWay</title>
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.hero-badge{display:inline-flex;align-items:center;gap:8px;font-family:'Fira Code',monospace;font-size:12px;padding:6px 16px;border-radius:20px;background:rgba(255,105,180,0.1);border:1px solid rgba(255,105,180,0.25);color:var(--pink);margin-bottom:24px;font-weight:600;letter-spacing:0.5px;}
+.tag.a11y{border-color:rgba(125,255,179,0.3);color:var(--mint-green);}
+.tag.seo{border-color:rgba(105,210,231,0.3);color:var(--sky-blue);}
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:32px 0;}
+.why-card{background:var(--bg-code);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:20px;text-align:center;transition:border-color 0.3s,transform 0.3s;}
+.why-card:hover{transform:translateY(-3px);}
+.why-icon{font-size:28px;margin-bottom:8px;}
+.why-name{font-family:'Fira Code',monospace;font-size:14px;font-weight:700;margin-bottom:6px;}
+.why-card:nth-child(1){border-color:rgba(125,255,179,0.2);}
+.why-card:nth-child(1):hover{border-color:var(--mint-green);}
+.why-card:nth-child(1) .why-name{color:var(--mint-green);}
+.why-card:nth-child(2){border-color:rgba(105,210,231,0.2);}
+.why-card:nth-child(2):hover{border-color:var(--sky-blue);}
+.why-card:nth-child(2) .why-name{color:var(--sky-blue);}
+.why-card:nth-child(3){border-color:rgba(255,105,180,0.2);}
+.why-card:nth-child(3):hover{border-color:var(--pink);}
+.why-card:nth-child(3) .why-name{color:var(--pink);}
+.why-card:nth-child(4){border-color:rgba(180,74,255,0.2);}
+.why-card:nth-child(4):hover{border-color:var(--purple);}
+.why-card:nth-child(4) .why-name{color:var(--purple);}
+.why-card:nth-child(5){border-color:rgba(255,211,105,0.2);}
+.why-card:nth-child(5):hover{border-color:var(--gold);}
+.why-card:nth-child(5) .why-name{color:var(--gold);}
+.why-desc{font-size:13px;color:var(--text-secondary);line-height:1.5;}
+.compare-split{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:32px 0;}
+.compare-panel{border-radius:12px;overflow:hidden;border:1px solid;}
+.compare-panel.bad{border-color:rgba(255,107,107,0.2);}
+.compare-panel.good{border-color:rgba(61,220,132,0.2);}
+.compare-panel-header{padding:12px 18px;font-family:'Fira Code',monospace;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.compare-panel.bad .compare-panel-header{background:rgba(255,107,107,0.08);color:var(--coral);}
+.compare-panel.good .compare-panel-header{background:rgba(61,220,132,0.08);color:var(--green-tip);}
+.compare-panel-body{padding:18px;font-family:'Fira Code',monospace;font-size:13px;line-height:1.85;background:var(--bg-code);white-space:pre;overflow-x:auto;}
+.layout-diagram{background:var(--bg-code);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:24px;margin:36px 0;max-width:560px;}
+.ld-block{border-radius:8px;padding:12px 16px;font-family:'Fira Code',monospace;font-size:13px;font-weight:600;text-align:center;margin-bottom:8px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.ld-header{background:rgba(255,105,180,0.12);border:1px solid rgba(255,105,180,0.25);color:var(--pink);}
+.ld-nav{background:rgba(105,210,231,0.12);border:1px solid rgba(105,210,231,0.25);color:var(--sky-blue);}
+.ld-main{background:rgba(180,74,255,0.12);border:1px solid rgba(180,74,255,0.25);color:var(--purple);min-height:80px;}
+.ld-middle{display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:8px;}
+.ld-section{background:rgba(125,255,179,0.08);border:1px solid rgba(125,255,179,0.2);color:var(--mint-green);border-radius:8px;padding:12px 16px;font-family:'Fira Code',monospace;font-size:13px;font-weight:600;text-align:center;}
+.ld-article{background:rgba(255,211,105,0.08);border:1px solid rgba(255,211,105,0.2);color:var(--gold);border-radius:6px;padding:8px 12px;font-family:'Fira Code',monospace;font-size:11px;margin:6px 0;text-align:center;}
+.ld-aside{background:rgba(255,211,105,0.08);border:1px solid rgba(255,211,105,0.2);color:var(--gold);border-radius:8px;padding:12px 16px;font-family:'Fira Code',monospace;font-size:13px;font-weight:600;text-align:center;min-width:120px;}
+.ld-footer{background:rgba(255,105,180,0.08);border:1px solid rgba(255,105,180,0.2);color:var(--pink);}
+.ld-label{font-family:'Fira Code',monospace;font-size:11px;color:var(--text-muted);text-align:center;margin-top:12px;letter-spacing:0.5px;}
+.elem-card{background:var(--bg-code);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:24px 28px;margin:24px 0;}
+.elem-card-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.elem-tag{font-family:'Fira Code',monospace;font-size:18px;font-weight:700;}
+.elem-card:nth-child(7n+1) .elem-tag{color:var(--pink);}
+.elem-card:nth-child(7n+2) .elem-tag{color:var(--sky-blue);}
+.elem-card:nth-child(7n+3) .elem-tag{color:var(--purple);}
+.elem-card:nth-child(7n+4) .elem-tag{color:var(--mint-green);}
+.elem-card:nth-child(7n+5) .elem-tag{color:var(--gold);}
+.elem-card:nth-child(7n+6) .elem-tag{color:var(--coral);}
+.elem-card:nth-child(7n+0) .elem-tag{color:var(--pink);}
+.elem-role{font-family:'Fira Code',monospace;font-size:12px;color:var(--text-muted);padding:3px 12px;border-radius:6px;background:rgba(255,255,255,0.04);}
+.elem-desc{color:var(--text-secondary);font-size:16px;margin-bottom:14px;line-height:1.7;}
+.elem-do{font-size:14px;color:var(--mint-green);margin-bottom:4px;}
+.elem-dont{font-size:14px;color:var(--coral);}
+.sr-mock{background:#111118;border:1px solid rgba(255,255,255,0.08);border-radius:12px;margin:32px 0;overflow:hidden;}
+.sr-mock-header{padding:12px 18px;background:rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.05);font-family:'Fira Code',monospace;font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:8px;}
+.sr-mock-header .sr-dot{width:8px;height:8px;border-radius:50%;background:var(--green-tip);}
+.sr-mock-body{padding:20px 24px;font-family:'Fira Code',monospace;font-size:14px;line-height:2.2;}
+.sr-line{display:flex;gap:10px;align-items:flex-start;}
+.sr-icon{color:var(--purple);flex-shrink:0;margin-top:3px;font-size:12px;}
+.sr-text{color:var(--text-primary);}
+.sr-text .sr-hl{color:var(--mint-green);font-weight:600;}
+.sr-text .sr-muted{color:var(--text-muted);}
+@media(max-width:640px){.compare-split{grid-template-columns:1fr;}.why-grid{grid-template-columns:1fr;}.ld-middle{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<section class="hero">
+  <div class="post-label"><span class="series-tag">HTML Fundamentals</span> Post 08 of 20</div>
+  <h1>🏗️ Semantic HTML <span class="gradient-text">(Extremely Important)</span></h1>
+  <p class="hero-sub">This is the single most important concept in this entire course. Semantic HTML is what separates someone who writes HTML from someone who writes it <em>well</em>.</p>
+  <div class="hero-badge">⚡ CORE CONCEPT — This Changes Everything</div>
+  <div class="tag-row"><span class="tag html">&lt;header&gt;</span><span class="tag html">&lt;nav&gt;</span><span class="tag html">&lt;main&gt;</span><span class="tag html">&lt;section&gt;</span><span class="tag html">&lt;article&gt;</span><span class="tag html">&lt;aside&gt;</span><span class="tag html">&lt;footer&gt;</span><span class="tag a11y">accessibility</span><span class="tag seo">SEO</span></div>
+</section>
+<main class="article">
+  <h2>The Difference Between Writing HTML and Writing It <em>Well</em></h2>
+  <p>You can build an entire website using nothing but <span class="il">&lt;div&gt;</span> tags. It will render in the browser. It will look correct. And it will be <span class="key">completely wrong</span>.</p>
+  <p>A <span class="il">&lt;div&gt;</span> is a generic container — it means nothing. It tells the browser "here's a box" but says nothing about <em>what's inside</em>. <span class="key">Semantic HTML</span> uses elements that describe what the content <em>is</em>. A <span class="il">&lt;nav&gt;</span> says "this is navigation." A <span class="il">&lt;header&gt;</span> says "this is the header." The page looks identical visually, but underneath it's organized, meaningful, and accessible.</p>
+  <div class="callout mindset"><div class="callout-title">🧠 Mindset Shift</div><p>Think of semantic HTML as the difference between a building with labeled rooms and one where every door is blank. Both are functional. But only one is usable by everyone — especially people who can't see the interior. <span class="key">You're building the signs, the labels, the wayfinding system.</span></p></div>
+  <div class="sep"></div>
+  <h2>Why This Matters More Than You Think</h2>
+  <div class="why-grid">
+    <div class="why-card"><div class="why-icon">♿</div><div class="why-name">Accessibility</div><div class="why-desc">Screen readers use semantic elements to navigate. Proper structure means your site works for everyone.</div></div>
+    <div class="why-card"><div class="why-icon">🔍</div><div class="why-name">SEO</div><div class="why-desc">Google's crawlers understand semantic elements. They know what's navigation, what's content, what's a sidebar.</div></div>
+    <div class="why-card"><div class="why-icon">📱</div><div class="why-name">Screen Readers</div><div class="why-desc">Users can jump directly to &lt;nav&gt;, &lt;main&gt;, or &lt;footer&gt; using landmark navigation — no semantic means no landmarks.</div></div>
+    <div class="why-card"><div class="why-icon">🧹</div><div class="why-name">Clean Code</div><div class="why-desc">Semantic code is self-documenting. Another developer reads &lt;header&gt; and instantly knows what it is.</div></div>
+    <div class="why-card"><div class="why-icon">⚡</div><div class="why-name">JS Targeting</div><div class="why-desc">querySelector('main') is clearer and safer than targeting a div with a random class.</div></div>
+  </div>
+  <p>This isn't theoretical. Hiring managers look at your HTML source. Accessibility audits flag non-semantic markup. Google Lighthouse measures it. Over <strong>one billion people</strong> worldwide use assistive technology. Semantic HTML is a <span class="key">professional requirement</span>.</p>
+  <div class="sep"></div>
+  <h2>The &lt;div&gt; Soup Problem</h2>
+  <p>Same page structure — div soup on the left, semantic HTML on the right:</p>
+  <div class="compare-split">
+    <div class="compare-panel bad">
+      <div class="compare-panel-header">❌ Div Soup</div>
+      <div class="compare-panel-body"><code><span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"header"</span><span class="t">&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"nav"</span><span class="t">&gt;</span>...<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"main"</span><span class="t">&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"content"</span><span class="t">&gt;</span>
+    <span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"post"</span><span class="t">&gt;</span>...<span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"sidebar"</span><span class="t">&gt;</span>...<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"footer"</span><span class="t">&gt;</span>...<span class="t">&lt;/div&gt;</span></code></div>
+    </div>
+    <div class="compare-panel good">
+      <div class="compare-panel-header">✅ Semantic HTML</div>
+      <div class="compare-panel-body"><code><span class="t">&lt;header&gt;</span>
+  <span class="t">&lt;nav&gt;</span>
+    <span class="t">&lt;ul&gt;</span>...<span class="t">&lt;/ul&gt;</span>
+  <span class="t">&lt;/nav&gt;</span>
+<span class="t">&lt;/header&gt;</span>
+<span class="t">&lt;main&gt;</span>
+  <span class="t">&lt;section&gt;</span>
+    <span class="t">&lt;article&gt;</span>...<span class="t">&lt;/article&gt;</span>
+  <span class="t">&lt;/section&gt;</span>
+  <span class="t">&lt;aside&gt;</span>...<span class="t">&lt;/aside&gt;</span>
+<span class="t">&lt;/main&gt;</span>
+<span class="t">&lt;footer&gt;</span>...<span class="t">&lt;/footer&gt;</span></code></div>
+    </div>
+  </div>
+  <p>They render identically. But the left is a pile of meaningless boxes. The right is a <span class="key">labeled blueprint</span> — screen readers can jump to landmarks, Google can identify primary vs sidebar content, and any developer can understand the structure at a glance.</p>
+  <div class="sep"></div>
+  <h2>The Semantic Page Blueprint</h2>
+  <div class="layout-diagram">
+    <div class="ld-block ld-header">&lt;header&gt;</div>
+    <div class="ld-block ld-nav">&lt;nav&gt;</div>
+    <div class="ld-middle">
+      <div>
+        <div class="ld-block ld-main">&lt;main&gt;</div>
+        <div style="padding:0 12px;"><div class="ld-section">&lt;section&gt;<div class="ld-article">&lt;article&gt;</div><div class="ld-article">&lt;article&gt;</div></div></div>
+      </div>
+      <div class="ld-aside">&lt;aside&gt;</div>
+    </div>
+    <div class="ld-block ld-footer">&lt;footer&gt;</div>
+    <div class="ld-label">↑ Typical semantic page structure</div>
+  </div>
+  <div class="sep"></div>
+  <h2>The Seven Elements You Need to Know</h2>
+  <div class="elem-card">
+    <div class="elem-card-header"><span class="elem-tag">&lt;header&gt;</span><span class="elem-role">Introductory content</span></div>
+    <div class="elem-desc">The introductory section of the page or a section within it — site logo, title, navigation.</div>
+    <div class="elem-do">✅ Use for: site header, article header, section header</div>
+    <div class="elem-dont">❌ Don't use for: random wrapper divs, footer content</div>
+  </div>
+  <div class="elem-card">
+    <div class="elem-card-header"><span class="elem-tag">&lt;nav&gt;</span><span class="elem-role">Navigation</span></div>
+    <div class="elem-desc">Wraps major navigation links. Screen readers announce this as a navigation landmark.</div>
+    <div class="elem-do">✅ Use for: main nav, secondary nav, breadcrumbs, table of contents</div>
+    <div class="elem-dont">❌ Don't use for: every group of links — only major navigation</div>
+  </div>
+  <div class="elem-card">
+    <div class="elem-card-header"><span class="elem-tag">&lt;main&gt;</span><span class="elem-role">Primary content</span></div>
+    <div class="elem-desc">The <span class="key">primary content</span> unique to this page. Only <strong>one per page</strong>. The most powerful accessibility landmark.</div>
+    <div class="elem-do">✅ Use for: the unique content area of every page</div>
+    <div class="elem-dont">❌ Don't use for: multiple times on one page, inside &lt;header&gt; or &lt;footer&gt;</div>
+  </div>
+  <div class="callout tip"><div class="callout-title">💡 Pro Tip</div><p>When a screen reader user presses "jump to main content," they land inside <span class="il">&lt;main&gt;</span>. Without it, they tab through your entire header and navigation on every single page load. One element. Massive impact.</p></div>
+  <div class="elem-card">
+    <div class="elem-card-header"><span class="elem-tag">&lt;section&gt;</span><span class="elem-role">Thematic group</span></div>
+    <div class="elem-desc">A thematic grouping of content, usually with its own heading — like a chapter in a book.</div>
+    <div class="elem-do">✅ Use for: distinct content sections with their own headings</div>
+    <div class="elem-dont">❌ Don't use for: generic wrappers or styling hooks</div>
+  </div>
+  <div class="elem-card">
+    <div class="elem-card-header"><span class="elem-tag">&lt;article&gt;</span><span class="elem-role">Self-contained content</span></div>
+    <div class="elem-desc">Self-contained content that could stand alone — blog posts, product cards, news stories, comments. Test: would it make sense on a different page?</div>
+    <div class="elem-do">✅ Use for: blog posts, product cards, news stories, user comments</div>
+    <div class="elem-dont">❌ Don't use for: generic page sections or layout wrappers</div>
+  </div>
+  <div class="callout info"><div class="callout-title">ℹ️ Good to Know</div><p><span class="il">&lt;section&gt;</span> and <span class="il">&lt;article&gt;</span> confuse everyone. Simple rule: <span class="key">articles can live inside sections, and sections can live inside articles</span>. A "Blog" section might contain multiple articles. A long article might be divided into sections.</p></div>
+  <div class="elem-card">
+    <div class="elem-card-header"><span class="elem-tag">&lt;aside&gt;</span><span class="elem-role">Tangential content</span></div>
+    <div class="elem-desc">Content tangentially related to the main content — sidebar, pull quote, related links, supplementary info.</div>
+    <div class="elem-do">✅ Use for: sidebars, pull quotes, related links, ads, author bios</div>
+    <div class="elem-dont">❌ Don't use for: primary content, main navigation</div>
+  </div>
+  <div class="elem-card">
+    <div class="elem-card-header"><span class="elem-tag">&lt;footer&gt;</span><span class="elem-role">Closing content</span></div>
+    <div class="elem-desc">The closing section — copyright info, contact links, social media, legal text.</div>
+    <div class="elem-do">✅ Use for: site footer, article footer, copyright info</div>
+    <div class="elem-dont">❌ Don't use for: header content or navigation-heavy sections</div>
+  </div>
+  <div class="sep"></div>
+  <h2>What a Screen Reader Actually Hears</h2>
+  <div class="sr-mock">
+    <div class="sr-mock-header"><span class="sr-dot"></span> Screen Reader — Semantic HTML</div>
+    <div class="sr-mock-body">
+      <div class="sr-line"><span class="sr-icon">▸</span><span class="sr-text"><span class="sr-hl">Banner landmark.</span> Heading level 1: "Jenna Torres"</span></div>
+      <div class="sr-line"><span class="sr-icon">▸</span><span class="sr-text"><span class="sr-hl">Navigation landmark.</span> List, 3 items.</span></div>
+      <div class="sr-line"><span class="sr-icon">▸</span><span class="sr-text"><span class="sr-hl">Main landmark.</span></span></div>
+      <div class="sr-line"><span class="sr-icon">▸</span><span class="sr-text"><span class="sr-hl">Region:</span> Heading level 2: "About Me"</span></div>
+      <div class="sr-line"><span class="sr-icon">▸</span><span class="sr-text"><span class="sr-hl">Article:</span> Heading level 3: "Weather Dashboard"</span></div>
+      <div class="sr-line"><span class="sr-icon">▸</span><span class="sr-text"><span class="sr-hl">Complementary landmark.</span> "Currently Learning"</span></div>
+      <div class="sr-line"><span class="sr-icon">▸</span><span class="sr-text"><span class="sr-hl">Content info landmark.</span> "© 2025 Jenna Torres."</span></div>
+    </div>
+  </div>
+  <div class="sr-mock">
+    <div class="sr-mock-header"><span class="sr-dot" style="background:var(--coral)"></span> Screen Reader — Div Soup</div>
+    <div class="sr-mock-body">
+      <div class="sr-line"><span class="sr-icon">▸</span><span class="sr-text"><span class="sr-muted">Group.</span> Heading level 1: "Jenna Torres"</span></div>
+      <div class="sr-line"><span class="sr-icon">▸</span><span class="sr-text"><span class="sr-muted">Group.</span> List, 3 items.</span></div>
+      <div class="sr-line"><span class="sr-icon">▸</span><span class="sr-text"><span class="sr-muted">Group.</span> Heading level 2: "About Me"</span></div>
+      <div class="sr-line"><span class="sr-icon">▸</span><span class="sr-text"><span class="sr-muted">Group.</span> Heading level 3: "Weather Dashboard"</span></div>
+      <div class="sr-line"><span class="sr-icon">▸</span><span class="sr-text"><span class="sr-muted">Group.</span> "© 2025 Jenna Torres."</span></div>
+    </div>
+  </div>
+  <p>The semantic version gives users a <span class="key">map of the page</span>. They can jump directly to navigation, skip to main content, find the footer. The div-soup version? Every section is just "Group." No landmarks. No shortcuts. No structure.</p>
+  <div class="callout mindset"><div class="callout-title">🧠 Mindset Shift</div><p>Accessibility isn't a charity feature you add if you have extra time. It's a <span class="key">quality standard</span>. Every <span class="il">&lt;div&gt;</span> where a semantic element would work is a door with no label. Your users — all of them — deserve better.</p></div>
+  <div class="sep"></div>
+  <h2>When &lt;div&gt; Is Still the Right Choice</h2>
+  <p>After all of this, <span class="il">&lt;div&gt;</span> isn't evil. It's a <span class="key">generic container for layout and styling</span> when no semantic element fits. Need to wrap elements for CSS Grid or Flexbox? Use a <span class="il">&lt;div&gt;</span>. Need a JavaScript target with no semantic meaning? <span class="il">&lt;div&gt;</span>. The rule: <span class="key">if a semantic element fits, use it. If none fits, use &lt;div&gt;</span>.</p>
+  <div class="callout tip"><div class="callout-title">💡 Quick Mental Checklist</div><p>Before typing any container: Header? → <span class="il">&lt;header&gt;</span>. Nav? → <span class="il">&lt;nav&gt;</span>. Main content? → <span class="il">&lt;main&gt;</span>. Thematic section with heading? → <span class="il">&lt;section&gt;</span>. Self-contained content? → <span class="il">&lt;article&gt;</span>. Supplementary info? → <span class="il">&lt;aside&gt;</span>. Closing? → <span class="il">&lt;footer&gt;</span>. None of the above? <em>Now</em> use <span class="il">&lt;div&gt;</span>.</p></div>
+  <div class="sep"></div>
+  <div class="devfession">
+    <div class="devfession-header">🔥 Dev_Fession</div>
+    <div class="devfession-body">
+      <p>My first three portfolio projects were built entirely with <span class="il">&lt;div&gt;</span> elements. Not some divs — <em>all</em> divs. <span class="il">&lt;div class="header"&gt;</span>, <span class="il">&lt;div class="nav"&gt;</span>, all of it.</p>
+      <p>I applied to a junior developer role and the hiring manager pulled up my portfolio's source code during the interview. She said: "I see you're using class names like 'header' and 'nav' — are you aware that HTML has actual elements for those?"</p>
+      <p>I wasn't. I genuinely did not know. I went home, read the MDN docs on semantic HTML, and refactored every project I had. The HTML got shorter. The code got cleaner. That rejection was the most valuable feedback I ever received.</p>
+    </div>
+    <div class="devfession-footer"><span>CodeHerWay // HTML Course</span><span class="tagline">Code it. Own it. Her way.</span></div>
+  </div>
+  <div class="mini-build">
+    <div class="mini-build-header"><h3>🏆 Mini Build: Semantic Portfolio Structure</h3></div>
+    <div class="mini-build-body">
+      <p>Rebuild your portfolio using <strong>zero unnecessary divs</strong>. Every container must be semantic:</p>
+      <div class="step"><div class="step-num">1</div><div class="step-text">Wrap logo and navigation in a <span class="sky">&lt;header&gt;</span>. Nav links in a <span class="sky">&lt;nav&gt;</span> with a <span class="sky">&lt;ul&gt;</span>.</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text">Wrap all unique page content in a single <span class="sky">&lt;main&gt;</span>.</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text">Create at least three <span class="sky">&lt;section&gt;</span> blocks: About, Projects, Contact — each with an <span class="sky">&lt;h2&gt;</span>.</div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text">Inside Projects, at least two <span class="sky">&lt;article&gt;</span> elements — one per project with <span class="sky">&lt;h3&gt;</span>, paragraph, and link.</div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-text">Add an <span class="sky">&lt;aside&gt;</span> — a "Currently Learning" sidebar or similar.</div></div>
+      <div class="step"><div class="step-num">6</div><div class="step-text">Close with a <span class="sky">&lt;footer&gt;</span> containing copyright, social links, and tagline.</div></div>
+      <div class="step"><div class="step-num">7</div><div class="step-text"><strong>Bonus:</strong> View Page Source and count your <span class="sky">&lt;div&gt;</span> elements. Goal: fewer than three. Ideally zero.</div></div>
+    </div>
+  </div>
+  <div class="sep"></div>
+  <h2>Recap</h2>
+  <p><span class="key">Semantic HTML</span> means using elements that describe what content <em>is</em>. <span class="il">&lt;header&gt;</span>, <span class="il">&lt;nav&gt;</span>, <span class="il">&lt;main&gt;</span> (one per page), <span class="il">&lt;section&gt;</span>, <span class="il">&lt;article&gt;</span>, <span class="il">&lt;aside&gt;</span>, <span class="il">&lt;footer&gt;</span>. Use <span class="il">&lt;div&gt;</span> only when no semantic element fits. This is the line between beginner HTML and professional HTML. <span class="key">Every page you build from here should be semantic by default.</span></p>
+  <nav class="post-nav">
+    <a href="07-lists.html" class="post-nav-link"><span class="nav-label">← Previous</span><span class="nav-title">HTML Lists</span></a>
+    <a href="09-div-vs-span.html" class="post-nav-link next"><span class="nav-label">Next →</span><span class="nav-title">Div vs Span: The Container Showdown</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">← Back to All Posts</a></div>
+</main>
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

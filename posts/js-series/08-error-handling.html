@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Async Error Handling in JavaScript: Retry Logic, Custom Errors & User States | CodeHerWay</title>
+<meta name="description" content="Custom error classes, retry logic, exponential backoff, and user-facing error states. Handle async errors like a senior dev. CodeHerWay.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.error-tier-list{display:flex;flex-direction:column;gap:10px;margin:24px 0;}
+.error-tier{display:flex;gap:16px;align-items:flex-start;background:var(--bg-card);border-radius:10px;padding:16px;border:1px solid rgba(255,255,255,.07);}
+.tier-badge{font-family:'Fira Code',monospace;font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px;white-space:nowrap;flex-shrink:0;}
+.tier-network .tier-badge{background:rgba(255,107,107,.12);color:var(--coral);border:1px solid rgba(255,107,107,.2);}
+.tier-http .tier-badge{background:rgba(255,211,105,.1);color:var(--gold);border:1px solid rgba(255,211,105,.2);}
+.tier-parse .tier-badge{background:rgba(180,74,255,.12);color:var(--purple);border:1px solid rgba(180,74,255,.2);}
+.tier-app .tier-badge{background:var(--accent-dim);color:var(--accent);border:1px solid var(--accent-border);}
+.tier-content{flex:1;}
+.tier-name{font-weight:700;font-size:15px;color:var(--text-primary);margin-bottom:4px;}
+.tier-desc{font-size:14px;color:var(--text-muted);line-height:1.6;}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Async</span> Post 02 of 10</div>
+  <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+  <div class="series-line"><span class="series-label">⚡ JavaScript, But Make It Async</span><span class="post-number">Post 02 of 10</span></div>
+  <h1 class="post-title">Async Error Handling in JavaScript</h1>
+  <p class="post-subtitle">Retry logic, exponential backoff, custom error classes, user-facing error states, and the art of failing gracefully.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 13 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Intermediate</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+<main>
+  <div class="back-ref"><span class="br-arrow">←</span> Builds on <strong>JS Async — Post 07</strong>: Fetch: Beyond the Basics</div>
+
+  <div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">Errors Will Happen. The Question Is How You Handle Them.</h2><div class="section-line"></div></div>
+  <p>Every fetch call you make can fail. Networks are unreliable. Servers go down. APIs rate-limit you. Users have bad connections. The difference between amateur and professional async code isn't whether errors are handled — it's <em>how</em> they're handled. A senior developer thinks about failure modes before writing the happy path.</p>
+  <p>This post builds on the basic try/catch you already know and goes deeper: the types of async errors, custom error classes, retry logic, exponential backoff, and showing the user something useful when things go wrong.</p>
+
+  <div class="section-header"><span class="section-icon">🗂️</span><h2 class="section-title">The Four Types of Async Errors</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>Custom error classes are one of those things that feels like over-engineering until you're debugging a production issue at midnight and you can't tell a network error from a validation error from an auth error. Giving each error type its own class with its own properties means you can catch them specifically and respond correctly — not just log a generic message and hope.</p>
+  </div>
+
+</div>
+  <p>Not all async errors are the same. Identifying which type you're dealing with tells you how to respond.</p>
+  <div class="error-tier-list">
+    <div class="error-tier tier-network">
+      <div class="tier-badge">Network</div>
+      <div class="tier-content"><div class="tier-name">Network / Connection Error</div><div class="tier-desc">No internet, DNS failure, CORS block. <span class="il">fetch()</span> throws an actual Error — the Promise rejects. <span class="il">response.ok</span> is never reached.</div></div>
+    </div>
+    <div class="error-tier tier-http">
+      <div class="tier-badge">HTTP</div>
+      <div class="tier-content"><div class="tier-name">HTTP Error Status</div><div class="tier-desc">Server responded — but with 4xx or 5xx. fetch() doesn't throw. <span class="il">response.ok</span> is false. You must throw manually.</div></div>
+    </div>
+    <div class="error-tier tier-parse">
+      <div class="tier-badge">Parse</div>
+      <div class="tier-content"><div class="tier-name">JSON Parse Error</div><div class="tier-desc">Server responded with 200 but the body isn't valid JSON. <span class="il">response.json()</span> throws. Rare but worth handling.</div></div>
+    </div>
+    <div class="error-tier tier-app">
+      <div class="tier-badge">App</div>
+      <div class="tier-content"><div class="tier-name">Application Logic Error</div><div class="tier-desc">Data came back but missing expected fields. Your code throws because it tried to access something that doesn't exist.</div></div>
+    </div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🏷️</span><h2 class="section-title">Custom Error Classes</h2><div class="section-line"></div></div>
+  <p>JavaScript's built-in <span class="il">Error</span> is fine, but in a real app you want to distinguish between error types in your catch blocks. Custom error classes let you do that cleanly.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — custom-errors.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// Custom error classes — extend the built-in Error</span>
+<span class="sy-kw">class</span> <span class="sy-fn">NetworkError</span> <span class="sy-kw">extends</span> <span class="sy-fn">Error</span> {
+  <span class="sy-fn">constructor</span>(<span class="sy-plain">message</span>) {
+    <span class="sy-kw">super</span>(<span class="sy-plain">message</span>)
+    <span class="sy-kw">this</span>.<span class="sy-prop">name</span> = <span class="sy-str">"NetworkError"</span>
+  }
+}
+
+<span class="sy-kw">class</span> <span class="sy-fn">HttpError</span> <span class="sy-kw">extends</span> <span class="sy-fn">Error</span> {
+  <span class="sy-fn">constructor</span>(<span class="sy-plain">status</span>, <span class="sy-plain">message</span>) {
+    <span class="sy-kw">super</span>(<span class="sy-plain">message</span>)
+    <span class="sy-kw">this</span>.<span class="sy-prop">name</span>   = <span class="sy-str">"HttpError"</span>
+    <span class="sy-kw">this</span>.<span class="sy-prop">status</span> = <span class="sy-plain">status</span>
+  }
+}
+
+<span class="sy-comment">// Use them in your fetch wrapper</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">apiFetch</span>(<span class="sy-plain">url</span>, <span class="sy-plain">options</span> = {}) {
+  <span class="sy-kw">let</span> <span class="sy-plain">res</span>
+  <span class="sy-kw">try</span> {
+    <span class="sy-plain">res</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-plain">url</span>, <span class="sy-plain">options</span>)
+  } <span class="sy-kw">catch</span> {
+    <span class="sy-kw">throw</span> <span class="sy-kw">new</span> <span class="sy-fn">NetworkError</span>(<span class="sy-str">"No connection — check your internet"</span>)
+  }
+  <span class="sy-kw">if</span> (!<span class="sy-plain">res</span>.<span class="sy-prop">ok</span>) <span class="sy-kw">throw</span> <span class="sy-kw">new</span> <span class="sy-fn">HttpError</span>(<span class="sy-plain">res</span>.<span class="sy-prop">status</span>, <span class="sy-plain">res</span>.<span class="sy-prop">statusText</span>)
+  <span class="sy-kw">return</span> <span class="sy-plain">res</span>.<span class="sy-fn">json</span>()
+}
+
+<span class="sy-comment">// Now catch blocks can respond intelligently by type</span>
+<span class="sy-kw">try</span> {
+  <span class="sy-kw">const</span> <span class="sy-plain">data</span> = <span class="sy-kw">await</span> <span class="sy-fn">apiFetch</span>(<span class="sy-str">"/api/user"</span>)
+} <span class="sy-kw">catch</span> (<span class="sy-plain">err</span>) {
+  <span class="sy-kw">if</span> (<span class="sy-plain">err</span> <span class="sy-kw">instanceof</span> <span class="sy-fn">NetworkError</span>) {
+    <span class="sy-fn">showToast</span>(<span class="sy-str">"No internet connection"</span>)
+  } <span class="sy-kw">else if</span> (<span class="sy-plain">err</span> <span class="sy-kw">instanceof</span> <span class="sy-fn">HttpError</span> && <span class="sy-plain">err</span>.<span class="sy-prop">status</span> === <span class="sy-num">401</span>) {
+    <span class="sy-fn">redirectToLogin</span>()
+  } <span class="sy-kw">else if</span> (<span class="sy-plain">err</span> <span class="sy-kw">instanceof</span> <span class="sy-fn">HttpError</span> && <span class="sy-plain">err</span>.<span class="sy-prop">status</span> >= <span class="sy-num">500</span>) {
+    <span class="sy-fn">showToast</span>(<span class="sy-str">"Server is having issues — try again later"</span>)
+  } <span class="sy-kw">else</span> {
+    <span class="sy-fn">showToast</span>(<span class="sy-str">"Something went wrong"</span>)
+  }
+}</pre></div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🔄</span><h2 class="section-title">Retry Logic</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>Exponential backoff sounds scary. It's just: wait a bit, try again. Wait a bit longer, try again. Wait even longer, try again. The 'exponential' part means each retry doubles the wait time — so you're not hammering a struggling server. Most real retry implementations cap it at 3-5 attempts with a maximum delay. That's it.</p>
+  </div>
+
+</div>
+  <p>Some errors are transient — a brief network blip, a server momentarily overloaded. Retrying once or twice often succeeds without the user even knowing there was a problem.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — retry.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// Retry a Promise-returning function up to maxRetries times</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">withRetry</span>(<span class="sy-plain">fn</span>, <span class="sy-plain">maxRetries</span> = <span class="sy-num">3</span>, <span class="sy-plain">delayMs</span> = <span class="sy-num">1000</span>) {
+  <span class="sy-kw">let</span> <span class="sy-plain">lastError</span>
+
+  <span class="sy-kw">for</span> (<span class="sy-kw">let</span> <span class="sy-plain">attempt</span> = <span class="sy-num">1</span>; <span class="sy-plain">attempt</span> <= <span class="sy-plain">maxRetries</span>; <span class="sy-plain">attempt</span>++) {
+    <span class="sy-kw">try</span> {
+      <span class="sy-kw">return</span> <span class="sy-kw">await</span> <span class="sy-fn">fn</span>()  <span class="sy-comment">// success — return immediately</span>
+    } <span class="sy-kw">catch</span> (<span class="sy-plain">err</span>) {
+      <span class="sy-plain">lastError</span> = <span class="sy-plain">err</span>
+      <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">`Attempt </span>${<span class="sy-plain">attempt</span>}<span class="sy-str"> failed. Retrying in </span>${<span class="sy-plain">delayMs</span>}<span class="sy-str">ms...`</span>)
+
+      <span class="sy-comment">// Don't wait after the last attempt</span>
+      <span class="sy-kw">if</span> (<span class="sy-plain">attempt</span> < <span class="sy-plain">maxRetries</span>) {
+        <span class="sy-kw">await</span> <span class="sy-kw">new</span> <span class="sy-fn">Promise</span>(<span class="sy-plain">r</span> => <span class="sy-fn">setTimeout</span>(<span class="sy-plain">r</span>, <span class="sy-plain">delayMs</span>))
+      }
+    }
+  }
+
+  <span class="sy-kw">throw</span> <span class="sy-plain">lastError</span>  <span class="sy-comment">// all retries exhausted — let the caller handle it</span>
+}
+
+<span class="sy-comment">// Usage</span>
+<span class="sy-kw">const</span> <span class="sy-plain">data</span> = <span class="sy-kw">await</span> <span class="sy-fn">withRetry</span>(
+  () => <span class="sy-fn">fetch</span>(<span class="sy-str">"/api/user"</span>).<span class="sy-fn">then</span>(<span class="sy-plain">r</span> => <span class="sy-plain">r</span>.<span class="sy-fn">json</span>()),
+  <span class="sy-num">3</span>,    <span class="sy-comment">// try up to 3 times</span>
+  <span class="sy-num">500</span>   <span class="sy-comment">// wait 500ms between retries</span>
+)</pre></div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">📈</span><h2 class="section-title">Exponential Backoff</h2><div class="section-line"></div></div>
+  <p>Fixed-delay retries can overwhelm a struggling server — every client retrying at the same interval creates synchronized traffic spikes. <span class="highlight">Exponential backoff</span> solves this by doubling the wait time after each failure, plus a small random amount (called jitter) to spread out the traffic.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — exponential-backoff.js</div></div>
+    <div class="code-body"><pre><span class="sy-kw">async function</span> <span class="sy-fn">withExponentialBackoff</span>(<span class="sy-plain">fn</span>, <span class="sy-plain">maxRetries</span> = <span class="sy-num">4</span>) {
+  <span class="sy-kw">let</span> <span class="sy-plain">lastError</span>
+
+  <span class="sy-kw">for</span> (<span class="sy-kw">let</span> <span class="sy-plain">attempt</span> = <span class="sy-num">0</span>; <span class="sy-plain">attempt</span> < <span class="sy-plain">maxRetries</span>; <span class="sy-plain">attempt</span>++) {
+    <span class="sy-kw">try</span> {
+      <span class="sy-kw">return</span> <span class="sy-kw">await</span> <span class="sy-fn">fn</span>()
+    } <span class="sy-kw">catch</span> (<span class="sy-plain">err</span>) {
+      <span class="sy-plain">lastError</span> = <span class="sy-plain">err</span>
+
+      <span class="sy-kw">if</span> (<span class="sy-plain">attempt</span> < <span class="sy-plain">maxRetries</span> - <span class="sy-num">1</span>) {
+        <span class="sy-comment">// 2^attempt * 1000ms + up to 1000ms random jitter</span>
+        <span class="sy-comment">// attempt 0: ~1000ms, attempt 1: ~2000ms, attempt 2: ~4000ms</span>
+        <span class="sy-kw">const</span> <span class="sy-plain">delay</span> = (<span class="sy-num">2</span> ** <span class="sy-plain">attempt</span> * <span class="sy-num">1000</span>) + (<span class="sy-method">Math</span>.<span class="sy-fn">random</span>() * <span class="sy-num">1000</span>)
+        <span class="sy-kw">await</span> <span class="sy-kw">new</span> <span class="sy-fn">Promise</span>(<span class="sy-plain">r</span> => <span class="sy-fn">setTimeout</span>(<span class="sy-plain">r</span>, <span class="sy-plain">delay</span>))
+      }
+    }
+  }
+
+  <span class="sy-kw">throw</span> <span class="sy-plain">lastError</span>
+}
+
+<span class="sy-comment">// Only retry on server errors — not on client errors (400, 401, 404)</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">smartRetry</span>(<span class="sy-plain">fn</span>) {
+  <span class="sy-kw">return</span> <span class="sy-fn">withExponentialBackoff</span>(<span class="sy-kw">async</span> () => {
+    <span class="sy-kw">try</span> {
+      <span class="sy-kw">return</span> <span class="sy-kw">await</span> <span class="sy-fn">fn</span>()
+    } <span class="sy-kw">catch</span> (<span class="sy-plain">err</span>) {
+      <span class="sy-comment">// Don't retry client errors — they won't magically fix themselves</span>
+      <span class="sy-kw">if</span> (<span class="sy-plain">err</span> <span class="sy-kw">instanceof</span> <span class="sy-fn">HttpError</span> && <span class="sy-plain">err</span>.<span class="sy-prop">status</span> < <span class="sy-num">500</span>) <span class="sy-kw">throw</span> <span class="sy-plain">err</span>
+      <span class="sy-kw">throw</span> <span class="sy-plain">err</span>  <span class="sy-comment">// server errors — backoff will retry</span>
+    }
+  })
+}</pre></div>
+  </div>
+  <div class="callout callout-mindset">
+    <div class="callout-title">🧠 Mindset Shift</div>
+    <p>Don't retry 4xx errors — they're <em>your</em> fault (bad request, unauthorized, not found). A 401 isn't going to fix itself with more attempts. Retry 5xx errors and network errors — those are server-side and transient. Smart retry logic knows the difference.</p>
+  </div>
+
+  <div class="section-header"><span class="section-icon">👤</span><h2 class="section-title">User-Facing Error States</h2><div class="section-line"></div></div>
+  <p>Technical errors need to be translated into human language. Users don't care about HTTP status codes. They care whether they can continue doing what they were trying to do.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — user-error-states.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// Translate technical errors into user messages</span>
+<span class="sy-kw">function</span> <span class="sy-fn">getUserMessage</span>(<span class="sy-plain">err</span>) {
+  <span class="sy-kw">if</span> (<span class="sy-plain">err</span> <span class="sy-kw">instanceof</span> <span class="sy-fn">NetworkError</span>) {
+    <span class="sy-kw">return</span> <span class="sy-str">"Can't connect. Check your internet and try again."</span>
+  }
+  <span class="sy-kw">if</span> (<span class="sy-plain">err</span> <span class="sy-kw">instanceof</span> <span class="sy-fn">HttpError</span>) {
+    <span class="sy-kw">if</span> (<span class="sy-plain">err</span>.<span class="sy-prop">status</span> === <span class="sy-num">401</span>) <span class="sy-kw">return</span> <span class="sy-str">"You need to log in to do that."</span>
+    <span class="sy-kw">if</span> (<span class="sy-plain">err</span>.<span class="sy-prop">status</span> === <span class="sy-num">403</span>) <span class="sy-kw">return</span> <span class="sy-str">"You don't have permission for this."</span>
+    <span class="sy-kw">if</span> (<span class="sy-plain">err</span>.<span class="sy-prop">status</span> === <span class="sy-num">404</span>) <span class="sy-kw">return</span> <span class="sy-str">"That resource doesn't exist anymore."</span>
+    <span class="sy-kw">if</span> (<span class="sy-plain">err</span>.<span class="sy-prop">status</span> === <span class="sy-num">429</span>) <span class="sy-kw">return</span> <span class="sy-str">"Too many requests. Wait a moment and try again."</span>
+    <span class="sy-kw">if</span> (<span class="sy-plain">err</span>.<span class="sy-prop">status</span> >= <span class="sy-num">500</span>) <span class="sy-kw">return</span> <span class="sy-str">"Something went wrong on our end. Try again shortly."</span>
+  }
+  <span class="sy-kw">return</span> <span class="sy-str">"Something unexpected happened. Please try again."</span>
+}
+
+<span class="sy-comment">// Pattern: loading → success → error states in the UI</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">loadAndRender</span>() {
+  <span class="sy-kw">const</span> <span class="sy-plain">container</span> = <span class="sy-plain">document</span>.<span class="sy-fn">querySelector</span>(<span class="sy-str">"#content"</span>)
+  <span class="sy-plain">container</span>.<span class="sy-prop">innerHTML</span> = <span class="sy-str">"&lt;p&gt;Loading...&lt;/p&gt;"</span>
+
+  <span class="sy-kw">try</span> {
+    <span class="sy-kw">const</span> <span class="sy-plain">data</span> = <span class="sy-kw">await</span> <span class="sy-fn">apiFetch</span>(<span class="sy-str">"/api/posts"</span>)
+    <span class="sy-plain">container</span>.<span class="sy-prop">innerHTML</span> = <span class="sy-plain">data</span>.<span class="sy-fn">map</span>(<span class="sy-plain">p</span> => <span class="sy-str">`&lt;p&gt;</span>${<span class="sy-plain">p</span>.<span class="sy-prop">title</span>}<span class="sy-str">&lt;/p&gt;`</span>).<span class="sy-fn">join</span>(<span class="sy-str">""</span>)
+  } <span class="sy-kw">catch</span> (<span class="sy-plain">err</span>) {
+    <span class="sy-plain">container</span>.<span class="sy-prop">innerHTML</span> = <span class="sy-str">`
+      &lt;div class="error-state"&gt;
+        &lt;p&gt;</span>${<span class="sy-fn">getUserMessage</span>(<span class="sy-plain">err</span>)}<span class="sy-str">&lt;/p&gt;
+        &lt;button onclick="loadAndRender()"&gt;Try again&lt;/button&gt;
+      &lt;/div&gt;
+    `</span>
+  }
+}</pre></div>
+  </div>
+  <div class="callout callout-tip">
+    <div class="callout-title">💡 Pro Tip</div>
+    <p>Always give users a way to recover. An error message with a "Try again" button is infinitely better than a blank screen. The button costs you two lines of code and saves your users from thinking your app is broken.</p>
+  </div>
+
+  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body">
+      <p>I shipped a feature where any failed API call just… left the page blank. No error message. No retry button. Just nothing where content should be. Users assumed the feature didn't exist. Support got tickets. My manager got questions. I spent two hours in a meeting explaining why the page was blank instead of showing an error. Writing <span class="il" style="font-style:normal;">container.innerHTML = "Something went wrong. Try again."</span> would have taken me 30 seconds. I have never shipped a blank error state since.</p>
+    </div>
+  </div>
+
+  <div class="mini-build">
+    <div class="mini-build-header"><span class="trophy">🔬</span><span class="mb-title">MINI BUILD — Retry Wrapper + User Error State</span></div>
+    <div class="mini-build-body">
+      <p>Build a robust fetch setup with custom errors, retry logic, and user-facing error states. This pattern is portfolio-worthy.</p>
+      <div class="goal-label">Exercises:</div>
+      <ul class="step-list">
+        <li><span class="step-num">01</span> Create <span class="il">NetworkError</span> and <span class="il">HttpError</span> custom error classes</li>
+        <li><span class="step-num">02</span> Build the <span class="il">apiFetch(url)</span> wrapper that throws the right class for each failure type</li>
+        <li><span class="step-num">03</span> Build the <span class="il">withRetry(fn, maxRetries, delayMs)</span> utility</li>
+        <li><span class="step-num">04</span> Build the <span class="il">getUserMessage(err)</span> function</li>
+        <li><span class="step-num">05</span> Fetch data from JSONPlaceholder through your wrapper — display loading, success, and error states</li>
+        <li><span class="step-num">06</span> Test the error state by pointing at a broken URL — confirm the error message and retry button both appear</li>
+        <li><span class="step-num">07</span> Bonus: implement exponential backoff and watch the delays increase in the console</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="confidence-close">
+    <div class="cc-icon">⚡</div>
+    <div class="cc-heading">Your Async Code Is Now Production-Ready</div>
+    <p>Custom error types, retry logic, exponential backoff, user-facing messages, and recovery patterns — this is what separates apps that break silently from apps that handle failure gracefully. Next: AbortController, the tool for cancelling requests that no longer matter.</p>
+  </div>
+  <a class="next-post" href="#"><div><div class="next-label">// next post →</div><div class="next-title">Post 09 — AbortController: Cancelling Requests</div></div><div class="next-arrow">→</div></a>
+
+  <nav class="post-nav">
+    <a href="07-fetch-beyond-basics.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">fetch() API Beyond the Basics</span></a>
+    <a href="09-abort-controller.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">AbortController</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

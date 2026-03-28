@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post 9 — Div vs Span | CodeHerWay</title>
+<meta name="description" content="Learn the difference between div and span — when to use block vs inline containers, and why semantic elements should be your first choice.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.vs-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:0;margin:32px 0;align-items:stretch;}
+.vs-card{background:var(--bg-code);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:28px 24px;}
+.vs-card.block-card{border-color:rgba(255,105,180,0.25);}
+.vs-card.inline-card{border-color:rgba(105,210,231,0.25);}
+.vs-badge{font-family:'Fira Code',monospace;font-size:11px;text-transform:uppercase;letter-spacing:1.5px;padding:4px 12px;border-radius:6px;display:inline-block;margin-bottom:14px;}
+.vs-card.block-card .vs-badge{background:rgba(255,105,180,0.1);color:var(--pink);}
+.vs-card.inline-card .vs-badge{background:rgba(105,210,231,0.1);color:var(--sky-blue);}
+.vs-icon{font-size:36px;margin-bottom:12px;}
+.vs-name{font-family:'Fira Code',monospace;font-size:22px;font-weight:700;margin-bottom:6px;}
+.vs-card.block-card .vs-name{color:var(--pink);}
+.vs-card.inline-card .vs-name{color:var(--sky-blue);}
+.vs-tag{font-family:'Fira Code',monospace;font-size:13px;color:var(--text-muted);margin-bottom:16px;}
+.vs-desc{font-size:15px;color:var(--text-secondary);line-height:1.7;}
+.vs-divider{display:flex;align-items:center;justify-content:center;padding:0 16px;}
+.vs-divider span{font-family:'Fira Code',monospace;font-size:20px;font-weight:700;color:var(--purple);background:rgba(180,74,255,0.1);width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(180,74,255,0.2);}
+.decision-grid{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;margin:32px 0;background:var(--bg-code);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:24px 28px;align-items:center;}
+.dec-q{font-size:15px;color:var(--text-secondary);}
+.dec-a{font-family:'Fira Code',monospace;font-size:14px;padding:5px 14px;border-radius:6px;width:fit-content;}
+.dec-a.div-a{background:rgba(255,105,180,0.1);color:var(--pink);}
+.dec-a.span-a{background:rgba(105,210,231,0.1);color:var(--sky-blue);}
+.dec-a.sem-a{background:rgba(125,255,179,0.1);color:var(--mint-green);}
+@media(max-width:640px){.vs-grid{grid-template-columns:1fr;}.vs-divider{padding:12px 0;}.vs-divider span{width:36px;height:36px;font-size:16px;}.decision-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<section class="hero">
+  <div class="post-label"><span class="series-tag">HTML Fundamentals</span> Post 09 of 20</div>
+  <h1>Div vs Span:<br><span class="gradient-text">The Container Showdown</span></h1>
+  <p class="hero-sub">Two of the most common tags in HTML — and the most misused. Here's when to reach for each, and when to reach for neither.</p>
+  <div class="tag-row"><span class="tag html">&lt;div&gt;</span><span class="tag html">&lt;span&gt;</span><span class="tag html">block vs inline</span><span class="tag html">semantic first</span></div>
+</section>
+<main class="article">
+  <p>If you've written any HTML, you've used <span class="il">&lt;div&gt;</span>. Probably a lot. Probably too many. And if you've ever needed to style a single word inside a paragraph, you've probably met <span class="il">&lt;span&gt;</span> too. These are the <span class="key">generic containers</span> of HTML — no meaning, no built-in styling, no special behavior. They exist purely to group content for CSS and JavaScript.</p>
+  <p>But they work very differently. And knowing the difference matters more than you think.</p>
+  <h2>Block vs. Inline — The Core Split</h2>
+  <p>The entire difference between <span class="il">&lt;div&gt;</span> and <span class="il">&lt;span&gt;</span> comes down to one concept: <span class="key">display behavior</span>.</p>
+  <div class="vs-grid">
+    <div class="vs-card block-card"><span class="vs-badge">Block-Level</span><div class="vs-icon">📦</div><div class="vs-name">&lt;div&gt;</div><div class="vs-tag">Division / Container</div><div class="vs-desc">Takes up the full width available. Starts on a new line. Stacks vertically. Like a shipping box — it claims its own row.</div></div>
+    <div class="vs-divider"><span>vs</span></div>
+    <div class="vs-card inline-card"><span class="vs-badge">Inline</span><div class="vs-icon">🏷️</div><div class="vs-name">&lt;span&gt;</div><div class="vs-tag">Inline Container</div><div class="vs-desc">Only takes up as much width as its content. Stays in the flow of text. Like a sticky note — it sits right where you put it.</div></div>
+  </div>
+  <div class="sep"></div>
+  <h2>&lt;div&gt; — The Block Container</h2>
+  <p>A <span class="il">&lt;div&gt;</span> groups chunks of content together — card layouts, page sections, form wrappers — anything treated as a single block.</p>
+  <div class="code-window"><div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML</div></div>
+  <div class="code-body"><span class="c">&lt;!-- Grouping a card --&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"card"</span><span class="t">&gt;</span>
+  <span class="t">&lt;img</span> <span class="a">src</span>=<span class="s">"profile.jpg"</span> <span class="a">alt</span>=<span class="s">"Jenna coding"</span><span class="t">&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"card-body"</span><span class="t">&gt;</span>
+    <span class="t">&lt;h3&gt;</span>Jenna Zawaski<span class="t">&lt;/h3&gt;</span>
+    <span class="t">&lt;p&gt;</span>Frontend Developer<span class="t">&lt;/p&gt;</span>
+  <span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;/div&gt;</span></div></div>
+  <div class="sep"></div>
+  <h2>&lt;span&gt; — The Inline Container</h2>
+  <p>A <span class="il">&lt;span&gt;</span> wraps a piece of text <em>without</em> breaking the flow. Reach for it when you need to style one word, highlight a phrase, or target a small piece of content with CSS or JavaScript.</p>
+  <div class="code-window"><div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML</div></div>
+  <div class="code-body"><span class="c">&lt;!-- Styling a single word --&gt;</span>
+<span class="t">&lt;p&gt;</span>
+  I specialize in
+  <span class="t">&lt;span</span> <span class="a">class</span>=<span class="s">"highlight"</span><span class="t">&gt;</span>frontend development<span class="t">&lt;/span&gt;</span>
+  with a focus on accessibility.
+<span class="t">&lt;/p&gt;</span>
+
+<span class="c">&lt;!-- Targeting text for JS --&gt;</span>
+<span class="t">&lt;p&gt;</span>Your cart total: <span class="t">&lt;span</span> <span class="a">id</span>=<span class="s">"cart-total"</span><span class="t">&gt;</span>$0.00<span class="t">&lt;/span&gt;</span><span class="t">&lt;/p&gt;</span>
+
+<span class="c">&lt;!-- Multiple inline tags --&gt;</span>
+<span class="t">&lt;p&gt;</span>Built with
+  <span class="t">&lt;span</span> <span class="a">class</span>=<span class="s">"tag"</span><span class="t">&gt;</span>HTML<span class="t">&lt;/span&gt;</span>,
+  <span class="t">&lt;span</span> <span class="a">class</span>=<span class="s">"tag"</span><span class="t">&gt;</span>CSS<span class="t">&lt;/span&gt;</span>, and
+  <span class="t">&lt;span</span> <span class="a">class</span>=<span class="s">"tag"</span><span class="t">&gt;</span>JavaScript<span class="t">&lt;/span&gt;</span>.
+<span class="t">&lt;/p&gt;</span></div></div>
+  <div class="sep"></div>
+  <h2>Side by Side — Same Content, Different Containers</h2>
+  <div class="code-window"><div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML</div></div>
+  <div class="code-body"><span class="c">&lt;!-- div = each on its own line --&gt;</span>
+<span class="t">&lt;div</span> <span class="a">style</span>=<span class="s">"background: pink;"</span><span class="t">&gt;</span>Block One<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">style</span>=<span class="s">"background: lavender;"</span><span class="t">&gt;</span>Block Two<span class="t">&lt;/div&gt;</span>
+
+<span class="c">&lt;!-- span = side by side --&gt;</span>
+<span class="t">&lt;span</span> <span class="a">style</span>=<span class="s">"background: pink;"</span><span class="t">&gt;</span>Inline One<span class="t">&lt;/span&gt;</span>
+<span class="t">&lt;span</span> <span class="a">style</span>=<span class="s">"background: lavender;"</span><span class="t">&gt;</span>Inline Two<span class="t">&lt;/span&gt;</span></div></div>
+  <div class="render-label">↳ Browser Output</div>
+  <div class="render-box">
+    <div style="background:#ffb6c1;padding:8px 14px;margin-bottom:4px;border-radius:4px;">Block One</div>
+    <div style="background:#e6e6fa;padding:8px 14px;border-radius:4px;margin-bottom:16px;">Block Two</div>
+    <div><span style="background:#ffb6c1;padding:4px 10px;border-radius:4px;">Inline One</span> <span style="background:#e6e6fa;padding:4px 10px;border-radius:4px;">Inline Two</span></div>
+  </div>
+  <p>The <span class="il">&lt;div&gt;</span> elements stretch across full width and stack. The <span class="il">&lt;span&gt;</span> elements sit side by side, only as wide as they need to be.</p>
+  <div class="callout tip"><div class="callout-title">💡 Quick Rule</div><p>Wrapping a <strong>section or group of elements</strong>? → <span class="il">&lt;div&gt;</span><br>Wrapping <strong>a word or phrase inside text</strong>? → <span class="il">&lt;span&gt;</span></p></div>
+  <div class="sep"></div>
+  <h2>The Real Talk: Stop Overusing &lt;div&gt;</h2>
+  <p><span class="il">&lt;div&gt;</span> is not the default tag for everything — it's the <span class="key">last resort</span>. Before you type it, ask: is there a semantic element that describes what this content actually <em>is</em>?</p>
+  <div class="code-window"><div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML · ❌ Div Soup</div></div>
+  <div class="code-body"><span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"header"</span><span class="t">&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"nav"</span><span class="t">&gt;</span>
+    <span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"nav-item"</span><span class="t">&gt;</span>Home<span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"main"</span><span class="t">&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"article"</span><span class="t">&gt;</span>...<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"footer"</span><span class="t">&gt;</span>...<span class="t">&lt;/div&gt;</span></div></div>
+  <div class="code-window"><div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML · ✅ Semantic</div></div>
+  <div class="code-body"><span class="t">&lt;header&gt;</span>
+  <span class="t">&lt;nav&gt;</span>
+    <span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"/"</span><span class="t">&gt;</span>Home<span class="t">&lt;/a&gt;</span>
+  <span class="t">&lt;/nav&gt;</span>
+<span class="t">&lt;/header&gt;</span>
+<span class="t">&lt;main&gt;</span>
+  <span class="t">&lt;article&gt;</span>...<span class="t">&lt;/article&gt;</span>
+<span class="t">&lt;/main&gt;</span>
+<span class="t">&lt;footer&gt;</span>...<span class="t">&lt;/footer&gt;</span></div></div>
+  <div class="callout mindset"><div class="callout-title">🧠 The Mindset Shift</div><p>Before you type <span class="il">&lt;div&gt;</span>, ask: "Is there a semantic element that describes what this actually is?" Navigation → <span class="il">&lt;nav&gt;</span>. Article → <span class="il">&lt;article&gt;</span>. Sidebar → <span class="il">&lt;aside&gt;</span>. Section → <span class="il">&lt;section&gt;</span>. Only when no semantic element fits do you reach for <span class="il">&lt;div&gt;</span>.</p></div>
+  <div class="sep"></div>
+  <h2>When to Use What — The Decision Guide</h2>
+  <div class="decision-grid">
+    <div class="dec-q">Wrapping a layout section for CSS Grid/Flexbox?</div><div class="dec-a div-a">&lt;div&gt;</div>
+    <div class="dec-q">Styling a word inside a paragraph?</div><div class="dec-a span-a">&lt;span&gt;</div>
+    <div class="dec-q">Building a page header area?</div><div class="dec-a sem-a">&lt;header&gt;</div>
+    <div class="dec-q">Creating a navigation menu?</div><div class="dec-a sem-a">&lt;nav&gt;</div>
+    <div class="dec-q">Grouping a blog post?</div><div class="dec-a sem-a">&lt;article&gt;</div>
+    <div class="dec-q">Adding a sidebar?</div><div class="dec-a sem-a">&lt;aside&gt;</div>
+    <div class="dec-q">Wrapping your main content?</div><div class="dec-a sem-a">&lt;main&gt;</div>
+    <div class="dec-q">Generic container with no semantic meaning?</div><div class="dec-a div-a">&lt;div&gt;</div>
+    <div class="dec-q">Generic inline wrapper with no semantic meaning?</div><div class="dec-a span-a">&lt;span&gt;</div>
+  </div>
+  <div class="callout info"><div class="callout-title">ℹ️ Remember</div><p><span class="il">&lt;div&gt;</span> and <span class="il">&lt;span&gt;</span> are both <strong>semantically neutral</strong>. Use semantic elements first. Use div and span only when you need a container that doesn't describe its content.</p></div>
+  <div class="sep"></div>
+  <div class="devfession">
+    <div class="devfession-header">// dev_fession</div>
+    <div class="devfession-body">
+      <p>My first portfolio site had 47 nested divs. Forty-seven. The whole page was div > div > div > div like some kind of HTML turducken.</p>
+      <p>I didn't know <span class="il">&lt;main&gt;</span> existed. I didn't know <span class="il">&lt;section&gt;</span> was a thing. I was out here writing <span class="il">&lt;div class="footer"&gt;</span> like <span class="il">&lt;footer&gt;</span> wasn't right there, free, waiting for me.</p>
+      <p>The day I learned semantic HTML, I refactored the whole thing and deleted 30 divs. It felt like cleaning out a closet. 🧹</p>
+    </div>
+    <div class="devfession-footer"><span>@itcodegirl</span><span class="tagline">CodeHerWay</span></div>
+  </div>
+  <div class="mini-build">
+    <div class="mini-build-header"><h3>🔨 Mini Build: Card Component</h3></div>
+    <div class="mini-build-body">
+      <p>Build a project card using <span class="il">&lt;div&gt;</span> and <span class="il">&lt;span&gt;</span> correctly alongside semantic elements:</p>
+      <div class="step"><div class="step-num">1</div><div class="step-text">Use an <span class="sky">&lt;article&gt;</span> as the card wrapper — it's self-contained content.</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text">Use a <span class="sky">&lt;div&gt;</span> inside for layout grouping (wrapping image and text body for Flexbox).</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text">Use <span class="sky">&lt;span&gt;</span> for inline badges — tech tags like "HTML", "CSS", "React" that sit in a row.</div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text">Use <span class="sky">&lt;h3&gt;</span> for the project title — not a styled div, not a span.</div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-text">Use <span class="sky">&lt;footer&gt;</span> at the bottom of the card for meta info like date and read time.</div></div>
+    </div>
+  </div>
+  <div class="sep"></div>
+  <h2>The Bottom Line</h2>
+  <p><span class="il">&lt;div&gt;</span> is a block-level container. <span class="il">&lt;span&gt;</span> is an inline container. Neither carries semantic meaning — they're blank boxes you style however you want. But the goal is to <strong>use them as little as possible.</strong> Semantic elements do the same job with meaning attached. Use <span class="il">&lt;div&gt;</span> when you need a block container with no semantic role. Use <span class="il">&lt;span&gt;</span> for inline wrappers with no semantic role. And reach for semantic elements first — always.</p>
+  <nav class="post-nav">
+    <a href="08-semantic-html.html" class="post-nav-link"><span class="nav-label">← Previous</span><span class="nav-title">Semantic HTML (Extremely Important)</span></a>
+    <a href="10-accessibility-basics.html" class="post-nav-link next"><span class="nav-label">Next →</span><span class="nav-title">Accessibility (A11Y Basics)</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">← Back to All Posts</a></div>
+</main>
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

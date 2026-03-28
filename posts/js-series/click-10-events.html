@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Events: addEventListener, Event Delegation & the Event Object | CodeHerWay</title>
+<meta name="description" content="addEventListener, event delegation, common event types, and the event object. How JavaScript responds to users. Beginner tutorial from CodeHerWay.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.event-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin:24px 0;}
+.event-card{background:var(--bg-card);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px;}
+.event-name{font-family:'Fira Code',monospace;font-size:13px;font-weight:700;color:var(--gold);margin-bottom:4px;}
+.event-desc{font-size:13px;color:var(--text-muted);}
+
+@media(max-width:375px){main{padding:20px 14px 48px!important;}.code-body{font-size:11.5px;}}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="chw-wrapper">
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Click</span> Post 10 of 15</div>
+  <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+  <span class="series-label">JavaScript, But Make It Click &nbsp;·&nbsp; Post 10 of 15</span>
+  <div class="post-number">Post 10 of 15</div>
+  <h1 class="post-title">JavaScript Events</h1>
+  <p class="post-subtitle">Users click, type, scroll, and submit. Events are how JavaScript listens and responds to every one of those actions.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 10 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Complete Beginners</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+<main id="main-content">
+<div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">Your Page Should React to People</h2><div class="section-line"></div></div>
+  <p>In <a href="js-click-post09-the-dom.html" style="color:var(--sky-blue);font-weight:600">Post 09</a> you learned to change the DOM directly. But in real life, those changes happen because a <em>user did something</em> — clicked a button, typed in a field, submitted a form. <span class="highlight">Events</span> are the mechanism that connects user actions to your JavaScript code.</p>
+<div class="section-header"><span class="section-icon">🧱</span><h2 class="section-title">addEventListener: The Right Way</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>The event object is the part most beginners ignore. It's the first argument passed to every event handler — usually called <code class='il'>e</code> or <code class='il'>event</code>. It contains everything about what just happened: which element was clicked (<code class='il'>e.target</code>), which key was pressed (<code class='il'>e.key</code>), where the mouse was (<code class='il'>e.clientX/Y</code>). You'll use <code class='il'>e.target</code> and <code class='il'>e.preventDefault()</code> constantly.</p>
+  </div>
+
+</div>  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — events.js</div></div>
+    <div class="code-body"><span class="sy-comment">// Syntax: element.addEventListener("eventType", callbackFunction)</span>
+<span class="sy-kw">const</span> <span class="sy-plain">btn</span> = <span class="sy-plain">document</span>.<span class="sy-fn">querySelector</span>(<span class="sy-str">"#my-btn"</span>)
+
+<span class="sy-plain">btn</span>.<span class="sy-fn">addEventListener</span>(<span class="sy-str">"click"</span>, () => {
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Button clicked!"</span>)
+})
+
+<span class="sy-comment">// The event object has info about what happened</span>
+<span class="sy-plain">btn</span>.<span class="sy-fn">addEventListener</span>(<span class="sy-str">"click"</span>, (<span class="sy-plain">event</span>) => {
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">event</span>.<span class="sy-prop">type</span>)      <span class="sy-comment">// "click"</span>
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">event</span>.<span class="sy-prop">target</span>)     <span class="sy-comment">// the element that was clicked</span>
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">event</span>.<span class="sy-prop">target</span>.<span class="sy-prop">id</span>)  <span class="sy-comment">// "my-btn"</span>
+})
+
+<span class="sy-comment">// once: true — listener fires only once then auto-removes itself</span>
+<span class="sy-plain">btn</span>.<span class="sy-fn">addEventListener</span>(<span class="sy-str">"click"</span>, <span class="sy-fn">handleClick</span>, { <span class="sy-prop">once</span>: <span class="sy-bool">true</span> })
+
+<span class="sy-comment">// removeEventListener — always pass the exact same function reference</span>
+<span class="sy-kw">function</span> <span class="sy-fn">handleClick</span>() { <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"clicked"</span>) }
+<span class="sy-plain">btn</span>.<span class="sy-fn">addEventListener</span>(<span class="sy-str">"click"</span>, <span class="sy-fn">handleClick</span>)
+<span class="sy-plain">btn</span>.<span class="sy-fn">removeEventListener</span>(<span class="sy-str">"click"</span>, <span class="sy-fn">handleClick</span>)  <span class="sy-comment">// removes the listener</span></div>
+  </div>  <div class="callout callout-warn">
+    <div class="callout-title">⚠️ Memory Leaks from Forgetting removeEventListener</div>
+    <p>Every listener you add stays active until explicitly removed or the element is deleted. If you add listeners inside a loop, or on elements that get replaced/re-created, you'll accumulate listeners and leak memory. Name your handler functions so you can pass the same reference to <code class="il">removeEventListener</span>. Anonymous arrow functions can't be removed.</p>
+  </div>  <div class="section-header"><span class="section-icon">📋</span><h2 class="section-title">Common Events You'll Use Daily</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>Event delegation sounds advanced but the idea is simple: instead of attaching a listener to every child element, you attach one listener to the parent. When a child is clicked, the event bubbles up to the parent. You check <code class='il'>e.target</code> to know which child was clicked. This is how you handle clicks on elements that don't exist yet when the page loads.</p>
+  </div>
+
+</div>
+  <div class="event-grid">
+    <div class="event-card"><div class="event-name">click</div><div class="event-desc">User clicks an element</div></div>
+    <div class="event-card"><div class="event-name">input</div><div class="event-desc">User types (fires every keystroke)</div></div>
+    <div class="event-card"><div class="event-name">submit</div><div class="event-desc">Form is submitted</div></div>
+    <div class="event-card"><div class="event-name">change</div><div class="event-desc">Value changes and loses focus</div></div>
+    <div class="event-card"><div class="event-name">keydown</div><div class="event-desc">A key is pressed — check e.key</div></div>
+    <div class="event-card"><div class="event-name">mouseover</div><div class="event-desc">Mouse hovers over element</div></div>
+    <div class="event-card"><div class="event-name">DOMContentLoaded</div><div class="event-desc">HTML parsed; safe to query DOM</div></div>
+    <div class="event-card"><div class="event-name">scroll</div><div class="event-desc">User scrolls the page</div></div>
+  </div>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — event-types.js</div></div>
+    <div class="code-body"><span class="sy-comment">// Input — fires on every keystroke</span>
+<span class="sy-plain">document</span>.<span class="sy-fn">querySelector</span>(<span class="sy-str">"#name-input"</span>).<span class="sy-fn">addEventListener</span>(<span class="sy-str">"input"</span>, (<span class="sy-plain">e</span>) => {
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Current value:"</span>, <span class="sy-plain">e</span>.<span class="sy-prop">target</span>.<span class="sy-prop">value</span>)
+})
+
+<span class="sy-comment">// Submit — always preventDefault to stop the page from refreshing</span>
+<span class="sy-plain">document</span>.<span class="sy-fn">querySelector</span>(<span class="sy-str">"form"</span>).<span class="sy-fn">addEventListener</span>(<span class="sy-str">"submit"</span>, (<span class="sy-plain">e</span>) => {
+  <span class="sy-plain">e</span>.<span class="sy-fn">preventDefault</span>()
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Form submitted without page refresh"</span>)
+})
+
+<span class="sy-comment">// Keydown — use e.key for the key name (not deprecated keyCode)</span>
+<span class="sy-plain">document</span>.<span class="sy-fn">addEventListener</span>(<span class="sy-str">"keydown"</span>, (<span class="sy-plain">e</span>) => {
+  <span class="sy-kw">if</span> (<span class="sy-plain">e</span>.<span class="sy-prop">key</span> === <span class="sy-str">"Escape"</span>) <span class="sy-fn">closeModal</span>()
+  <span class="sy-kw">if</span> (<span class="sy-plain">e</span>.<span class="sy-prop">key</span> === <span class="sy-str">"Enter"</span>)  <span class="sy-fn">handleSubmit</span>()
+})</div>
+  </div><div class="section-header"><span class="section-icon">🎯</span><h2 class="section-title">Event Delegation: One Listener for Many Elements</h2><div class="section-line"></div></div>
+  <p>Instead of adding a listener to every child element, add <em>one listener</em> to a parent and check which element was actually clicked via <span class="highlight">event.target</span>. This is essential for dynamically-created elements — new DOM nodes don't have listeners on them unless you use delegation.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — event-delegation.js</div></div>
+    <div class="code-body"><span class="sy-comment">// Without delegation — breaks for dynamically added items</span>
+<span class="sy-plain">document</span>.<span class="sy-fn">querySelectorAll</span>(<span class="sy-str">".delete-btn"</span>).<span class="sy-fn">forEach</span>(<span class="sy-plain">btn</span> => {
+  <span class="sy-plain">btn</span>.<span class="sy-fn">addEventListener</span>(<span class="sy-str">"click"</span>, <span class="sy-fn">handleDelete</span>)  <span class="sy-comment">// won't work on buttons added later</span>
+})
+
+<span class="sy-comment">// With delegation — one listener on the parent, works for all children</span>
+<span class="sy-plain">document</span>.<span class="sy-fn">querySelector</span>(<span class="sy-str">"#todo-list"</span>).<span class="sy-fn">addEventListener</span>(<span class="sy-str">"click"</span>, (<span class="sy-plain">e</span>) => {
+  <span class="sy-kw">if</span> (<span class="sy-plain">e</span>.<span class="sy-prop">target</span>.<span class="sy-fn">matches</span>(<span class="sy-str">".delete-btn"</span>)) {
+    <span class="sy-plain">e</span>.<span class="sy-prop">target</span>.<span class="sy-prop">closest</span>(<span class="sy-str">"li"</span>)?.<span class="sy-fn">remove</span>()
+  }
+})</span></div>
+  </div>  <div class="callout callout-mindset">
+    <div class="callout-title">🧠 Callbacks — The Mental Model</div>
+    <p>Event listeners don't run immediately — they <strong>wait</strong>. When you write <code class="il">addEventListener("click", fn)</span>, you're saying "keep this function on standby and run it whenever a click happens." That waiting function is called a <strong>callback</strong>. JavaScript is full of callbacks — this is your first one.</p>
+  </div>  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body"><p>I built my first interactive page — a click counter — and it worked. I clicked the button and the number went up. I showed it to my roommate and said "watch this" and clicked it seventeen times. She was not impressed. I was. Build the click counter. Show someone. Feel proud regardless of whether they get it.</p></div>
+  </div>  <div class="mini-build">
+    <div class="mini-build-header"><span class="trophy">🏆</span><span class="mb-title">MINI BUILD — Click Counter + Dark Mode Toggle</span></div>
+    <div class="mini-build-body"><p>Two classics in one.</p><div class="goal-label">Your steps:</div><ul class="step-list"><li><span class="step-num">01</span> Add an <code class="il">&lt;h2 id="count"&gt;0&lt;/h2&gt;</span> and two buttons: <code class="il">+</span> and <code class="il">-</span></li>
+<li><span class="step-num">02</span> Declare <code class="il">let count = 0</span>. Add click listeners: + increments, - decrements; both update the h2's <code class="il">textContent</span></li>
+<li><span class="step-num">03</span> Add a "Toggle Dark Mode" button; in CSS define a <code class="il">.dark</span> class with different colors</li>
+<li><span class="step-num">04</span> In JS: <code class="il">document.body.classList.toggle("dark")</span> on click</li>
+<li><span class="step-num">05</span> Bonus: prevent the counter from going below 0</li>
+<li><span class="step-num">06</span> Bonus: add a named handler function and use <code class="il">removeEventListener</span> to disable one of the buttons after 10 clicks</li></ul></div>
+  </div>  <div class="confidence-close">
+    <div class="cc-icon">💛</div>
+    <div class="cc-heading">Your Pages Now Respond to People</div>
+    <p>You know how to listen for user actions, access event data, prevent default browser behavior, remove listeners to avoid leaks, and use delegation for dynamic elements. Next: scope and hoisting — understanding why your variables behave the way they do.</p>
+  </div>  <a class="next-post" href="js-click-post11-scope-hoisting.html">
+    <div><div class="next-label">// next post →</div><div class="next-title">Post 11 — Scope, Hoisting &amp; Why let/const Rule</div></div>
+    <div class="next-arrow">→</div>
+  </a>
+
+  <nav class="post-nav">
+    <a href="click-09-the-dom.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">The DOM</span></a>
+    <a href="click-11-scope-hoisting.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Scope, Hoisting and Closures</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+</div>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

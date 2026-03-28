@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Debugging & try/catch: How to Find and Fix Errors | CodeHerWay</title>
+<meta name="description" content="How to read error messages, use the console, set breakpoints, and handle errors with try/catch. Debugging skills that save hours. CodeHerWay.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.error-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:24px 0;}
+@media(max-width:600px){.error-grid{grid-template-columns:1fr;}}
+.error-card{background:var(--bg-card);border:1px solid rgba(255,107,107,.15);border-radius:10px;padding:16px;}
+.error-type{font-family:'Fira Code',monospace;font-size:13px;font-weight:700;color:var(--coral);margin-bottom:4px;}
+.error-example{font-family:'Fira Code',monospace;font-size:12px;color:var(--text-muted);margin-bottom:6px;line-height:1.5;white-space:pre-wrap;}
+.error-cause{font-size:13px;color:var(--text-muted);}
+
+@media(max-width:375px){main{padding:20px 14px 48px!important;}.code-body{font-size:11.5px;}}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="chw-wrapper">
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Click</span> Post 13 of 15</div>
+  <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+  <span class="series-label">JavaScript, But Make It Click &nbsp;·&nbsp; Post 13 of 15</span>
+  <div class="post-number">Post 13 of 15</div>
+  <h1 class="post-title">JavaScript Debugging & try/catch</h1>
+  <p class="post-subtitle">Every developer sees errors. The good ones know how to read them, find them, and fix them fast.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 10 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Intermediate</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+<main id="main-content">
+<div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">Errors Are Not Failures. They're Feedback.</h2><div class="section-line"></div></div>
+  <p>Every developer encounters errors constantly — including seniors. The difference is that experienced developers know how to read them, find them fast, and fix them without panic. This post turns you into that developer.</p>
+<div class="section-header"><span class="section-icon">🚨</span><h2 class="section-title">The Four Error Types You'll See Most</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>The console is more than just <code class='il'>console.log()</code>. <code class='il'>console.table()</code> displays arrays and objects in a formatted table — genuinely useful when debugging a list of user data. <code class='il'>console.group()</code> lets you collapse related logs. <code class='il'>console.time()</code> measures performance. You don't need all of these, but knowing <code class='il'>console.table()</code> alone will save you time every week.</p>
+  </div>
+
+</div>
+  <div class="error-grid">
+    <div class="error-card">
+      <div class="error-type">SyntaxError</div>
+      <div class="error-example">const x = {    ← missing closing brace</div>
+      <div class="error-cause">Invalid JavaScript syntax. Code won't run at all.</div>
+    </div>
+    <div class="error-card">
+      <div class="error-type">ReferenceError</div>
+      <div class="error-example">console.log(username)  ← never declared</div>
+      <div class="error-cause">Variable doesn't exist in this scope.</div>
+    </div>
+    <div class="error-card">
+      <div class="error-type">TypeError</div>
+      <div class="error-example">Cannot read properties of null
+  (reading 'classList')</div>
+      <div class="error-cause">The #1 beginner error. You tried to use a method on null/undefined — usually because querySelector found nothing.</div>
+    </div>
+    <div class="error-card">
+      <div class="error-type">RangeError</div>
+      <div class="error-example">Maximum call stack size exceeded</div>
+      <div class="error-cause">Value out of valid range — often infinite recursion.</div>
+    </div>
+  </div>
+  <div class="callout callout-info">
+    <div class="callout-title">ℹ️ Reading a TypeError</div>
+    <p>The most common error beginners see: <code class="il">Cannot read properties of null (reading 'classList')</span>. This means <code class="il">querySelector</span> returned <code class="il">null</span> (element not found) and you tried to use <code class="il">.classList</span> on it. The fix: check your selector, make sure the element exists in HTML, and ensure your script runs after the DOM loads.</p>
+  </div><div class="section-header"><span class="section-icon">🔍</span><h2 class="section-title">Console Debugging: Your First Line of Defense</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>try/catch has one critical gotcha: it only catches synchronous errors. If the error happens inside a Promise or async function, try/catch in the outer scope won't catch it. We cover async error handling properly in the next post — and it gets its own deep dive in the Async series. For now: try/catch is your tool for synchronous code and JSON parsing.</p>
+  </div>
+
+</div>  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — debugging.js</div></div>
+    <div class="code-body"><span class="sy-comment">// Log intermediate values to understand what's happening</span>
+<span class="sy-kw">function</span> <span class="sy-fn">processCart</span>(<span class="sy-plain">items</span>) {
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"items received:"</span>, <span class="sy-plain">items</span>)  <span class="sy-comment">// ← checkpoint 1</span>
+
+  <span class="sy-kw">const</span> <span class="sy-plain">total</span> = <span class="sy-plain">items</span>.<span class="sy-fn">reduce</span>((<span class="sy-plain">sum</span>, <span class="sy-plain">item</span>) => {
+    <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"processing:"</span>, <span class="sy-plain">item</span>)  <span class="sy-comment">// ← checkpoint 2</span>
+    <span class="sy-kw">return</span> <span class="sy-plain">sum</span> + <span class="sy-plain">item</span>.<span class="sy-prop">price</span>
+  }, <span class="sy-num">0</span>)
+
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"total:"</span>, <span class="sy-plain">total</span>)        <span class="sy-comment">// ← checkpoint 3</span>
+  <span class="sy-kw">return</span> <span class="sy-plain">total</span>
+}
+
+<span class="sy-comment">// console.table — great for arrays of objects</span>
+<span class="sy-kw">const</span> <span class="sy-plain">users</span> = [
+  { <span class="sy-prop">name</span>: <span class="sy-str">"Jenna"</span>, <span class="sy-prop">age</span>: <span class="sy-num">27</span> },
+  { <span class="sy-prop">name</span>: <span class="sy-str">"Maya"</span>,  <span class="sy-prop">age</span>: <span class="sy-num">24</span> },
+]
+<span class="sy-method">console</span>.<span class="sy-fn">table</span>(<span class="sy-plain">users</span>)  <span class="sy-comment">// renders as a clean table in DevTools</span></div>
+  </div>  <div class="callout callout-tip">
+    <div class="callout-title">💡 DevTools Breakpoints</div>
+    <p>In Chrome: DevTools → <strong>Sources tab</strong>. In Firefox: DevTools → <strong>Debugger tab</strong>. Click any line number to set a breakpoint — execution pauses there and you can inspect every variable's value at that exact moment. Far more powerful than console.log for complex bugs.</p>
+  </div><div class="section-header"><span class="section-icon">🛡️</span><h2 class="section-title">try / catch: Handle Errors Gracefully</h2><div class="section-line"></div></div>  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — try-catch.js</div></div>
+    <div class="code-body"><span class="sy-comment">// Without try/catch — one bad line crashes everything after it</span>
+<span class="sy-plain">JSON</span>.<span class="sy-fn">parse</span>(<span class="sy-str">"this is not json"</span>)  <span class="sy-comment">// throws SyntaxError — script stops</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"never runs"</span>)
+
+<span class="sy-comment">// With try/catch — error is caught, execution continues</span>
+<span class="sy-kw">try</span> {
+  <span class="sy-kw">const</span> <span class="sy-plain">data</span> = <span class="sy-plain">JSON</span>.<span class="sy-fn">parse</span>(<span class="sy-str">"invalid json"</span>)
+} <span class="sy-kw">catch</span> (<span class="sy-plain">error</span>) {
+  <span class="sy-method">console</span>.<span class="sy-fn">error</span>(<span class="sy-plain">error</span>.<span class="sy-prop">name</span>)     <span class="sy-comment">// "SyntaxError" — the error type</span>
+  <span class="sy-method">console</span>.<span class="sy-fn">error</span>(<span class="sy-plain">error</span>.<span class="sy-prop">message</span>)  <span class="sy-comment">// "Unexpected token i in JSON..."</span>
+} <span class="sy-kw">finally</span> {
+  <span class="sy-comment">// runs whether try succeeded or catch fired</span>
+  <span class="sy-comment">// use this to hide loading spinners, re-enable buttons, clean up</span>
+  <span class="sy-fn">hideLoadingSpinner</span>()
+}
+
+<span class="sy-comment">// Throw your own errors with meaningful messages</span>
+<span class="sy-kw">function</span> <span class="sy-fn">divide</span>(<span class="sy-plain">a</span>, <span class="sy-plain">b</span>) {
+  <span class="sy-kw">if</span> (<span class="sy-plain">b</span> === <span class="sy-num">0</span>) <span class="sy-kw">throw</span> <span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-str">"Division by zero"</span>)
+  <span class="sy-kw">return</span> <span class="sy-plain">a</span> / <span class="sy-plain">b</span>
+}
+
+<span class="sy-kw">try</span> {
+  <span class="sy-fn">divide</span>(<span class="sy-num">10</span>, <span class="sy-num">0</span>)
+} <span class="sy-kw">catch</span> (<span class="sy-plain">e</span>) {
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">e</span>.<span class="sy-prop">name</span>)     <span class="sy-comment">// "Error"</span>
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">e</span>.<span class="sy-prop">message</span>)  <span class="sy-comment">// "Division by zero"</span>
+}</div>
+  </div>  <div class="callout callout-mindset">
+    <div class="callout-title">🧠 When to Use try/catch</div>
+    <p>Use <code class="il">try/catch</span> around code that can fail for reasons outside your control: <code class="il">JSON.parse()</span>, network requests, anything that depends on external data. Don't wrap every line — only the parts that might throw. Use <code class="il">finally</span> to restore UI state (hide spinners, re-enable buttons) regardless of whether an error occurred.</p>
+  </div>  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body"><p>My first live bug was a TypeError that crashed the whole page because I forgot a null check. A user clicked a button, <span class="il" style="font-style:normal">querySelector</span> found nothing, and <span class="il" style="font-style:normal">.classList.add()</span> threw. Nothing on the page worked after that. Now I defensively check every DOM query and wrap anything async in try/catch. One caught error is worth a hundred logged ones.</p></div>
+  </div>  <div class="mini-build">
+    <div class="mini-build-header"><span class="trophy">🏆</span><span class="mb-title">MINI BUILD — Break It Intentionally, Then Fix It</span></div>
+    <div class="mini-build-body"><p>The best way to get comfortable with errors is to cause them on purpose.</p><div class="goal-label">Your steps:</div><ul class="step-list"><li><span class="step-num">01</span> Try <code class="il">console.log(x)</span> before declaring <code class="il">x</span> with let — see the TDZ error. Compare with var — see undefined.</li>
+<li><span class="step-num">02</span> Call <code class="il">null.classList.add("x")</span> — read the TypeError message carefully: "Cannot read properties of null (reading 'classList')"</li>
+<li><span class="step-num">03</span> Wrap <code class="il">JSON.parse("bad json")</span> in try/catch — log <code class="il">error.name</span> and <code class="il">error.message</span> separately</li>
+<li><span class="step-num">04</span> Add a <code class="il">finally</span> block that always runs — log "cleanup complete" to confirm it fires both on success and error</li>
+<li><span class="step-num">05</span> Write a function that throws a custom <code class="il">new Error("Your message")</span> and catch it</li>
+<li><span class="step-num">06</span> Bonus: Use DevTools breakpoints (Sources/Debugger tab) to pause execution and inspect variable values</li></ul></div>
+  </div>  
+  <div class="callout callout-info" role="note">
+    <div class="callout-title">ℹ️ Async Errors Are Different</div>
+    <p>The try/catch you just learned handles synchronous errors. Async code — fetch, Promises, async/await — has its own error patterns. We cover those in <a href="js-click-post14-async-javascript.html" style="color:var(--sky-blue);font-weight:600">Post 14: Async JavaScript</a>, and the full deep-dive is in the Async series.</p>
+  </div>
+
+<div class="confidence-close">
+    <div class="cc-icon">💛</div>
+    <div class="cc-heading">You Just Became a Debugger</div>
+    <p>Errors are not the enemy — ignored errors are. You know the four main types, how to read their messages, how to use console.log and breakpoints strategically, and how to handle failures gracefully with try/catch. Next: the final big concept — async JavaScript, fetch, and promises.</p>
+  </div>  <a class="next-post" href="js-click-post14-async-javascript.html">
+    <div><div class="next-label">// next post →</div><div class="next-title">Post 14 — Async JavaScript: Fetch, Promises &amp; async/await</div></div>
+    <div class="next-arrow">→</div>
+  </a>
+
+  <nav class="post-nav">
+    <a href="click-12-modern-js.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Modern JavaScript</span></a>
+    <a href="click-14-async.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Async JavaScript</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+</div>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

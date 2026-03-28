@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post 1 — What HTML Actually Is (And Why It's Not Scary) | CodeHerWay</title>
+<meta name="description" content="HTML stripped of intimidation — what it really is, how browsers use it, and why it's the foundation that makes everything else possible." />
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.hero-meta{display: flex;
+    gap: 20px;
+    margin-bottom: 28px;
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    color: var(--text-muted);}
+.sel{color: var(--pink);}
+.prp{color: var(--sky-blue);}
+.val{color: var(--mint-green);}
+.fn{color: var(--gold);}
+.kw{color: var(--purple);}
+.layers{display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 32px 0;}
+.layer-card{background: var(--bg-code);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 22px;
+    text-align: center;
+    transition: border-color 0.3s, transform 0.3s;}
+.layer-card:hover{transform: translateY(-3px);}
+.layer-card.html-card{border-color: rgba(255,105,180,0.25);}
+.layer-card.css-card{border-color: rgba(105,210,231,0.25);}
+.layer-card.js-card{border-color: rgba(255,211,105,0.25);}
+.layer-card:hover.html-card{border-color: var(--pink);}
+.layer-card:hover.css-card{border-color: var(--sky-blue);}
+.layer-card:hover.js-card{border-color: var(--gold);}
+.layer-icon{font-size: 32px; margin-bottom: 10px;}
+.layer-name{font-family: 'Fira Code', monospace; font-size: 16px; font-weight: 700; margin-bottom: 4px;}
+.layer-card.html-card .layer-name{color: var(--pink);}
+.layer-card.css-card .layer-name{color: var(--sky-blue);}
+.layer-card.js-card .layer-name{color: var(--gold);}
+.layer-role{font-size: 13px; color: var(--text-muted); font-family: 'Fira Code', monospace;}
+.layer-desc{font-size: 14px; color: var(--text-secondary); margin-top: 10px; line-height: 1.6;}
+.flow-steps{margin: 32px 0; position: relative;}
+.flow-step{display: flex; gap: 18px; margin-bottom: 6px; align-items: flex-start; position: relative;}
+.flow-num{font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--purple);
+    background: rgba(180,74,255,0.1);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid rgba(180,74,255,0.2);
+    position: relative;
+    z-index: 1;}
+.flow-text{flex: 1; padding: 5px 0 18px; color: var(--text-primary); font-size: 16px;}
+.flow-text strong{color: #fff;}
+.flow-connector{position: absolute;
+    left: 15px;
+    top: 32px;
+    width: 2px;
+    height: calc(100% - 16px);
+    background: linear-gradient(180deg, rgba(180,74,255,0.3), rgba(180,74,255,0.05));}
+.walkthrough{margin: 32px 0;}
+.walk-item{display: flex; gap: 16px; margin-bottom: 16px; align-items: flex-start;}
+.walk-code{font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    background: rgba(180,74,255,0.08);
+    color: var(--pink);
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid rgba(180,74,255,0.12);
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 175px;
+    text-align: center;}
+.walk-desc{flex: 1; color: var(--text-secondary); font-size: 15px; padding-top: 4px; line-height: 1.65;}
+.overwhelm-grid{display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0;}
+.overwhelm-card{background: var(--bg-code);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 22px;}
+.overwhelm-card h4{font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; color: var(--coral); margin-bottom: 8px;}
+.overwhelm-card p{font-size: 15px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 0;}
+.overwhelm-card .fix{margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); color: var(--mint-green); font-size: 14px; font-weight: 500;}
+.setup-options{display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0;}
+.setup-card{background: var(--bg-code);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 24px;}
+.setup-card h4{font-family: 'Fira Code', monospace; font-size: 15px; font-weight: 700; margin-bottom: 6px;}
+.setup-card.option-a h4{color: var(--sky-blue);}
+.setup-card.option-b h4{color: var(--mint-green);}
+.setup-card .subtitle{font-size: 12px; color: var(--text-muted); font-family: 'Fira Code', monospace; margin-bottom: 14px;}
+.setup-card p{font-size: 15px; color: var(--text-secondary); margin-bottom: 10px; line-height: 1.6;}
+.setup-card p:last-child{margin-bottom: 0;}
+.setup-steps{margin-top: 12px; counter-reset: setupstep;}
+.setup-step{display: flex;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    align-items: flex-start;}
+.setup-step::before{counter-increment: setupstep;
+    content: counter(setupstep);
+    font-family: 'Fira Code', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--mint-green);
+    background: rgba(125,255,179,0.1);
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;}
+@media(max-width:640px){.layers { grid-template-columns: 1fr; } .overwhelm-grid { grid-template-columns: 1fr; } .setup-options { grid-template-columns: 1fr; } .walk-item { flex-direction: column; gap: 6px; } .walk-code { min-width: unset; width: fit-content; }}
+</style>
+</head>
+<body>
+
+  <!-- Shared Header -->
+  <div id="site-header"></div>
+
+<!-- ════════════════════ HERO ════════════════════ -->
+<section class="hero">
+  <div class="post-label">
+    <span class="series-tag">HTML Fundamentals</span>
+    Post 01 of 20
+  </div>
+  <h1>What HTML Actually Is<br><span class="gradient-text">(And Why It's Not Scary)</span></h1>
+  <p class="hero-sub">You've heard the acronym. You've maybe even Googled it at 1am. Let's strip away the intimidation and talk about what HTML really is — no gatekeeping, no jargon spirals, just the truth.</p>
+  <div class="hero-meta">
+    <span>📖 10 min read</span>
+    <span>🟢 Absolute Beginner</span>
+  </div>
+</section>
+
+<!-- ════════════════════ ARTICLE ════════════════════ -->
+<main class="article">
+
+  <h2>Real Talk: What HTML Actually Is</h2>
+
+  <p><strong>HTML</strong> stands for <span class="key">HyperText Markup Language</span>. Let's immediately make that less intimidating by translating it into human:</p>
+
+  <p><span class="key">HyperText</span> = text that can link to other text. That's it. When you click a link on a website and it takes you somewhere new? That's "hypertext" doing its thing. It's been around since the 1990s. Not new. Not complex. Just… clickable text.</p>
+
+  <p><span class="key">Markup Language</span> = a system of labels that you wrap around your content to tell the browser what that content <em>is</em>. "This is a heading." "This is a paragraph." "This is an image." You're literally labeling things.</p>
+
+  <p>That's the whole thing. HTML is a <span class="key">labeling system for content</span>. You take words, images, and links — and you wrap them in labels so a web browser knows how to display them.</p>
+
+  <p>Imagine you're organizing a bookshelf. You're not writing the books — you're deciding which shelf they go on, which ones face outward, and which ones get grouped together. HTML is the organizing. The content already exists. You're giving it structure.</p>
+
+  <div class="callout mindset">
+    <div class="callout-title">🧠 Mindset Shift</div>
+    <p>If you've ever made a to-do list, organized files into folders, or written an outline for a school paper — you already understand the core concept behind HTML. You've been "marking up" information your whole life. You just didn't call it that.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <h2>It's Not a Programming Language (And That's Fine)</h2>
+
+  <p>Let's address the elephant in the room, because someone on the internet is going to say it to you eventually:</p>
+
+  <p><em>"HTML isn't a real programming language."</em></p>
+
+  <p>They're technically right. HTML doesn't do math. It doesn't make decisions. It doesn't loop through data or respond to logic. Programming languages like JavaScript and Python do those things. HTML does not.</p>
+
+  <p>HTML is a <span class="key">markup language</span> — it describes structure, not behavior. And here's what the gatekeepers won't tell you: that doesn't make it less important. It makes it <span class="key">foundational</span>.</p>
+
+  <p>Every website you've ever visited — Google, Instagram, Amazon, your favorite blog, that weird recipe site with 47 pop-ups — all of them are built on HTML at their core. Literally every single one. The fanciest React app in the world? It renders HTML in the browser. The most complex web application on the planet? HTML underneath.</p>
+
+  <p>So when someone says "HTML isn't a real language," what they really mean is "I don't understand what foundations are." Smile. Keep learning. You're building the thing that makes everything else possible.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">💡 Pro Tip</div>
+    <p>Nobody ever looked at the foundation of a house and said "that's not real construction." The foundation is literally what holds everything up. That's HTML.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <h2>How Websites Actually Get Built</h2>
+
+  <p>A website is made of three core technologies, and they each have a specific job. Think of building a house:</p>
+
+  <div class="layers">
+    <div class="layer-card html-card">
+      <div class="layer-icon">🏗️</div>
+      <div class="layer-name">HTML</div>
+      <div class="layer-role">The Structure</div>
+      <div class="layer-desc">The walls, the rooms, the doors, the windows. What things are and where they go.</div>
+    </div>
+    <div class="layer-card css-card">
+      <div class="layer-icon">🎨</div>
+      <div class="layer-name">CSS</div>
+      <div class="layer-role">The Style</div>
+      <div class="layer-desc">The paint colors, the furniture, the lighting, the vibes. Same house, totally different aesthetic.</div>
+    </div>
+    <div class="layer-card js-card">
+      <div class="layer-icon">⚡</div>
+      <div class="layer-name">JavaScript</div>
+      <div class="layer-role">The Behavior</div>
+      <div class="layer-desc">The smart home system. Click this, show that. Scroll here, fade in there. Makes things <em>do</em> stuff.</div>
+    </div>
+  </div>
+
+  <p>Right now, we're focused on HTML — the foundation that CSS and JavaScript build on top of. You wouldn't hang curtains in a house that doesn't have walls yet. Structure first. Always.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-body"><code><span class="c">&lt;!-- HTML: the structure --&gt;</span>
+<span class="t">&lt;button&gt;</span>Sign Up<span class="t">&lt;/button&gt;</span></code></div>
+  </div>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">CSS</div>
+    </div>
+    <div class="code-body"><code><span class="c">/* CSS: the style */</span>
+<span class="sel">button</span> <span class="p">{</span>
+  <span class="prp">background</span><span class="p">:</span> <span class="val">#c94277</span><span class="p">;</span>
+  <span class="prp">color</span><span class="p">:</span> <span class="val">white</span><span class="p">;</span>
+  <span class="prp">padding</span><span class="p">:</span> <span class="val">12px 24px</span><span class="p">;</span>
+  <span class="prp">border-radius</span><span class="p">:</span> <span class="val">8px</span><span class="p">;</span>
+<span class="p">}</span></code></div>
+  </div>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">JavaScript</div>
+    </div>
+    <div class="code-body"><code><span class="c">// JavaScript: the behavior</span>
+<span class="v">button</span><span class="p">.</span><span class="fn">addEventListener</span><span class="p">(</span><span class="s">'click'</span><span class="p">,</span> <span class="p">() =&gt; {</span>
+  <span class="fn">alert</span><span class="p">(</span><span class="s">'Welcome to CodeHerWay!'</span><span class="p">);</span>
+<span class="p">});</span></code></div>
+  </div>
+
+  <div class="sep"></div>
+
+  <h2>What Your Browser Does With HTML</h2>
+
+  <p>When you type a URL into Chrome, Safari, Firefox, or whatever browser you use — here's what actually happens behind the scenes:</p>
+
+  <div class="flow-steps">
+    <div class="flow-step">
+      <div class="flow-num">1</div>
+      <div class="flow-text"><strong>You type a URL</strong> (or click a link). Something like <span class="il">www.codeherway.com</span>.</div>
+      <div class="flow-connector"></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">2</div>
+      <div class="flow-text"><strong>Your browser sends a request</strong> across the internet to a <span class="key">server</span> — a computer sitting in a data center somewhere that stores that website's files.</div>
+      <div class="flow-connector"></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">3</div>
+      <div class="flow-text"><strong>The server sends back files</strong> — HTML files, CSS files, JavaScript files, images. The HTML file always comes first.</div>
+      <div class="flow-connector"></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">4</div>
+      <div class="flow-text"><strong>Your browser reads the HTML</strong> from top to bottom, like reading a document.</div>
+      <div class="flow-connector"></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">5</div>
+      <div class="flow-text"><strong>It builds the <span class="key">DOM</span></strong> (Document Object Model) — a tree of all your HTML elements organized by how they're nested.</div>
+      <div class="flow-connector"></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">6</div>
+      <div class="flow-text"><strong>It applies the CSS</strong> to make things look right.</div>
+      <div class="flow-connector"></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">7</div>
+      <div class="flow-text"><strong>It runs the JavaScript</strong> to make things interactive.</div>
+      <div class="flow-connector"></div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">8</div>
+      <div class="flow-text"><strong>You see a webpage.</strong></div>
+    </div>
+  </div>
+
+  <p>All of this happens in milliseconds. But the critical thing to notice: <span class="key">HTML is always first</span>. It's the document the browser reads before anything else.</p>
+
+  <div class="callout info">
+    <div class="callout-title">ℹ️ Good to Know</div>
+    <p>Fun fact: you can see the raw HTML of any website. Right-click on any page and select "View Page Source." That wall of code? That's the HTML. Every website's code is visible to everyone. The web was built on openness.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <h2>Why Beginners Get Overwhelmed (And How to Stop)</h2>
+
+  <div class="overwhelm-grid">
+    <div class="overwhelm-card">
+      <h4>1. The "Wall of Code" Effect</h4>
+      <p>You open a tutorial and see 30 lines of code and your brain goes: "I will never understand this."</p>
+      <div class="fix">→ You're not supposed to understand all 30 lines at once. Code is read one line at a time.</div>
+    </div>
+    <div class="overwhelm-card">
+      <h4>2. Unfamiliar Syntax</h4>
+      <p>Angle brackets, forward slashes, attributes, tags — it feels like a foreign language because it literally is one.</p>
+      <div class="fix">→ You wouldn't expect to read French after one lesson. The symbols become second nature faster than you think.</div>
+    </div>
+    <div class="overwhelm-card">
+      <h4>3. The Comparison Trap</h4>
+      <p>You see someone on Twitter posting a full website they built and think "I'm so behind."</p>
+      <div class="fix">→ You didn't see the six months of confusion. Everyone starts where you are right now.</div>
+    </div>
+    <div class="overwhelm-card">
+      <h4>4. Tutorial Overload</h4>
+      <p>There are 10,000 HTML tutorials online and they all teach slightly differently. It's paralyzing.</p>
+      <div class="fix">→ Follow this course post by post. Don't skip around. Depth beats breadth every time.</div>
+    </div>
+  </div>
+
+  <div class="callout mindset">
+    <div class="callout-title">🧠 Mindset Shift</div>
+    <p>"I don't get it" doesn't mean you're bad at this. It means your brain is building new neural pathways. That uncomfortable, foggy feeling? That's literally what learning feels like. <span class="key">Stay in the fog. It clears.</span></p>
+  </div>
+
+  <div class="sep"></div>
+
+  <h2>Your First HTML Page — Yes, Right Now</h2>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-body"><code><span class="t">&lt;!DOCTYPE html&gt;</span>
+<span class="t">&lt;html&gt;</span>
+  <span class="t">&lt;head&gt;</span>
+    <span class="t">&lt;title&gt;</span>My First Page<span class="t">&lt;/title&gt;</span>
+  <span class="t">&lt;/head&gt;</span>
+  <span class="t">&lt;body&gt;</span>
+    <span class="t">&lt;h1&gt;</span>Hello, world. I'm learning HTML.<span class="t">&lt;/h1&gt;</span>
+    <span class="t">&lt;p&gt;</span>This is my first webpage and I built it myself.<span class="t">&lt;/p&gt;</span>
+  <span class="t">&lt;/body&gt;</span>
+<span class="t">&lt;/html&gt;</span></code></div>
+  </div>
+
+  <div class="walkthrough">
+    <div class="walk-item">
+      <div class="walk-code">&lt;!DOCTYPE html&gt;</div>
+      <div class="walk-desc">Tells the browser: "This is a modern HTML document." Goes first. Always.</div>
+    </div>
+    <div class="walk-item">
+      <div class="walk-code">&lt;html&gt;</div>
+      <div class="walk-desc">The <span class="key">root container</span>. Everything on the page lives inside this.</div>
+    </div>
+    <div class="walk-item">
+      <div class="walk-code">&lt;head&gt;</div>
+      <div class="walk-desc">The invisible backstage area. Stuff the user doesn't see goes here.</div>
+    </div>
+    <div class="walk-item">
+      <div class="walk-code">&lt;title&gt;</div>
+      <div class="walk-desc">The text in the browser tab. Also what Google shows in search results.</div>
+    </div>
+    <div class="walk-item">
+      <div class="walk-code">&lt;body&gt;</div>
+      <div class="walk-desc">Everything the user actually <em>sees</em>. Your visible content lives here.</div>
+    </div>
+    <div class="walk-item">
+      <div class="walk-code">&lt;h1&gt;</div>
+      <div class="walk-desc">A <span class="key">top-level heading</span>. The biggest, most important heading on the page.</div>
+    </div>
+    <div class="walk-item">
+      <div class="walk-code">&lt;p&gt;</div>
+      <div class="walk-desc">A <span class="key">paragraph</span>. Regular body text.</div>
+    </div>
+  </div>
+
+  <h3>How to Actually Create This File</h3>
+
+  <div class="setup-options">
+    <div class="setup-card option-a">
+      <h4>Option A: Online Editor</h4>
+      <div class="subtitle">Instant gratification</div>
+      <p>Go to <strong>CodePen.io</strong> and type the HTML into the HTML panel. You'll see the result live.</p>
+    </div>
+    <div class="setup-card option-b">
+      <h4>Option B: VS Code</h4>
+      <div class="subtitle">Recommended for real habits</div>
+      <div class="setup-steps">
+        <div class="setup-step">Download VS Code (free) from code.visualstudio.com.</div>
+        <div class="setup-step">Create a folder called <span class="il">my-first-site</span>.</div>
+        <div class="setup-step">Open that folder in VS Code.</div>
+        <div class="setup-step">Create a new file named <span class="il">index.html</span>.</div>
+        <div class="setup-step">Type the code above. <strong>Don't copy-paste.</strong> Type it.</div>
+        <div class="setup-step">Save with <span class="il">Ctrl+S</span> / <span class="il">Cmd+S</span>.</div>
+        <div class="setup-step">Double-click the file to open it in your browser.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="devfession">
+    <div class="devfession-header">🔥 Dev_Fession</div>
+    <div class="devfession-body">
+      <p>I'm going to tell you something that most "learn to code" content won't: I didn't understand HTML the first time I tried to learn it.</p>
+      <p>I remember staring at angle brackets feeling like I was reading hieroglyphics. I remember closing a tab on a tutorial 4 minutes in because it already felt like too much. I remember thinking "maybe coding just isn't for me" — which is one of the most dangerous sentences a beginner can say to herself.</p>
+      <p>It <em>was</em> for me. It just wasn't for me <em>yet</em>. I needed time. I needed a second attempt. I needed someone to explain it in a way that didn't make me feel like I was already supposed to know it.</p>
+      <p>So if you're reading this and the code examples feel weird and foreign — good. They're supposed to feel that way right now. You're not behind. You're at the beginning. And the beginning is the hardest part, not because the material is hard, but because your brain hasn't built the pattern recognition yet.</p>
+      <p>It will. Give it a few posts. Give it a few practice sessions. Give it a few moments of "oh wait, I actually get that." They're coming. I promise.</p>
+    </div>
+    <div class="devfession-footer">
+      <span>CodeHerWay // Dev Fessions — Because nobody got good at this without struggling first.</span>
+      <span class="tagline">Code it. Own it. Her way.</span>
+    </div>
+  </div>
+
+  <div class="mini-build">
+    <div class="mini-build-header">
+      <h3>🏆 Mini Build: Your "Hello World" Page</h3>
+    </div>
+    <div class="mini-build-body">
+      <p>Create your first HTML file from scratch. <strong>Don't copy-paste</strong> — type every character. Your page should include:</p>
+      <div class="step"><div class="step-num">1</div><div class="step-text">The full HTML structure: <span class="sky">&lt;!DOCTYPE html&gt;</span>, <span class="sky">&lt;html&gt;</span>, <span class="sky">&lt;head&gt;</span>, <span class="sky">&lt;body&gt;</span></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text">A <span class="sky">&lt;title&gt;</span> that says your name</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text">An <span class="sky">&lt;h1&gt;</span> that says "Hello! I'm [Your Name] and I'm learning to code."</div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text">A <span class="sky">&lt;p&gt;</span> explaining in one or two sentences why you want to learn</div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-text">Save as <span class="sky">index.html</span>. Open it in your browser. You just made a webpage. You are officially a <strong>web developer in training</strong>.</div></div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <h2>What's Coming Next</h2>
+  <p>In the next post, we're going to break down <span class="key">tags, elements, and attributes</span> — the three words that everything in HTML is built from. You'll start to see the patterns that make HTML predictable instead of mysterious.</p>
+  <p>You've already taken the hardest step: starting. Everything from here is building on what you just learned.</p>
+
+  <!-- Post Navigation -->
+  <nav class="post-nav">
+    <div></div>
+    <a href="02-document-structure.html" class="post-nav-link next">
+      <span class="nav-label">Next Post →</span>
+      <span class="nav-title">Document Structure: The Non-Negotiable Skeleton</span>
+    </a>
+  </nav>
+
+  <div class="post-back">
+    <a href="../../blog.html" class="btn-back">← Back to All Posts</a>
+  </div>
+
+</main>
+
+  <!-- Shared Footer -->
+  <div id="site-footer"></div>
+
+  <script src="../../assets/js/main.js"></script>
+
+</body>
+</html>

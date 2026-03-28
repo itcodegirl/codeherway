@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How HTML Connects to JavaScript — The Bridge to Interactivity | CodeHerWay</title>
+<meta name="description" content="Understand how HTML and JavaScript work together — IDs and classes as hooks, forms interacting with JS, DOM manipulation, and event listeners. The bridge from static pages to dynamic apps.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.finale-badge{display: inline-block; font-family: 'Fira Code', monospace; font-size: 11px; padding: 4px 12px; border-radius: 20px; background: linear-gradient(135deg, rgba(255,211,105,0.15), rgba(255,105,180,0.15)); border: 1px solid rgba(255,211,105,0.3); color: var(--gold); margin-left: 10px; letter-spacing: 1px;}
+.tag.js{border-color: rgba(255,211,105,0.3); color: var(--gold);}
+.jl{font-family: 'Fira Code', monospace; font-size: 0.88em; background: rgba(255,211,105,0.1); color: var(--gold); padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(255,211,105,0.15); white-space: nowrap;}
+.j{color: var(--mint-green);}
+.flow{display: flex; align-items: center; justify-content: center; gap: 12px; margin: 36px 0; flex-wrap: wrap;}
+.flow-box{background: var(--bg-code); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 16px 24px; text-align: center; font-family: 'Fira Code', monospace; font-size: 14px; min-width: 140px;}
+.flow-box.html-box{border-color: rgba(255,105,180,0.25); color: var(--pink);}
+.flow-box.bridge-box{border-color: rgba(105,210,231,0.25); color: var(--sky-blue);}
+.flow-box.js-box{border-color: rgba(255,211,105,0.25); color: var(--gold);}
+.flow-arrow{font-size: 20px; color: var(--text-muted);}
+.flow-label{font-size: 11px; color: var(--text-muted); display: block; margin-top: 4px;}
+.hook-grid{display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 32px 0;}
+.hook-card{background: var(--bg-code); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06); transition: border-color 0.3s, transform 0.3s;}
+.hook-card:hover{transform: translateY(-2px);}
+.hook-card:nth-child(1){border-color: rgba(255,105,180,0.15);}
+.hook-card:nth-child(1):hover{border-color: var(--pink);}
+.hook-card:nth-child(2){border-color: rgba(105,210,231,0.15);}
+.hook-card:nth-child(2):hover{border-color: var(--sky-blue);}
+.hook-card:nth-child(3){border-color: rgba(255,211,105,0.15);}
+.hook-card:nth-child(3):hover{border-color: var(--gold);}
+.hook-card:nth-child(4){border-color: rgba(125,255,179,0.15);}
+.hook-card:nth-child(4):hover{border-color: var(--mint-green);}
+.hk-top{padding: 16px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.04);}
+.hk-icon{font-size: 22px;}
+.hk-title{font-family: 'Fira Code', monospace; font-size: 14px; font-weight: 700; color: #fff;}
+.hk-body{padding: 16px 20px;}
+.hk-html{font-family: 'Fira Code', monospace; font-size: 12px; color: var(--pink); background: rgba(255,105,180,0.06); padding: 8px 12px; border-radius: 6px; margin-bottom: 8px;}
+.hk-js{font-family: 'Fira Code', monospace; font-size: 12px; color: var(--gold); background: rgba(255,211,105,0.06); padding: 8px 12px; border-radius: 6px;}
+.finale-banner{background: linear-gradient(135deg, rgba(180,74,255,0.08), rgba(255,105,180,0.08), rgba(255,211,105,0.08)); border: 1px solid rgba(255,211,105,0.15); border-radius: 16px; padding: 40px 32px; margin: 56px 0; text-align: center;}
+.finale-banner h2{border: none; margin: 0 0 16px; font-size: 32px; background: var(--gradient-finale); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; padding: 0;}
+.finale-banner p{max-width: 600px; margin: 0 auto 12px; color: var(--text-secondary);}
+.finale-banner p:last-child{margin-bottom: 0;}
+.finale-stats{display: flex; justify-content: center; gap: 32px; margin: 24px 0; flex-wrap: wrap;}
+.finale-stat{text-align: center;}
+.finale-stat .num{font-family: 'Fira Code', monospace; font-size: 36px; font-weight: 700; background: var(--gradient-header); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;}
+.finale-stat .label{font-family: 'Fira Code', monospace; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;}
+@media(max-width:640px){.hook-grid { grid-template-columns: 1fr; } .flow { flex-direction: column; } .flow-arrow { transform: rotate(90deg); } .finale-stats { gap: 20px; } .finale-stat .num { font-size: 28px; }}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<!-- ═══════ HERO ═══════ -->
+<section class="hero">
+  <div class="post-label"><span class="series-tag">HTML Fundamentals</span> Post 20 of 20</div>
+  <div class="post-number">Post 20 · HTML Fundamentals <span class="finale-badge">Series Finale</span></div>
+  <h1>How HTML Connects<br><span class="gradient-text">to JavaScript</span></h1>
+  <p class="hero-sub">HTML gives your page structure. JavaScript gives it behavior. This post is the bridge — how every ID, class, form, and element you've learned becomes a hook for interactivity.</p>
+  <div class="tag-row">
+    <span class="tag html">#HTML</span>
+    <span class="tag js">#JavaScript</span>
+    <span class="tag js">#DOM</span>
+    <span class="tag">11 min read</span>
+  </div>
+</section>
+
+<!-- ═══════ ARTICLE ═══════ -->
+<main class="article">
+
+  <!-- ── INTRO ── -->
+  <p>You've spent 19 posts building a complete HTML foundation. You can structure documents, build forms, organize files, embed media, validate code, and write clean, professional markup. But HTML alone is static — it displays content but can't respond to users.</p>
+
+  <p>JavaScript is what makes the web interactive. And here's the thing: <span class="key">JavaScript doesn't exist in a vacuum</span>. It needs HTML to work. Every button JS makes clickable, every form JS validates, every element JS shows or hides — it all starts with the HTML you write. Your HTML isn't just content anymore. It's the <span class="key">interface layer</span> that JavaScript connects to.</p>
+
+  <div class="flow">
+    <div class="flow-box html-box">
+      HTML<br><span class="flow-label">Structure &amp; Content</span>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box bridge-box">
+      IDs, Classes, Data-*<br><span class="flow-label">The Hooks</span>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box js-box">
+      JavaScript<br><span class="flow-label">Behavior &amp; Interactivity</span>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── IDS AND CLASSES AS HOOKS ── -->
+  <h2>1. IDs &amp; Classes Are Hooks</h2>
+
+  <p>Every time you write an <span class="il">id</span> or <span class="il">class</span> attribute in HTML, you're creating a <span class="key">hook</span> that JavaScript (and CSS) can grab onto. IDs are unique identifiers — one per page. Classes are reusable labels — as many as you want.</p>
+
+  <div class="hook-grid">
+    <div class="hook-card">
+      <div class="hk-top"><div class="hk-icon">🎯</div><div class="hk-title">getElementById</div></div>
+      <div class="hk-body">
+        <div class="hk-html">&lt;h1 id="page-title"&gt;Welcome&lt;/h1&gt;</div>
+        <div class="hk-js">document.getElementById('page-title')</div>
+      </div>
+    </div>
+    <div class="hook-card">
+      <div class="hk-top"><div class="hk-icon">🏷️</div><div class="hk-title">querySelector</div></div>
+      <div class="hk-body">
+        <div class="hk-html">&lt;div class="card"&gt;...&lt;/div&gt;</div>
+        <div class="hk-js">document.querySelector('.card')</div>
+      </div>
+    </div>
+    <div class="hook-card">
+      <div class="hk-top"><div class="hk-icon">📦</div><div class="hk-title">querySelectorAll</div></div>
+      <div class="hk-body">
+        <div class="hk-html">&lt;li class="item"&gt; (×5)</div>
+        <div class="hk-js">document.querySelectorAll('.item')</div>
+      </div>
+    </div>
+    <div class="hook-card">
+      <div class="hk-top"><div class="hk-icon">📊</div><div class="hk-title">dataset</div></div>
+      <div class="hk-body">
+        <div class="hk-html">&lt;div data-category="html"&gt;</div>
+        <div class="hk-js">element.dataset.category</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML + JavaScript</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- HTML: The structure with hooks --&gt;</span>
+<span class="t">&lt;button</span> <span class="a">id</span>=<span class="s">"theme-toggle"</span> <span class="a">class</span>=<span class="s">"btn"</span><span class="t">&gt;</span>
+  Toggle Dark Mode
+<span class="t">&lt;/button&gt;</span>
+
+<span class="t">&lt;main</span> <span class="a">id</span>=<span class="s">"content"</span> <span class="a">class</span>=<span class="s">"light-theme"</span><span class="t">&gt;</span>
+  <span class="t">&lt;p&gt;</span>This content changes theme.<span class="t">&lt;/p&gt;</span>
+<span class="t">&lt;/main&gt;</span>
+
+<span class="c">// JavaScript: Grabbing those hooks</span>
+<span class="j">const</span> <span class="p">btn = document.getElementById(</span><span class="s">'theme-toggle'</span><span class="p">);</span>
+<span class="j">const</span> <span class="p">content = document.getElementById(</span><span class="s">'content'</span><span class="p">);</span>
+
+<span class="p">btn.addEventListener(</span><span class="s">'click'</span><span class="p">, () => {</span>
+  <span class="p">content.classList.toggle(</span><span class="s">'dark-theme'</span><span class="p">);</span>
+<span class="p">});</span>
+    </div>
+  </div>
+
+  <div class="callout mindset">
+    <div class="callout-title">🧠 The Mental Shift</div>
+    <p>When you're writing HTML, start thinking: "Could JavaScript need to find this element?" If yes, give it an ID or a descriptive class. You're not just writing for the browser or the user anymore — you're writing for <em>your future JavaScript code</em>. Every ID is a grabbing point. Every class is a selection filter. Every data attribute is a piece of information JS can read.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── FORMS + JS ── -->
+  <h2>2. Forms Interact with JavaScript</h2>
+
+  <p>Forms are the most natural connection point between HTML and JavaScript. HTML gives you the form structure — inputs, selects, textareas, buttons. JavaScript reads those values, validates them, and does something with the data.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML · Form</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- HTML: A signup form --&gt;</span>
+<span class="t">&lt;form</span> <span class="a">id</span>=<span class="s">"signup-form"</span><span class="t">&gt;</span>
+  <span class="t">&lt;label</span> <span class="a">for</span>=<span class="s">"email"</span><span class="t">&gt;</span>Email<span class="t">&lt;/label&gt;</span>
+  <span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"email"</span> <span class="a">id</span>=<span class="s">"email"</span> <span class="a">name</span>=<span class="s">"email"</span>
+         <span class="a">required</span><span class="t">&gt;</span>
+
+  <span class="t">&lt;label</span> <span class="a">for</span>=<span class="s">"password"</span><span class="t">&gt;</span>Password<span class="t">&lt;/label&gt;</span>
+  <span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"password"</span> <span class="a">id</span>=<span class="s">"password"</span> <span class="a">name</span>=<span class="s">"password"</span>
+         <span class="a">minlength</span>=<span class="s">"8"</span> <span class="a">required</span><span class="t">&gt;</span>
+
+  <span class="t">&lt;p</span> <span class="a">id</span>=<span class="s">"error-msg"</span> <span class="a">class</span>=<span class="s">"hidden"</span><span class="t">&gt;&lt;/p&gt;</span>
+  <span class="t">&lt;button</span> <span class="a">type</span>=<span class="s">"submit"</span><span class="t">&gt;</span>Sign Up<span class="t">&lt;/button&gt;</span>
+<span class="t">&lt;/form&gt;</span>
+    </div>
+  </div>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">JavaScript · Form Handling</div>
+    </div>
+    <div class="code-body">
+<span class="c">// JavaScript: Intercept and validate</span>
+<span class="j">const</span> <span class="p">form = document.getElementById(</span><span class="s">'signup-form'</span><span class="p">);</span>
+<span class="j">const</span> <span class="p">errorMsg = document.getElementById(</span><span class="s">'error-msg'</span><span class="p">);</span>
+
+<span class="p">form.addEventListener(</span><span class="s">'submit'</span><span class="p">, (e) => {</span>
+  <span class="p">e.preventDefault();</span>  <span class="c">// Stop the form from reloading</span>
+
+  <span class="j">const</span> <span class="p">email = document.getElementById(</span><span class="s">'email'</span><span class="p">).value;</span>
+  <span class="j">const</span> <span class="p">password = document.getElementById(</span><span class="s">'password'</span><span class="p">).value;</span>
+
+  <span class="j">if</span> <span class="p">(password.length < 8) {</span>
+    <span class="p">errorMsg.textContent =</span> <span class="s">'Password must be 8+ chars'</span><span class="p">;</span>
+    <span class="p">errorMsg.classList.remove(</span><span class="s">'hidden'</span><span class="p">);</span>
+    <span class="j">return</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="c">// Submit data to server...</span>
+  <span class="p">console.log(</span><span class="s">'Signed up:'</span><span class="p">, email);</span>
+<span class="p">});</span>
+    </div>
+  </div>
+
+  <p>Notice how the HTML does the heavy lifting on structure — labels, input types, required attributes, a hidden error message ready to display. JavaScript just reads values, runs logic, and toggles visibility. The better your HTML form is built, the less JavaScript you need to write.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">💡 HTML Validation vs JavaScript Validation</div>
+    <p>HTML5 attributes like <span class="il">required</span>, <span class="il">type="email"</span>, <span class="il">minlength</span>, and <span class="il">pattern</span> provide built-in validation — the browser handles it automatically with zero JavaScript. Use these for basic validation. JavaScript adds <em>custom</em> validation on top: checking if passwords match, verifying data against an API, showing inline error messages in your own style.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── DOM MANIPULATION ── -->
+  <h2>3. DOM Manipulation Starts from HTML</h2>
+
+  <p>Every piece of JavaScript that modifies a page is <span class="key">DOM manipulation</span> — and it all starts with the HTML structure you wrote. JavaScript can create new elements, change text, add or remove classes, show and hide content, and rearrange the entire page. But it always starts by finding an element in the DOM tree that your HTML defined.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">JavaScript · DOM Manipulation</div>
+    </div>
+    <div class="code-body">
+<span class="c">// Change text content</span>
+<span class="p">document.getElementById(</span><span class="s">'title'</span><span class="p">).textContent =</span> <span class="s">'New Title'</span><span class="p">;</span>
+
+<span class="c">// Add a CSS class</span>
+<span class="p">document.querySelector(</span><span class="s">'.card'</span><span class="p">).classList.add(</span><span class="s">'highlighted'</span><span class="p">);</span>
+
+<span class="c">// Hide an element</span>
+<span class="p">document.getElementById(</span><span class="s">'banner'</span><span class="p">).style.display =</span> <span class="s">'none'</span><span class="p">;</span>
+
+<span class="c">// Create a new element and add it to the page</span>
+<span class="j">const</span> <span class="p">newItem = document.createElement(</span><span class="s">'li'</span><span class="p">);</span>
+<span class="p">newItem.textContent =</span> <span class="s">'New course added!'</span><span class="p">;</span>
+<span class="p">document.querySelector(</span><span class="s">'.course-list'</span><span class="p">).appendChild(newItem);</span>
+
+<span class="c">// Change an attribute</span>
+<span class="p">document.querySelector(</span><span class="s">'img'</span><span class="p">).setAttribute(</span><span class="s">'src'</span><span class="p">,</span> <span class="s">'new-image.jpg'</span><span class="p">);</span>
+
+<span class="c">// Read a data attribute</span>
+<span class="j">const</span> <span class="p">level = document.querySelector(</span><span class="s">'.card'</span><span class="p">).dataset.level;</span>
+    </div>
+  </div>
+
+  <p>Every one of these operations targets something you wrote in HTML — an ID, a class, a tag name, a data attribute. The quality of your HTML directly determines how easy or hard your JavaScript will be. Clean, well-structured HTML with meaningful IDs and classes makes JavaScript straightforward. Messy HTML with generic names makes every JS operation a struggle.</p>
+
+  <div class="sep"></div>
+
+  <!-- ── EVENT LISTENERS ── -->
+  <h2>4. Event Listeners Attach to Elements</h2>
+
+  <p>This is where the magic happens. <span class="key">Event listeners</span> are how JavaScript responds to user actions — clicks, hovers, key presses, form submissions, scrolling, and more. And every event listener attaches to an <span class="key">HTML element</span> that you created.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML + JavaScript · Events</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- HTML: Elements that need interactivity --&gt;</span>
+<span class="t">&lt;button</span> <span class="a">id</span>=<span class="s">"subscribe-btn"</span><span class="t">&gt;</span>Subscribe<span class="t">&lt;/button&gt;</span>
+<span class="t">&lt;input</span> <span class="a">id</span>=<span class="s">"search-input"</span> <span class="a">type</span>=<span class="s">"text"</span>
+       <span class="a">placeholder</span>=<span class="s">"Search courses..."</span><span class="t">&gt;</span>
+<span class="t">&lt;div</span> <span class="a">id</span>=<span class="s">"dropdown"</span> <span class="a">class</span>=<span class="s">"hidden"</span><span class="t">&gt;</span>...<span class="t">&lt;/div&gt;</span>
+
+<span class="c">// JavaScript: Attach behavior</span>
+
+<span class="c">// Click event</span>
+<span class="p">document.getElementById(</span><span class="s">'subscribe-btn'</span><span class="p">)</span>
+  <span class="p">.addEventListener(</span><span class="s">'click'</span><span class="p">, () => {</span>
+    <span class="p">alert(</span><span class="s">'Subscribed!'</span><span class="p">);</span>
+  <span class="p">});</span>
+
+<span class="c">// Input event (fires on every keystroke)</span>
+<span class="p">document.getElementById(</span><span class="s">'search-input'</span><span class="p">)</span>
+  <span class="p">.addEventListener(</span><span class="s">'input'</span><span class="p">, (e) => {</span>
+    <span class="p">console.log(</span><span class="s">'Searching:'</span><span class="p">, e.target.value);</span>
+  <span class="p">});</span>
+
+<span class="c">// Mouseover event</span>
+<span class="p">document.getElementById(</span><span class="s">'dropdown'</span><span class="p">)</span>
+  <span class="p">.addEventListener(</span><span class="s">'mouseover'</span><span class="p">, () => {</span>
+    <span class="c">// Show the dropdown</span>
+  <span class="p">});</span>
+    </div>
+  </div>
+
+  <p>The pattern is always the same: <strong>find the element</strong> (using an ID, class, or selector from your HTML), then <strong>attach a listener</strong> for a specific event. The HTML is the target. JavaScript is the behavior. They work together.</p>
+
+  <div class="callout warn">
+    <div class="callout-title">⚠️ Inline Event Handlers Are Outdated</div>
+    <p>You might see older code using <span class="il">onclick="doSomething()"</span> directly in the HTML. This is the old way. Modern JavaScript separates behavior from structure by using <span class="jl">addEventListener()</span> in a separate JS file. This keeps your HTML clean, your JS organized, and makes your code easier to maintain. Think of it as the same principle behind separating CSS from HTML.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── THE FULL PICTURE ── -->
+  <h2>The Full Picture — HTML as the Foundation</h2>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML · Prepared for JavaScript</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- This HTML is written WITH JavaScript in mind --&gt;</span>
+<span class="t">&lt;section</span> <span class="a">id</span>=<span class="s">"courses"</span><span class="t">&gt;</span>
+
+  <span class="c">&lt;!-- Filter buttons with data attributes --&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"filters"</span><span class="t">&gt;</span>
+    <span class="t">&lt;button</span> <span class="a">class</span>=<span class="s">"filter-btn active"</span>
+            <span class="a">data-filter</span>=<span class="s">"all"</span><span class="t">&gt;</span>All<span class="t">&lt;/button&gt;</span>
+    <span class="t">&lt;button</span> <span class="a">class</span>=<span class="s">"filter-btn"</span>
+            <span class="a">data-filter</span>=<span class="s">"html"</span><span class="t">&gt;</span>HTML<span class="t">&lt;/button&gt;</span>
+    <span class="t">&lt;button</span> <span class="a">class</span>=<span class="s">"filter-btn"</span>
+            <span class="a">data-filter</span>=<span class="s">"css"</span><span class="t">&gt;</span>CSS<span class="t">&lt;/button&gt;</span>
+    <span class="t">&lt;button</span> <span class="a">class</span>=<span class="s">"filter-btn"</span>
+            <span class="a">data-filter</span>=<span class="s">"js"</span><span class="t">&gt;</span>JavaScript<span class="t">&lt;/button&gt;</span>
+  <span class="t">&lt;/div&gt;</span>
+
+  <span class="c">&lt;!-- Course cards with filterable data --&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"course-grid"</span><span class="t">&gt;</span>
+    <span class="t">&lt;article</span> <span class="a">class</span>=<span class="s">"course-card"</span>
+             <span class="a">data-category</span>=<span class="s">"html"</span><span class="t">&gt;</span>
+      <span class="t">&lt;h3&gt;</span>HTML Fundamentals<span class="t">&lt;/h3&gt;</span>
+      <span class="t">&lt;p&gt;</span>Start from scratch.<span class="t">&lt;/p&gt;</span>
+    <span class="t">&lt;/article&gt;</span>
+    <span class="t">&lt;article</span> <span class="a">class</span>=<span class="s">"course-card"</span>
+             <span class="a">data-category</span>=<span class="s">"css"</span><span class="t">&gt;</span>
+      <span class="t">&lt;h3&gt;</span>CSS Mastery<span class="t">&lt;/h3&gt;</span>
+      <span class="t">&lt;p&gt;</span>Flexbox, Grid, beyond.<span class="t">&lt;/p&gt;</span>
+    <span class="t">&lt;/article&gt;</span>
+  <span class="t">&lt;/div&gt;</span>
+
+  <span class="c">&lt;!-- Status message, hidden by default --&gt;</span>
+  <span class="t">&lt;p</span> <span class="a">id</span>=<span class="s">"no-results"</span> <span class="a">class</span>=<span class="s">"hidden"</span><span class="t">&gt;</span>
+    No courses match that filter.
+  <span class="t">&lt;/p&gt;</span>
+
+<span class="t">&lt;/section&gt;</span>
+    </div>
+  </div>
+
+  <p>Look at that HTML. Before a single line of JavaScript is written, the structure is already set up for interactivity: filter buttons with data attributes, course cards with data categories, a hidden message ready to be revealed, descriptive IDs and classes everywhere. When JavaScript arrives, it has everything it needs. That's what it means to write HTML <em>with JavaScript in mind</em>.</p>
+
+  <div class="sep"></div>
+
+  <!-- ── DEVFESSION ── -->
+  <div class="devfession">
+    <div class="devfession-header">// dev_fession</div>
+    <div class="devfession-body">
+      <p>When I first started learning JavaScript, I wrote the most convoluted code because my HTML had no hooks. No IDs. No data attributes. Generic class names like <span class="il">.box</span> and <span class="il">.thing</span>. So my JavaScript was full of <span class="jl">document.querySelector('div > div:nth-child(3) > p')</span> — fragile selectors that broke every time I changed the HTML.</p>
+      <p>The fix wasn't better JavaScript. It was better HTML. Once I added meaningful IDs and data attributes, my JS went from 40 lines of selector gymnastics to 10 lines of clean logic.</p>
+      <p>Good HTML doesn't just serve users — it serves your future code. 🔌</p>
+    </div>
+    <div class="devfession-footer">
+      <span>@itcodegirl</span>
+      <span class="tagline">CodeHerWay</span>
+    </div>
+  </div>
+
+  <!-- ── MINI BUILD ── -->
+  <div class="mini-build">
+    <div class="mini-build-header">
+      <h3>🔨 Mini Build: JS-Ready Interactive Page</h3>
+    </div>
+    <div class="mini-build-body">
+      <p>Build an HTML page that's fully prepared for JavaScript — even before you write any JS:</p>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">Create a <span class="sky">theme toggle button</span> with an <span class="sky">id</span>. Add <span class="sky">data-theme="light"</span> to the <span class="sky">&lt;body&gt;</span>.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">Build a <span class="sky">search input</span> with an <span class="sky">id</span> and a results container with a separate <span class="sky">id</span>. Add a hidden "no results" message with a <span class="sky">class</span> of <span class="sky">"hidden"</span>.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">Create a <span class="sky">contact form</span> with proper <span class="sky">labels</span>, <span class="sky">ids</span> on every input, an error message <span class="sky">&lt;p&gt;</span> with an id, and a submit button. Use HTML5 validation attributes (required, type, minlength).</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">Build three <span class="sky">project cards</span> with <span class="sky">data-category</span> and <span class="sky">data-featured</span> attributes. Add filter buttons above them with matching <span class="sky">data-filter</span> values.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-text">Write a JavaScript <span class="sky">&lt;script&gt;</span> at the bottom that does one thing: logs every element with a <span class="sky">data-*</span> attribute to the console. Confirm that your HTML hooks are accessible from JS.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── SERIES FINALE ── -->
+  <div class="finale-banner">
+    <h2>HTML Fundamentals: Complete. ✅</h2>
+
+    <div class="finale-stats">
+      <div class="finale-stat">
+        <div class="num">20</div>
+        <div class="label">Posts</div>
+      </div>
+      <div class="finale-stat">
+        <div class="num">60+</div>
+        <div class="label">Elements Covered</div>
+      </div>
+      <div class="finale-stat">
+        <div class="num">20</div>
+        <div class="label">Mini Builds</div>
+      </div>
+      <div class="finale-stat">
+        <div class="num">20</div>
+        <div class="label">Dev Fessions</div>
+      </div>
+    </div>
+
+    <p>From a blank file to a complete HTML foundation. Document structure, text elements, links, images, lists, semantic HTML, forms, tables, media, file organization, meta tags, accessibility, developer tools, validation, intermediate concepts, and the bridge to JavaScript.</p>
+
+    <p>This isn't just knowledge. This is a <strong>skill set</strong>. You don't just know HTML — you know how to write it professionally, validate it, debug it, optimize it for search engines, make it accessible, and prepare it for JavaScript.</p>
+
+    <p><strong>Next up: CSS Fundamentals.</strong> Same energy. Same depth. Same no-gatekeeping approach. Let's make your HTML beautiful.</p>
+  </div>
+
+
+  <nav class="post-nav" style="grid-template-columns:1fr">
+    <a href="19-intermediate-concepts.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Intermediate Concepts</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

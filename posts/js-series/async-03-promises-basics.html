@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Promises Explained: States, .then(), .catch() & Common Mistakes | CodeHerWay</title>
+<meta name="description" content="What a Promise is, the three states, .then/.catch/.finally, and the mistakes everyone makes. Promise basics from CodeHerWay.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.state-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:28px 0;}
+@media(max-width:600px){.state-grid{grid-template-columns:1fr;}}
+.state-card{background:var(--bg-card);border-radius:12px;padding:20px;text-align:center;}
+.state-pending{border:1px solid rgba(255,211,105,.25);border-top:3px solid var(--gold);}
+.state-fulfilled{border:1px solid rgba(61,220,132,.25);border-top:3px solid var(--green-tip);}
+.state-rejected{border:1px solid rgba(255,107,107,.25);border-top:3px solid var(--coral);}
+.state-icon{font-size:28px;margin-bottom:10px;}
+.state-name{font-family:'Fira Code',monospace;font-size:13px;font-weight:700;margin-bottom:6px;}
+.state-pending .state-name{color:var(--gold);}
+.state-fulfilled .state-name{color:var(--green-tip);}
+.state-rejected .state-name{color:var(--coral);}
+.state-desc{font-size:13px;color:var(--text-muted);line-height:1.5;}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Async</span> Post 03 of 16</div>
+  <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+  <div class="series-line"><span class="series-label">⚡ JavaScript, But Make It Async</span><span class="post-number">Post 03 of 18</span></div>
+  <h1 class="post-title">JavaScript Promises Explained</h1>
+  <p class="post-subtitle">What a Promise actually is, how it's created, the three states it can be in, and how to handle what comes back.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 12 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Intermediate</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+<main>
+  <div class="back-ref"><span class="br-arrow">←</span> Builds on <strong>JS Async — Post 02</strong>: The Callback Era (And Why We Left It)</div>
+
+  <div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">A Promise Is a Contract</h2><div class="section-line"></div></div>
+  <p>In Post 02 you saw what callback hell looked like and why the community wanted something better. Promises were the answer — introduced natively in ES6 (2015) and now a fundamental part of the language. But before you can use them fluently, you need to understand what they actually <em>are</em>, not just what they look like.</p>
+  <p>A <span class="highlight">Promise</span> is an object that represents the eventual result of an asynchronous operation. Think of it like a restaurant receipt after ordering. The food isn't there yet — but you have a <em>promise</em> that it will arrive. You can decide in advance what you'll do when it shows up, and what you'll do if the kitchen says they can't make it.</p>
+
+  <div class="section-header"><span class="section-icon">🔄</span><h2 class="section-title">The Three States</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>The three Promise states are worth memorizing: pending (waiting), fulfilled (succeeded), rejected (failed). A Promise can only move in one direction — once it settles (fulfills or rejects), it stays there forever. That immutability is what makes Promises safe to pass around and chain.</p>
+  </div>
+
+</div>
+  <p>Every Promise exists in exactly one of three states at any given moment. Once it moves out of pending, it never changes again — a settled Promise is permanent.</p>
+  <div class="state-grid">
+    <div class="state-card state-pending">
+      <div class="state-icon">⏳</div>
+      <div class="state-name">Pending</div>
+      <div class="state-desc">The async operation is still in progress. No result yet. This is the starting state of every Promise.</div>
+    </div>
+    <div class="state-card state-fulfilled">
+      <div class="state-icon">✅</div>
+      <div class="state-name">Fulfilled</div>
+      <div class="state-desc">The operation completed successfully. The Promise has a resolved value you can work with.</div>
+    </div>
+    <div class="state-card state-rejected">
+      <div class="state-icon">❌</div>
+      <div class="state-name">Rejected</div>
+      <div class="state-desc">The operation failed. The Promise has a reason — an error — explaining what went wrong.</div>
+    </div>
+  </div>
+  <div class="callout callout-accent">
+    <div class="callout-title">⚡ Fulfilled vs Resolved</div>
+    <p>You'll hear "resolved" used two ways. Sometimes it means fulfilled (succeeded). But technically, a Promise can "resolve" to another Promise — meaning it's not settled yet. The spec term for success is <strong>fulfilled</strong>. In casual use, "resolved" usually means fulfilled. Don't let it trip you up — just know the distinction exists.</p>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🏗️</span><h2 class="section-title">Creating a Promise</h2><div class="section-line"></div></div>
+  <p>You create a Promise with <span class="il">new Promise()</span>, passing it an executor function that receives two arguments: <span class="il">resolve</span> and <span class="il">reject</span>. Call <span class="il">resolve(value)</span> when the operation succeeds. Call <span class="il">reject(error)</span> when it fails.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — creating-promises.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// Basic Promise structure</span>
+<span class="sy-kw">const</span> <span class="sy-plain">myPromise</span> = <span class="sy-kw">new</span> <span class="sy-fn">Promise</span>((<span class="sy-plain">resolve</span>, <span class="sy-plain">reject</span>) => {
+  <span class="sy-comment">// Do async work here</span>
+  <span class="sy-kw">const</span> <span class="sy-plain">success</span> = <span class="sy-bool">true</span>
+
+  <span class="sy-kw">if</span> (<span class="sy-plain">success</span>) {
+    <span class="sy-fn">resolve</span>(<span class="sy-str">"It worked!"</span>)   <span class="sy-comment">// fulfilled — passes value to .then()</span>
+  } <span class="sy-kw">else</span> {
+    <span class="sy-fn">reject</span>(<span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-str">"It failed"</span>))  <span class="sy-comment">// rejected — passes error to .catch()</span>
+  }
+})
+
+<span class="sy-comment">// Simulating async with setTimeout</span>
+<span class="sy-kw">const</span> <span class="sy-plain">waitOneSecond</span> = <span class="sy-kw">new</span> <span class="sy-fn">Promise</span>((<span class="sy-plain">resolve</span>) => {
+  <span class="sy-fn">setTimeout</span>(() => {
+    <span class="sy-fn">resolve</span>(<span class="sy-str">"One second passed!"</span>)
+  }, <span class="sy-num">1000</span>)
+})
+
+<span class="sy-comment">// Real-world pattern — wrapping an old callback API in a Promise</span>
+<span class="sy-kw">function</span> <span class="sy-fn">readFilePromise</span>(<span class="sy-plain">path</span>) {
+  <span class="sy-kw">return</span> <span class="sy-kw">new</span> <span class="sy-fn">Promise</span>((<span class="sy-plain">resolve</span>, <span class="sy-plain">reject</span>) => {
+    <span class="sy-plain">fs</span>.<span class="sy-fn">readFile</span>(<span class="sy-plain">path</span>, <span class="sy-str">"utf8"</span>, (<span class="sy-plain">err</span>, <span class="sy-plain">data</span>) => {
+      <span class="sy-kw">if</span> (<span class="sy-plain">err</span>) <span class="sy-fn">reject</span>(<span class="sy-plain">err</span>)
+      <span class="sy-kw">else</span> <span class="sy-fn">resolve</span>(<span class="sy-plain">data</span>)
+    })
+  })
+}</pre></div>
+  </div>
+  <div class="callout callout-info">
+    <div class="callout-title">ℹ️ Good to Know</div>
+    <p>In practice you rarely create Promises with <span class="il">new Promise()</span> yourself — most async APIs already return Promises (<span class="il">fetch()</span>, for example). But knowing how to construct one is essential for wrapping older callback-style APIs and for writing your own async utilities.</p>
+  </div>
+
+  <div class="section-header"><span class="section-icon">📬</span><h2 class="section-title">.then(), .catch(), .finally()</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p><code class='il'>.finally()</code> is the most underused Promise method. It runs whether the Promise succeeded or failed — perfect for cleanup: hiding a loading spinner, re-enabling a button, closing a connection. You don't need it for every Promise, but when you need it, nothing else does the job as cleanly.</p>
+  </div>
+
+</div>
+  <p>Once you have a Promise, you handle its result with three methods. Each one takes a callback and returns a new Promise — which is what makes chaining possible (more on that in Post 04).</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — handling-promises.js</div></div>
+    <div class="code-body"><pre><span class="sy-kw">const</span> <span class="sy-plain">promise</span> = <span class="sy-kw">new</span> <span class="sy-fn">Promise</span>((<span class="sy-plain">resolve</span>, <span class="sy-plain">reject</span>) => {
+  <span class="sy-fn">setTimeout</span>(() => <span class="sy-fn">resolve</span>(<span class="sy-str">"data arrived"</span>), <span class="sy-num">500</span>)
+})
+
+<span class="sy-comment">// .then() — runs when the Promise is fulfilled</span>
+<span class="sy-plain">promise</span>.<span class="sy-fn">then</span>((<span class="sy-plain">value</span>) => {
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Success:"</span>, <span class="sy-plain">value</span>)  <span class="sy-comment">// "Success: data arrived"</span>
+})
+
+<span class="sy-comment">// .catch() — runs when the Promise is rejected</span>
+<span class="sy-plain">promise</span>.<span class="sy-fn">catch</span>((<span class="sy-plain">error</span>) => {
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Error:"</span>, <span class="sy-plain">error</span>.<span class="sy-prop">message</span>)
+})
+
+<span class="sy-comment">// .finally() — runs regardless of success or failure</span>
+<span class="sy-comment">// Perfect for cleanup: hiding loaders, re-enabling buttons, etc.</span>
+<span class="sy-plain">promise</span>.<span class="sy-fn">finally</span>(() => {
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Always runs — clean up here"</span>)
+})
+
+<span class="sy-comment">// All three together — the standard pattern</span>
+<span class="sy-plain">promise</span>
+  .<span class="sy-fn">then</span>(<span class="sy-plain">value</span>  => <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Got:"</span>, <span class="sy-plain">value</span>))
+  .<span class="sy-fn">catch</span>(<span class="sy-plain">error</span>  => <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Failed:"</span>, <span class="sy-plain">error</span>.<span class="sy-prop">message</span>))
+  .<span class="sy-fn">finally</span>(()    => <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Done either way"</span>))</pre></div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">⚡</span><h2 class="section-title">Promise.resolve() and Promise.reject()</h2><div class="section-line"></div></div>
+  <p>These static methods let you create instantly settled Promises — useful for testing, default values, and forcing async interfaces to accept sync values.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — static-methods.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// Promise.resolve() — creates an already-fulfilled Promise</span>
+<span class="sy-method">Promise</span>.<span class="sy-fn">resolve</span>(<span class="sy-str">"instant value"</span>)
+  .<span class="sy-fn">then</span>(<span class="sy-plain">v</span> => <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">v</span>))  <span class="sy-comment">// "instant value"</span>
+
+<span class="sy-comment">// Promise.reject() — creates an already-rejected Promise</span>
+<span class="sy-method">Promise</span>.<span class="sy-fn">reject</span>(<span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-str">"instant failure"</span>))
+  .<span class="sy-fn">catch</span>(<span class="sy-plain">e</span> => <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">e</span>.<span class="sy-prop">message</span>))  <span class="sy-comment">// "instant failure"</span>
+
+<span class="sy-comment">// Real use case — returning cached data as a Promise</span>
+<span class="sy-comment">// so the calling code always deals with a Promise interface</span>
+<span class="sy-kw">function</span> <span class="sy-fn">getUser</span>(<span class="sy-plain">id</span>) {
+  <span class="sy-kw">const</span> <span class="sy-plain">cached</span> = <span class="sy-plain">cache</span>.<span class="sy-fn">get</span>(<span class="sy-plain">id</span>)
+  <span class="sy-kw">if</span> (<span class="sy-plain">cached</span>) <span class="sy-kw">return</span> <span class="sy-method">Promise</span>.<span class="sy-fn">resolve</span>(<span class="sy-plain">cached</span>)  <span class="sy-comment">// sync data, async interface</span>
+  <span class="sy-kw">return</span> <span class="sy-fn">fetch</span>(<span class="sy-str">`/api/users/</span>${<span class="sy-plain">id</span>}<span class="sy-str">`</span>).<span class="sy-fn">then</span>(<span class="sy-plain">r</span> => <span class="sy-plain">r</span>.<span class="sy-fn">json</span>())
+}</pre></div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">⚠️</span><h2 class="section-title">Common Promise Mistakes</h2><div class="section-line"></div></div>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — promise-mistakes.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// ❌ MISTAKE 1: Forgetting to return in .then()</span>
+<span class="sy-comment">// The chain breaks — next .then() gets undefined</span>
+<span class="sy-fn">fetch</span>(<span class="sy-str">"/api/user"</span>)
+  .<span class="sy-fn">then</span>(<span class="sy-plain">response</span> => {
+    <span class="sy-plain">response</span>.<span class="sy-fn">json</span>()  <span class="sy-comment">// ← missing return!</span>
+  })
+  .<span class="sy-fn">then</span>(<span class="sy-plain">data</span> => <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">data</span>))  <span class="sy-comment">// data is undefined</span>
+
+<span class="sy-comment">// ✅ Correct — return the inner Promise</span>
+<span class="sy-fn">fetch</span>(<span class="sy-str">"/api/user"</span>)
+  .<span class="sy-fn">then</span>(<span class="sy-plain">response</span> => <span class="sy-plain">response</span>.<span class="sy-fn">json</span>())  <span class="sy-comment">// implicit return ✓</span>
+  .<span class="sy-fn">then</span>(<span class="sy-plain">data</span> => <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">data</span>))
+
+<span class="sy-comment">// ❌ MISTAKE 2: Nesting .then() instead of chaining</span>
+<span class="sy-comment">// You've recreated callback hell with Promises</span>
+<span class="sy-fn">fetch</span>(<span class="sy-str">"/api/user"</span>).<span class="sy-fn">then</span>(<span class="sy-plain">res</span> => {
+  <span class="sy-plain">res</span>.<span class="sy-fn">json</span>().<span class="sy-fn">then</span>(<span class="sy-plain">user</span> => {     <span class="sy-comment">// ← nesting, not chaining</span>
+    <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">user</span>)
+  })
+})
+
+<span class="sy-comment">// ❌ MISTAKE 3: No .catch() handler</span>
+<span class="sy-comment">// Rejected Promises become unhandled rejections — bad in production</span>
+<span class="sy-fn">fetch</span>(<span class="sy-str">"/api/user"</span>)
+  .<span class="sy-fn">then</span>(<span class="sy-plain">res</span> => <span class="sy-plain">res</span>.<span class="sy-fn">json</span>())
+  <span class="sy-comment">// no .catch() — if this fails, the error disappears silently</span></pre></div>
+  </div>
+  <div class="callout callout-warn">
+    <div class="callout-title">⚠️ Unhandled Promise Rejections</div>
+    <p>In modern Node.js, an unhandled Promise rejection crashes your process. In browsers, it logs a console warning — but the error is silently swallowed from the user's perspective. <strong>Always add a <span class="il">.catch()</span></strong>. No exceptions. This is one of the first things a code reviewer will flag.</p>
+  </div>
+
+  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body">
+      <p>I spent an embarrassing amount of time debugging a feature where data was always <span class="il" style="font-style:normal;">undefined</span> after a fetch. I checked the API. I checked the network tab. I checked the response. Everything looked fine. Turns out I forgot to <span class="il" style="font-style:normal;">return</span> inside my <span class="il" style="font-style:normal;">.then()</span> and the entire chain was getting <span class="il" style="font-style:normal;">undefined</span> passed through it. The missing <span class="il" style="font-style:normal;">return</span> is the silent killer of Promise chains. I've never forgotten it since. Burn it into your brain: if you're inside a <span class="il" style="font-style:normal;">.then()</span> and calling something that returns a Promise, return it.</p>
+    </div>
+  </div>
+
+  <div class="mini-build">
+    <div class="mini-build-header"><span class="trophy">🔬</span><span class="mb-title">MINI BUILD — Build Your First Manual Promise</span></div>
+    <div class="mini-build-body">
+      <p>Build a Promise from scratch using <span class="il">new Promise()</span> — no fetch, no shortcuts. Understand each piece before the abstraction hides it.</p>
+      <div class="goal-label">Exercises:</div>
+      <ul class="step-list">
+        <li><span class="step-num">01</span> Create a <span class="il">delay(ms)</span> function that returns a Promise resolving after <span class="il">ms</span> milliseconds using <span class="il">setTimeout</span></li>
+        <li><span class="step-num">02</span> Call <span class="il">delay(1000).then(() => console.log("1 second!"))</span> — confirm it works</li>
+        <li><span class="step-num">03</span> Create a <span class="il">flip()</span> function that returns a Promise — resolves with "heads" or rejects with "tails" randomly (50/50)</li>
+        <li><span class="step-num">04</span> Handle both outcomes with <span class="il">.then()</span> and <span class="il">.catch()</span></li>
+        <li><span class="step-num">05</span> Add <span class="il">.finally()</span> that always logs "Coin flipped"</li>
+        <li><span class="step-num">06</span> Intentionally break the <span class="il">return</span> in a <span class="il">.then()</span> chain and confirm the next handler gets <span class="il">undefined</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="confidence-close">
+    <div class="cc-icon">⚡</div>
+    <div class="cc-heading">You Now Understand What a Promise Actually Is</div>
+    <p>Three states. An executor function. Resolve and reject. <span class="il">.then()</span>, <span class="il">.catch()</span>, <span class="il">.finally()</span>. That's the full basic API. Next post goes deeper: chaining Promises, running them in parallel, and the static methods that handle multiple Promises at once.</p>
+  </div>
+  <a class="next-post" href="#"><div><div class="next-label">// next post →</div><div class="next-title">Post 04 — Promises, Part 2: Chaining &amp; Composition</div></div><div class="next-arrow">→</div></a>
+
+  <nav class="post-nav">
+    <a href="async-02-callbacks.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Callbacks</span></a>
+    <a href="async-04-promises-chaining.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Promise Chaining</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSS Transitions, Transforms, and Variables: How to Make Your Site Feel Alive — CodeHerWay</title>
+<meta name="description" content="The gap between 'it works' and 'it feels designed' is usually transitions and CSS variables. Learn smooth hover effects, transform, opacity, and how to build a reusable color token system.">
+  <link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.prop{color: var(--sky-blue);}
+.val{color: var(--mint-green);}
+.sel{color: var(--pink);}
+.sel-class{color: var(--gold);}
+.demo-row{display: flex; gap: 16px; flex-wrap: wrap; margin: 28px 0; padding: 28px; background: rgba(255,255,255,0.02); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); align-items: center;}
+.demo-label{font-family: 'Fira Code', monospace; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; width: 100%; margin-bottom: -4px;}
+.demo-btn{padding: 10px 24px; border-radius: 8px; font-family: 'Fira Code', monospace; font-size: 13px; font-weight: 600; cursor: pointer; border: 1px solid;}
+.btn-no-transition{background: rgba(180,74,255,0.15); border-color: rgba(180,74,255,0.3); color: var(--purple);}
+.btn-no-transition:hover{background: var(--purple); color: #fff;}
+.btn-with-transition{background: rgba(255,105,180,0.15); border-color: rgba(255,105,180,0.3); color: var(--pink); transition: all 0.3s ease;}
+.btn-with-transition:hover{background: var(--pink); color: #fff; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(255,105,180,0.3);}
+.card-lift{background: #12121a; border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; padding: 18px 22px; width: 160px; transition: all 0.3s ease; cursor: default;}
+.card-lift:hover{transform: translateY(-6px); box-shadow: 0 16px 40px rgba(0,0,0,0.5); border-color: rgba(180,74,255,0.4);}
+.card-lift h4{font-size: 14px; color: #fff; margin-bottom: 4px;}
+.card-lift p{font-size: 12px; color: var(--text-muted); margin-bottom: 0;}
+.theme-swatch-row{display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap;}
+.theme-swatch{border-radius: 8px; width: 80px; height: 80px; border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: flex-end; padding: 6px 8px;}
+.theme-swatch span{font-family: 'Fira Code', monospace; font-size: 10px;}
+@media (max-width: 480px){
+      .code-body { font-size: 11.5px; padding: 12px; }
+      .hero h1 { font-size: clamp(24px, 9vw, 32px); }
+      .il { white-space: normal; word-break: break-word; }
+      .unit-grid, .compare-2, .before-after, .phase-grid,
+      .lh-demo, .pair-grid, .ba-grid, .font-compare { grid-template-columns: 1fr; }
+      .shadow-grid { grid-template-columns: 1fr 1fr; }
+      .swatch-row { gap: 8px; }
+      .swatch { min-width: 90px; }
+      .pyramid-row { flex-direction: column; gap: 6px; align-items: flex-start; }
+      .score-row { flex-direction: column; gap: 6px; }
+      .score-sel { min-width: unset; }
+      .recap-item { flex-wrap: wrap; gap: 4px; }
+      .recap-title { width: 100%; }
+      .checklist { padding: 14px; }
+      .demo-row { padding: 16px 12px; gap: 12px; }
+      .series-nav-divider { display: none; }
+      .connect-arrow { display: none; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .layer-margin { padding: 20px; }
+      .layer-border { padding: 16px; }
+    }
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+
+<div class="hero">
+  <div class="post-label"><span class="series-tag">CSS, But Make It Powerful</span> Post 11 of 14</div>
+  <div class="post-number">CSS Series · Post 11</div>
+  <h1>Transitions, Transforms<br><span class="gradient-text">&amp; CSS Variables</span></h1>
+  <p class="hero-sub">This post brings your sites to life. Smooth hover effects, subtle movement, and a reusable color system you can change in one place — these three tools are what separate static pages from polished products.</p>
+  <div class="tag-row">
+    <span class="tag css">CSS</span>
+    <span class="tag beginner">Beginner</span>
+    <span class="tag series">Series: Post 11</span>
+    <span class="tag">~13 min read</span>
+  </div>
+</div>
+
+<main class="article">
+
+  <h2>💬 "Why Does This Feel Cheap?"</h2>
+
+  <p>The layout is correct. The colors are right. But when you hover over a button it snaps — no fade, no feel. The card jumps up without any softness. Everything technically works but nothing feels <em>considered</em>.</p>
+
+  <p>That snap is the absence of transitions. <span class="key">Transitions convert instant state changes into smooth animations</span>, and they take exactly one line of CSS to add. One line. This post covers the three properties that close the gap between "it works" and "it feels good."</p>
+
+  <h2>🧱 Transitions</h2>
+
+  <p>A transition tells CSS to animate from the old value to the new value when a property changes (on hover, on focus, on class change). Without a transition, the change is instant. With a transition, it's smooth.</p>
+
+  <div class="demo-row">
+    <div class="demo-label">hover both buttons — feel the difference</div>
+    <button class="demo-btn btn-no-transition">No transition — snaps</button>
+    <button class="demo-btn btn-with-transition">With transition — smooth</button>
+  </div>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">styles.css</div>
+      <div class="code-lang">CSS · transition</div>
+    </div>
+    <div class="code-body"><code><span class="c">/* transition: property duration timing-function */</span>
+
+<span class="sel-class">.button</span> {
+  <span class="prop">background</span>: <span class="val">rgba(255,105,180,0.15)</span>;
+  <span class="prop">color</span>: <span class="val">#ff69b4</span>;
+  <span class="prop">transition</span>: <span class="val">all 0.3s ease</span>;  <span class="c">/* smooth ALL changing properties */</span>
+}
+
+<span class="sel-class">.button</span><span style="color:var(--purple)">:hover</span> {
+  <span class="prop">background</span>: <span class="val">#ff69b4</span>;
+  <span class="prop">color</span>: <span class="val">#fff</span>;
+}
+
+<span class="c">/* Transition specific properties — better for performance */</span>
+<span class="sel-class">.card</span> {
+  <span class="prop">transition</span>: <span class="val">transform 0.25s ease</span>, <span class="val">box-shadow 0.25s ease</span>;
+}
+
+<span class="c">/* Timing functions */</span>
+<span class="c">/* ease       — slow start, fast middle, slow end (default) */</span>
+<span class="c">/* ease-in    — slow start, fast end */</span>
+<span class="c">/* ease-out   — fast start, slow end (feels most natural) */</span>
+<span class="c">/* linear     — same speed throughout */</span>
+<span class="c">/* ease-in-out — slow start and end */</span></code></div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">✦ transition: all vs Specific Properties</div>
+    <p><span class="il">transition: all</span> is convenient but animates everything — including properties like <span class="il">display</span> and <span class="il">height</span> that don't animate well. For production code, list specific properties: <span class="il">transition: transform 0.3s ease, opacity 0.3s ease</span>. It's more intentional and performs better.</p>
+  </div>
+
+  <h2>🧱 Transform — Move, Scale, Rotate</h2>
+
+  <p>The <span class="il">transform</span> property manipulates an element's position, size, and rotation <em>without affecting layout</em>. Other elements don't shift to accommodate it. It happens at the compositing layer — which makes it fast and smooth.</p>
+
+  <div class="demo-row">
+    <div class="demo-label">hover the cards</div>
+    <div class="card-lift">
+      <h4>Card A</h4>
+      <p>Lifts on hover</p>
+    </div>
+    <div class="card-lift" style="transition: all 0.3s ease;">
+      <h4>Card B</h4>
+      <p>Smooth lift</p>
+    </div>
+  </div>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">styles.css</div>
+      <div class="code-lang">CSS · transform values</div>
+    </div>
+    <div class="code-body"><code><span class="c">/* translateX / translateY — move horizontally / vertically */</span>
+<span class="sel-class">.card</span><span style="color:var(--purple)">:hover</span> {
+  <span class="prop">transform</span>: <span class="val">translateY(-6px)</span>;  <span class="c">/* lift up 6px */</span>
+}
+
+<span class="c">/* scale — grow or shrink */</span>
+<span class="sel-class">.icon</span><span style="color:var(--purple)">:hover</span> {
+  <span class="prop">transform</span>: <span class="val">scale(1.1)</span>;  <span class="c">/* 10% bigger */</span>
+}
+
+<span class="c">/* rotate */</span>
+<span class="sel-class">.arrow</span><span style="color:var(--purple)">:hover</span> {
+  <span class="prop">transform</span>: <span class="val">rotate(90deg)</span>;
+}
+
+<span class="c">/* Combine multiple transforms */</span>
+<span class="sel-class">.button</span><span style="color:var(--purple)">:hover</span> {
+  <span class="prop">transform</span>: <span class="val">translateY(-2px) scale(1.02)</span>;
+}
+
+<span class="c">/* Always add transition on the BASE state — not the :hover */</span>
+<span class="sel-class">.button</span> {
+  <span class="prop">transition</span>: <span class="val">transform 0.2s ease</span>; <span class="c">/* ← here, not on :hover */</span>
+}</code></div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">ℹ️ Put transition on the Base, Not :hover</div>
+    <p>If you put <span class="il">transition</span> only on <span class="il">:hover</span>, the effect plays when entering the hover state but snaps back instantly when the cursor leaves. Always put <span class="il">transition</span> on the base element — then it animates both in and out smoothly.</p>
+  </div>
+
+  <h3>opacity — Fade In and Out</h3>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">styles.css</div>
+      <div class="code-lang">CSS · opacity transition</div>
+    </div>
+    <div class="code-body"><code><span class="c">/* Fade an overlay in on hover */</span>
+<span class="sel-class">.card-overlay</span> {
+  <span class="prop">opacity</span>: <span class="val">0</span>;
+  <span class="prop">transition</span>: <span class="val">opacity 0.3s ease</span>;
+}
+
+<span class="sel-class">.card</span><span style="color:var(--purple)">:hover</span> <span class="sel-class">.card-overlay</span> {
+  <span class="prop">opacity</span>: <span class="val">1</span>;
+}
+
+<span class="c">/* Dim inactive items */</span>
+<span class="sel-class">.nav-item</span> {
+  <span class="prop">opacity</span>: <span class="val">0.6</span>;
+  <span class="prop">transition</span>: <span class="val">opacity 0.2s ease</span>;
+}
+<span class="sel-class">.nav-item</span><span style="color:var(--purple)">:hover</span>,
+<span class="sel-class">.nav-item.active</span> {
+  <span class="prop">opacity</span>: <span class="val">1</span>;
+}</code></div>
+  </div>
+
+  <h2>🧱 CSS Variables — A Reusable Design System</h2>
+
+  <p>CSS custom properties (variables) let you define a value once and reuse it everywhere. Change it in one place and every element that references it updates instantly. This is how real design systems work — one source of truth for colors, spacing, and typography.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">styles.css</div>
+      <div class="code-lang">CSS · Custom Properties</div>
+    </div>
+    <div class="code-body"><code><span class="c">/* Define variables on :root — available everywhere */</span>
+<span class="sel">:root</span> {
+  <span class="c">/* Colors */</span>
+  <span class="a">--color-bg</span>:       <span class="val">#0a0a0f</span>;
+  <span class="a">--color-surface</span>:  <span class="val">#12121a</span>;
+  <span class="a">--color-text</span>:     <span class="val">#e0e0e8</span>;
+  <span class="a">--color-muted</span>:    <span class="val">#9595a8</span>;
+  <span class="a">--color-accent</span>:   <span class="val">#ff69b4</span>;
+
+  <span class="c">/* Transparent layers built from the accent */</span>
+  <span class="a">--accent-glow</span>:    <span class="val">rgba(255, 105, 180, 0.15)</span>;
+  <span class="a">--accent-border</span>:  <span class="val">rgba(255, 105, 180, 0.25)</span>;
+
+  <span class="c">/* Spacing */</span>
+  <span class="a">--space-sm</span>:  <span class="val">8px</span>;
+  <span class="a">--space-md</span>:  <span class="val">16px</span>;
+  <span class="a">--space-lg</span>:  <span class="val">24px</span>;
+  <span class="a">--space-xl</span>:  <span class="val">48px</span>;
+
+  <span class="c">/* Typography */</span>
+  <span class="a">--font-body</span>:    <span class="val">'Space Grotesk'</span>, <span class="val">sans-serif</span>;
+  <span class="a">--font-mono</span>:    <span class="val">'Fira Code'</span>, <span class="val">monospace</span>;
+  <span class="a">--radius-card</span>:  <span class="val">12px</span>;
+}
+
+<span class="c">/* Use them with var() */</span>
+<span class="sel">body</span> {
+  <span class="prop">background</span>: <span class="val">var(--color-bg)</span>;
+  <span class="prop">color</span>: <span class="val">var(--color-text)</span>;
+  <span class="prop">font-family</span>: <span class="val">var(--font-body)</span>;
+}
+
+<span class="sel-class">.card</span> {
+  <span class="prop">background</span>: <span class="val">var(--color-surface)</span>;
+  <span class="prop">border</span>: <span class="val">1px solid var(--accent-border)</span>;
+  <span class="prop">border-radius</span>: <span class="val">var(--radius-card)</span>;
+  <span class="prop">padding</span>: <span class="val">var(--space-lg)</span>;
+  <span class="prop">transition</span>: <span class="val">border-color 0.3s ease</span>;
+}
+
+<span class="sel-class">.card</span><span style="color:var(--purple)">:hover</span> {
+  <span class="prop">border-color</span>: <span class="val">var(--color-accent)</span>;
+}</code></div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">✦ Variable Fallbacks
+          </div>
+          <div class="callout callout-tip">
+            <span class="callout-label">💡 Variable Fallbacks</span>
+            <p>You can provide a fallback value: <code class="il">var(--accent, #ff69b4)</code> — if the variable isn't defined, CSS uses the fallback. Useful for components that might be used outside your design system.</p>
+          </div>
+          <div class="callout callout-tip">
+            <span class="callout-label">✦ Rebrand in One Edit</span></div>
+    <p>Want to rebrand from pink to purple? Change <span class="il">--color-accent</span> on <span class="il">:root</span> once. One edit. Every button, every border, every hover state — updated. That's what a design system feels like when it's working.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="mini-build">
+    <div class="mini-build-header">
+      <span style="font-size:22px;">🛠</span>
+      <h3>Mini Build: Card with Hover Effects + Variable Theme</h3>
+    </div>
+    <div class="mini-build-body">
+      <p>Build a card that lifts on hover with a smooth transition, using CSS variables for all colors. Then swap the entire theme by changing two variable values.</p>
+
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-text"><p><strong>Define your design token variables on :root.</strong></p></div>
+      </div>
+
+      <div class="code-window">
+        <div class="code-topbar">
+          <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+          <div class="code-filename">styles.css</div>
+          <div class="code-lang">CSS</div>
+        </div>
+        <div class="code-body"><code><span class="sel">:root</span> {
+  <span class="a">--bg</span>:       <span class="val">#0a0a0f</span>;
+  <span class="a">--surface</span>:  <span class="val">#12121a</span>;
+  <span class="a">--accent</span>:   <span class="val">#ff69b4</span>;        <span class="c">/* change this to rebrand */</span>
+  <span class="a">--glow</span>:     <span class="val">rgba(255,105,180,0.12)</span>;
+  <span class="a">--text</span>:     <span class="val">#e0e0e8</span>;
+  <span class="a">--muted</span>:    <span class="val">#9595a8</span>;
+  <span class="a">--radius</span>:   <span class="val">12px</span>;
+  <span class="a">--transition</span>: <span class="val">0.3s ease</span>;
+}
+
+<span class="sel">*</span> { <span class="prop">margin</span>: <span class="val">0</span>; <span class="prop">padding</span>: <span class="val">0</span>; <span class="prop">box-sizing</span>: <span class="val">border-box</span>; }
+<span class="sel">body</span> { <span class="prop">background</span>: <span class="val">var(--bg)</span>; <span class="prop">color</span>: <span class="val">var(--text)</span>; <span class="prop">font-family</span>: <span class="val">sans-serif</span>; <span class="prop">padding</span>: <span class="val">40px 24px</span>; }</code></div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-text"><p><strong>Build the card with transitions tied to variables.</strong></p></div>
+      </div>
+
+      <div class="code-window">
+        <div class="code-topbar">
+          <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+          <div class="code-filename">styles.css</div>
+          <div class="code-lang">CSS</div>
+        </div>
+        <div class="code-body"><code><span class="sel-class">.card</span> {
+  <span class="prop">background</span>: <span class="val">var(--surface)</span>;
+  <span class="prop">border</span>: <span class="val">1px solid rgba(255,255,255,0.07)</span>;
+  <span class="prop">border-radius</span>: <span class="val">var(--radius)</span>;
+  <span class="prop">padding</span>: <span class="val">24px</span>;
+  <span class="prop">max-width</span>: <span class="val">320px</span>;
+  <span class="prop">transition</span>: <span class="val">transform var(--transition)</span>,
+              <span class="val">box-shadow var(--transition)</span>,
+              <span class="val">border-color var(--transition)</span>;
+}
+
+<span class="sel-class">.card</span><span style="color:var(--purple)">:hover</span> {
+  <span class="prop">transform</span>: <span class="val">translateY(-6px)</span>;
+  <span class="prop">box-shadow</span>: <span class="val">0 20px 48px rgba(0,0,0,0.5)</span>;
+  <span class="prop">border-color</span>: <span class="val">var(--accent)</span>;
+  <span class="prop">background</span>: <span class="val">var(--glow)</span>;
+}
+
+<span class="sel-class">.card-tag</span> {
+  <span class="prop">font-size</span>: <span class="val">0.75rem</span>;
+  <span class="prop">color</span>: <span class="val">var(--accent)</span>;
+  <span class="prop">text-transform</span>: <span class="val">uppercase</span>;
+  <span class="prop">letter-spacing</span>: <span class="val">1.5px</span>;
+  <span class="prop">margin-bottom</span>: <span class="val">10px</span>;
+  <span class="prop">display</span>: <span class="val">block</span>;
+}</code></div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-text">
+          <p><strong>Swap the theme in two lines.</strong> Change <span class="il">--accent</span> to <span class="il">#69d2e7</span> and <span class="il">--glow</span> to <span class="il">rgba(105,210,231,0.12)</span>. Your entire card — tag color, hover border, hover background — instantly switches. No hunting through 20 selectors.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="confidence-close">
+    <h2>💛 Your Sites Have a Pulse Now</h2>
+    <p>The difference between a static page and a product that feels designed often comes down to two things: motion and consistency. Transitions add the motion. CSS variables enforce the consistency. Together they're the finish layer on everything you've built.</p>
+    <ul class="recap-list">
+      <li><span class="il">transition</span> smooths state changes — put it on the base element, not <span class="il">:hover</span></li>
+      <li><span class="il">transform: translateY()</span> lifts elements. <span class="il">scale()</span> grows them. <span class="il">rotate()</span> turns them.</li>
+      <li>Transform doesn't affect layout — other elements don't move</li>
+      <li><span class="il">opacity</span> fades. Pair with <span class="il">transition</span> for smooth reveal effects.</li>
+      <li>CSS variables (<span class="il">--name: value</span>) defined on <span class="il">:root</span> are available everywhere</li>
+      <li>Use <span class="il">var(--name)</span> to reference. Change once, updates everywhere.</li>
+    </ul>
+    <p>Next: Shadows, Depth &amp; Advanced Selectors — <span class="il">box-shadow</span>, <span class="il">::before</span>/<span class="il">::after</span>, and attribute selectors. The finishing details that make a site feel properly crafted.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="devfession">
+    <div class="devfession-header">🧾 DevFession</div>
+    <div class="devfession-body">
+      <p>For an embarrassingly long time I had <span class="il">transition</span> on my <span class="il">:hover</span> state. Not on the base. On the hover. Which meant hovering in was smooth but leaving was an instant snap, and I genuinely thought that was just how CSS transitions worked.</p>
+      <p>Someone finally pointed it out in a code review. "Why is your transition only on :hover?" I looked at it. I thought about it. I moved it to the base. Both directions became smooth. That code review note quietly improved every interactive element I've written since.</p>
+      <p>Base element. Not :hover. Every time.</p>
+    </div></div>
+
+
+  <nav class="post-nav">
+    <a href="10-specificity-and-cascade.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Specificity and the Cascade</span></a>
+    <a href="12-shadows-depth-selectors.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Shadows, Pseudo-Elements, and Advanced Selectors</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

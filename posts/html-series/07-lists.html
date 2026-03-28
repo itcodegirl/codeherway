@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post 7 — HTML Lists | CodeHerWay</title>
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.list-types{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:32px 0;}
+.lt-card{background:var(--bg-code);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:22px;transition:border-color 0.3s,transform 0.3s;}
+.lt-card:hover{transform:translateY(-3px);}
+.lt-card:nth-child(1){border-color:rgba(255,105,180,0.2);}
+.lt-card:nth-child(1):hover{border-color:var(--pink);}
+.lt-card:nth-child(2){border-color:rgba(105,210,231,0.2);}
+.lt-card:nth-child(2):hover{border-color:var(--sky-blue);}
+.lt-card:nth-child(3){border-color:rgba(125,255,179,0.2);}
+.lt-card:nth-child(3):hover{border-color:var(--mint-green);}
+.lt-icon{font-size:28px;margin-bottom:10px;}
+.lt-name{font-family:'Fira Code',monospace;font-size:16px;font-weight:700;margin-bottom:4px;}
+.lt-card:nth-child(1) .lt-name{color:var(--pink);}
+.lt-card:nth-child(2) .lt-name{color:var(--sky-blue);}
+.lt-card:nth-child(3) .lt-name{color:var(--mint-green);}
+.lt-tags{font-family:'Fira Code',monospace;font-size:12px;color:var(--text-muted);margin-bottom:8px;}
+.lt-desc{font-size:14px;color:var(--text-secondary);line-height:1.6;}
+.decision-grid{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;margin:32px 0;background:var(--bg-code);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:24px 28px;align-items:center;}
+.dec-q{font-size:15px;color:var(--text-secondary);}
+.dec-a{font-family:'Fira Code',monospace;font-size:14px;padding:5px 14px;border-radius:6px;width:fit-content;}
+.dec-a.ul-a{background:rgba(255,105,180,0.1);color:var(--pink);}
+.dec-a.ol-a{background:rgba(105,210,231,0.1);color:var(--sky-blue);}
+.dec-a.dl-a{background:rgba(125,255,179,0.1);color:var(--mint-green);}
+@media(max-width:640px){.list-types{grid-template-columns:1fr;}.decision-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<section class="hero">
+  <div class="post-label"><span class="series-tag">HTML Fundamentals</span> Post 07 of 20</div>
+  <h1>📦 <span class="gradient-text">HTML Lists</span></h1>
+  <p class="hero-sub">Navigation menus, step-by-step instructions, feature lists, glossaries — lists are everywhere on the web. HTML gives you three types, and each one means something different.</p>
+  <div class="tag-row"><span class="tag html">&lt;ul&gt;</span><span class="tag html">&lt;ol&gt;</span><span class="tag html">&lt;li&gt;</span><span class="tag html">&lt;dl&gt;</span><span class="tag html">&lt;dt&gt; &amp; &lt;dd&gt;</span></div>
+</section>
+<main class="article">
+  <h2>Three Types of Lists</h2>
+  <p>HTML has three distinct list types, and each carries <span class="key">semantic meaning</span>. Choosing the right list communicates the <em>relationship</em> between your items.</p>
+  <div class="list-types">
+    <div class="lt-card"><div class="lt-icon">●</div><div class="lt-name">Unordered</div><div class="lt-tags">&lt;ul&gt; + &lt;li&gt;</div><div class="lt-desc">Items with no specific sequence. Order doesn't matter. Bullet points by default.</div></div>
+    <div class="lt-card"><div class="lt-icon">1.</div><div class="lt-name">Ordered</div><div class="lt-tags">&lt;ol&gt; + &lt;li&gt;</div><div class="lt-desc">Items in a meaningful sequence. Steps, rankings, chronology. Numbered by default.</div></div>
+    <div class="lt-card"><div class="lt-icon">→</div><div class="lt-name">Definition</div><div class="lt-tags">&lt;dl&gt; + &lt;dt&gt; + &lt;dd&gt;</div><div class="lt-desc">Term-and-description pairs. Glossaries, FAQs, metadata. The underused powerhouse.</div></div>
+  </div>
+  <div class="sep"></div>
+  <h2>Unordered Lists: &lt;ul&gt;</h2>
+  <p>An <span class="key">unordered list</span> is for items where order doesn't matter — grocery lists, skills, feature lists, navigation menus. Browsers render bullet points by default.</p>
+  <div class="code-window"><div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML</div></div>
+  <div class="code-body"><span class="t">&lt;ul&gt;</span>
+  <span class="t">&lt;li&gt;</span>HTML &amp; CSS<span class="t">&lt;/li&gt;</span>
+  <span class="t">&lt;li&gt;</span>JavaScript<span class="t">&lt;/li&gt;</span>
+  <span class="t">&lt;li&gt;</span>React<span class="t">&lt;/li&gt;</span>
+  <span class="t">&lt;li&gt;</span>Responsive Design<span class="t">&lt;/li&gt;</span>
+<span class="t">&lt;/ul&gt;</span></div></div>
+  <div class="render-label">Browser Renders As</div>
+  <div class="render-box"><ul><li>HTML & CSS</li><li>JavaScript</li><li>React</li><li>Responsive Design</li></ul></div>
+  <div class="callout info"><div class="callout-title">ℹ️ Good to Know</div><p>Navigation menus are almost always <span class="il">&lt;ul&gt;</span> lists inside a <span class="il">&lt;nav&gt;</span>. CSS transforms the bullets into a horizontal bar — but semantically, a nav menu <em>is</em> a list of links.</p></div>
+  <div class="code-window"><div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML</div></div>
+  <div class="code-body"><span class="t">&lt;nav&gt;</span>
+  <span class="t">&lt;ul&gt;</span>
+    <span class="t">&lt;li&gt;</span><span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"#about"</span><span class="t">&gt;</span>About<span class="t">&lt;/a&gt;</span><span class="t">&lt;/li&gt;</span>
+    <span class="t">&lt;li&gt;</span><span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"#projects"</span><span class="t">&gt;</span>Projects<span class="t">&lt;/a&gt;</span><span class="t">&lt;/li&gt;</span>
+    <span class="t">&lt;li&gt;</span><span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"#contact"</span><span class="t">&gt;</span>Contact<span class="t">&lt;/a&gt;</span><span class="t">&lt;/li&gt;</span>
+  <span class="t">&lt;/ul&gt;</span>
+<span class="t">&lt;/nav&gt;</span></div></div>
+  <div class="sep"></div>
+  <h2>Ordered Lists: &lt;ol&gt;</h2>
+  <p>An <span class="key">ordered list</span> is for items where sequence matters — step-by-step instructions, rankings, recipes. Rearranging items would change the meaning.</p>
+  <div class="code-window"><div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML</div></div>
+  <div class="code-body"><span class="t">&lt;h3&gt;</span>How to Start a Project<span class="t">&lt;/h3&gt;</span>
+<span class="t">&lt;ol&gt;</span>
+  <span class="t">&lt;li&gt;</span>Create a new folder for your project<span class="t">&lt;/li&gt;</span>
+  <span class="t">&lt;li&gt;</span>Open it in VS Code<span class="t">&lt;/li&gt;</span>
+  <span class="t">&lt;li&gt;</span>Create an index.html file<span class="t">&lt;/li&gt;</span>
+  <span class="t">&lt;li&gt;</span>Write your HTML structure<span class="t">&lt;/li&gt;</span>
+  <span class="t">&lt;li&gt;</span>Open in browser and start building<span class="t">&lt;/li&gt;</span>
+<span class="t">&lt;/ol&gt;</span></div></div>
+  <div class="render-label">Browser Renders As</div>
+  <div class="render-box"><strong>How to Start a Project</strong><ol><li>Create a new folder for your project</li><li>Open it in VS Code</li><li>Create an index.html file</li><li>Write your HTML structure</li><li>Open in browser and start building</li></ol></div>
+  <div class="callout tip"><div class="callout-title">💡 Pro Tip</div><p><span class="il">start="5"</span> changes the starting number. <span class="il">reversed</span> counts down. <span class="il">type="A"</span> switches to letters. Never hard-code numbers into <span class="il">&lt;li&gt;</span> text.</p></div>
+  <div class="sep"></div>
+  <h2>Nested Lists</h2>
+  <p>Lists can be nested by placing a new <span class="il">&lt;ul&gt;</span> or <span class="il">&lt;ol&gt;</span> <em>inside</em> an <span class="il">&lt;li&gt;</span> — not after it.</p>
+  <div class="code-window"><div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML</div></div>
+  <div class="code-body"><span class="t">&lt;ul&gt;</span>
+  <span class="t">&lt;li&gt;</span>Frontend
+    <span class="t">&lt;ul&gt;</span>
+      <span class="t">&lt;li&gt;</span>HTML<span class="t">&lt;/li&gt;</span>
+      <span class="t">&lt;li&gt;</span>CSS<span class="t">&lt;/li&gt;</span>
+      <span class="t">&lt;li&gt;</span>JavaScript<span class="t">&lt;/li&gt;</span>
+    <span class="t">&lt;/ul&gt;</span>
+  <span class="t">&lt;/li&gt;</span>
+  <span class="t">&lt;li&gt;</span>Backend
+    <span class="t">&lt;ul&gt;</span>
+      <span class="t">&lt;li&gt;</span>Node.js<span class="t">&lt;/li&gt;</span>
+    <span class="t">&lt;/ul&gt;</span>
+  <span class="t">&lt;/li&gt;</span>
+<span class="t">&lt;/ul&gt;</span></div></div>
+  <div class="callout mindset"><div class="callout-title">🧠 Mindset Shift</div><p>The nested <span class="il">&lt;ul&gt;</span> goes <em>inside</em> the <span class="il">&lt;li&gt;</span>, not after it. The parent <span class="il">&lt;li&gt;</span> doesn't close until after the sub-list. If your nesting looks wrong, check that the inner list is actually inside the <span class="il">&lt;li&gt;</span>.</p></div>
+  <div class="sep"></div>
+  <h2>Definition Lists: &lt;dl&gt;</h2>
+  <p>The <span class="key">definition list</span> pairs <span class="key">terms</span> (<span class="il">&lt;dt&gt;</span>) with their <span class="key">descriptions</span> (<span class="il">&lt;dd&gt;</span>). Perfect for glossaries, FAQs, product specs, and metadata.</p>
+  <div class="code-window"><div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML</div></div>
+  <div class="code-body"><span class="t">&lt;dl&gt;</span>
+  <span class="t">&lt;dt&gt;</span>Element<span class="t">&lt;/dt&gt;</span>
+  <span class="t">&lt;dd&gt;</span>The complete unit: opening tag + content + closing tag.<span class="t">&lt;/dd&gt;</span>
+
+  <span class="t">&lt;dt&gt;</span>Attribute<span class="t">&lt;/dt&gt;</span>
+  <span class="t">&lt;dd&gt;</span>Extra info added to an opening tag, like href or class.<span class="t">&lt;/dd&gt;</span>
+
+  <span class="t">&lt;dt&gt;</span>Semantic HTML<span class="t">&lt;/dt&gt;</span>
+  <span class="t">&lt;dd&gt;</span>Using elements that describe the meaning of content, not just appearance.<span class="t">&lt;/dd&gt;</span>
+<span class="t">&lt;/dl&gt;</span></div></div>
+  <div class="render-label">Browser Renders As</div>
+  <div class="render-box"><dl><dt>Element</dt><dd>The complete unit: opening tag + content + closing tag.</dd><dt>Attribute</dt><dd>Extra info added to an opening tag, like href or class.</dd><dt>Semantic HTML</dt><dd>Using elements that describe the meaning of content, not just appearance.</dd></dl></div>
+  <div class="sep"></div>
+  <h2>Which List Type Should I Use?</h2>
+  <div class="decision-grid">
+    <div class="dec-q">Does the order of items matter?</div><div class="dec-a ol-a">Yes → &lt;ol&gt;</div>
+    <div class="dec-q">A collection with no sequence?</div><div class="dec-a ul-a">Yes → &lt;ul&gt;</div>
+    <div class="dec-q">Pairing terms with descriptions?</div><div class="dec-a dl-a">Yes → &lt;dl&gt;</div>
+    <div class="dec-q">Navigation menu?</div><div class="dec-a ul-a">&lt;ul&gt; inside &lt;nav&gt;</div>
+    <div class="dec-q">Steps in a tutorial or recipe?</div><div class="dec-a ol-a">Always &lt;ol&gt;</div>
+    <div class="dec-q">FAQ or glossary?</div><div class="dec-a dl-a">&lt;dl&gt; is the semantic choice</div>
+  </div>
+  <div class="sep"></div>
+  <div class="devfession">
+    <div class="devfession-header">🔥 Dev_Fession</div>
+    <div class="devfession-body">
+      <p>I used to build navigation menus with <span class="il">&lt;div&gt;</span> tags — just a row of <span class="il">&lt;a&gt;</span> links in a <span class="il">&lt;div&gt;</span>. It looked fine. I did it that way for months.</p>
+      <p>Turns out screen readers announce "navigation, list, five items" for a proper <span class="il">&lt;ul&gt;</span> in a <span class="il">&lt;nav&gt;</span>. My <span class="il">&lt;div&gt;</span>-based nav got read with no context, no count, no structure. I refactored every nav I'd ever built that week. It should have been done from the start.</p>
+    </div>
+    <div class="devfession-footer"><span>CodeHerWay // HTML Course</span><span class="tagline">Code it. Own it. Her way.</span></div>
+  </div>
+  <div class="mini-build">
+    <div class="mini-build-header"><h3>🏆 Mini Build: Recipe Page</h3></div>
+    <div class="mini-build-body">
+      <p>Build a recipe page using all three list types:</p>
+      <div class="step"><div class="step-num">1</div><div class="step-text">An <span class="sky">&lt;h1&gt;</span> recipe name and <span class="sky">&lt;p&gt;</span> intro.</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text">An <strong>unordered list</strong> (<span class="sky">&lt;ul&gt;</span>) for the ingredients — order doesn't matter.</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text">An <strong>ordered list</strong> (<span class="sky">&lt;ol&gt;</span>) for step-by-step instructions — order absolutely matters.</div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text">A <strong>definition list</strong> (<span class="sky">&lt;dl&gt;</span>) for "Quick Facts" — Prep Time, Servings, Difficulty paired with their values.</div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-text">A <span class="sky">&lt;nav&gt;</span> at the top with anchor links to each section.</div></div>
+      <div class="step"><div class="step-num">6</div><div class="step-text"><strong>Bonus:</strong> Nest a <span class="sky">&lt;ul&gt;</span> inside one ingredient <span class="sky">&lt;li&gt;</span> for sub-ingredients.</div></div>
+    </div>
+  </div>
+  <div class="sep"></div>
+  <h2>Recap</h2>
+  <p><span class="key">Unordered lists</span> (<span class="il">&lt;ul&gt;</span>) for items where order doesn't matter. <span class="key">Ordered lists</span> (<span class="il">&lt;ol&gt;</span>) for sequential items. <span class="key">Definition lists</span> (<span class="il">&lt;dl&gt;</span>) for term-description pairs. Lists can be nested. Nav menus use <span class="il">&lt;ul&gt;</span> inside <span class="il">&lt;nav&gt;</span>. Always choose based on meaning, not appearance.</p>
+  <nav class="post-nav">
+    <a href="06-images-media.html" class="post-nav-link"><span class="nav-label">← Previous</span><span class="nav-title">Images</span></a>
+    <a href="08-semantic-html.html" class="post-nav-link next"><span class="nav-label">Next →</span><span class="nav-title">Semantic HTML (Extremely Important)</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">← Back to All Posts</a></div>
+</main>
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

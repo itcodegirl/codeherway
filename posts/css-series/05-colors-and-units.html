@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <title>CSS Colors and Units Explained: HEX, RGBA, HSL, rem, and When to Use Each — CodeHerWay</title>
+<meta name="description" content="Every color on every website is a CSS value — and every sizing decision is a unit choice. Learn HEX, RGBA, HSL, px, rem, %, and vh/vw in this beginner-friendly CSS tutorial.">
+ <link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.swatch-strip{max-width: 860px; margin: 0 auto; padding: 0 24px; display: flex; gap: 4px; height: 6px;}
+.swatch-seg{flex: 1; border-radius: 3px;}
+.prop{color: var(--sky-blue);}
+.val{color: var(--mint-green);}
+.sel{color: var(--pink);}
+.sel-class{color: var(--gold);}
+.swatch-row{display: flex; gap: 10px; flex-wrap: wrap; margin: 24px 0;}
+.swatch{border-radius: 10px; padding: 16px 20px; font-family: 'Fira Code', monospace; font-size: 12px; font-weight: 600; min-width: 140px; border: 1px solid rgba(255,255,255,0.08);}
+.swatch .sw-label{font-size: 11px; opacity: 0.7; margin-bottom: 4px;}
+.swatch .sw-val{font-size: 13px;}
+.alpha-stack{display: flex; flex-direction: column; gap: 8px; margin: 24px 0;}
+.alpha-row{display: flex; align-items: center; gap: 16px;}
+.alpha-swatch{width: 48px; height: 36px; border-radius: 8px; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.08);}
+.alpha-label{font-family: 'Fira Code', monospace; font-size: 13px; color: var(--text-secondary);}
+.unit-grid{display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0;}
+.unit-card{background: var(--bg-code); border-radius: 12px; padding: 22px; border: 1px solid rgba(255,255,255,0.06);}
+.unit-card-head{font-family: 'Fira Code', monospace; font-size: 18px; font-weight: 700; margin-bottom: 8px;}
+.unit-card-sub{font-size: 13px; color: var(--text-muted); margin-bottom: 14px;}
+.unit-card ul{list-style: none; padding: 0;}
+.unit-card li{font-size: 14px; color: var(--text-secondary); padding: 4px 0; display: flex; align-items: flex-start; gap: 8px;}
+.unit-card li::before{content: "→"; color: var(--text-muted); flex-shrink: 0; font-family: 'Fira Code', monospace;}
+.unit-card.abs{border-color: rgba(255,107,107,0.2);}
+.unit-card.abs .unit-card-head{color: var(--coral);}
+.unit-card.rel{border-color: rgba(125,255,179,0.2);}
+.unit-card.rel .unit-card-head{color: var(--mint-green);}
+.ref-table-wrap{margin: 32px 0; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06);}
+.ref-table{width: 100%; border-collapse: collapse; font-size: 14.5px;}
+.ref-table thead{background: linear-gradient(135deg, rgba(180,74,255,0.15), rgba(255,105,180,0.1));}
+.ref-table th{padding: 13px 18px; text-align: left; font-weight: 600; color: var(--purple); border-bottom: 2px solid rgba(180,74,255,0.2); font-size: 13px;}
+.ref-table td{padding: 11px 18px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top;}
+.ref-table tbody tr{background: var(--bg-code); transition: background 0.2s;}
+.ref-table tbody tr:hover{background: rgba(180,74,255,0.04);}
+.ref-table tbody tr:nth-child(even){background: var(--bg-code-alt);}
+@media(max-width:640px){.code-body { font-size: 12px; padding: 14px; } .code-topbar { padding: 10px 14px; } .code-lang { font-size: 10px; padding: 2px 8px; } .code-filename { font-size: 10px; } .hero h1 { font-size: clamp(26px, 8vw, 40px); } .hero-sub { font-size: 16px; } .hero { padding: 32px 16px 28px; } .article { padding: 0 16px 60px; } .article h2 { font-size: 22px; margin: 40px 0 14px; } .article h3 { font-size: 18px; margin: 28px 0 12px; } .callout { padding: 18px; } .devfession-body { padding: 20px; } .devfession-header { font-size: 15px; padding: 14px 20px; } .devfession-footer { flex-direction: column; gap: 4px; font-size: 11px; padding: 12px 20px; } .mini-build-body { padding: 20px; } .mini-build-header { padding: 14px 20px; } .mini-build-header h3 { font-size: 17px; } .confidence-close { padding: 22px 20px; } .confidence-close::before { display: none; } .step { gap: 10px; } .step-num { width: 26px; height: 26px; font-size: 12px; flex-shrink: 0; } .tag { font-size: 11px; padding: 4px 10px; } .post-number { font-size: 11px; letter-spacing: 1px; } .sep { margin: 32px 0; } .swatch-strip { padding: 0 16px; }}
+@media (max-width: 480px){
+   .code-body { font-size: 11.5px; padding: 12px; }
+   .hero h1 { font-size: clamp(24px, 9vw, 32px); }
+   .il { white-space: normal; word-break: break-word; }
+   .unit-grid { grid-template-columns: 1fr; }
+   .swatch-row { gap: 8px; }
+   .swatch { min-width: 90px; }
+  }
+</style>
+</head>
+<body>
+ <div id="site-header"></div>
+
+<div class="hero">
+ <div class="post-label"><span class="series-tag">CSS, But Make It Powerful</span> Post 05 of 14 </div>
+ <div class="post-number">CSS Series · Post 05</div>
+ <h1>Colors &amp; Units<br><span class="gradient-text">The Language of Visual Decisions</span></h1>
+ <p class="hero-sub">Every color you see on every website was written as a value in a CSS file. This post gives you full control over that — and teaches you which units to reach for, and when.</p>
+ <div class="tag-row">
+  <span class="tag css">CSS</span>
+  <span class="tag beginner">Beginner</span>
+  <span class="tag series">Series: Post 05</span>
+  <span class="tag">~12 min read</span>
+ </div>
+</div>
+
+<div class="swatch-strip">
+ <div class="swatch-seg" style="background:#F55D71;"></div>
+ <div class="swatch-seg" style="background:#f472b6;"></div>
+ <div class="swatch-seg" style="background:#e879a0;"></div>
+ <div class="swatch-seg" style="background:#c084fc;"></div>
+ <div class="swatch-seg" style="background:#a78bfa;"></div>
+ <div class="swatch-seg" style="background:#818cf8;"></div>
+ <div class="swatch-seg" style="background:#36367d;"></div>
+ <div class="swatch-seg" style="background:#3d65ba;"></div>
+ <div class="swatch-seg" style="background:#4386AB;"></div>
+ <div class="swatch-seg" style="background:#22d3ee;"></div>
+ <div class="swatch-seg" style="background:#34d399;"></div>
+ <div class="swatch-seg" style="background:#fbbf24;"></div>
+ <div class="swatch-seg" style="background:#fb7185;"></div>
+ <div class="swatch-seg" style="background:#d85a28;"></div>
+</div>
+
+<main class="article">
+
+ <h2>💬 "What Even Is #ff69b4?"</h2>
+
+ <p>At some point you copy-paste a color value and it works — but you have no idea why <span class="il">#ff69b4</span> is pink, or what <span class="il">rgba(0,0,0,0.5)</span> means, or why one tutorial uses <span class="il">px</span> and another uses <span class="il">rem</span>. It all feels like magic codes you have to look up every time.</p>
+
+ <p>It's not magic. <span class="key">CSS has multiple color systems and multiple unit systems</span>, and each one was built for a different use case. Once you understand what each one does, you start making deliberate choices instead of guessing.</p>
+
+ <div class="callout mindset">
+  <div class="callout-title">🧠 Mindset First</div>
+  <p>Colors and units aren't just technical values — they're design decisions. Choosing <span class="il">rem</span> over <span class="il">px</span> for font sizes, or <span class="il">rgba</span> over <span class="il">hex</span> for overlays, reflects a level of intentionality that separates beginner CSS from professional CSS.</p>
+ </div>
+
+ <h2>🧱 Color Systems</h2>
+
+ <h3>HEX — The Most Common Format</h3>
+
+ <p>HEX is the format you'll see most often. It's a six-character code that represents red, green, and blue as pairs of hexadecimal digits — base 16, where letters A–F represent 10–15.</p>
+
+ <div class="swatch-row">
+  <div class="swatch" style="background:#ff69b4; color:#3d0020;">
+   <div class="sw-label">HEX</div>
+   <div class="sw-val">#ff69b4</div>
+  </div>
+  <div class="swatch" style="background:#b44aff; color:#1a0030;">
+   <div class="sw-label">HEX</div>
+   <div class="sw-val">#b44aff</div>
+  </div>
+  <div class="swatch" style="background:#0a0a0f; color:#e0e0e8; border-color:rgba(255,255,255,0.15);">
+   <div class="sw-label">HEX</div>
+   <div class="sw-val">#0a0a0f</div>
+  </div>
+  <div class="swatch" style="background:#69d2e7; color:#001e24;">
+   <div class="sw-label">HEX</div>
+   <div class="sw-val">#69d2e7</div>
+  </div>
+ </div>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">styles.css</div>
+   <div class="code-lang">CSS · HEX</div>
+  </div>
+  <div class="code-body"><code><span class="c">/* Full 6-digit HEX — #RRGGBB */</span>
+<span class="sel-class">.heading</span> { <span class="prop">color</span>: <span class="val">#ff69b4</span>; }   <span class="c">/* pink */</span>
+<span class="sel-class">.bg</span>   { <span class="prop">background</span>: <span class="val">#0a0a0f</span>; } <span class="c">/* near-black */</span>
+<span class="sel-class">.border</span> { <span class="prop">border-color</span>: <span class="val">#b44aff</span>; } <span class="c">/* purple */</span>
+
+<span class="c">/* Shorthand — #RGB (only when both digits match) */</span>
+<span class="sel-class">.white</span>  { <span class="prop">color</span>: <span class="val">#fff</span>; }  <span class="c">/* = #ffffff */</span>
+<span class="sel-class">.black</span>  { <span class="prop">color</span>: <span class="val">#000</span>; }  <span class="c">/* = #000000 */</span>
+
+<span class="c">/* HEX with alpha — 8 digits, last two = opacity */</span>
+<span class="sel-class">.ghost</span>  { <span class="prop">background</span>: <span class="val">#ff69b480</span>; } <span class="c">/* 50% transparent pink */</span></code></div>
+ </div>
+
+ <h3>RGB and RGBA — Red, Green, Blue (+ Alpha)</h3>
+
+ <p>RGB uses three numbers 0–255 for red, green, and blue. <span class="key">RGBA adds a fourth value for transparency</span> — alpha — from 0 (invisible) to 1 (fully opaque). This is the most readable format for colors where opacity matters.</p>
+
+ <div class="alpha-stack">
+  <div class="alpha-row">
+   <div class="alpha-swatch" style="background: rgba(180,74,255,1.0);"></div>
+   <div class="alpha-label">rgba(180, 74, 255, 1.0) — fully opaque</div>
+  </div>
+  <div class="alpha-row">
+   <div class="alpha-swatch" style="background: rgba(180,74,255,0.6);"></div>
+   <div class="alpha-label">rgba(180, 74, 255, 0.6) — 60% opacity</div>
+  </div>
+  <div class="alpha-row">
+   <div class="alpha-swatch" style="background: rgba(180,74,255,0.25);"></div>
+   <div class="alpha-label">rgba(180, 74, 255, 0.25) — 25% opacity</div>
+  </div>
+  <div class="alpha-row">
+   <div class="alpha-swatch" style="background: rgba(180,74,255,0.06);"></div>
+   <div class="alpha-label">rgba(180, 74, 255, 0.06) — subtle tint</div>
+  </div>
+ </div>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">styles.css</div>
+   <div class="code-lang">CSS · RGB / RGBA</div>
+  </div>
+  <div class="code-body"><code><span class="c">/* rgb(red, green, blue) — each 0–255 */</span>
+<span class="sel-class">.heading</span> { <span class="prop">color</span>: <span class="val">rgb(255, 105, 180)</span>; }
+
+<span class="c">/* rgba — same, plus alpha 0–1 */</span>
+<span class="sel-class">.overlay</span> { <span class="prop">background</span>: <span class="val">rgba(0, 0, 0, 0.5)</span>; }   <span class="c">/* dark overlay */</span>
+<span class="sel-class">.card</span>   { <span class="prop">border</span>: <span class="val">1px solid rgba(255,255,255,0.08)</span>; } <span class="c">/* subtle border */</span>
+<span class="sel-class">.callout</span> { <span class="prop">background</span>: <span class="val">rgba(180,74,255,0.06)</span>; }  <span class="c">/* very faint tint */</span>
+
+<span class="c">/* Modern syntax — spaces, no commas */</span>
+<span class="sel-class">.modern</span>  { <span class="prop">color</span>: <span class="val">rgb(255 105 180 / 80%)</span>; }</code></div>
+ </div>
+
+ <div class="callout tip">
+  <div class="callout-title">✦ RGBA Is Your Best Friend for Subtle UI</div>
+  <p>Low-opacity colors for borders, backgrounds, and overlays make designs feel layered and polished without requiring exact color matching. <span class="il">rgba(255,255,255,0.08)</span> on a dark background gives you a barely-there border that works with any accent color. This trick is used on virtually every modern dark UI.</p>
+ </div>
+
+ <h3>HSL — Hue, Saturation, Lightness</h3>
+
+ <p>HSL is the most <em>human-readable</em> color system — and the one designers think in. It's how color wheels work. Instead of thinking in RGB values, you describe a color the way a person would: what hue it is, how vivid it is, and how light or dark it is.</p>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">styles.css</div>
+   <div class="code-lang">CSS · HSL / HSLA</div>
+  </div>
+  <div class="code-body"><code><span class="c">/* hsl(hue, saturation%, lightness%) */</span>
+<span class="c">/* hue: 0–360° on the color wheel */</span>
+<span class="c">/* saturation: 0% = gray, 100% = full color */</span>
+<span class="c">/* lightness: 0% = black, 50% = pure, 100% = white */</span>
+
+<span class="sel-class">.pink</span>  { <span class="prop">color</span>: <span class="val">hsl(330, 100%, 71%)</span>; }
+<span class="sel-class">.purple</span> { <span class="prop">color</span>: <span class="val">hsl(277, 100%, 64%)</span>; }
+
+<span class="c">/* HSL makes color variations easy — just adjust L */</span>
+<span class="sel-class">.pink-light</span> { <span class="prop">background</span>: <span class="val">hsl(330, 100%, 90%)</span>; } <span class="c">/* very light */</span>
+<span class="sel-class">.pink-dark</span> { <span class="prop">background</span>: <span class="val">hsl(330, 100%, 30%)</span>; } <span class="c">/* deep */</span>
+<span class="sel-class">.pink-muted</span> { <span class="prop">background</span>: <span class="val">hsl(330, 30%, 71%)</span>; } <span class="c">/* desaturated */</span>
+
+<span class="c">/* HSLA — add alpha */</span>
+<span class="sel-class">.glow</span>  { <span class="prop">box-shadow</span>: <span class="val">0 0 24px hsla(330, 100%, 71%, 0.3)</span>; }</code></div>
+ </div>
+
+ <div class="callout info">
+  <div class="callout-title">ℹ️ Named Colors</div>
+  <p>CSS also has 140+ built-in named colors: <span class="il">hotpink</span>, <span class="il">rebeccapurple</span>, <span class="il">dodgerblue</span>, <span class="il">tomato</span>. They work everywhere a color value is accepted, but they give you no control over opacity or variation. Good for quick prototyping, not production design systems. (Yes, <code class="il">rebeccapurple</code> is a real one — it was added to the CSS spec in honor of Rebecca Meyer, daughter of web standards pioneer Eric Meyer. That's a piece of CSS history worth knowing.)</p>
+ </div>
+
+ <div class="swatch-strip" style="margin: 2.5rem 0;">
+  <div class="swatch-seg" style="background:#f472b6;"></div>
+  <div class="swatch-seg" style="background:#e879a0;"></div>
+  <div class="swatch-seg" style="background:#c084fc;"></div>
+  <div class="swatch-seg" style="background:#a78bfa;"></div>
+  <div class="swatch-seg" style="background:#818cf8;"></div>
+  <div class="swatch-seg" style="background:#38bdf8;"></div>
+  <div class="swatch-seg" style="background:#22d3ee;"></div>
+  <div class="swatch-seg" style="background:#34d399;"></div>
+  <div class="swatch-seg" style="background:#fbbf24;"></div>
+  <div class="swatch-seg" style="background:#fb7185;"></div>
+ </div>
+
+ <h2>🧱 Units</h2>
+
+ <p>CSS has two categories of units: <span class="pink-key">absolute</span> (fixed regardless of context) and <span class="key">relative</span> (calculated based on something else). Knowing which to reach for is one of the clearest signs of CSS maturity.</p>
+
+ <div class="unit-grid">
+  <div class="unit-card abs">
+   <div class="unit-card-head">Absolute Units</div>
+   <div class="unit-card-sub">Fixed size. Doesn't scale with anything.</div>
+   <ul>
+    <li><strong style="color:#fff;font-family:'Fira Code',monospace;">px</strong> — pixels. The most common absolute unit. Use for borders, shadows, fine details.</li>
+    <li>Other absolutes (cm, mm, in, pt) exist but are almost never used in web CSS.</li>
+   </ul>
+  </div>
+  <div class="unit-card rel">
+   <div class="unit-card-head">Relative Units</div>
+   <div class="unit-card-sub">Calculated based on something else. Scales naturally.</div>
+   <ul>
+    <li><strong style="color:#fff;font-family:'Fira Code',monospace;">rem</strong> — relative to root font size. Best for typography and spacing.</li>
+    <li><strong style="color:#fff;font-family:'Fira Code',monospace;">em</strong> — relative to the parent's font size. Useful but can compound unexpectedly.</li>
+    <li><strong style="color:#fff;font-family:'Fira Code',monospace;">%</strong> — relative to the parent element's size. Great for widths and fluid layouts.</li>
+    <li><strong style="color:#fff;font-family:'Fira Code',monospace;">vh / vw</strong> — percentage of the viewport height/width. Hero sections, full-screen layouts.</li>
+   </ul>
+  </div>
+ </div>
+
+ <h3>px — Pixels</h3>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">styles.css</div>
+   <div class="code-lang">CSS · px</div>
+  </div>
+  <div class="code-body"><code><span class="c">/* px is best for things that should NEVER scale */</span>
+<span class="sel-class">.card</span> {
+ <span class="prop">border</span>: <span class="val">1px solid rgba(255,255,255,0.08)</span>; <span class="c">/* fine line */</span>
+ <span class="prop">border-radius</span>: <span class="val">12px</span>;
+ <span class="prop">box-shadow</span>: <span class="val">0 8px 32px rgba(0,0,0,0.4)</span>;
+}
+
+<span class="c">/* Avoid px for font-size — it ignores browser zoom preferences */</span>
+<span class="sel-class">.avoid-this</span> { <span class="prop">font-size</span>: <span class="val">16px</span>; } <span class="c">/* won't scale if user increases browser font size */</span></code></div>
+ </div>
+
+ <h3>rem — Root Em</h3>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">styles.css</div>
+   <div class="code-lang">CSS · rem</div>
+  </div>
+  <div class="code-body"><code><span class="c">/* Browser default: 1rem = 16px */</span>
+<span class="c">/* You can change the base by setting html font-size */</span>
+
+<span class="sel">html</span> { <span class="prop">font-size</span>: <span class="val">16px</span>; }  <span class="c">/* 1rem = 16px */</span>
+
+<span class="sel">body</span> { <span class="prop">font-size</span>: <span class="val">1rem</span>; }  <span class="c">/* 16px */</span>
+<span class="sel">h1</span>  { <span class="prop">font-size</span>: <span class="val">3rem</span>; }  <span class="c">/* 48px */</span>
+<span class="sel">h2</span>  { <span class="prop">font-size</span>: <span class="val">1.75rem</span>; } <span class="c">/* 28px */</span>
+<span class="sel">small</span> { <span class="prop">font-size</span>: <span class="val">0.875rem</span>;} <span class="c">/* 14px */</span>
+
+<span class="c">/* rem also works for spacing */</span>
+<span class="sel-class">.section</span> { <span class="prop">padding</span>: <span class="val">4rem 0</span>; }   <span class="c">/* 64px top+bottom */</span>
+<span class="sel-class">.gap</span>   { <span class="prop">margin-bottom</span>: <span class="val">1.5rem</span>; } <span class="c">/* 24px */</span></code></div>
+ </div>
+
+ <h3>% — Percentage</h3>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">styles.css</div>
+   <div class="code-lang">CSS · %</div>
+  </div>
+  <div class="code-body"><code><span class="c">/* % is relative to the PARENT element's size */</span>
+
+<span class="sel-class">.container</span> { <span class="prop">width</span>: <span class="val">860px</span>; }
+
+<span class="sel-class">.sidebar</span> {
+ <span class="prop">width</span>: <span class="val">30%</span>; <span class="c">/* 30% of 860px = 258px */</span>
+}
+
+<span class="sel-class">.main</span> {
+ <span class="prop">width</span>: <span class="val">70%</span>; <span class="c">/* 70% of 860px = 602px */</span>
+}
+
+<span class="c">/* % heights are tricky — parent needs an explicit height */</span>
+<span class="sel-class">.hero-img</span> {
+ <span class="prop">width</span>: <span class="val">100%</span>; <span class="c">/* fills its container — very common */</span>
+ <span class="prop">height</span>: <span class="val">auto</span>; <span class="c">/* maintains aspect ratio */</span>
+}</code></div>
+ </div>
+
+ <h3>vh and vw — Viewport Units</h3>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">styles.css</div>
+   <div class="code-lang">CSS · vh / vw</div>
+  </div>
+  <div class="code-body"><code><span class="c">/* 1vh = 1% of the viewport height */</span>
+<span class="c">/* 1vw = 1% of the viewport width */</span>
+
+<span class="c">/* Full-screen hero section */</span>
+<span class="sel-class">.hero</span> {
+ <span class="prop">min-height</span>: <span class="val">100vh</span>; <span class="c">/* full screen height */</span>
+ <span class="prop">width</span>: <span class="val">100vw</span>;    <span class="c">/* full screen width */</span>
+}
+
+<span class="c">/* Fluid font scaling with clamp() */</span>
+<span class="sel">h1</span> {
+ <span class="prop">font-size</span>: <span class="val">clamp(32px, 5vw, 64px)</span>;
+ <span class="c">/* min 32px, scales with viewport, max 64px */</span>
+}</code></div>
+ </div>
+
+ <h3>Quick Reference: When to Use What</h3>
+
+ <div class="ref-table-wrap">
+  <table class="ref-table">
+   <thead>
+    <tr><th>Unit</th><th>Use It For</th><th>Avoid It For</th></tr>
+   </thead>
+   <tbody>
+    <tr><td><span class="il">px</span></td><td>Borders, shadows, border-radius, fine details</td><td>Font sizes, spacing systems</td></tr>
+    <tr><td><span class="il">rem</span></td><td>Font sizes, spacing, padding, margins</td><td>Borders (overkill)</td></tr>
+    <tr><td><span class="il">em</span></td><td>Sizing relative to local font (icons, buttons)</td><td>Large-scale layout (compounding is confusing)</td></tr>
+    <tr><td><span class="il">%</span></td><td>Widths, fluid containers, responsive columns</td><td>Heights (unless parent has fixed height)</td></tr>
+    <tr><td><span class="il">vh / vw</span></td><td>Full-screen sections, viewport-aware sizing</td><td>Font sizes (can cause tiny text on mobile)</td></tr>
+   </tbody>
+  </table>
+ </div>
+
+ <div class="sep"></div>
+
+ <div class="mini-build">
+  <div class="mini-build-header">
+   <span style="font-size:22px;">🛠</span>
+   <h3>Mini Build: A Consistent Color Theme</h3>
+  </div>
+  <div class="mini-build-body">
+   <p>You're going to build a simple color system using CSS variables, then apply it using the right color format for each job. This is exactly how real design systems are built — define once, use everywhere.</p>
+
+   <div class="step">
+    <div class="step-num">01</div>
+    <div class="step-text">
+     <p><strong>Define your color palette as CSS variables on :root.</strong> We'll cover CSS variables fully in Post 11 — for now, think of <code class="il">--accent: #ff69b4</code> as giving a name to a color, and <code class="il">var(--accent)</code> as using that name anywhere you need it. Define once, reuse everywhere.</p>
+    </div>
+   </div>
+
+   <div class="code-window">
+    <div class="code-topbar">
+     <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+     <div class="code-filename">styles.css</div>
+     <div class="code-lang">CSS</div>
+    </div>
+    <div class="code-body"><code><span class="sel">:root</span> {
+ <span class="c">/* Base colors */</span>
+ <span class="a">--bg</span>:   <span class="val">#0a0a0f</span>;
+ <span class="a">--surface</span>: <span class="val">#12121a</span>;
+ <span class="a">--text</span>:  <span class="val">#e0e0e8</span>;
+ <span class="a">--muted</span>:  <span class="val">#9595a8</span>;
+
+ <span class="c">/* Accent — HEX for the pure color */</span>
+ <span class="a">--accent</span>: <span class="val">#ff69b4</span>;
+
+ <span class="c">/* Accent with transparency — RGBA for layers */</span>
+ <span class="a">--accent-glow</span>:  <span class="val">rgba(255, 105, 180, 0.15)</span>;
+ <span class="a">--accent-border</span>: <span class="val">rgba(255, 105, 180, 0.25)</span>;
+}
+
+<span class="sel">*</span> { <span class="prop">margin</span>: <span class="val">0</span>; <span class="prop">padding</span>: <span class="val">0</span>; <span class="prop">box-sizing</span>: <span class="val">border-box</span>; }
+
+<span class="sel">body</span> {
+ <span class="prop">background</span>: <span class="val">var(--bg)</span>;
+ <span class="prop">color</span>: <span class="val">var(--text)</span>;
+ <span class="prop">font-family</span>: <span class="val">sans-serif</span>;
+ <span class="prop">font-size</span>: <span class="val">1rem</span>;   <span class="c">/* rem — scales with browser */</span>
+ <span class="prop">line-height</span>: <span class="val">1.75</span>;
+ <span class="prop">padding</span>: <span class="val">3rem 2rem</span>; <span class="c">/* rem — consistent rhythm */</span>
+}</code></div>
+   </div>
+
+   <div class="step">
+    <div class="step-num">02</div>
+    <div class="step-text">
+     <p><strong>Style a card using your color system.</strong> Notice which format goes where: HEX for solid colors, RGBA for transparent layers, px for fine structural details, rem for spacing and type.</p>
+    </div>
+   </div>
+
+   <div class="code-window">
+    <div class="code-topbar">
+     <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+     <div class="code-filename">styles.css</div>
+     <div class="code-lang">CSS</div>
+    </div>
+    <div class="code-body"><code><span class="sel-class">.card</span> {
+ <span class="prop">background</span>: <span class="val">var(--surface)</span>;
+ <span class="prop">border</span>: <span class="val">1px solid var(--accent-border)</span>; <span class="c">/* RGBA — subtle */</span>
+ <span class="prop">border-radius</span>: <span class="val">12px</span>;          <span class="c">/* px — fine detail */</span>
+ <span class="prop">padding</span>: <span class="val">1.5rem</span>;            <span class="c">/* rem — spacing */</span>
+ <span class="prop">max-width</span>: <span class="val">380px</span>;
+}
+
+<span class="sel-class">.card:hover</span> {
+ <span class="prop">background</span>: <span class="val">var(--accent-glow)</span>;     <span class="c">/* RGBA tint on hover */</span>
+ <span class="prop">border-color</span>: <span class="val">var(--accent)</span>;       <span class="c">/* HEX — full accent */</span>
+}
+
+<span class="sel-class">.card-title</span> {
+ <span class="prop">color</span>: <span class="val">var(--accent)</span>; <span class="c">/* HEX */</span>
+ <span class="prop">font-size</span>: <span class="val">1.25rem</span>;  <span class="c">/* rem */</span>
+ <span class="prop">margin-bottom</span>: <span class="val">0.5rem</span>;
+}
+
+<span class="sel-class">.card-body</span> {
+ <span class="prop">color</span>: <span class="val">var(--muted)</span>;
+ <span class="prop">font-size</span>: <span class="val">0.9rem</span>;
+}</code></div>
+   </div>
+
+   <div class="step">
+    <div class="step-num">03</div>
+    <div class="step-text">
+     <p><strong>Change your whole theme by editing just two lines.</strong> Swap <span class="il">--accent</span> to <span class="il">#69d2e7</span> (sky blue) and <span class="il">--accent-border</span> to <span class="il">rgba(105, 210, 231, 0.25)</span>. Every element that references those variables updates instantly. That's the power of a color system.</p>
+    </div>
+   </div>
+  </div>
+ </div>
+
+ <div class="confidence-close">
+  <h2>💛 You Just Learned to Think in Color Systems</h2>
+  <p>Most beginners copy-paste colors without knowing what format they're looking at. Now you know what each format is <em>for</em> — HEX for solid accent colors, RGBA when you need transparency, HSL when you want to reason about lightness and saturation directly.</p>
+  <ul class="recap-list">
+   <li>HEX: the standard format for solid colors — 6 digits, R/G/B</li>
+   <li>RGBA: your go-to for overlays, borders, tints — anything where opacity matters</li>
+   <li>HSL: the most human-readable format, great for generating color families</li>
+   <li><span class="il">px</span> for precise details. <span class="il">rem</span> for everything type and spacing related.</li>
+   <li><span class="il">%</span> for fluid widths. <span class="il">vh/vw</span> for full-viewport layouts.</li>
+   <li>CSS variables tie it all together into a theme you can change in one place</li>
+  </ul>
+  <p>Next: Display &amp; Positioning — how CSS decides where elements sit, how big they are, and how they stack. This is the post that makes <span class="il">position: absolute</span> finally make sense.</p>
+ </div>
+
+ <div class="sep"></div>
+
+ <div class="devfession">
+  <div class="devfession-header">🧾 DevFession</div>
+  <div class="devfession-body">
+   <p>I used HEX for everything for way too long. Even for transparent borders. My code was full of things like <span class="il">border: 1px solid #ffffff14</span> — which I had to look up every single time because HEX alpha is not intuitive at all. (<span class="il">#14</span> in hex is 20 in decimal, which is... roughly 8% opacity. You're welcome.)</p>
+   <p>The day I switched transparent UI colors to RGBA, my CSS became immediately more readable. <span class="il">rgba(255,255,255,0.08)</span> — I can just read that. 8% white. Done. I don't need a hex-to-decimal converter to understand my own stylesheet anymore.</p>
+   <p>Use the right format for the job. Your future self will be very grateful.</p>
+  </div></div>
+
+
+ <nav class="post-nav">
+  <a href="04-typography.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">CSS Typography</span></a>
+  <a href="06-display-and-positioning.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">CSS Display and Positioning</span></a>
+ </nav>
+ <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+ <div id="site-footer"></div>
+ <script src="../../assets/js/main.js"></script>
+</body>
+</html>

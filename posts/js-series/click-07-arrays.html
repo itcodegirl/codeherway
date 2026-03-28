@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Arrays: Methods, .map(), .filter(), .reduce() for Beginners | CodeHerWay</title>
+<meta name="description" content="Arrays, array methods, and the power of .map, .filter, .reduce, and .find. Real data lives in lists. CodeHerWay JavaScript for beginners.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+
+@media(max-width:375px){main{padding:20px 14px 48px!important;}.code-body{font-size:11.5px;}}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="chw-wrapper">
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Click</span> Post 07 of 15</div>
+  <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+  <span class="series-label">JavaScript, But Make It Click &nbsp;·&nbsp; Post 07 of 15</span>
+  <div class="post-number">Post 07 of 15</div>
+  <h1 class="post-title">JavaScript Arrays</h1>
+  <p class="post-subtitle">Real data comes in lists. Arrays are how JavaScript handles them — and the methods are pure power.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 12 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Complete Beginners</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+<main id="main-content">
+<div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">Your Data Comes in Lists</h2><div class="section-line"></div></div>
+  <p>Most real data isn't a single value. It's a list — a list of users, products, messages, todos, search results. JavaScript uses <span class="highlight">arrays</span> to store ordered lists of values. Mastering arrays is what separates someone who can write basic JS from someone who can actually build things.</p>
+<div class="section-header"><span class="section-icon">🧱</span><h2 class="section-title">Creating &amp; Accessing Arrays</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>There's a distinction worth drilling in: <em>mutating</em> vs <em>returning new</em>. Methods like <code class='il'>push()</code>, <code class='il'>pop()</code>, and <code class='il'>splice()</code> change the original array. Methods like <code class='il'>.map()</code>, <code class='il'>.filter()</code>, and <code class='il'>.slice()</code> return a brand new array and leave the original alone. This matters the moment two parts of your code share the same array.</p>
+  </div>
+
+</div>  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — arrays.js</div></div>
+    <div class="code-body"><span class="sy-kw">const</span> <span class="sy-plain">colors</span> = [<span class="sy-str">"pink"</span>, <span class="sy-str">"purple"</span>, <span class="sy-str">"teal"</span>]
+
+<span class="sy-comment">// Access by index — starts at 0, not 1</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">colors</span>[<span class="sy-num">0</span>])   <span class="sy-comment">// "pink"</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">colors</span>[<span class="sy-num">2</span>])   <span class="sy-comment">// "teal"</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">colors</span>.<span class="sy-prop">length</span>) <span class="sy-comment">// 3</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">colors</span>[<span class="sy-plain">colors</span>.<span class="sy-prop">length</span> - <span class="sy-num">1</span>]) <span class="sy-comment">// "teal" — last item trick</span>
+
+<span class="sy-comment">// Add and remove (these MUTATE the original array)</span>
+<span class="sy-plain">colors</span>.<span class="sy-fn">push</span>(<span class="sy-str">"gold"</span>)     <span class="sy-comment">// adds to END   → ["pink","purple","teal","gold"]</span>
+<span class="sy-plain">colors</span>.<span class="sy-fn">pop</span>()            <span class="sy-comment">// removes END   → ["pink","purple","teal"]</span>
+<span class="sy-plain">colors</span>.<span class="sy-fn">unshift</span>(<span class="sy-str">"red"</span>)  <span class="sy-comment">// adds to START → ["red","pink","purple","teal"]</span>
+<span class="sy-plain">colors</span>.<span class="sy-fn">shift</span>()          <span class="sy-comment">// removes START → ["pink","purple","teal"]</span></div>
+  </div>  <div class="callout callout-warn">
+    <div class="callout-title">⚠️ Mutating vs Non-Mutating Methods</div>
+    <p><code class="il">push</span>, <code class="il">pop</span>, <code class="il">shift</span>, <code class="il">unshift</span>, <code class="il">splice</span>, <code class="il">sort</span>, and <code class="il">reverse</span> all <strong>modify the original array</strong>. Most developers are caught off guard that <code class="il">sort()</span> mutates — if you need a sorted copy, use <code class="il">[...arr].sort()</span> instead.</p>
+  </div><div class="section-header"><span class="section-icon">⚡</span><h2 class="section-title">Array Methods: The Real Power</h2><div class="section-line"></div></div>  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — array-methods.js</div></div>
+    <div class="code-body"><span class="sy-kw">const</span> <span class="sy-plain">nums</span> = [<span class="sy-num">1</span>, <span class="sy-num">2</span>, <span class="sy-num">3</span>, <span class="sy-num">4</span>, <span class="sy-num">5</span>]
+
+<span class="sy-comment">// forEach — run a function on each item. Returns undefined.</span>
+<span class="sy-plain">nums</span>.<span class="sy-fn">forEach</span>(<span class="sy-plain">n</span> => <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">n</span> * <span class="sy-num">2</span>))
+
+<span class="sy-comment">// map — transform each item, returns a NEW array</span>
+<span class="sy-kw">const</span> <span class="sy-plain">doubled</span> = <span class="sy-plain">nums</span>.<span class="sy-fn">map</span>(<span class="sy-plain">n</span> => <span class="sy-plain">n</span> * <span class="sy-num">2</span>)
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">doubled</span>)  <span class="sy-comment">// [2, 4, 6, 8, 10]  — original unchanged</span>
+
+<span class="sy-comment">// filter — keep only items that pass a test, returns a NEW array</span>
+<span class="sy-kw">const</span> <span class="sy-plain">evens</span> = <span class="sy-plain">nums</span>.<span class="sy-fn">filter</span>(<span class="sy-plain">n</span> => <span class="sy-plain">n</span> % <span class="sy-num">2</span> === <span class="sy-num">0</span>)
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">evens</span>)  <span class="sy-comment">// [2, 4]</span>
+
+<span class="sy-comment">// find — returns the FIRST item that matches (a single value, not an array)</span>
+<span class="sy-comment">//        returns undefined if nothing matches</span>
+<span class="sy-kw">const</span> <span class="sy-plain">firstBig</span> = <span class="sy-plain">nums</span>.<span class="sy-fn">find</span>(<span class="sy-plain">n</span> => <span class="sy-plain">n</span> > <span class="sy-num">3</span>)
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">firstBig</span>)  <span class="sy-comment">// 4</span>
+
+<span class="sy-comment">// findIndex — like find, but returns the INDEX (or -1 if not found)</span>
+<span class="sy-kw">const</span> <span class="sy-plain">idx</span> = <span class="sy-plain">nums</span>.<span class="sy-fn">findIndex</span>(<span class="sy-plain">n</span> => <span class="sy-plain">n</span> > <span class="sy-num">3</span>)
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">idx</span>)  <span class="sy-comment">// 3 (index of 4)</span>
+
+<span class="sy-comment">// reduce — combine all items into a single value</span>
+<span class="sy-kw">const</span> <span class="sy-plain">total</span> = <span class="sy-plain">nums</span>.<span class="sy-fn">reduce</span>((<span class="sy-plain">sum</span>, <span class="sy-plain">n</span>) => <span class="sy-plain">sum</span> + <span class="sy-plain">n</span>, <span class="sy-num">0</span>)
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">total</span>)  <span class="sy-comment">// 15</span>
+
+<span class="sy-comment">// includes — true/false: is this value in the array?</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">nums</span>.<span class="sy-fn">includes</span>(<span class="sy-num">3</span>))   <span class="sy-comment">// true</span>
+
+<span class="sy-comment">// some — true if ANY item passes the test</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">nums</span>.<span class="sy-fn">some</span>(<span class="sy-plain">n</span> => <span class="sy-plain">n</span> > <span class="sy-num">4</span>))  <span class="sy-comment">// true</span>
+
+<span class="sy-comment">// every — true only if ALL items pass the test</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">nums</span>.<span class="sy-fn">every</span>(<span class="sy-plain">n</span> => <span class="sy-plain">n</span> > <span class="sy-num">0</span>))  <span class="sy-comment">// true</span></div>
+  </div>  <div class="callout callout-mindset">
+    <div class="callout-title">🧠 Mindset Shift</div>
+    <p><code class="il">map</span> and <code class="il">filter</span> return <strong>new arrays</strong>. <code class="il">find</span> and <code class="il">findIndex</span> return a <strong>single value</strong> (or <code class="il">undefined</span>/<code class="il">-1</span>). None of them modify the original — that's immutability and it's a core modern JS pattern. <code class="il">push</span>, <code class="il">pop</span>, <code class="il">sort</span>, and <code class="il">splice</span> DO modify the original — that's the key difference.</p>
+  </div>  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body"><p>I wrote a for loop with an if statement inside every single time I needed to filter an array for probably four months. It worked, but I never understood why senior devs' code was so much shorter than mine. Then I discovered <span class="il" style="font-style:normal">.filter()</span>. A five-line block became a one-liner. Learn these methods early.</p></div>
+  </div>  <div class="mini-build">
+    <div class="mini-build-header"><span class="trophy">🏆</span><span class="mb-title">MINI BUILD — Reading List Manager</span></div>
+    <div class="mini-build-body"><p>Build a reading list you can manipulate with array methods.</p><div class="goal-label">Your steps:</div><ul class="step-list"><li><span class="step-num">01</span> Create an array of 5 book titles</li>
+<li><span class="step-num">02</span> Use <code class="il">push()</span> to add a new book and <code class="il">pop()</span> to remove the last one</li>
+<li><span class="step-num">03</span> Use <code class="il">forEach()</span> to log each book with a number: <code class="il">"1. Book Title"</span></li>
+<li><span class="step-num">04</span> Use <code class="il">filter()</span> to find only books with more than 10 characters in the title</li>
+<li><span class="step-num">05</span> Use <code class="il">map()</span> to create a new array where every title is uppercased</li>
+<li><span class="step-num">06</span> Use <code class="il">find()</span> to get the first book containing "the" — then <code class="il">findIndex()</span> to get its position</li>
+<li><span class="step-num">07</span> Use <code class="il">reduce()</span> to calculate the total character count of all titles: <code class="il">reduce((total, title) => total + title.length, 0)</span></li></ul></div>
+  </div>  <div class="confidence-close">
+    <div class="cc-icon">💛</div>
+    <div class="cc-heading">You Just Unlocked Data Manipulation</div>
+    <p>Arrays are everywhere in real JS development. You know how to create, access, mutate, and transform them using modern methods. Next: objects — storing structured data with named properties instead of numbered indexes.</p>
+  </div>  <a class="next-post" href="js-click-post08-objects.html">
+    <div><div class="next-label">// next post →</div><div class="next-title">Post 08 — Objects: Storing Structured Data</div></div>
+    <div class="next-arrow">→</div>
+  </a>
+
+  <nav class="post-nav">
+    <a href="click-06-loops.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Loops</span></a>
+    <a href="click-08-objects.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Objects</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+</div>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

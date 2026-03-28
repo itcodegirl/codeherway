@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meta Tags & SEO Basics — The Invisible Power of &lt;head&gt; | CodeHerWay</title>
+<meta name="description" content="Learn the meta tags that control how search engines and social media see your website — charset, viewport, description, keywords, author, and Open Graph.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.tag.seo{border-color: rgba(125,255,179,0.3); color: var(--mint-green);}
+.meta-grid{display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 32px 0;}
+.meta-card{background: var(--bg-code); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 22px; transition: border-color 0.3s, transform 0.3s;}
+.meta-card:hover{transform: translateY(-2px);}
+.meta-card:nth-child(1){border-color: rgba(255,105,180,0.2);}
+.meta-card:nth-child(1):hover{border-color: var(--pink);}
+.meta-card:nth-child(2){border-color: rgba(105,210,231,0.2);}
+.meta-card:nth-child(2):hover{border-color: var(--sky-blue);}
+.meta-card:nth-child(3){border-color: rgba(125,255,179,0.2);}
+.meta-card:nth-child(3):hover{border-color: var(--mint-green);}
+.meta-card:nth-child(4){border-color: rgba(255,211,105,0.2);}
+.meta-card:nth-child(4):hover{border-color: var(--gold);}
+.meta-card:nth-child(5){border-color: rgba(180,74,255,0.2);}
+.meta-card:nth-child(5):hover{border-color: var(--purple);}
+.meta-card:nth-child(6){border-color: rgba(255,107,107,0.2);}
+.meta-card:nth-child(6):hover{border-color: var(--coral);}
+.meta-icon{font-size: 26px; margin-bottom: 8px;}
+.meta-name{font-family: 'Fira Code', monospace; font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 6px;}
+.meta-prio{font-family: 'Fira Code', monospace; font-size: 11px; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 8px;}
+.meta-prio.required{background: rgba(255,105,180,0.1); color: var(--pink);}
+.meta-prio.recommended{background: rgba(255,211,105,0.1); color: var(--gold);}
+.meta-prio.optional{background: rgba(105,210,231,0.1); color: var(--sky-blue);}
+.meta-desc{font-size: 13px; color: var(--text-secondary); line-height: 1.65;}
+.social-preview{background: #fff; border-radius: 12px; margin: 28px 0; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.2); max-width: 520px;}
+.sp-image{background: linear-gradient(135deg, #1a1a2e, #2a1040, #1a1a2e); height: 260px; display: flex; align-items: center; justify-content: center;}
+.sp-image-inner{text-align: center; color: #fff;}
+.sp-image-logo{font-family: 'Fira Code', monospace; font-size: 24px; font-weight: 700; background: var(--gradient-header); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 8px;}
+.sp-image-title{font-size: 18px; font-weight: 600; max-width: 320px; line-height: 1.4;}
+.sp-body{padding: 16px 20px;}
+.sp-domain{font-size: 12px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;}
+.sp-title{font-size: 16px; font-weight: 700; color: #1a1a2e; margin-bottom: 4px; line-height: 1.3;}
+.sp-desc{font-size: 14px; color: #666; line-height: 1.5;}
+@media(max-width:640px){.meta-grid { grid-template-columns: 1fr; }}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<!-- ═══════ HERO ═══════ -->
+<section class="hero">
+  <div class="post-label"><span class="series-tag">HTML Fundamentals</span> Post 14 of 20</div>
+  <div class="post-number">Post 14 · HTML Fundamentals</div>
+  <h1>Meta Tags &amp; SEO:<br><span class="gradient-text">The Invisible Power of &lt;head&gt;</span></h1>
+  <p class="hero-sub">Users never see these tags. Search engines and social media live by them. Here's every meta tag you need to understand — and why each one matters.</p>
+  <div class="tag-row">
+    <span class="tag html">#HTML</span>
+    <span class="tag seo">#SEO</span>
+    <span class="tag seo">#MetaTags</span>
+    <span class="tag">10 min read</span>
+  </div>
+</section>
+
+<!-- ═══════ ARTICLE ═══════ -->
+<main class="article">
+
+  <!-- ── INTRO ── -->
+  <p>Everything inside the <span class="il">&lt;head&gt;</span> tag is invisible to your visitors. They don't see it. They don't interact with it. But it's the most powerful section of your HTML — because it controls how <span class="key">search engines</span>, <span class="key">social media platforms</span>, and <span class="key">browsers</span> understand your page.</p>
+
+  <p>Your meta tags determine whether Google shows your page for the right search queries. They control what appears when someone shares your link on Twitter or LinkedIn. They tell the browser how to render your text and how to scale your page on mobile devices.</p>
+
+  <p>If your HTML content is the product, your meta tags are the packaging, the shelf placement, and the back-of-the-box description all in one.</p>
+
+  <!-- ── THE ESSENTIAL SIX ── -->
+  <h2>The Six Meta Tags You Need to Know</h2>
+
+  <div class="meta-grid">
+    <div class="meta-card">
+      <div class="meta-icon">🔤</div>
+      <div class="meta-name">charset</div>
+      <div class="meta-prio required">Required</div>
+      <div class="meta-desc">Tells the browser which character set to use. UTF-8 supports every language and symbol. Without it, special characters can display as garbled text.</div>
+    </div>
+    <div class="meta-card">
+      <div class="meta-icon">📱</div>
+      <div class="meta-name">viewport</div>
+      <div class="meta-prio required">Required</div>
+      <div class="meta-desc">Controls how your page scales on mobile devices. Without it, mobile browsers zoom out and make your site tiny. This is what makes responsive design work.</div>
+    </div>
+    <div class="meta-card">
+      <div class="meta-icon">📝</div>
+      <div class="meta-name">description</div>
+      <div class="meta-prio required">Required</div>
+      <div class="meta-desc">The 150-160 character summary that shows up under your title in Google results. This is your pitch to searchers — write it like ad copy.</div>
+    </div>
+    <div class="meta-card">
+      <div class="meta-icon">🏷️</div>
+      <div class="meta-name">keywords</div>
+      <div class="meta-prio optional">Low priority</div>
+      <div class="meta-desc">A comma-separated list of keywords for your page. Google doesn't use this for ranking anymore, but some smaller search engines still reference it.</div>
+    </div>
+    <div class="meta-card">
+      <div class="meta-icon">✍️</div>
+      <div class="meta-name">author</div>
+      <div class="meta-prio recommended">Recommended</div>
+      <div class="meta-desc">Credits the page author. Useful for portfolio sites and blogs where personal branding matters. Some CMS tools display this automatically.</div>
+    </div>
+    <div class="meta-card">
+      <div class="meta-icon">🌐</div>
+      <div class="meta-name">Open Graph</div>
+      <div class="meta-prio required">Required for social</div>
+      <div class="meta-desc">Controls how your page looks when shared on social media — the title, description, and preview image. Without OG tags, platforms guess (badly).</div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── CHARSET ── -->
+  <h2>1. Character Set — charset</h2>
+
+  <p>This should be the very first tag inside your <span class="il">&lt;head&gt;</span>. It tells the browser how to decode the text on your page.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-body">
+<span class="t">&lt;meta</span> <span class="a">charset</span>=<span class="s">"UTF-8"</span><span class="t">&gt;</span>
+    </div>
+  </div>
+
+  <p><span class="il">UTF-8</span> supports virtually every character in every language — English, Spanish, Japanese, Arabic, emoji, mathematical symbols, all of it. There's no reason to use anything else. Put it first, always.</p>
+
+  <div class="callout warn">
+    <div class="callout-title">⚠️ What Happens Without It</div>
+    <p>Without a charset declaration, the browser has to guess how to decode your text. Accented characters turn into question marks. Curly quotes become garbled symbols. Emoji break. It's subtle enough that you might not notice in English — but the moment you have international content or special characters, everything falls apart.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── VIEWPORT ── -->
+  <h2>2. Viewport — The Mobile Essential</h2>
+
+  <p>This single tag is what makes your website <span class="key">responsive</span>. Without it, mobile browsers assume your page was designed for a desktop and zoom out to fit the whole thing on screen — making everything tiny and unreadable.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-body">
+<span class="t">&lt;meta</span> <span class="a">name</span>=<span class="s">"viewport"</span>
+      <span class="a">content</span>=<span class="s">"width=device-width, initial-scale=1.0"</span><span class="t">&gt;</span>
+    </div>
+  </div>
+
+  <p><span class="il">width=device-width</span> tells the browser to match the page width to the device's screen width. <span class="il">initial-scale=1.0</span> sets the initial zoom level to 100%. Together, they let your CSS media queries actually work and your responsive design actually respond.</p>
+
+  <div class="callout info">
+    <div class="callout-title">ℹ️ This Is Not Optional</div>
+    <p>If you're building anything that anyone will ever view on a phone (so, everything), this tag must be present. It's part of every HTML boilerplate for a reason. Skip it and your entire mobile experience breaks — regardless of how good your CSS is.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── DESCRIPTION ── -->
+  <h2>3. Description — Your Google Elevator Pitch</h2>
+
+  <p>The meta description is the text that appears under your page title in search results. It's your chance to convince someone to click your link instead of the other nine results on the page.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- ❌ Too vague --&gt;</span>
+<span class="t">&lt;meta</span> <span class="a">name</span>=<span class="s">"description"</span>
+      <span class="a">content</span>=<span class="s">"A website about coding."</span><span class="t">&gt;</span>
+
+<span class="c">&lt;!-- ❌ Too long (gets cut off) --&gt;</span>
+<span class="t">&lt;meta</span> <span class="a">name</span>=<span class="s">"description"</span>
+      <span class="a">content</span>=<span class="s">"CodeHerWay is a platform built by Jenna
+      Zawaski for women who want to learn to code
+      with HTML CSS JavaScript and React through
+      interactive courses and blog posts and a
+      supportive community of women in technology..."</span><span class="t">&gt;</span>
+
+<span class="c">&lt;!-- ✅ Clear, compelling, right length --&gt;</span>
+<span class="t">&lt;meta</span> <span class="a">name</span>=<span class="s">"description"</span>
+      <span class="a">content</span>=<span class="s">"Learn to code on your own terms. CodeHerWay
+      offers HTML, CSS, and JavaScript courses built
+      for women — no gatekeeping, no fluff."</span><span class="t">&gt;</span>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">💡 Writing Great Descriptions</div>
+    <p>Keep it between <strong>150-160 characters</strong>. Lead with the most compelling information. Include your target keyword naturally. Write it like you're explaining to a friend what this page is about in one sentence. And never duplicate descriptions across pages — every page should have a unique one.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── KEYWORDS + AUTHOR ── -->
+  <h2>4 &amp; 5. Keywords and Author</h2>
+
+  <p>Let's be honest about keywords: <span class="key">Google doesn't use them for ranking</span>. They stopped relying on the keywords meta tag years ago because people abused it — stuffing hundreds of irrelevant keywords to game search results.</p>
+
+  <p>That said, some smaller search engines and internal site search tools still reference them. They take two seconds to add, so there's no harm in including them.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- Keywords — low priority, but harmless to include --&gt;</span>
+<span class="t">&lt;meta</span> <span class="a">name</span>=<span class="s">"keywords"</span>
+      <span class="a">content</span>=<span class="s">"learn to code, women in tech, HTML tutorial,
+      CSS for beginners, JavaScript course"</span><span class="t">&gt;</span>
+
+<span class="c">&lt;!-- Author — great for personal brand --&gt;</span>
+<span class="t">&lt;meta</span> <span class="a">name</span>=<span class="s">"author"</span>
+      <span class="a">content</span>=<span class="s">"Jenna Zawaski"</span><span class="t">&gt;</span>
+    </div>
+  </div>
+
+  <p>The <span class="il">author</span> tag is more useful for personal branding. If you're building a portfolio or a blog, it credits you as the creator. Some CMS tools and browser extensions surface this information. It's a small detail that reinforces your identity on everything you build.</p>
+
+  <div class="sep"></div>
+
+  <!-- ── OPEN GRAPH ── -->
+  <h2>6. Open Graph — Owning Your Social Previews</h2>
+
+  <p>This is the one most beginners miss — and it's the one that makes the biggest visible difference. <span class="key">Open Graph tags</span> control what your link looks like when someone shares it on Twitter, LinkedIn, Facebook, Slack, Discord, iMessage, and basically everywhere else.</p>
+
+  <p>Without them, platforms try to guess your title and pull a random image from your page. It almost always looks terrible.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML · Open Graph Tags</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- Basic Open Graph --&gt;</span>
+<span class="t">&lt;meta</span> <span class="a">property</span>=<span class="s">"og:title"</span>
+      <span class="a">content</span>=<span class="s">"CodeHerWay — Learn to Code on Your Own Terms"</span><span class="t">&gt;</span>
+
+<span class="t">&lt;meta</span> <span class="a">property</span>=<span class="s">"og:description"</span>
+      <span class="a">content</span>=<span class="s">"HTML, CSS, and JavaScript courses built for
+      women. No gatekeeping. No fluff."</span><span class="t">&gt;</span>
+
+<span class="t">&lt;meta</span> <span class="a">property</span>=<span class="s">"og:image"</span>
+      <span class="a">content</span>=<span class="s">"https://codeherway.com/images/og-banner.jpg"</span><span class="t">&gt;</span>
+
+<span class="t">&lt;meta</span> <span class="a">property</span>=<span class="s">"og:url"</span>
+      <span class="a">content</span>=<span class="s">"https://codeherway.com"</span><span class="t">&gt;</span>
+
+<span class="t">&lt;meta</span> <span class="a">property</span>=<span class="s">"og:type"</span>
+      <span class="a">content</span>=<span class="s">"website"</span><span class="t">&gt;</span>
+
+<span class="c">&lt;!-- Twitter-specific (optional but recommended) --&gt;</span>
+<span class="t">&lt;meta</span> <span class="a">name</span>=<span class="s">"twitter:card"</span>
+      <span class="a">content</span>=<span class="s">"summary_large_image"</span><span class="t">&gt;</span>
+
+<span class="t">&lt;meta</span> <span class="a">name</span>=<span class="s">"twitter:creator"</span>
+      <span class="a">content</span>=<span class="s">"@itcodegirl"</span><span class="t">&gt;</span>
+    </div>
+  </div>
+
+  <h3>What This Looks Like When Shared</h3>
+
+  <p>With proper Open Graph tags, here's what your link preview looks like on social media:</p>
+
+  <div class="social-preview">
+    <div class="sp-image">
+      <div class="sp-image-inner">
+        <div class="sp-image-logo">&lt;CodeHerWay /&gt;</div>
+        <div class="sp-image-title">Where Women Code, Lead &amp; Rewrite the Future of Tech</div>
+      </div>
+    </div>
+    <div class="sp-body">
+      <div class="sp-domain">codeherway.com</div>
+      <div class="sp-title">CodeHerWay — Learn to Code on Your Own Terms</div>
+      <div class="sp-desc">HTML, CSS, and JavaScript courses built for women. No gatekeeping. No fluff.</div>
+    </div>
+  </div>
+
+  <p>Without OG tags, that same link might show up as a tiny text link with no image, a generic title pulled from your <span class="il">&lt;title&gt;</span> tag, and a random sentence from your page as the description. Not the look you want when you're sharing your work.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">💡 OG Image Tips</div>
+    <p>The recommended image size for Open Graph is <strong>1200 × 630 pixels</strong>. Use a clean, branded design — your logo, a bold headline, and your brand colors work great. Test your previews using free tools like opengraph.xyz or LinkedIn's Post Inspector. And always use an <strong>absolute URL</strong> (full <span class="il">https://</span> path) for the image — relative paths don't work here.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── THE COMPLETE HEAD ── -->
+  <h2>Putting It All Together — The Complete &lt;head&gt;</h2>
+
+  <p>Here's what a fully configured <span class="il">&lt;head&gt;</span> looks like for a real project. Copy this as your starting template:</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML · Complete &lt;head&gt; Template</div>
+    </div>
+    <div class="code-body">
+<span class="t">&lt;head&gt;</span>
+  <span class="c">&lt;!-- Character encoding — always first --&gt;</span>
+  <span class="t">&lt;meta</span> <span class="a">charset</span>=<span class="s">"UTF-8"</span><span class="t">&gt;</span>
+
+  <span class="c">&lt;!-- Responsive viewport --&gt;</span>
+  <span class="t">&lt;meta</span> <span class="a">name</span>=<span class="s">"viewport"</span>
+        <span class="a">content</span>=<span class="s">"width=device-width, initial-scale=1.0"</span><span class="t">&gt;</span>
+
+  <span class="c">&lt;!-- Page title (shows in browser tab + search results) --&gt;</span>
+  <span class="t">&lt;title&gt;</span>CodeHerWay — Learn to Code on Your Own Terms<span class="t">&lt;/title&gt;</span>
+
+  <span class="c">&lt;!-- SEO meta tags --&gt;</span>
+  <span class="t">&lt;meta</span> <span class="a">name</span>=<span class="s">"description"</span>
+        <span class="a">content</span>=<span class="s">"HTML, CSS, and JavaScript courses built
+        for women. No gatekeeping. No fluff."</span><span class="t">&gt;</span>
+  <span class="t">&lt;meta</span> <span class="a">name</span>=<span class="s">"keywords"</span>
+        <span class="a">content</span>=<span class="s">"learn to code, women in tech, HTML, CSS"</span><span class="t">&gt;</span>
+  <span class="t">&lt;meta</span> <span class="a">name</span>=<span class="s">"author"</span> <span class="a">content</span>=<span class="s">"Jenna Zawaski"</span><span class="t">&gt;</span>
+
+  <span class="c">&lt;!-- Open Graph (social sharing) --&gt;</span>
+  <span class="t">&lt;meta</span> <span class="a">property</span>=<span class="s">"og:title"</span>
+        <span class="a">content</span>=<span class="s">"CodeHerWay — Learn to Code on Your Own Terms"</span><span class="t">&gt;</span>
+  <span class="t">&lt;meta</span> <span class="a">property</span>=<span class="s">"og:description"</span>
+        <span class="a">content</span>=<span class="s">"Courses built for women. No gatekeeping."</span><span class="t">&gt;</span>
+  <span class="t">&lt;meta</span> <span class="a">property</span>=<span class="s">"og:image"</span>
+        <span class="a">content</span>=<span class="s">"https://codeherway.com/images/og-banner.jpg"</span><span class="t">&gt;</span>
+  <span class="t">&lt;meta</span> <span class="a">property</span>=<span class="s">"og:url"</span>
+        <span class="a">content</span>=<span class="s">"https://codeherway.com"</span><span class="t">&gt;</span>
+  <span class="t">&lt;meta</span> <span class="a">property</span>=<span class="s">"og:type"</span> <span class="a">content</span>=<span class="s">"website"</span><span class="t">&gt;</span>
+
+  <span class="c">&lt;!-- Twitter card --&gt;</span>
+  <span class="t">&lt;meta</span> <span class="a">name</span>=<span class="s">"twitter:card"</span>
+        <span class="a">content</span>=<span class="s">"summary_large_image"</span><span class="t">&gt;</span>
+  <span class="t">&lt;meta</span> <span class="a">name</span>=<span class="s">"twitter:creator"</span>
+        <span class="a">content</span>=<span class="s">"@itcodegirl"</span><span class="t">&gt;</span>
+
+  <span class="c">&lt;!-- Favicon --&gt;</span>
+  <span class="t">&lt;link</span> <span class="a">rel</span>=<span class="s">"icon"</span> <span class="a">href</span>=<span class="s">"images/favicon.ico"</span><span class="t">&gt;</span>
+
+  <span class="c">&lt;!-- Stylesheet --&gt;</span>
+  <span class="t">&lt;link</span> <span class="a">rel</span>=<span class="s">"stylesheet"</span> <span class="a">href</span>=<span class="s">"css/styles.css"</span><span class="t">&gt;</span>
+<span class="t">&lt;/head&gt;</span>
+    </div>
+  </div>
+
+  <div class="callout mindset">
+    <div class="callout-title">🧠 The Order Matters</div>
+    <p>Charset goes first (so the browser knows how to read everything after it). Viewport goes second. Title and description come next for SEO. Open Graph follows. Then your favicon and stylesheets. This ordering is a convention — but it's a good one that keeps your head section readable and logical.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── DEVFESSION ── -->
+  <div class="devfession">
+    <div class="devfession-header">// dev_fession</div>
+    <div class="devfession-body">
+      <p>I shared my portfolio link on LinkedIn for the first time and the preview looked like garbage. No image. The title said "Document." The description pulled a random sentence from my footer.</p>
+      <p>I had spent <em>weeks</em> perfecting the design and didn't spend five minutes on Open Graph tags. The irony of building a beautiful site that looks terrible the moment someone shares it was not lost on me.</p>
+      <p>Twenty minutes later I had OG tags, a branded banner image, and a link preview that actually represented my work. Should've been there from day one. 🤦‍♀️</p>
+    </div>
+    <div class="devfession-footer">
+      <span>@itcodegirl</span>
+      <span class="tagline">CodeHerWay</span>
+    </div>
+  </div>
+
+  <!-- ── MINI BUILD ── -->
+  <div class="mini-build">
+    <div class="mini-build-header">
+      <h3>🔨 Mini Build: Optimize Your Portfolio's &lt;head&gt;</h3>
+    </div>
+    <div class="mini-build-body">
+      <p>Open your portfolio project and upgrade the <span class="il">&lt;head&gt;</span> with proper meta and OG tags:</p>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">Confirm <span class="sky">charset</span> is set to UTF-8 and the <span class="sky">viewport</span> meta tag is present. If not, add them as the first two tags in your head.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">Write a compelling <span class="sky">meta description</span> (150-160 characters) that describes your portfolio and what makes you unique as a developer.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">Add <span class="sky">og:title</span>, <span class="sky">og:description</span>, <span class="sky">og:image</span>, and <span class="sky">og:url</span> tags. Create a 1200×630px banner image for the og:image (Canva's free tier works great for this).</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">Add <span class="sky">twitter:card</span> set to <span class="sky">summary_large_image</span> and <span class="sky">twitter:creator</span> with your handle.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-text">Deploy your changes and test the preview at <span class="sky">opengraph.xyz</span>. Share the link in a private message to yourself on social media and confirm the preview looks right.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── WRAP UP ── -->
+  <h2>The Bottom Line</h2>
+
+  <p>Meta tags are invisible to your visitors but essential for everything that happens before someone lands on your page. <span class="il">charset</span> makes your text readable. <span class="il">viewport</span> makes your site mobile-friendly. <span class="il">description</span> sells your page in search results. And <span class="il">Open Graph</span> tags make your links look professional when shared.</p>
+
+  <p>Every page you build from this point forward should have a fully configured <span class="il">&lt;head&gt;</span>. It takes five minutes to set up and makes every other part of your site work better — from Google rankings to social sharing to mobile rendering. The invisible code is just as important as the code people see.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">🎉 Series Milestone</div>
+    <p>14 posts in. You've covered the full spectrum of HTML fundamentals — from your first <span class="il">&lt;html&gt;</span> tag to meta tags that control how the world sees your site. This isn't just knowledge anymore. This is a skill set. Go build something and ship it. You're ready.</p>
+  </div>
+
+
+  <nav class="post-nav">
+    <a href="13-file-structure.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">File Structure and Organization</span></a>
+    <a href="15-html5-media.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">HTML5 Media: Video and Audio</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

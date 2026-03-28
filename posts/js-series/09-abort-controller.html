@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript AbortController: Cancel Fetch Requests & Prevent Stale Data | CodeHerWay</title>
+<meta name="description" content="Cancel in-flight fetch requests, prevent stale searches, handle navigation away, and stop double-submits. AbortController tutorial. CodeHerWay.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.flow-diagram{display:flex;flex-direction:column;gap:0;margin:28px 0;background:var(--bg-card);border:1px solid rgba(0,229,255,.15);border-radius:12px;overflow:hidden;}
+.flow-step{display:flex;align-items:center;gap:16px;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.04);}
+.flow-step:last-child{border-bottom:none;}
+.flow-num{font-family:'Fira Code',monospace;font-size:11px;font-weight:700;color:var(--accent);background:var(--accent-dim);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.flow-text{font-size:14px;color:var(--text-secondary);}
+.flow-text strong{color:var(--text-primary);}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Async</span> Post 03 of 10</div>
+  <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+  <div class="series-line"><span class="series-label">⚡ JavaScript, But Make It Async</span><span class="post-number">Post 03 of 10</span></div>
+  <h1 class="post-title">JavaScript AbortController</h1>
+  <p class="post-subtitle">Stale searches, navigation away, double-submits — here's how to cancel in-flight requests before they cause problems.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 12 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Intermediate</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+<main>
+  <div class="back-ref"><span class="br-arrow">←</span> Builds on <strong>JS Async — Post 08</strong>: Handling Errors Like a Senior Dev</div>
+
+  <div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">The Problem: Requests Don't Know When to Stop</h2><div class="section-line"></div></div>
+  <p>Here's a scenario every developer hits eventually: a user types into a search box, triggering a fetch. They keep typing. Three more fetches fire. The first one — for an old search term — responds last and overwrites the results from the correct current search. The UI shows the wrong data. No error. No warning. Just stale results confidently displayed as if they're correct.</p>
+  <p>Or: a user navigates away from a page. The fetch for that page is still in-flight. It resolves, tries to update state, and throws because the component is gone. <span class="highlight">AbortController</span> is the native solution to both problems.</p>
+
+  <div class="section-header"><span class="section-icon">🧩</span><h2 class="section-title">How AbortController Works</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>The pattern is always the same: create a controller, pass its signal to fetch, call abort() when you want to cancel. The key insight is that you need to create a new AbortController for each request (or set of related requests). Reusing a controller after aborting it won't work — once aborted, always aborted.</p>
+  </div>
+
+</div>
+  <div class="flow-diagram">
+    <div class="flow-step"><div class="flow-num">1</div><div class="flow-text">Create an <strong>AbortController</strong> instance — it has a <strong>signal</strong> property</div></div>
+    <div class="flow-step"><div class="flow-num">2</div><div class="flow-text">Pass <strong>signal</strong> to fetch() in the options object</div></div>
+    <div class="flow-step"><div class="flow-num">3</div><div class="flow-text">When you want to cancel, call <strong>controller.abort()</strong></div></div>
+    <div class="flow-step"><div class="flow-num">4</div><div class="flow-text">The fetch rejects with an <strong>AbortError</strong> — catch it and ignore it</div></div>
+  </div>
+
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — abort-basics.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// The minimal AbortController pattern</span>
+<span class="sy-kw">const</span> <span class="sy-plain">controller</span> = <span class="sy-kw">new</span> <span class="sy-fn">AbortController</span>()
+<span class="sy-kw">const</span> { <span class="sy-plain">signal</span> } = <span class="sy-plain">controller</span>
+
+<span class="sy-comment">// Pass signal to fetch</span>
+<span class="sy-fn">fetch</span>(<span class="sy-str">"/api/search?q=hello"</span>, { <span class="sy-plain">signal</span> })
+  .<span class="sy-fn">then</span>(<span class="sy-plain">res</span> => <span class="sy-plain">res</span>.<span class="sy-fn">json</span>())
+  .<span class="sy-fn">then</span>(<span class="sy-plain">data</span> => <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">data</span>))
+  .<span class="sy-fn">catch</span>(<span class="sy-plain">err</span> => {
+    <span class="sy-kw">if</span> (<span class="sy-plain">err</span>.<span class="sy-prop">name</span> === <span class="sy-str">"AbortError"</span>) {
+      <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Request cancelled — no problem"</span>)
+      <span class="sy-kw">return</span>  <span class="sy-comment">// not a real error — just skip it</span>
+    }
+    <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Real error:"</span>, <span class="sy-plain">err</span>)
+  })
+
+<span class="sy-comment">// Cancel after 2 seconds</span>
+<span class="sy-fn">setTimeout</span>(() => <span class="sy-plain">controller</span>.<span class="sy-fn">abort</span>(), <span class="sy-num">2000</span>)</pre></div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🔍</span><h2 class="section-title">The Search Input Pattern</h2><div class="section-line"></div></div>
+  <p>The most common real-world use case: cancel the previous search request every time the user types a new character. Only the most recent request matters.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — search-cancel.js</div></div>
+    <div class="code-body"><pre><span class="sy-kw">let</span> <span class="sy-plain">currentController</span> = <span class="sy-bool">null</span>
+
+<span class="sy-kw">async function</span> <span class="sy-fn">search</span>(<span class="sy-plain">query</span>) {
+  <span class="sy-comment">// Cancel any in-flight request from the previous keystroke</span>
+  <span class="sy-kw">if</span> (<span class="sy-plain">currentController</span>) {
+    <span class="sy-plain">currentController</span>.<span class="sy-fn">abort</span>()
+  }
+
+  <span class="sy-comment">// Create a fresh controller for this request</span>
+  <span class="sy-plain">currentController</span> = <span class="sy-kw">new</span> <span class="sy-fn">AbortController</span>()
+
+  <span class="sy-kw">try</span> {
+    <span class="sy-kw">const</span> <span class="sy-plain">res</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(
+      <span class="sy-str">`/api/search?q=</span>${<span class="sy-fn">encodeURIComponent</span>(<span class="sy-plain">query</span>)}<span class="sy-str">`</span>,
+      { <span class="sy-prop">signal</span>: <span class="sy-plain">currentController</span>.<span class="sy-prop">signal</span> }
+    )
+    <span class="sy-kw">const</span> <span class="sy-plain">data</span> = <span class="sy-kw">await</span> <span class="sy-plain">res</span>.<span class="sy-fn">json</span>()
+    <span class="sy-fn">renderResults</span>(<span class="sy-plain">data</span>)
+  } <span class="sy-kw">catch</span> (<span class="sy-plain">err</span>) {
+    <span class="sy-kw">if</span> (<span class="sy-plain">err</span>.<span class="sy-prop">name</span> === <span class="sy-str">"AbortError"</span>) <span class="sy-kw">return</span>  <span class="sy-comment">// stale — ignore</span>
+    <span class="sy-fn">showError</span>(<span class="sy-plain">err</span>)
+  }
+}
+
+<span class="sy-comment">// Wire up the input</span>
+<span class="sy-plain">document</span>.<span class="sy-fn">querySelector</span>(<span class="sy-str">"#search"</span>).<span class="sy-fn">addEventListener</span>(<span class="sy-str">"input"</span>, <span class="sy-plain">e</span> => {
+  <span class="sy-fn">search</span>(<span class="sy-plain">e</span>.<span class="sy-prop">target</span>.<span class="sy-prop">value</span>)
+})</pre></div>
+  </div>
+  <div class="callout callout-accent">
+    <div class="callout-title">⚡ AbortError Is Not a Real Error</div>
+    <p>When you abort a request, it throws an error with <span class="il">name === "AbortError"</span>. This is not a problem — it's expected behavior. Always check for it first in your catch block and return early. Passing it to your error handler would show the user a fake error for something that worked perfectly.</p>
+  </div>
+
+  
+  <div class="callout callout-tip" role="note">
+    <div class="callout-title">💡 Even Better With Debounce</div>
+    <p>The search input pattern above cancels the previous request before firing a new one. But you can go further: combine it with debounce so the fetch doesn't even trigger until the user stops typing. That combo — debounce + AbortController — is the production-grade version. We build it in <a href="async-post13-debounce-throttle.html" style="color:var(--sky-blue);font-weight:600">Post 13: Debounce &amp; Throttle</a>.</p>
+  </div>
+
+<div class="section-header"><span class="section-icon">🧭</span><h2 class="section-title">Cleanup on Navigation</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>Timeout handling with AbortController is something developers often reinvent badly. The clean way: create a controller, set a <code class='il'>setTimeout</code> that calls <code class='il'>controller.abort()</code>, pass the signal to fetch. If the fetch completes in time, clear the timeout. If not, the abort fires and you catch it as an <code class='il'>AbortError</code>. No external libraries needed.</p>
+  </div>
+
+</div>
+  <p>When a user navigates away from a page, any in-flight requests for that page are now pointless. If they resolve and try to update state, you get errors about updating unmounted components (very common in React) or stale data flashing on screen.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — cleanup-navigation.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// Vanilla JS — abort on page navigation</span>
+<span class="sy-kw">const</span> <span class="sy-plain">controller</span> = <span class="sy-kw">new</span> <span class="sy-fn">AbortController</span>()
+
+<span class="sy-kw">async function</span> <span class="sy-fn">loadPageData</span>() {
+  <span class="sy-kw">try</span> {
+    <span class="sy-kw">const</span> <span class="sy-plain">data</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">"/api/page-data"</span>, {
+      <span class="sy-prop">signal</span>: <span class="sy-plain">controller</span>.<span class="sy-prop">signal</span>
+    }).<span class="sy-fn">then</span>(<span class="sy-plain">r</span> => <span class="sy-plain">r</span>.<span class="sy-fn">json</span>())
+    <span class="sy-fn">render</span>(<span class="sy-plain">data</span>)
+  } <span class="sy-kw">catch</span> (<span class="sy-plain">err</span>) {
+    <span class="sy-kw">if</span> (<span class="sy-plain">err</span>.<span class="sy-prop">name</span> !== <span class="sy-str">"AbortError"</span>) <span class="sy-fn">showError</span>(<span class="sy-plain">err</span>)
+  }
+}
+
+<span class="sy-comment">// Cancel all pending requests when leaving</span>
+<span class="sy-plain">window</span>.<span class="sy-fn">addEventListener</span>(<span class="sy-str">"pagehide"</span>, () => <span class="sy-plain">controller</span>.<span class="sy-fn">abort</span>())
+
+<span class="sy-fn">loadPageData</span>()
+
+<span class="sy-comment">// In React — same idea, different lifecycle hook</span>
+<span class="sy-comment">// useEffect(() => {</span>
+<span class="sy-comment">//   const controller = new AbortController()</span>
+<span class="sy-comment">//   fetchData(controller.signal)</span>
+<span class="sy-comment">//   return () => controller.abort()  // cleanup on unmount</span>
+<span class="sy-comment">// }, [])</span></pre></div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">⏲️</span><h2 class="section-title">Using AbortController for Timeouts</h2><div class="section-line"></div></div>
+  <p>Modern browsers support <span class="il">AbortSignal.timeout(ms)</span> — a one-liner that creates a signal that auto-aborts after a set time. No need to manage a controller manually for simple timeout cases.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — timeout-signal.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// AbortSignal.timeout() — built-in, no controller needed</span>
+<span class="sy-kw">try</span> {
+  <span class="sy-kw">const</span> <span class="sy-plain">res</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">"/api/data"</span>, {
+    <span class="sy-prop">signal</span>: <span class="sy-method">AbortSignal</span>.<span class="sy-fn">timeout</span>(<span class="sy-num">5000</span>)  <span class="sy-comment">// cancel if no response in 5s</span>
+  })
+  <span class="sy-kw">const</span> <span class="sy-plain">data</span> = <span class="sy-kw">await</span> <span class="sy-plain">res</span>.<span class="sy-fn">json</span>()
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">data</span>)
+} <span class="sy-kw">catch</span> (<span class="sy-plain">err</span>) {
+  <span class="sy-kw">if</span> (<span class="sy-plain">err</span>.<span class="sy-prop">name</span> === <span class="sy-str">"TimeoutError"</span>) {
+    <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Request took too long"</span>)
+  }
+}
+
+<span class="sy-comment">// Combine timeout AND manual abort — AbortSignal.any()</span>
+<span class="sy-kw">const</span> <span class="sy-plain">controller</span> = <span class="sy-kw">new</span> <span class="sy-fn">AbortController</span>()
+<span class="sy-kw">const</span> <span class="sy-plain">signal</span> = <span class="sy-method">AbortSignal</span>.<span class="sy-fn">any</span>([
+  <span class="sy-plain">controller</span>.<span class="sy-prop">signal</span>,
+  <span class="sy-method">AbortSignal</span>.<span class="sy-fn">timeout</span>(<span class="sy-num">5000</span>)
+])
+
+<span class="sy-comment">// Now both a timeout OR manual abort will cancel the request</span>
+<span class="sy-fn">fetch</span>(<span class="sy-str">"/api/data"</span>, { <span class="sy-plain">signal</span> })</pre></div>
+  </div>
+  <div class="callout callout-info">
+    <div class="callout-title">ℹ️ Browser Support</div>
+    <p><span class="il">AbortSignal.timeout()</span> is supported in all modern browsers and Node 18+. <span class="il">AbortSignal.any()</span> is newer — check compatibility if supporting older browsers. The manual <span class="il">new AbortController()</span> pattern works everywhere.</p>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🚫</span><h2 class="section-title">Preventing Double Submits</h2><div class="section-line"></div></div>
+  <p>Another killer use case: users who click "Submit" twice. You need to either disable the button or cancel the first request — or both.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — double-submit.js</div></div>
+    <div class="code-body"><pre><span class="sy-kw">let</span> <span class="sy-plain">submitController</span> = <span class="sy-bool">null</span>
+
+<span class="sy-plain">submitBtn</span>.<span class="sy-fn">addEventListener</span>(<span class="sy-str">"click"</span>, <span class="sy-kw">async</span> () => {
+  <span class="sy-comment">// If there's already a request in flight, cancel it</span>
+  <span class="sy-kw">if</span> (<span class="sy-plain">submitController</span>) <span class="sy-plain">submitController</span>.<span class="sy-fn">abort</span>()
+  <span class="sy-plain">submitController</span> = <span class="sy-kw">new</span> <span class="sy-fn">AbortController</span>()
+
+  <span class="sy-plain">submitBtn</span>.<span class="sy-prop">disabled</span> = <span class="sy-bool">true</span>
+  <span class="sy-plain">submitBtn</span>.<span class="sy-prop">textContent</span> = <span class="sy-str">"Submitting..."</span>
+
+  <span class="sy-kw">try</span> {
+    <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">"/api/submit"</span>, {
+      <span class="sy-prop">method</span>: <span class="sy-str">"POST"</span>,
+      <span class="sy-prop">signal</span>: <span class="sy-plain">submitController</span>.<span class="sy-prop">signal</span>,
+      <span class="sy-prop">body</span>: <span class="sy-method">JSON</span>.<span class="sy-fn">stringify</span>(<span class="sy-fn">getFormData</span>())
+    })
+    <span class="sy-fn">showSuccess</span>()
+  } <span class="sy-kw">catch</span> (<span class="sy-plain">err</span>) {
+    <span class="sy-kw">if</span> (<span class="sy-plain">err</span>.<span class="sy-prop">name</span> !== <span class="sy-str">"AbortError"</span>) <span class="sy-fn">showError</span>(<span class="sy-plain">err</span>)
+  } <span class="sy-kw">finally</span> {
+    <span class="sy-plain">submitBtn</span>.<span class="sy-prop">disabled</span> = <span class="sy-bool">false</span>
+    <span class="sy-plain">submitBtn</span>.<span class="sy-prop">textContent</span> = <span class="sy-str">"Submit"</span>
+    <span class="sy-plain">submitController</span> = <span class="sy-bool">null</span>
+  }
+})</pre></div>
+  </div>
+  <div class="callout callout-mindset">
+    <div class="callout-title">🧠 Mindset Shift</div>
+    <p>AbortController is about <strong>intentional cleanup</strong>. Most async code teaches you what to do when a request finishes. AbortController teaches you what to do when a request <em>shouldn't</em> finish — which is a completely different and equally important skill. Knowing when to cancel is part of building resilient UIs.</p>
+  </div>
+
+  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body">
+      <p>I once built a search feature and watched a user type "javascript" one character at a time. Ten fetches fired. They all came back in different orders. The results flickered between "j", "ja", "jav", and "javascript" for about two full seconds before settling. It looked broken. It was broken. It was one of those bugs where nothing in the code is technically wrong — it just doesn't account for how fast humans type. AbortController fixed it in about eight lines. Every search input I've built since has it from day one.</p>
+    </div>
+  </div>
+
+  <div class="mini-build">
+    <div class="mini-build-header"><span class="trophy">🔬</span><span class="mb-title">MINI BUILD — Cancellable Live Search</span></div>
+    <div class="mini-build-body">
+      <p>Build a live search input that cancels stale requests on every keystroke using <span class="il">AbortController</span>. Use JSONPlaceholder to simulate real search results.</p>
+      <div class="goal-label">Exercises:</div>
+      <ul class="step-list">
+        <li><span class="step-num">01</span> Create an <span class="il">&lt;input&gt;</span> and a results <span class="il">&lt;div&gt;</span> in your HTML</li>
+        <li><span class="step-num">02</span> Write a <span class="il">search(query)</span> function that fetches from <span class="il">jsonplaceholder.typicode.com/posts?userId=1</span> (simulate filtering client-side)</li>
+        <li><span class="step-num">03</span> Add <span class="il">AbortController</span> — cancel the previous request on each new call</li>
+        <li><span class="step-num">04</span> Handle the <span class="il">AbortError</span> — confirm it doesn't show in the UI</li>
+        <li><span class="step-num">05</span> Add a <span class="il">console.log("cancelled")</span> in the AbortError handler — type fast and watch it fire</li>
+        <li><span class="step-num">06</span> Bonus: add <span class="il">AbortSignal.timeout(3000)</span> — now requests also cancel if they take over 3 seconds</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="confidence-close">
+    <div class="cc-icon">⚡</div>
+    <div class="cc-heading">You Can Now Cancel What Doesn't Belong</div>
+    <p>Stale searches, navigation cleanup, double-submit prevention, built-in timeouts — AbortController handles all of it with one consistent API. Next: working with real-world APIs — authentication, query params, pagination, and the patterns professionals use daily.</p>
+  </div>
+  <a class="next-post" href="#"><div><div class="next-label">// next post →</div><div class="next-title">Post 10 — Working With Real APIs</div></div><div class="next-arrow">→</div></a>
+
+  <nav class="post-nav">
+    <a href="08-error-handling.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Async Error Handling</span></a>
+    <a href="10-real-apis.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Working With Real APIs</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

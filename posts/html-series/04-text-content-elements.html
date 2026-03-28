@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post 04 — Text & Content Elements | CodeHerWay</title>
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.heading-scale{background:var(--bg-code);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:28px 32px;margin:32px 0;}
+.hs-item{display:flex;align-items:baseline;gap:16px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.04);}
+.hs-item:last-child{margin-bottom:0;padding-bottom:0;border:none;}
+.hs-tag{font-family:"Fira Code",monospace;font-size:13px;color:var(--pink);min-width:48px;flex-shrink:0;}
+.hs-preview{color:#fff;font-weight:700;}
+.hs-1{font-size:32px;}
+.hs-2{font-size:26px;}
+.hs-3{font-size:22px;}
+.hs-4{font-size:18px;}
+.hs-5{font-size:16px;}
+.hs-6{font-size:14px;color:var(--text-secondary);}
+.hs-note{font-family:"Fira Code",monospace;font-size:11px;color:var(--text-muted);margin-left:auto;white-space:nowrap;}
+.compare-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:32px 0;}
+.compare-card.abs{background:rgba(105,210,231,0.04);border-color:rgba(105,210,231,0.15);}
+.compare-card.rel{background:rgba(125,255,179,0.04);border-color:rgba(125,255,179,0.15);}
+.compare-card.abs h4{color:var(--sky-blue);}
+.compare-card.rel h4{color:var(--mint-green);}
+.compare-card .ex{font-family:"Fira Code",monospace;font-size:13px;background:rgba(255,255,255,0.04);padding:8px 14px;border-radius:6px;color:var(--gold);margin-top:8px;}
+@media(max-width:640px){.compare-cards{grid-template-columns:1fr;}.hs-note{display:none;}}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<section class="hero">
+  <div class="post-label"><span class="series-tag">HTML Fundamentals</span> Post 04 of 20</div>
+  <h1>📚 Text &amp; <span class="gradient-text">Content Elements</span></h1>
+  <p class="hero-sub">Headings, paragraphs, bold, italic, highlights, and more — the elements you'll use on literally every page you ever build.</p>
+  <div class="tag-row"><span class="tag html">&lt;h1&gt;–&lt;h6&gt;</span><span class="tag html">&lt;p&gt;</span><span class="tag html">&lt;strong&gt;</span><span class="tag html">&lt;em&gt;</span><span class="tag html">&lt;mark&gt;</span><span class="tag html">&lt;br&gt; &lt;hr&gt;</span></div>
+</section>
+<main class="article">
+  <h2>The Content Layer</h2>
+  <p>These are the elements that hold your words — your headings, your paragraphs, your emphasized points. They're the elements you'll reach for on <span class="key">every single page</span> you build.</p>
+  <div class="sep"></div>
+  <h2>Headings: &lt;h1&gt; Through &lt;h6&gt;</h2>
+  <p>HTML gives you six levels of headings. Headings create a <span class="key">content hierarchy</span> that tells both browsers and screen readers how your information is organized.</p>
+  <div class="heading-scale">
+    <div class="hs-item"><span class="hs-tag">&lt;h1&gt;</span><span class="hs-preview hs-1">Main Page Title</span><span class="hs-note">One per page</span></div>
+    <div class="hs-item"><span class="hs-tag">&lt;h2&gt;</span><span class="hs-preview hs-2">Section Heading</span><span class="hs-note">Major sections</span></div>
+    <div class="hs-item"><span class="hs-tag">&lt;h3&gt;</span><span class="hs-preview hs-3">Subsection</span><span class="hs-note">Within an h2</span></div>
+    <div class="hs-item"><span class="hs-tag">&lt;h4&gt;</span><span class="hs-preview hs-4">Sub-subsection</span><span class="hs-note">Less common</span></div>
+    <div class="hs-item"><span class="hs-tag">&lt;h5&gt;</span><span class="hs-preview hs-5">Deep nesting</span><span class="hs-note">Rare</span></div>
+    <div class="hs-item"><span class="hs-tag">&lt;h6&gt;</span><span class="hs-preview hs-6">Deepest level</span><span class="hs-note">Very rare</span></div>
+  </div>
+  <div class="callout mindset"><div class="callout-title">🧠 Mindset Shift</div><p>Headings are <em>not</em> about making text bigger. That's CSS's job. Headings are about <span class="key">meaning and hierarchy</span>. Use only <strong>one &lt;h1&gt; per page</strong> — it should describe the main topic.</p></div>
+  <div class="sep"></div>
+  <h2>Paragraphs: &lt;p&gt;</h2>
+  <p>The <span class="il">&lt;p&gt;</span> element is the most common element in HTML. Every block of body text goes in a paragraph tag.</p>
+  <div class="code-window"><div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML</div></div>
+  <div class="code-body"><code><span class="t">&lt;p&gt;</span>First paragraph.<span class="t">&lt;/p&gt;</span>
+<span class="t">&lt;p&gt;</span>Second paragraph — automatically spaced.<span class="t">&lt;/p&gt;</span></code></div></div>
+  <div class="sep"></div>
+  <h2>Text Formatting Elements</h2>
+  <h3>&lt;strong&gt; — Important Text</h3>
+  <p><span class="il">&lt;strong&gt;</span> marks text as <span class="key">strongly important</span>. Browsers render it bold, but the point is the meaning — screen readers change their tone, search engines give it extra weight.</p>
+  <div class="code-window"><div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML</div></div>
+  <div class="code-body"><code><span class="t">&lt;p&gt;</span>Do <span class="t">&lt;strong&gt;</span>not<span class="t">&lt;/strong&gt;</span> skip the fundamentals.<span class="t">&lt;/p&gt;</span></code></div></div>
+  <div class="render-label">Browser Renders As</div>
+  <div class="render-box">Do <strong>not</strong> skip the fundamentals.</div>
+  <h3>&lt;em&gt; — Emphasized Text</h3>
+  <p><span class="il">&lt;em&gt;</span> marks text with <span class="key">emphasis</span> — a stress that changes the meaning of the sentence. Displays italic by default.</p>
+  <div class="code-window"><div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML</div></div>
+  <div class="code-body"><code><span class="t">&lt;p&gt;</span>You <span class="t">&lt;em&gt;</span>can<span class="t">&lt;/em&gt;</span> do this. I promise.<span class="t">&lt;/p&gt;</span></code></div></div>
+  <div class="render-label">Browser Renders As</div>
+  <div class="render-box">You <em>can</em> do this. I promise.</div>
+  <h3>&lt;mark&gt; — Highlighted Text</h3>
+  <p><span class="il">&lt;mark&gt;</span> highlights text like a yellow highlighter — draws attention to key terms.</p>
+  <div class="code-window"><div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML</div></div>
+  <div class="code-body"><code><span class="t">&lt;p&gt;</span>The most important rule: <span class="t">&lt;mark&gt;</span>structure first, style later<span class="t">&lt;/mark&gt;</span>.<span class="t">&lt;/p&gt;</span></code></div></div>
+  <div class="render-label">Browser Renders As</div>
+  <div class="render-box">The most important rule: <mark style="background:#ffd369;color:#1a1a2e;padding:2px 4px;border-radius:3px;">structure first, style later</mark>.</div>
+  <h3>&lt;sup&gt; and &lt;sub&gt;</h3>
+  <div class="code-window"><div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML</div></div>
+  <div class="code-body"><code><span class="t">&lt;p&gt;</span>E = mc<span class="t">&lt;sup&gt;</span>2<span class="t">&lt;/sup&gt;&lt;/p&gt;</span>
+<span class="t">&lt;p&gt;</span>Water is H<span class="t">&lt;sub&gt;</span>2<span class="t">&lt;/sub&gt;</span>O<span class="t">&lt;/p&gt;</span></code></div></div>
+  <div class="render-label">Browser Renders As</div>
+  <div class="render-box">E = mc<sup>2</sup><br><br>Water is H<sub>2</sub>O</div>
+  <div class="sep"></div>
+  <h2>Line Breaks &amp; Horizontal Rules</h2>
+  <p><span class="il">&lt;br&gt;</span> forces a line break within the same block. <span class="il">&lt;hr&gt;</span> creates a thematic break — a visible horizontal line that separates sections.</p>
+  <div class="callout tip"><div class="callout-title">💡 Pro Tip</div><p>Never use multiple <span class="il">&lt;br&gt;</span> tags to create space. That's CSS's job. Use <span class="il">&lt;br&gt;</span> only when content genuinely needs separate lines within the same block — like an address.</p></div>
+  <div class="sep"></div>
+  <div class="devfession">
+    <div class="devfession-header">🔥 Dev_Fession</div>
+    <div class="devfession-body">
+      <p>For an embarrassingly long time, I used <span class="il">&lt;b&gt;</span> instead of <span class="il">&lt;strong&gt;</span> and <span class="il">&lt;i&gt;</span> instead of <span class="il">&lt;em&gt;</span>. They look the same in the browser, so I figured they were the same thing.</p>
+      <p>They're not. <span class="il">&lt;b&gt;</span> and <span class="il">&lt;i&gt;</span> are purely visual. <span class="il">&lt;strong&gt;</span> and <span class="il">&lt;em&gt;</span> carry <em>meaning</em>. A screen reader will stress <span class="il">&lt;em&gt;</span> text and announce <span class="il">&lt;strong&gt;</span> text with urgency. Using the right tags is about caring enough to write code that works for everyone.</p>
+    </div>
+    <div class="devfession-footer"><span>CodeHerWay // HTML Course</span><span class="tagline">Code it. Own it. Her way.</span></div>
+  </div>
+  <div class="mini-build">
+    <div class="mini-build-header"><h3>🏆 Mini Build: Styled Blog Post Intro</h3></div>
+    <div class="mini-build-body">
+      <p>Create a blog intro using every text element from this lesson:</p>
+      <div class="step"><div class="step-num">1</div><div class="step-text">An <span class="sky">&lt;h1&gt;</span> post title and an <span class="sky">&lt;h2&gt;</span> subheading.</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text">Two <span class="sky">&lt;p&gt;</span> paragraphs with at least one <span class="sky">&lt;strong&gt;</span> and one <span class="sky">&lt;em&gt;</span> in each.</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text">A sentence using <span class="sky">&lt;mark&gt;</span> to highlight a key takeaway.</div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text">A <span class="sky">&lt;small&gt;</span> copyright line and an <span class="sky">&lt;hr /&gt;</span> separating sections.</div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-text"><strong>Bonus:</strong> Use <span class="sky">&lt;sup&gt;</span> somewhere — a footnote, an ordinal, or an exponent.</div></div>
+    </div>
+  </div>
+  <div class="sep"></div>
+  <h2>Recap</h2>
+  <p>Headings (<span class="il">&lt;h1&gt;</span>–<span class="il">&lt;h6&gt;</span>) create hierarchy. <span class="il">&lt;p&gt;</span> holds body text. <span class="il">&lt;strong&gt;</span> marks importance. <span class="il">&lt;em&gt;</span> adds emphasis. <span class="il">&lt;mark&gt;</span> highlights. <span class="il">&lt;br&gt;</span> breaks a line, <span class="il">&lt;hr&gt;</span> breaks a section. Every element is about <span class="key">meaning</span>, not just appearance.</p>
+  <nav class="post-nav">
+    <a href="03-elements-tags-attributes.html" class="post-nav-link"><span class="nav-label">← Previous</span><span class="nav-title">Elements, Tags & Attributes</span></a>
+    <a href="05-links-navigation.html" class="post-nav-link next"><span class="nav-label">Next →</span><span class="nav-title">HTML Links & Navigation</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">← Back to All Posts</a></div>
+</main>
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

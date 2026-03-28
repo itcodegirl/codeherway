@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How the JavaScript Event Loop Works: Call Stack, Task Queue & Microtasks | CodeHerWay</title>
+<meta name="description" content="The call stack, task queue, microtask queue — the mental model that makes async JavaScript finally click. CodeHerWay intermediate JavaScript tutorial.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.tag .tag-icon{font-size: 14px;}
+.stack-diagram{display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 28px 0;}
+@media (max-width: 600px){ .stack-diagram { grid-template-columns: 1fr; } }
+.stack-col{background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,.07);}
+.stack-col-header{padding: 12px 16px; font-family: 'Fira Code', monospace; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-align: center;}
+.stack-col-body{padding: 12px 16px; display: flex; flex-direction: column; gap: 6px; min-height: 120px;}
+.stack-col.col-stack{border-top: 3px solid var(--purple);}
+.stack-col.col-stack  .stack-col-header{background: rgba(180,74,255,.12); color: var(--purple);}
+.stack-col.col-queue{border-top: 3px solid var(--accent);}
+.stack-col.col-queue  .stack-col-header{background: var(--accent-dim);   color: var(--accent);}
+.stack-col.col-webapi{border-top: 3px solid var(--mint-green);}
+.stack-col.col-webapi .stack-col-header{background: rgba(61,220,132,.1);  color: var(--mint-green);}
+.stack-item{font-family: 'Fira Code', monospace; font-size: 12px; padding: 6px 10px; border-radius: 6px; text-align: center;}
+.stack-item.item-purple{background: rgba(180,74,255,.15); color: var(--purple);    border: 1px solid rgba(180,74,255,.25);}
+.stack-item.item-accent{background: var(--accent-dim);   color: var(--accent);    border: 1px solid var(--accent-border);}
+.stack-item.item-mint{background: rgba(61,220,132,.1); color: var(--mint-green);border: 1px solid rgba(61,220,132,.2);}
+.stack-item.item-muted{background: rgba(255,255,255,.04); color: var(--text-muted); border: 1px solid rgba(255,255,255,.06); font-style: italic;}
+.timeline{display: flex; flex-direction: column; gap: 0; margin: 28px 0;}
+.timeline-step{display: flex; gap: 20px; padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,.05);}
+.timeline-step:last-child{border-bottom: none;}
+.tl-badge{font-family: 'Fira Code', monospace; font-size: 11px; font-weight: 700; color: var(--accent); background: var(--accent-dim); border: 1px solid var(--accent-border); border-radius: 6px; padding: 3px 10px; white-space: nowrap; height: fit-content; margin-top: 4px; flex-shrink: 0;}
+.tl-content{flex: 1;}
+.tl-title{font-size: 15px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;}
+.tl-desc{font-size: 14px; color: var(--text-muted); line-height: 1.6;}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+
+<!-- ── HERO ── -->
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Async</span> Post 01 of 16</div>
+  <div class="chw-logo">
+    <span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span>
+  </div>
+  <div class="series-line">
+    <span class="series-label">⚡ JavaScript, But Make It Async</span>
+    <span class="post-number">Post 01 of 18</span>
+  </div>
+  <h1 class="post-title">How the JavaScript Event Loop Works</h1>
+  <p class="post-subtitle">The event loop, the call stack, the task queue — the mental model that makes every async concept finally click.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 14 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Intermediate</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+
+<!-- ── MAIN ── -->
+<main>
+  <div class="bridge-banner">
+    <div class="bridge-icon">←</div>
+    <div class="bridge-content">
+      <div class="bridge-label">← Coming From the Click Series?</div>
+      <div class="bridge-title">Start here if async/await feels fuzzy</div>
+      <p class="bridge-desc">This series assumes you've used async/await and fetch at least once. If those feel unfamiliar, read JavaScript But Make It Click, Post 14 first — it's the intro. This post is the deep dive.</p>
+      <a class="bridge-btn" href="js-click-post14-async-javascript.html">Read it →</a>
+    </div>
+  </div>
+
+
+  <div class="back-ref"><span class="br-arrow">←</span> Picks up from <strong>JS Click — Post 14</strong>: Async JavaScript: Fetch, Promises &amp; async/await</div>
+
+  <div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">You've Used async/await. But Do You Know Why It Works?</h2><div class="section-line"></div></div>
+
+  <p>In the last series you learned to write async/await and fetch data from an API. You know the syntax. But there's a deeper question most tutorials skip: <em>how does JavaScript actually do this?</em> It runs one thing at a time — so how does it fetch data from the internet without freezing the entire page?</p>
+
+  <p>The answer is the <span class="highlight">event loop</span>. Understanding it doesn't just satisfy curiosity — it directly explains why async code behaves the way it does, why certain bugs happen, and how to reason about the order your code runs in. This is the mental model that makes everything else in this series make sense.</p>
+
+  <div class="section-header"><span class="section-icon">🧱</span><h2 class="section-title">JavaScript Is Single-Threaded</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>The call stack is the most important piece to understand first. JavaScript is single-threaded — it can only run one thing at a time. The call stack tracks what's currently running. Each function call gets pushed onto the stack; when it returns, it gets popped off. The event loop's job is to keep the call stack fed without ever blocking it.</p>
+  </div>
+
+</div>
+
+  <p>JavaScript has one <span class="highlight">call stack</span> — one thread of execution. It can only do one thing at a time. This is not a weakness. It's a deliberate design decision that eliminates an entire class of concurrency bugs that plague multi-threaded languages.</p>
+
+  <p>The call stack is exactly what it sounds like: a stack of function calls. When you call a function, it gets pushed onto the stack. When it returns, it gets popped off. JavaScript works through that stack top to bottom, one frame at a time.</p>
+
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — call-stack.js</div></div>
+    <div class="code-body"><pre><span class="sy-kw">function</span> <span class="sy-fn">third</span>()  { <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"I run last"</span>) }
+<span class="sy-kw">function</span> <span class="sy-fn">second</span>() { <span class="sy-fn">third</span>() }
+<span class="sy-kw">function</span> <span class="sy-fn">first</span>()  { <span class="sy-fn">second</span>() }
+
+<span class="sy-fn">first</span>()
+
+<span class="sy-comment">// Call stack at deepest point:</span>
+<span class="sy-comment">// [ third ]   ← top (currently running)</span>
+<span class="sy-comment">// [ second ]</span>
+<span class="sy-comment">// [ first  ]</span>
+<span class="sy-comment">// [ main   ]  ← bottom (global execution context)</span>
+<span class="sy-comment">//</span>
+<span class="sy-comment">// Each function pops off as it returns, bottom to top</span></pre></div>
+  </div>
+
+  <div class="callout callout-info">
+    <div class="callout-title">ℹ️ Good to Know</div>
+    <p>You've seen the call stack before — it's what a stack trace shows you when an error occurs. Every line in that error output is a frame that was on the stack at the moment the error was thrown. The call stack isn't an abstract concept. It's the thing showing up in your DevTools right now.</p>
+  </div>
+
+  <div class="section-header"><span class="section-icon">⏳</span><h2 class="section-title">The Problem: What About Things That Take Time?</h2><div class="section-line"></div></div>
+
+  <p>If JavaScript is single-threaded and can only do one thing at a time, what happens when you fetch data that takes 500ms to arrive? Does the whole page freeze and wait?</p>
+
+  <p>The answer is no — and the reason is that <span class="highlight">the browser does the waiting, not JavaScript</span>. When you call <span class="il">fetch()</span>, JavaScript hands the request off to a Web API running in the browser. The browser handles the network request in the background. JavaScript immediately moves on to the next line of code. When the browser is done, it puts the callback on a queue. The event loop picks it up when the call stack is empty.</p>
+
+  <p>That's the whole system. Four pieces working together:</p>
+
+  <div class="stack-diagram">
+    <div class="stack-col col-stack">
+      <div class="stack-col-header">CALL STACK</div>
+      <div class="stack-col-body">
+        <div class="stack-item item-purple">currently running</div>
+        <div class="stack-item item-purple">function frames</div>
+        <div class="stack-item item-muted">one at a time</div>
+      </div>
+    </div>
+    <div class="stack-col col-webapi">
+      <div class="stack-col-header">WEB APIs</div>
+      <div class="stack-col-body">
+        <div class="stack-item item-mint">fetch()</div>
+        <div class="stack-item item-mint">setTimeout()</div>
+        <div class="stack-item item-mint">DOM events</div>
+      </div>
+    </div>
+    <div class="stack-col col-queue">
+      <div class="stack-col-header">TASK QUEUE</div>
+      <div class="stack-col-body">
+        <div class="stack-item item-accent">waiting callbacks</div>
+        <div class="stack-item item-accent">ready to run</div>
+        <div class="stack-item item-muted">when stack is empty</div>
+      </div>
+    </div>
+  </div>
+
+  <p>The <span class="highlight">event loop</span> is the traffic controller. It has one job: check if the call stack is empty. If it is, take the next callback from the queue and push it onto the stack. Repeat forever. That's it. That's the whole event loop.</p>
+
+  <div class="section-header"><span class="section-icon">🔬</span><h2 class="section-title">Watching It Happen — setTimeout</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>The microtask queue (where Promises live) and the task queue (where setTimeout lives) have a strict priority: microtasks always run before the next task. This is why <code class='il'>Promise.resolve().then()</code> runs before <code class='il'>setTimeout(fn, 0)</code> — even though zero milliseconds sounds instant. Once you internalize queue priority, async code ordering becomes predictable.</p>
+  </div>
+
+</div>
+
+  <p><span class="il">setTimeout</span> is the clearest way to see the event loop in action. Watch what order these log in and think about why.</p>
+
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — settimeout-order.js</div></div>
+    <div class="code-body"><pre><span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"1 — start"</span>)
+
+<span class="sy-fn">setTimeout</span>(() => {
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"3 — setTimeout callback"</span>)
+}, <span class="sy-num">0</span>)  <span class="sy-comment">// 0ms delay — but still async!</span>
+
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"2 — end"</span>)
+
+<span class="sy-comment">// Output:</span>
+<span class="sy-comment">// 1 — start</span>
+<span class="sy-comment">// 2 — end</span>
+<span class="sy-comment">// 3 — setTimeout callback</span>
+<span class="sy-comment">//</span>
+<span class="sy-comment">// Even with 0ms delay, the callback goes to the Web API,</span>
+<span class="sy-comment">// then the queue, then runs AFTER the current stack clears.</span>
+<span class="sy-comment">// "0ms" means "as soon as possible" — not "right now".</span></pre></div>
+  </div>
+
+  <div class="callout callout-mindset">
+    <div class="callout-title">🧠 Mindset Shift</div>
+    <p><span class="il">setTimeout(fn, 0)</span> doesn't mean "run immediately." It means "run after the current call stack finishes." This is one of the most misunderstood behaviors in JavaScript. The delay is a <em>minimum</em> wait time, not a guaranteed one. If the stack is busy for 2 seconds, your 0ms timeout still waits those 2 seconds.</p>
+  </div>
+
+  <div class="section-header"><span class="section-icon">⚡</span><h2 class="section-title">The Microtask Queue — Promises Go Here</h2><div class="section-line"></div></div>
+
+  <p>Here's where it gets more nuanced — and where async/await behavior starts to make complete sense. There are actually <em>two</em> queues, not one.</p>
+
+  <p>The <span class="highlight">task queue</span> (also called the macrotask queue) handles things like: <span class="il">setTimeout</span>, <span class="il">setInterval</span>, and DOM events. The <span class="hl-purple">microtask queue</span> handles: Promise callbacks (<span class="il">.then()</span>, <span class="il">.catch()</span>) and <span class="il">queueMicrotask()</span>.</p>
+
+  <p>The critical rule: <span class="highlight">microtasks always run before the next task</span>. When the call stack empties, the event loop drains the <em>entire</em> microtask queue before picking up even one task from the task queue.</p>
+
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — microtask-queue.js</div></div>
+    <div class="code-body"><pre><span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"1 — sync start"</span>)
+
+<span class="sy-fn">setTimeout</span>(() => <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"4 — setTimeout (task queue)"</span>), <span class="sy-num">0</span>)
+
+<span class="sy-method">Promise</span>.<span class="sy-fn">resolve</span>().<span class="sy-fn">then</span>(() => <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"3 — Promise.then (microtask queue)"</span>))
+
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"2 — sync end"</span>)
+
+<span class="sy-comment">// Output:</span>
+<span class="sy-comment">// 1 — sync start</span>
+<span class="sy-comment">// 2 — sync end</span>
+<span class="sy-comment">// 3 — Promise.then (microtask queue)  ← runs before setTimeout!</span>
+<span class="sy-comment">// 4 — setTimeout (task queue)</span>
+<span class="sy-comment">//</span>
+<span class="sy-comment">// Microtasks always drain before the next task runs.</span>
+<span class="sy-comment">// This is why Promise callbacks feel "faster" than setTimeout.</span></pre></div>
+  </div>
+
+  <div class="callout callout-accent">
+    <div class="callout-title">⚡ Why This Matters for async/await</div>
+    <p>When you <span class="il">await</span> something, JavaScript pauses that async function and puts the rest of it into the microtask queue. When the awaited Promise resolves, the continuation is pulled from the microtask queue — before any setTimeout callbacks. This is why async/await code resumes quickly and predictably. It's not magic. It's the microtask queue doing its job.</p>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🗺️</span><h2 class="section-title">The Full Picture — Step by Step</h2><div class="section-line"></div></div>
+
+  <p>Let's trace exactly what happens when you run a real async function — one fetch call — through this entire system:</p>
+
+  <div class="timeline">
+    <div class="timeline-step">
+      <div class="tl-badge">STEP 01</div>
+      <div class="tl-content">
+        <div class="tl-title">async function is called</div>
+        <div class="tl-desc">It gets pushed onto the call stack. Synchronous code inside it runs normally.</div>
+      </div>
+    </div>
+    <div class="timeline-step">
+      <div class="tl-badge">STEP 02</div>
+      <div class="tl-content">
+        <div class="tl-title">await fetch() is hit</div>
+        <div class="tl-desc">JavaScript hands the network request to the browser's Web API. The async function is paused. Its continuation is saved. The call stack moves on.</div>
+      </div>
+    </div>
+    <div class="timeline-step">
+      <div class="tl-badge">STEP 03</div>
+      <div class="tl-content">
+        <div class="tl-title">The rest of the synchronous code runs</div>
+        <div class="tl-desc">Everything after the async function call continues. The browser fetches in the background. Nothing freezes.</div>
+      </div>
+    </div>
+    <div class="timeline-step">
+      <div class="tl-badge">STEP 04</div>
+      <div class="tl-content">
+        <div class="tl-title">The network response arrives</div>
+        <div class="tl-desc">The browser resolves the Promise. The continuation of the async function is placed in the microtask queue.</div>
+      </div>
+    </div>
+    <div class="timeline-step">
+      <div class="tl-badge">STEP 05</div>
+      <div class="tl-content">
+        <div class="tl-title">The call stack empties</div>
+        <div class="tl-desc">The event loop sees an empty stack. It checks the microtask queue first — finds the async function continuation.</div>
+      </div>
+    </div>
+    <div class="timeline-step">
+      <div class="tl-badge">STEP 06</div>
+      <div class="tl-content">
+        <div class="tl-title">The async function resumes</div>
+        <div class="tl-desc">It picks up exactly where it left off — after the await. The response data is now available. The rest of the function runs.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — event-loop-fetch.js</div></div>
+    <div class="code-body"><pre><span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"A — before async call"</span>)
+
+<span class="sy-kw">async function</span> <span class="sy-fn">loadData</span>() {
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"B — inside async, before await"</span>)
+
+  <span class="sy-kw">const</span> <span class="sy-plain">res</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">"https://jsonplaceholder.typicode.com/todos/1"</span>)
+
+  <span class="sy-comment">// Everything below here is a microtask continuation</span>
+  <span class="sy-comment">// It doesn't run until the fetch resolves AND the stack is clear</span>
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"D — inside async, after await"</span>)
+}
+
+<span class="sy-fn">loadData</span>()
+
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"C — after async call (sync continues)"</span>)
+
+<span class="sy-comment">// Output:</span>
+<span class="sy-comment">// A — before async call</span>
+<span class="sy-comment">// B — inside async, before await</span>
+<span class="sy-comment">// C — after async call (sync continues)</span>
+<span class="sy-comment">// D — inside async, after await  ← arrives when fetch resolves</span></pre></div>
+  </div>
+
+  <div class="callout callout-tip">
+    <div class="callout-title">💡 Pro Tip</div>
+    <p>Run this exact code in your browser console right now. Watch the order. Then try adding another <span class="il">console.log</span> after <span class="il">loadData()</span> and before D — confirm that synchronous code always runs before the async continuation. This is the behavior that surprises every developer the first time they see it.</p>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🚫</span><h2 class="section-title">Blocking the Event Loop — What Not to Do</h2><div class="section-line"></div></div>
+
+  <p>Because JavaScript is single-threaded, <span class="hl-coral">anything that occupies the call stack for too long blocks everything else</span>. No events fire. No callbacks run. No UI updates. The page appears frozen.</p>
+
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — blocking.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// ❌ This blocks the event loop — don't do this</span>
+<span class="sy-kw">function</span> <span class="sy-fn">blockFor2Seconds</span>() {
+  <span class="sy-kw">const</span> <span class="sy-plain">start</span> = <span class="sy-method">Date</span>.<span class="sy-fn">now</span>()
+  <span class="sy-kw">while</span> (<span class="sy-method">Date</span>.<span class="sy-fn">now</span>() - <span class="sy-plain">start</span> < <span class="sy-num">2000</span>) {}  <span class="sy-comment">// busy-wait loop</span>
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Done blocking"</span>)
+}
+
+<span class="sy-fn">setTimeout</span>(() => <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"timeout fired"</span>), <span class="sy-num">100</span>)
+<span class="sy-fn">blockFor2Seconds</span>()
+
+<span class="sy-comment">// "timeout fired" won't log until AFTER blockFor2Seconds completes</span>
+<span class="sy-comment">// because the while loop keeps the call stack occupied</span>
+<span class="sy-comment">// Output after ~2 seconds: "Done blocking"</span>
+<span class="sy-comment">// Then: "timeout fired"</span>
+<span class="sy-comment">//</span>
+<span class="sy-comment">// ✅ Expensive work should be broken into chunks, run async,</span>
+<span class="sy-comment">// or offloaded to a Web Worker so the event loop stays free</span></pre></div>
+  </div>
+
+  <div class="callout callout-mindset">
+    <div class="callout-title">🧠 Mindset Shift</div>
+    <p>This is why you never see professional code doing heavy computation directly in JavaScript. Long-running synchronous operations starve the event loop. Best practice: break heavy work into async chunks, use <span class="il">setTimeout</span> to yield control back between chunks, or use Web Workers for truly CPU-intensive tasks.</p>
+  </div>
+
+  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body">
+      <p>I used async/await for months before I understood that there were two queues. I knew Promises resolved "later" and I just trusted that and moved on. Then in an interview someone asked me why a Promise callback runs before a setTimeout even with a 0ms delay, and I had absolutely no answer. I said "JavaScript magic?" The interviewer did not laugh. Learning the event loop properly — even just the basic mental model — is one of those things that immediately separates you in technical conversations. Do this now, not after the interview.</p>
+    </div>
+  </div>
+
+  <div class="mini-build">
+    <div class="mini-build-header"><span class="trophy">🔬</span><span class="mb-title">MINI BUILD — Predict the Output</span></div>
+    <div class="mini-build-body">
+      <p>Before running any of this code, write down what you think the output order will be. Then run it. The gaps between what you predicted and what actually happened are exactly what you need to understand. Open your DevTools console right now.</p>
+      <div class="goal-label">Exercises:</div>
+      <ul class="step-list">
+        <li><span class="step-num">01</span> Predict the output of the setTimeout 0ms example from this post — then run it and confirm</li>
+        <li><span class="step-num">02</span> Predict the output of the microtask queue example — run it and confirm</li>
+        <li><span class="step-num">03</span> Run the full <span class="il">loadData()</span> fetch example — confirm the A/B/C/D order</li>
+        <li><span class="step-num">04</span> Add a second <span class="il">Promise.resolve().then()</span> after the first in the microtask example — where does it log?</li>
+        <li><span class="step-num">05</span> Add a second <span class="il">setTimeout(fn, 0)</span> — where does it log relative to the Promise?</li>
+        <li><span class="step-num">06</span> Bonus: open DevTools → Performance tab → record while running the blocking example. Watch the flame chart. See the call stack freeze visually.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="confidence-close">
+    <div class="cc-icon">⚡</div>
+    <div class="cc-heading">You Now Have the Mental Model</div>
+    <p>The event loop, the call stack, the task queue, the microtask queue — you now understand the engine underneath every async concept in this series. Every post from here builds on this foundation. Next: callbacks, the original async pattern, and why they led to one of JavaScript's most infamous problems.</p>
+  </div>
+
+  <a class="next-post" href="#">
+    <div>
+      <div class="next-label">// next post →</div>
+      <div class="next-title">Post 02 — The Callback Era (And Why We Left It)</div>
+    </div>
+    <div class="next-arrow">→</div>
+  </a>
+
+
+  <nav class="post-nav" style="grid-template-columns:1fr;justify-items:end">
+    
+    <a href="async-02-callbacks.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Callbacks</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

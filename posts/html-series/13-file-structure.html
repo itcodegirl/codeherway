@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>File Structure & Organization — Your Project's Blueprint | CodeHerWay</title>
+<meta name="description" content="Learn how to organize your web projects — linking CSS and JS files, folder structure best practices, and building projects that don't fall apart at scale.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.folder-tree{background: var(--bg-code); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 28px 32px; margin: 32px 0; font-family: 'Fira Code', monospace; font-size: 14px; line-height: 2.0;}
+.ft-item{display: flex; align-items: center; gap: 10px;}
+.ft-item.root{color: var(--pink); font-weight: 700; font-size: 15px;}
+.ft-item.folder{color: var(--sky-blue); font-weight: 600;}
+.ft-item.file{color: var(--text-secondary);}
+.ft-item.file.main{color: var(--gold); font-weight: 600;}
+.ft-indent-1{padding-left: 24px;}
+.ft-indent-2{padding-left: 48px;}
+.ft-indent-3{padding-left: 72px;}
+.ft-icon{font-size: 16px; flex-shrink: 0;}
+.ft-badge{font-size: 11px; padding: 2px 8px; border-radius: 4px; margin-left: 8px;}
+.ft-badge.entry{background: rgba(255,211,105,0.1); color: var(--gold);}
+.ft-badge.styles{background: rgba(255,105,180,0.1); color: var(--pink);}
+.ft-badge.logic{background: rgba(125,255,179,0.1); color: var(--mint-green);}
+.link-cards{display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0;}
+.link-card{background: var(--bg-code); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 24px; transition: border-color 0.3s, transform 0.3s;}
+.link-card:hover{transform: translateY(-2px);}
+.link-card.css-card{border-color: rgba(255,105,180,0.2);}
+.link-card.css-card:hover{border-color: var(--pink);}
+.link-card.js-card{border-color: rgba(255,211,105,0.2);}
+.link-card.js-card:hover{border-color: var(--gold);}
+.link-card .lc-icon{font-size: 32px; margin-bottom: 10px;}
+.link-card .lc-title{font-family: 'Fira Code', monospace; font-size: 17px; font-weight: 700; margin-bottom: 6px;}
+.link-card.css-card .lc-title{color: var(--pink);}
+.link-card.js-card .lc-title{color: var(--gold);}
+.link-card .lc-where{font-family: 'Fira Code', monospace; font-size: 12px; color: var(--text-muted); margin-bottom: 10px;}
+.link-card .lc-desc{font-size: 14px; color: var(--text-secondary); line-height: 1.65;}
+.path-grid{display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; margin: 32px 0; background: var(--bg-code); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 24px 28px; align-items: center;}
+.path-type{font-family: 'Fira Code', monospace; font-size: 14px; padding: 4px 12px; border-radius: 6px; width: fit-content;}
+.path-type.relative{background: rgba(105,210,231,0.1); color: var(--sky-blue);}
+.path-type.absolute{background: rgba(180,74,255,0.1); color: var(--purple);}
+.path-type.root{background: rgba(255,105,180,0.1); color: var(--pink);}
+.path-desc{font-size: 15px; color: var(--text-secondary);}
+@media(max-width:640px){.link-cards { grid-template-columns: 1fr; } .path-grid { grid-template-columns: 1fr; }}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<!-- ═══════ HERO ═══════ -->
+<section class="hero">
+  <div class="post-label"><span class="series-tag">HTML Fundamentals</span> Post 13 of 20</div>
+  <div class="post-number">Post 13 · HTML Fundamentals</div>
+  <h1>File Structure:<br><span class="gradient-text">Your Project's Blueprint</span></h1>
+  <p class="hero-sub">A clean folder structure is the difference between a project you can maintain and a project that makes you cry at 2am. Let's set it up right from the start.</p>
+  <div class="tag-row">
+    <span class="tag html">#HTML</span>
+    <span class="tag html">#ProjectSetup</span>
+    <span class="tag">#Beginner</span>
+    <span class="tag">8 min read</span>
+  </div>
+</section>
+
+<!-- ═══════ ARTICLE ═══════ -->
+<main class="article">
+
+  <!-- ── INTRO ── -->
+  <p>You can write perfect HTML, flawless CSS, and brilliant JavaScript — but if your files are scattered everywhere with no structure, your project is a ticking time bomb. One wrong file path and your styles vanish. One misplaced script and nothing works.</p>
+
+  <p>File structure isn't glamorous. Nobody's going to compliment your folder names. But it's the <span class="key">invisible architecture</span> that holds everything together. And if you learn it now, you'll never have to untangle a messy project later.</p>
+
+  <p>This post covers three things: how to link CSS to your HTML, how to link JavaScript, and how to organize your project folders like a professional.</p>
+
+  <!-- ── LINKING CSS ── -->
+  <h2>Linking CSS — The &lt;link&gt; Tag</h2>
+
+  <p>CSS goes in its own file (never inline in your HTML for real projects). You connect it to your HTML using the <span class="il">&lt;link&gt;</span> tag inside the <span class="il">&lt;head&gt;</span>.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML · index.html</div>
+    </div>
+    <div class="code-body">
+<span class="t">&lt;!DOCTYPE html&gt;</span>
+<span class="t">&lt;html</span> <span class="a">lang</span>=<span class="s">"en"</span><span class="t">&gt;</span>
+<span class="t">&lt;head&gt;</span>
+  <span class="t">&lt;meta</span> <span class="a">charset</span>=<span class="s">"UTF-8"</span><span class="t">&gt;</span>
+  <span class="t">&lt;meta</span> <span class="a">name</span>=<span class="s">"viewport"</span>
+        <span class="a">content</span>=<span class="s">"width=device-width, initial-scale=1.0"</span><span class="t">&gt;</span>
+  <span class="t">&lt;title&gt;</span>My Project<span class="t">&lt;/title&gt;</span>
+
+  <span class="c">&lt;!-- Link your stylesheet here --&gt;</span>
+  <span class="t">&lt;link</span> <span class="a">rel</span>=<span class="s">"stylesheet"</span> <span class="a">href</span>=<span class="s">"css/styles.css"</span><span class="t">&gt;</span>
+<span class="t">&lt;/head&gt;</span>
+    </div>
+  </div>
+
+  <p>Three attributes matter here: <span class="il">rel="stylesheet"</span> tells the browser this is a CSS file, <span class="il">href</span> is the path to the file, and the fact that it's in the <span class="il">&lt;head&gt;</span> means the browser loads styles <em>before</em> rendering the page — so users never see a flash of unstyled content.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">💡 Multiple Stylesheets</div>
+    <p>You can link more than one CSS file. This is common in larger projects where you might split styles into <span class="il">reset.css</span>, <span class="il">layout.css</span>, and <span class="il">components.css</span>. They load in order — so styles in the last file override earlier ones if there are conflicts.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── LINKING JS ── -->
+  <h2>Linking JavaScript — The &lt;script&gt; Tag</h2>
+
+  <p>JavaScript gets connected with the <span class="il">&lt;script&gt;</span> tag. But unlike CSS, <strong>where</strong> you place it matters a lot.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML · index.html</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- ❌ In the &lt;head&gt; without defer — blocks page rendering --&gt;</span>
+<span class="t">&lt;head&gt;</span>
+  <span class="t">&lt;script</span> <span class="a">src</span>=<span class="s">"js/app.js"</span><span class="t">&gt;&lt;/script&gt;</span>
+<span class="t">&lt;/head&gt;</span>
+
+<span class="c">&lt;!-- ✅ Option 1: At the bottom of &lt;body&gt; --&gt;</span>
+<span class="t">&lt;body&gt;</span>
+  <span class="c">&lt;!-- ...all your HTML content... --&gt;</span>
+
+  <span class="t">&lt;script</span> <span class="a">src</span>=<span class="s">"js/app.js"</span><span class="t">&gt;&lt;/script&gt;</span>
+<span class="t">&lt;/body&gt;</span>
+
+<span class="c">&lt;!-- ✅ Option 2: In &lt;head&gt; with defer --&gt;</span>
+<span class="t">&lt;head&gt;</span>
+  <span class="t">&lt;script</span> <span class="a">src</span>=<span class="s">"js/app.js"</span> <span class="a">defer</span><span class="t">&gt;&lt;/script&gt;</span>
+<span class="t">&lt;/head&gt;</span>
+    </div>
+  </div>
+
+  <div class="link-cards">
+    <div class="link-card css-card">
+      <div class="lc-icon">🎨</div>
+      <div class="lc-title">&lt;link&gt; for CSS</div>
+      <div class="lc-where">Always in &lt;head&gt;</div>
+      <div class="lc-desc">Self-closing tag. Uses <code>href</code> for the file path. Loads before the page renders so styles are ready immediately.</div>
+    </div>
+    <div class="link-card js-card">
+      <div class="lc-icon">⚡</div>
+      <div class="lc-title">&lt;script&gt; for JS</div>
+      <div class="lc-where">Bottom of &lt;body&gt; or &lt;head&gt; with defer</div>
+      <div class="lc-desc">Requires a closing tag. Uses <code>src</code> for the file path. Place after HTML or use <code>defer</code> so it doesn't block rendering.</div>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-title">⚠️ Why Placement Matters</div>
+    <p>When the browser hits a <span class="il">&lt;script&gt;</span> tag, it <strong>stops rendering the page</strong> and downloads/runs that JavaScript first. If your script is in the <span class="il">&lt;head&gt;</span> without <span class="il">defer</span>, users see a blank page while the script loads. Put it at the bottom of <span class="il">&lt;body&gt;</span> or use <span class="il">defer</span> — both ensure the HTML loads first.</p>
+  </div>
+
+  <h3>What About "defer" vs "async"?</h3>
+
+  <p>You'll see both of these attributes on script tags. Here's the quick version:</p>
+
+  <p><span class="il">defer</span> — downloads the script in the background and runs it <em>after</em> the HTML is fully parsed. Scripts run in order. <strong>This is what you want 99% of the time.</strong></p>
+
+  <p><span class="il">async</span> — downloads in the background but runs <em>as soon as it's ready</em>, even if the HTML isn't done. Scripts might run out of order. Use this only for independent scripts like analytics that don't interact with your page content.</p>
+
+  <div class="sep"></div>
+
+  <!-- ── FOLDER STRUCTURE ── -->
+  <h2>Folder Structure — The Professional Setup</h2>
+
+  <p>Here's the folder structure you should use for every project from this point forward. It's simple, scalable, and what you'll see in real-world codebases:</p>
+
+  <div class="folder-tree">
+    <div class="ft-item root">
+      <span class="ft-icon">📁</span> my-project/
+    </div>
+    <div class="ft-item file main ft-indent-1">
+      <span class="ft-icon">📄</span> index.html <span class="ft-badge entry">entry point</span>
+    </div>
+    <div class="ft-item folder ft-indent-1">
+      <span class="ft-icon">📁</span> css/
+    </div>
+    <div class="ft-item file ft-indent-2">
+      <span class="ft-icon">🎨</span> styles.css <span class="ft-badge styles">styles</span>
+    </div>
+    <div class="ft-item folder ft-indent-1">
+      <span class="ft-icon">📁</span> js/
+    </div>
+    <div class="ft-item file ft-indent-2">
+      <span class="ft-icon">⚡</span> app.js <span class="ft-badge logic">logic</span>
+    </div>
+    <div class="ft-item folder ft-indent-1">
+      <span class="ft-icon">📁</span> images/
+    </div>
+    <div class="ft-item file ft-indent-2">
+      <span class="ft-icon">🖼️</span> hero.jpg
+    </div>
+    <div class="ft-item file ft-indent-2">
+      <span class="ft-icon">🖼️</span> logo.svg
+    </div>
+    <div class="ft-item file ft-indent-2">
+      <span class="ft-icon">🖼️</span> profile.png
+    </div>
+    <div class="ft-item folder ft-indent-1">
+      <span class="ft-icon">📁</span> assets/
+    </div>
+    <div class="ft-item file ft-indent-2">
+      <span class="ft-icon">🔤</span> fonts/
+    </div>
+    <div class="ft-item file ft-indent-2">
+      <span class="ft-icon">🎬</span> videos/
+    </div>
+  </div>
+
+  <p><span class="il">index.html</span> sits in the root — it's your entry point, the first page browsers load. CSS goes in its own <span class="il">css/</span> folder. JavaScript in <span class="il">js/</span>. Images in <span class="il">images/</span>. Everything has a home.</p>
+
+  <div class="callout mindset">
+    <div class="callout-title">🧠 Why This Matters</div>
+    <p>When you push code to GitHub, deploy to Netlify, or hand off a project to another developer — they should be able to open your folder and immediately understand what's what. If everything is dumped in one folder with names like <span class="il">style2-final-FINAL.css</span>, that's chaos. Organization is communication.</p>
+  </div>
+
+  <h3>Growing Projects — The Expanded Structure</h3>
+
+  <p>As your projects get bigger, the structure scales naturally:</p>
+
+  <div class="folder-tree">
+    <div class="ft-item root">
+      <span class="ft-icon">📁</span> codeherway/
+    </div>
+    <div class="ft-item file main ft-indent-1">
+      <span class="ft-icon">📄</span> index.html
+    </div>
+    <div class="ft-item file ft-indent-1">
+      <span class="ft-icon">📄</span> about.html
+    </div>
+    <div class="ft-item file ft-indent-1">
+      <span class="ft-icon">📄</span> courses.html
+    </div>
+    <div class="ft-item file ft-indent-1">
+      <span class="ft-icon">📄</span> blog.html
+    </div>
+    <div class="ft-item folder ft-indent-1">
+      <span class="ft-icon">📁</span> css/
+    </div>
+    <div class="ft-item file ft-indent-2">
+      <span class="ft-icon">🎨</span> reset.css
+    </div>
+    <div class="ft-item file ft-indent-2">
+      <span class="ft-icon">🎨</span> layout.css
+    </div>
+    <div class="ft-item file ft-indent-2">
+      <span class="ft-icon">🎨</span> components.css
+    </div>
+    <div class="ft-item folder ft-indent-1">
+      <span class="ft-icon">📁</span> js/
+    </div>
+    <div class="ft-item file ft-indent-2">
+      <span class="ft-icon">⚡</span> app.js
+    </div>
+    <div class="ft-item file ft-indent-2">
+      <span class="ft-icon">⚡</span> navigation.js
+    </div>
+    <div class="ft-item folder ft-indent-1">
+      <span class="ft-icon">📁</span> images/
+    </div>
+    <div class="ft-item folder ft-indent-1">
+      <span class="ft-icon">📁</span> assets/
+    </div>
+  </div>
+
+  <p>Multiple HTML pages sit in the root. CSS files split by concern. JavaScript files split by feature. Same principle — just more files.</p>
+
+  <div class="sep"></div>
+
+  <!-- ── FILE PATHS ── -->
+  <h2>Understanding File Paths</h2>
+
+  <p>When you link a CSS file or an image, the browser needs to know <em>where</em> that file lives. That's what file paths are — directions from one file to another. There are three types you'll use:</p>
+
+  <div class="path-grid">
+    <div class="path-type relative">Relative</div>
+    <div class="path-desc"><span class="il">css/styles.css</span> — relative to the current file's location. Most common. Use this for your own project files.</div>
+
+    <div class="path-type relative">Parent</div>
+    <div class="path-desc"><span class="il">../images/logo.png</span> — the <span class="il">..</span> goes up one folder. Use when linking from a nested file back to a sibling folder.</div>
+
+    <div class="path-type root">Root-relative</div>
+    <div class="path-desc"><span class="il">/css/styles.css</span> — starts from the website's root. Works on live servers but can break locally.</div>
+
+    <div class="path-type absolute">Absolute</div>
+    <div class="path-desc"><span class="il">https://fonts.google.com/...</span> — the full URL. Use only for external resources like CDNs and Google Fonts.</div>
+  </div>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML · File Paths in Action</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- From index.html in the root --&gt;</span>
+<span class="t">&lt;link</span> <span class="a">rel</span>=<span class="s">"stylesheet"</span> <span class="a">href</span>=<span class="s">"css/styles.css"</span><span class="t">&gt;</span>
+<span class="t">&lt;img</span> <span class="a">src</span>=<span class="s">"images/hero.jpg"</span> <span class="a">alt</span>=<span class="s">"Hero image"</span><span class="t">&gt;</span>
+<span class="t">&lt;script</span> <span class="a">src</span>=<span class="s">"js/app.js"</span> <span class="a">defer</span><span class="t">&gt;&lt;/script&gt;</span>
+
+<span class="c">&lt;!-- From a page inside a /pages/ folder --&gt;</span>
+<span class="t">&lt;link</span> <span class="a">rel</span>=<span class="s">"stylesheet"</span> <span class="a">href</span>=<span class="s">"../css/styles.css"</span><span class="t">&gt;</span>
+<span class="t">&lt;img</span> <span class="a">src</span>=<span class="s">"../images/hero.jpg"</span> <span class="a">alt</span>=<span class="s">"Hero image"</span><span class="t">&gt;</span>
+
+<span class="c">&lt;!-- External resources — full URL --&gt;</span>
+<span class="t">&lt;link</span> <span class="a">href</span>=<span class="s">"https://fonts.googleapis.com/css2?family=..."</span>
+      <span class="a">rel</span>=<span class="s">"stylesheet"</span><span class="t">&gt;</span>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">💡 The #1 Debugging Tip</div>
+    <p>If your CSS isn't loading or your image is broken, it's almost always a <strong>path issue</strong>. Open your browser's DevTools (F12), check the Console for 404 errors, and look at the Network tab to see which file path the browser is trying to load. Fix the path, fix the problem.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── NAMING CONVENTIONS ── -->
+  <h2>Naming Conventions — The Unwritten Rules</h2>
+
+  <p>File naming seems trivial until you deploy a project and discover that your server is case-sensitive and <span class="il">Hero.jpg</span> is not the same as <span class="il">hero.jpg</span>. Here are the rules that will save you pain:</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">Naming Rules</div>
+    </div>
+    <div class="code-body">
+<span class="c">// ❌ Don't do this</span>
+<span class="s">My Project/</span>
+<span class="s">  Home Page.html</span>
+<span class="s">  Style Sheet (Final).css</span>
+<span class="s">  IMG_4892.JPG</span>
+<span class="s">  App copy 2.js</span>
+
+<span class="c">// ✅ Do this</span>
+<span class="s">my-project/</span>
+<span class="s">  index.html</span>
+<span class="s">  css/styles.css</span>
+<span class="s">  images/hero-banner.jpg</span>
+<span class="s">  js/app.js</span>
+
+<span class="c">// Rules:</span>
+<span class="c">// → All lowercase</span>
+<span class="c">// → Hyphens for spaces (not underscores, not spaces)</span>
+<span class="c">// → No special characters</span>
+<span class="c">// → Descriptive but short</span>
+<span class="c">// → Your main page is always index.html</span>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">ℹ️ Why "index.html"?</div>
+    <p>Web servers look for <span class="il">index.html</span> by default. When someone visits <span class="il">yoursite.com</span>, the server automatically serves <span class="il">index.html</span>. If your file is named <span class="il">home.html</span> or <span class="il">main.html</span>, the server won't find it without extra configuration. Always name your main page <span class="il">index.html</span>.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── DEVFESSION ── -->
+  <div class="devfession">
+    <div class="devfession-header">// dev_fession</div>
+    <div class="devfession-body">
+      <p>My first project had everything in one folder. HTML, CSS, JavaScript, 47 images, a README, and a random text file called "notes.txt" that I used as a to-do list. Finding anything meant scrolling through a wall of files.</p>
+      <p>When I tried to deploy it, half the image paths broke because I had spaces in folder names and mixed uppercase and lowercase letters. The entire site loaded with broken images and no styles.</p>
+      <p>Spent an entire Saturday renaming files and fixing paths. Now I set up my folder structure <em>before</em> I write a single line of code. Every time. 📁</p>
+    </div>
+    <div class="devfession-footer">
+      <span>@itcodegirl</span>
+      <span class="tagline">CodeHerWay</span>
+    </div>
+  </div>
+
+  <!-- ── MINI BUILD ── -->
+  <div class="mini-build">
+    <div class="mini-build-header">
+      <h3>🔨 Mini Build: Set Up a Portfolio Project</h3>
+    </div>
+    <div class="mini-build-body">
+      <p>Create a properly structured portfolio project from scratch:</p>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">Create a root folder called <span class="sky">portfolio</span> with subfolders: <span class="sky">css/</span>, <span class="sky">js/</span>, <span class="sky">images/</span>.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">Create <span class="sky">index.html</span> in the root with a full HTML boilerplate. Link a <span class="sky">css/styles.css</span> file in the head and a <span class="sky">js/app.js</span> file at the bottom of the body (or in the head with <span class="sky">defer</span>).</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">In <span class="sky">styles.css</span>, add a simple body style (background color, font family) to verify the link works.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">In <span class="sky">app.js</span>, add a <span class="sky">console.log("Connected!")</span> and verify it appears in DevTools to confirm the script is linked.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-text">Add a placeholder image to <span class="sky">images/</span> and reference it in your HTML with the correct relative path. Confirm it renders.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── WRAP UP ── -->
+  <h2>The Bottom Line</h2>
+
+  <p>File structure is one of those skills that seems boring until the day it saves you hours of debugging. CSS connects via <span class="il">&lt;link&gt;</span> in the head. JavaScript connects via <span class="il">&lt;script&gt;</span> at the bottom of the body (or with <span class="il">defer</span>). Your project lives in organized folders with lowercase, hyphenated file names.</p>
+
+  <p>Set up your folder structure first — before you write any HTML. Get your links working — before you build any features. It takes two minutes and prevents hours of frustration. This is how professionals start every project.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">⬆️ Next Up</div>
+    <p><strong>Post 14: Meta Tags &amp; SEO Basics</strong> — Everything that goes in the <span class="il">&lt;head&gt;</span> before users ever see your page. Charset, viewport, meta descriptions, Open Graph tags, and how search engines decide what your site is about.</p>
+  </div>
+
+
+  <nav class="post-nav">
+    <a href="12-html-tables.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">HTML Tables</span></a>
+    <a href="14-meta-tags-seo.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Meta Tags and SEO Basics</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

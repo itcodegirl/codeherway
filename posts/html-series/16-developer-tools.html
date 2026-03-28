@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Developer Tools — Your Browser's Built-In Superpower | CodeHerWay</title>
+<meta name="description" content="Learn to use browser DevTools — Inspect Element, the DOM tree, live HTML editing, and the Network tab. This is where beginners become developers.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.tag.tools{border-color: rgba(255,211,105,0.3); color: var(--gold);}
+.devtools-mock{background: #1e1e2e; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; margin: 28px 0; box-shadow: 0 8px 32px rgba(0,0,0,0.5);}
+.dt-toolbar{display: flex; gap: 2px; padding: 8px 12px; background: #181825; border-bottom: 1px solid rgba(255,255,255,0.06); overflow-x: auto;}
+.dt-tab{font-family: 'Fira Code', monospace; font-size: 11px; padding: 5px 14px; border-radius: 4px; color: var(--text-muted); cursor: default; white-space: nowrap;}
+.dt-tab.active{background: rgba(255,255,255,0.08); color: var(--sky-blue);}
+.dt-body{padding: 16px 20px; font-family: 'Fira Code', monospace; font-size: 13px; line-height: 1.9; min-height: 180px;}
+.dt-indent-1{padding-left: 20px;}
+.dt-indent-2{padding-left: 40px;}
+.dt-indent-3{padding-left: 60px;}
+.dt-collapse{color: var(--text-muted); cursor: default; margin-right: 4px;}
+.dt-tag{color: var(--pink);}
+.dt-attr{color: var(--sky-blue);}
+.dt-val{color: var(--gold);}
+.dt-text{color: var(--text-secondary);}
+.dt-highlight{background: rgba(105,210,231,0.08); border-left: 2px solid var(--sky-blue); margin: 0 -20px; padding: 2px 20px;}
+.tab-grid{display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 32px 0;}
+.tab-card{background: var(--bg-code); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 24px; transition: border-color 0.3s, transform 0.3s;}
+.tab-card:hover{transform: translateY(-2px);}
+.tab-card:nth-child(1){border-color: rgba(105,210,231,0.2);}
+.tab-card:nth-child(1):hover{border-color: var(--sky-blue);}
+.tab-card:nth-child(2){border-color: rgba(255,105,180,0.2);}
+.tab-card:nth-child(2):hover{border-color: var(--pink);}
+.tab-card:nth-child(3){border-color: rgba(125,255,179,0.2);}
+.tab-card:nth-child(3):hover{border-color: var(--mint-green);}
+.tab-card:nth-child(4){border-color: rgba(255,211,105,0.2);}
+.tab-card:nth-child(4):hover{border-color: var(--gold);}
+.tc-icon{font-size: 28px; margin-bottom: 10px;}
+.tc-name{font-family: 'Fira Code', monospace; font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 4px;}
+.tc-shortcut{font-family: 'Fira Code', monospace; font-size: 11px; color: var(--text-muted); margin-bottom: 10px;}
+.tc-desc{font-size: 14px; color: var(--text-secondary); line-height: 1.65;}
+.kbd{display: inline-block; font-family: 'Fira Code', monospace; font-size: 12px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; padding: 2px 8px; color: var(--text-primary); box-shadow: 0 1px 2px rgba(0,0,0,0.3);}
+.network-mock{background: #1e1e2e; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; overflow: hidden; margin: 28px 0; box-shadow: 0 8px 32px rgba(0,0,0,0.5);}
+.net-header{display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 4px; padding: 8px 16px; background: #181825; border-bottom: 1px solid rgba(255,255,255,0.06); font-family: 'Fira Code', monospace; font-size: 11px; color: var(--text-muted);}
+.net-row{display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 4px; padding: 6px 16px; font-family: 'Fira Code', monospace; font-size: 12px; border-bottom: 1px solid rgba(255,255,255,0.03);}
+.net-row .net-name{color: var(--sky-blue);}
+.net-row .net-status{color: var(--mint-green);}
+.net-row .net-status.error{color: var(--coral);}
+.net-row .net-type{color: var(--text-muted);}
+.net-row .net-size{color: var(--text-muted);}
+.net-row.error-row{background: rgba(255,107,107,0.06);}
+@media(max-width:640px){.tab-grid { grid-template-columns: 1fr; } .dt-body { font-size: 11.5px; } .net-header, .net-row { grid-template-columns: 1.5fr 0.8fr 0.8fr 0.8fr; font-size: 10px; }}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<!-- ═══════ HERO ═══════ -->
+<section class="hero">
+  <div class="post-label"><span class="series-tag">HTML Fundamentals</span> Post 16 of 20</div>
+  <div class="post-number">Post 16 · HTML Fundamentals</div>
+  <h1>Developer Tools:<br><span class="gradient-text">Your Browser's Superpower</span></h1>
+  <p class="hero-sub">Every browser ships with a built-in development toolkit. Learning to use it is the single biggest unlock for any beginner. This is where you stop guessing and start debugging.</p>
+  <div class="tag-row">
+    <span class="tag html">#HTML</span>
+    <span class="tag tools">#DevTools</span>
+    <span class="tag tools">#Debugging</span>
+    <span class="tag">10 min read</span>
+  </div>
+</section>
+
+<!-- ═══════ ARTICLE ═══════ -->
+<main class="article">
+
+  <!-- ── INTRO ── -->
+  <p>You've been writing HTML for a while now. You've linked stylesheets, built forms, structured tables, embedded videos. But at some point, something is going to break. A style won't apply. An image won't load. A layout collapses on mobile. And your first instinct might be to stare at your code and hope the bug reveals itself.</p>
+
+  <p>There's a better way. Every major browser — Chrome, Firefox, Edge, Safari — ships with <span class="key">Developer Tools</span> (DevTools). It's a free, built-in toolkit that lets you inspect, edit, and debug your website in real time. Once you learn to use it, you'll wonder how you ever coded without it.</p>
+
+  <p>This isn't an advanced topic. This is a <span class="key">beginner essential</span>. You should have DevTools open every single time you're building a website.</p>
+
+  <!-- ── OPENING DEVTOOLS ── -->
+  <h2>Opening DevTools</h2>
+
+  <p>Three ways in — pick whichever feels natural:</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">Keyboard Shortcuts</div>
+    </div>
+    <div class="code-body">
+<span class="c">// Method 1: Keyboard shortcut (fastest)</span>
+<span class="a">Windows/Linux:</span>  <span class="s">F12</span>  or  <span class="s">Ctrl + Shift + I</span>
+<span class="a">Mac:</span>            <span class="s">Cmd + Option + I</span>
+
+<span class="c">// Method 2: Right-click → Inspect (most useful)</span>
+<span class="p">Right-click any element on the page → "Inspect"</span>
+<span class="c">// Opens DevTools AND jumps to that exact element</span>
+
+<span class="c">// Method 3: Browser menu</span>
+<span class="p">Chrome → Menu → More Tools → Developer Tools</span>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">💡 Right-Click → Inspect Is Your Best Friend</div>
+    <p>This is the method you'll use most. See a button that's the wrong color? Right-click it → Inspect. It opens DevTools and immediately highlights the HTML and CSS for that exact element. No searching — the browser takes you right there.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── THE FOUR TABS ── -->
+  <h2>The Four Tabs You Need Right Now</h2>
+
+  <p>DevTools has a lot of tabs. You don't need all of them yet. These four cover 95% of what a beginner needs:</p>
+
+  <div class="tab-grid">
+    <div class="tab-card">
+      <div class="tc-icon">🔍</div>
+      <div class="tc-name">Elements</div>
+      <div class="tc-shortcut">Ctrl+Shift+C / Cmd+Shift+C</div>
+      <div class="tc-desc">Inspect and edit HTML &amp; CSS in real time. See the DOM tree. Hover to highlight elements on the page. This is where you'll spend most of your time.</div>
+    </div>
+    <div class="tab-card">
+      <div class="tc-icon">🖥️</div>
+      <div class="tc-name">Console</div>
+      <div class="tc-shortcut">Ctrl+Shift+J / Cmd+Option+J</div>
+      <div class="tc-desc">Shows JavaScript errors, warnings, and logs. If something's broken, the Console tells you what and where. Your first stop for JS debugging.</div>
+    </div>
+    <div class="tab-card">
+      <div class="tc-icon">🌐</div>
+      <div class="tc-name">Network</div>
+      <div class="tc-shortcut">Ctrl+Shift+E</div>
+      <div class="tc-desc">Shows every file your page loads — HTML, CSS, JS, images, fonts, API calls. Spot 404 errors, slow loads, and missing files instantly.</div>
+    </div>
+    <div class="tab-card">
+      <div class="tc-icon">📱</div>
+      <div class="tc-name">Device Toolbar</div>
+      <div class="tc-shortcut">Ctrl+Shift+M / Cmd+Shift+M</div>
+      <div class="tc-desc">Simulate mobile devices. Test how your site looks on iPhone, Pixel, iPad — without leaving your desktop. Essential for responsive design.</div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── INSPECT ELEMENT + DOM ── -->
+  <h2>1. Inspect Element &amp; The DOM Tree</h2>
+
+  <p>The Elements panel shows the <span class="key">live HTML</span> of the page — not your source code, but what the browser is actually rendering right now. This is the <span class="key">DOM tree</span> (Document Object Model).</p>
+
+  <div class="devtools-mock">
+    <div class="dt-toolbar">
+      <div class="dt-tab active">Elements</div>
+      <div class="dt-tab">Console</div>
+      <div class="dt-tab">Sources</div>
+      <div class="dt-tab">Network</div>
+      <div class="dt-tab">Performance</div>
+      <div class="dt-tab">Application</div>
+    </div>
+    <div class="dt-body">
+      <div><span class="dt-collapse">▼</span> <span class="dt-tag">&lt;html</span> <span class="dt-attr">lang</span>=<span class="dt-val">"en"</span><span class="dt-tag">&gt;</span></div>
+      <div class="dt-indent-1"><span class="dt-collapse">▶</span> <span class="dt-tag">&lt;head&gt;</span><span class="dt-text">...</span><span class="dt-tag">&lt;/head&gt;</span></div>
+      <div class="dt-indent-1"><span class="dt-collapse">▼</span> <span class="dt-tag">&lt;body&gt;</span></div>
+      <div class="dt-indent-2"><span class="dt-collapse">▼</span> <span class="dt-tag">&lt;header</span> <span class="dt-attr">class</span>=<span class="dt-val">"site-header"</span><span class="dt-tag">&gt;</span></div>
+      <div class="dt-indent-3 dt-highlight"><span class="dt-collapse">▶</span> <span class="dt-tag">&lt;nav</span> <span class="dt-attr">class</span>=<span class="dt-val">"nav-pills"</span><span class="dt-tag">&gt;</span><span class="dt-text">...</span><span class="dt-tag">&lt;/nav&gt;</span></div>
+      <div class="dt-indent-2"><span class="dt-tag">&lt;/header&gt;</span></div>
+      <div class="dt-indent-2"><span class="dt-collapse">▼</span> <span class="dt-tag">&lt;main</span> <span class="dt-attr">class</span>=<span class="dt-val">"article"</span><span class="dt-tag">&gt;</span></div>
+      <div class="dt-indent-3"><span class="dt-collapse">▶</span> <span class="dt-tag">&lt;h1&gt;</span><span class="dt-text">Developer Tools</span><span class="dt-tag">&lt;/h1&gt;</span></div>
+      <div class="dt-indent-3"><span class="dt-collapse">▶</span> <span class="dt-tag">&lt;p&gt;</span><span class="dt-text">...</span><span class="dt-tag">&lt;/p&gt;</span></div>
+      <div class="dt-indent-2"><span class="dt-tag">&lt;/main&gt;</span></div>
+    </div>
+  </div>
+
+  <p>When you hover over any element in this tree, the browser highlights it on the actual page — showing its dimensions, padding, margins, and borders in colored overlays. Click an element and the right panel shows every CSS rule applied to it.</p>
+
+  <div class="callout info">
+    <div class="callout-title">ℹ️ Source vs DOM</div>
+    <p><strong>View Source</strong> (<span class="kbd">Ctrl+U</span>) shows your original HTML file — exactly as written. The <strong>DOM tree</strong> in DevTools shows what the browser <em>built</em> from that file — after parsing, error correction, and JavaScript modifications. If JavaScript adds elements dynamically, they appear in the DOM but not in View Source. When debugging, the DOM tree is almost always what you want.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── EDITING LIVE ── -->
+  <h2>2. Editing HTML &amp; CSS Live</h2>
+
+  <p>This is the part that blows beginners' minds: you can <span class="key">edit HTML and CSS directly in DevTools</span> and see the results instantly on the page. No saving. No refreshing. Change it and watch.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">DevTools Actions</div>
+    </div>
+    <div class="code-body">
+<span class="c">// Edit text content</span>
+<span class="p">Double-click any text in the DOM tree → type new text</span>
+
+<span class="c">// Edit an entire element's HTML</span>
+<span class="p">Right-click element → "Edit as HTML" → modify freely</span>
+
+<span class="c">// Edit CSS values</span>
+<span class="p">Click any CSS value in the Styles panel → type a new one</span>
+
+<span class="c">// Toggle a CSS rule on/off</span>
+<span class="p">Click the checkbox next to any rule</span>
+
+<span class="c">// Add a brand new CSS rule</span>
+<span class="p">Click the "+" icon in the Styles panel</span>
+
+<span class="c">// Delete an element from the page</span>
+<span class="p">Select it → press Delete key</span>
+
+<span class="c">// Reorder elements</span>
+<span class="p">Click and drag any element in the DOM tree</span>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-title">⚠️ It's Temporary — And That's the Point</div>
+    <p>Every edit you make in DevTools is <strong>temporary</strong>. Refresh the page and it all resets. This is actually a feature — you can experiment fearlessly. Try wild CSS changes, rearrange elements, test colors — when something works, go update your actual source files.</p>
+  </div>
+
+  <div class="callout mindset">
+    <div class="callout-title">🧠 The Pro Workflow</div>
+    <p>Don't go back and forth between your code editor and the browser. Open DevTools, make changes live until it looks right, <em>then</em> copy the CSS values back to your source file. Designers and senior devs use this workflow constantly. It saves enormous amounts of time.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── NETWORK TAB ── -->
+  <h2>3. The Network Tab — Seeing Every Request</h2>
+
+  <p>The Network tab shows <span class="key">every file your page loads</span> — HTML, CSS, JavaScript, images, fonts, API calls. Open it, refresh the page, and watch the requests roll in. Here's what it looks like:</p>
+
+  <div class="network-mock">
+    <div class="dt-toolbar">
+      <div class="dt-tab">Elements</div>
+      <div class="dt-tab">Console</div>
+      <div class="dt-tab">Sources</div>
+      <div class="dt-tab active">Network</div>
+    </div>
+    <div class="net-header">
+      <span>Name</span>
+      <span>Status</span>
+      <span>Type</span>
+      <span>Size</span>
+    </div>
+    <div class="net-row">
+      <span class="net-name">index.html</span>
+      <span class="net-status">200</span>
+      <span class="net-type">document</span>
+      <span class="net-size">4.2 kB</span>
+    </div>
+    <div class="net-row">
+      <span class="net-name">styles.css</span>
+      <span class="net-status">200</span>
+      <span class="net-type">stylesheet</span>
+      <span class="net-size">8.1 kB</span>
+    </div>
+    <div class="net-row">
+      <span class="net-name">app.js</span>
+      <span class="net-status">200</span>
+      <span class="net-type">script</span>
+      <span class="net-size">12.3 kB</span>
+    </div>
+    <div class="net-row">
+      <span class="net-name">hero.jpg</span>
+      <span class="net-status">200</span>
+      <span class="net-type">image</span>
+      <span class="net-size">245 kB</span>
+    </div>
+    <div class="net-row error-row">
+      <span class="net-name">logo.png</span>
+      <span class="net-status error">404</span>
+      <span class="net-type">image</span>
+      <span class="net-size">—</span>
+    </div>
+    <div class="net-row">
+      <span class="net-name">Space+Grotesk</span>
+      <span class="net-status">200</span>
+      <span class="net-type">font</span>
+      <span class="net-size">18.4 kB</span>
+    </div>
+  </div>
+
+  <p>See that <span style="color:var(--coral);font-weight:700;">404</span> on <span class="il">logo.png</span>? That means the browser tried to load that image and couldn't find it. The path is wrong or the file doesn't exist. This is how you diagnose broken images, missing stylesheets, and failed script loads — instantly, without guessing.</p>
+
+  <p>The Network tab also reveals <strong>performance problems</strong>. If that hero image is 2.4 MB, you'll see it right here. If a third-party font is taking 3 seconds to load, you'll see it. Everything is visible.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">💡 Filter by Type</div>
+    <p>The Network tab has filter buttons at the top: All, Fetch/XHR, JS, CSS, Img, Font, Doc. Click <strong>CSS</strong> to see only stylesheets. Click <strong>Img</strong> to see only images. When you're hunting a specific missing file, filters help you find it fast.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── DEVICE MODE ── -->
+  <h2>4. Device Mode — Testing Responsive Design</h2>
+
+  <p>Click the device icon in the DevTools toolbar (or press <span class="kbd">Ctrl+Shift+M</span>) to toggle responsive design mode. This lets you simulate how your page looks on different screen sizes without touching a phone.</p>
+
+  <p>You can select specific devices (iPhone 14, Pixel 7, iPad) from the dropdown, or drag the viewport edges to any custom width. The page re-renders in real time as you resize.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">Common Breakpoints to Test</div>
+    </div>
+    <div class="code-body">
+<span class="c">// Mobile</span>
+<span class="a">375px</span>   <span class="p">→ iPhone SE / small phones</span>
+<span class="a">390px</span>   <span class="p">→ iPhone 14 / modern phones</span>
+
+<span class="c">// Tablet</span>
+<span class="a">768px</span>   <span class="p">→ iPad Mini / portrait tablet</span>
+<span class="a">1024px</span>  <span class="p">→ iPad / landscape tablet</span>
+
+<span class="c">// Desktop</span>
+<span class="a">1280px</span>  <span class="p">→ Laptop</span>
+<span class="a">1440px</span>  <span class="p">→ Desktop monitor</span>
+<span class="a">1920px</span>  <span class="p">→ Full HD</span>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-title">⚠️ Not a Perfect Replacement</div>
+    <p>Device simulation is great for testing layout, but it's not identical to a real device. Touch interactions, browser-specific rendering, and actual performance can differ. Always do a final test on a real phone before launching. But for daily development? Device mode saves you from pulling out your phone every two minutes.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── DEVFESSION ── -->
+  <div class="devfession">
+    <div class="devfession-header">// dev_fession</div>
+    <div class="devfession-body">
+      <p>I spent my first three months coding without ever opening DevTools. I thought it was an "advanced" thing that real developers used. When something looked wrong, I'd change one line of CSS, save, refresh, check. Change another line, save, refresh, check. Over and over.</p>
+      <p>Then someone showed me I could just right-click an element and edit CSS live. I tested twelve different font sizes in about eight seconds. Changes appeared instantly on screen. No saving. No refreshing.</p>
+      <p>I was so annoyed nobody told me sooner. DevTools isn't advanced — it's day one material. Open it right now. Keep it open. Never close it. 🔧</p>
+    </div>
+    <div class="devfession-footer">
+      <span>@itcodegirl</span>
+      <span class="tagline">CodeHerWay</span>
+    </div>
+  </div>
+
+  <!-- ── MINI BUILD ── -->
+  <div class="mini-build">
+    <div class="mini-build-header">
+      <h3>🔨 Mini Build: DevTools Scavenger Hunt</h3>
+    </div>
+    <div class="mini-build-body">
+      <p>Open any website you admire and complete these tasks using only DevTools:</p>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">Right-click the site's main heading → <span class="sky">Inspect</span>. Find its font-family, font-size, and color in the Styles panel. Write down all three values.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">Change the heading text to your name by <span class="sky">double-clicking</span> it in the DOM tree. Take a screenshot of your name on their site.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">In the Styles panel, change the heading's <span class="sky">color</span> to hot pink and its <span class="sky">font-size</span> to 64px. See the change live.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">Open the <span class="sky">Network tab</span>, refresh the page, and find the largest file by size. Is it an image? A script? How big is it?</div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-text">Toggle <span class="sky">Device Mode</span> and switch to iPhone 14. Is the site responsive? Does anything break? Find one layout difference between mobile and desktop.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── WRAP UP ── -->
+  <h2>The Bottom Line</h2>
+
+  <p>DevTools isn't optional. It's not "advanced." It's the single most important tool you have as a web developer, and it's been sitting in your browser this entire time waiting for you to use it.</p>
+
+  <p><strong>Elements</strong> lets you inspect and edit HTML and CSS live. <strong>Console</strong> shows you errors. <strong>Network</strong> reveals every file your page loads and catches broken paths instantly. <strong>Device Mode</strong> lets you test responsive designs without a phone.</p>
+
+  <p>From this point forward, DevTools should be open every time you're writing code. Not sometimes. Every time. This is where beginners become developers — when you stop guessing what's wrong and start <em>seeing</em> what's wrong.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">🎉 Series Milestone — 16 Posts Deep</div>
+    <p>You've now covered every major pillar of HTML: document structure, text, links, images, lists, semantic elements, forms, tables, media, file organization, meta tags, accessibility, and the developer tools to tie it all together. This is a real, complete HTML foundation. You're not just learning — you're building skills that transfer directly to CSS, JavaScript, and everything beyond.</p>
+  </div>
+
+
+  <nav class="post-nav">
+    <a href="15-html5-media.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">HTML5 Media: Video and Audio</span></a>
+    <a href="17-common-mistakes.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Common Beginner Mistakes</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

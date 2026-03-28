@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSS Specificity and the Cascade Explained: Why Your Styles Aren't Working — CodeHerWay</title>
+<meta name="description" content="CSS has a scoring system that decides which rule wins. Learn specificity scores, cascade order, inheritance, and why !important is a trap — with a hands-on debugging mini build.">
+  <link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.prop{color: var(--sky-blue);}
+.val{color: var(--mint-green);}
+.sel{color: var(--pink);}
+.sel-class{color: var(--gold);}
+.pyramid{margin: 32px 0; display: flex; flex-direction: column; gap: 8px;}
+.pyramid-row{border-radius: 8px; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;}
+.pyramid-row .pr-label{font-family: 'Fira Code', monospace; font-size: 14px; font-weight: 700;}
+.pyramid-row .pr-example{font-family: 'Fira Code', monospace; font-size: 12px; opacity: 0.75;}
+.pyramid-row .pr-score{font-family: 'Fira Code', monospace; font-size: 13px; font-weight: 700; background: rgba(0,0,0,0.2); padding: 3px 10px; border-radius: 6px; white-space: normal; word-break: break-word;}
+.pr-inline{background: rgba(255,107,107,0.12); border: 1px solid rgba(255,107,107,0.2);}
+.pr-inline  .pr-label{color: var(--coral);}
+.pr-id{background: rgba(255,211,105,0.1);  border: 1px solid rgba(255,211,105,0.2);}
+.pr-id      .pr-label{color: var(--gold);}
+.pr-class{background: rgba(180,74,255,0.1);  border: 1px solid rgba(180,74,255,0.2);}
+.pr-class   .pr-label{color: var(--purple);}
+.pr-element{background: rgba(105,210,231,0.08); border: 1px solid rgba(105,210,231,0.15);}
+.pr-element .pr-label{color: var(--sky-blue);}
+.score-demo{background: var(--bg-code); border-radius: 12px; padding: 24px; margin: 28px 0; border: 1px solid rgba(255,255,255,0.06);}
+.score-row{display: flex; align-items: center; gap: 14px; margin-bottom: 14px; font-size: 15px; flex-wrap: wrap;}
+.score-row:last-child{margin-bottom: 0;}
+.score-sel{font-family: 'Fira Code', monospace; font-size: 14px; color: var(--text-primary); flex: 1; min-width: 200px;}
+.score-badge{font-family: 'Fira Code', monospace; font-size: 13px; font-weight: 700; padding: 4px 12px; border-radius: 6px; white-space: normal; word-break: break-word;}
+.sb-low{background: rgba(105,210,231,0.12); color: var(--sky-blue);}
+.sb-mid{background: rgba(180,74,255,0.12);  color: var(--purple);}
+.sb-high{background: rgba(255,211,105,0.12); color: var(--gold);}
+.sb-max{background: rgba(255,107,107,0.12); color: var(--coral);}
+@media (max-width: 480px){
+      .code-body { font-size: 11.5px; padding: 12px; }
+      .hero h1 { font-size: clamp(24px, 9vw, 32px); }
+      .il { white-space: normal; word-break: break-word; }
+      .unit-grid, .compare-2, .before-after, .phase-grid,
+      .lh-demo, .pair-grid, .ba-grid, .font-compare { grid-template-columns: 1fr; }
+      .shadow-grid { grid-template-columns: 1fr 1fr; }
+      .swatch-row { gap: 8px; }
+      .swatch { min-width: 90px; }
+      .pyramid-row { flex-direction: column; gap: 6px; align-items: flex-start; }
+      .score-row { flex-direction: column; gap: 6px; }
+      .score-sel { min-width: unset; }
+      .recap-item { flex-wrap: wrap; gap: 4px; }
+      .recap-title { width: 100%; }
+      .checklist { padding: 14px; }
+      .demo-row { padding: 16px 12px; gap: 12px; }
+      .series-nav-divider { display: none; }
+      .connect-arrow { display: none; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .layer-margin { padding: 20px; }
+      .layer-border { padding: 16px; }
+    }
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+
+<div class="hero">
+  <div class="post-label"><span class="series-tag">CSS, But Make It Powerful</span> Post 10 of 14</div>
+  <div class="post-number">CSS Series · Post 10</div>
+  <h1>Specificity &amp;<br><span class="gradient-text">The Cascade</span></h1>
+  <p class="hero-sub">CSS has a built-in rulebook that decides which style wins when two rules conflict. Once you understand it, the mystery of "why isn't my style applying?" disappears entirely.</p>
+  <div class="tag-row">
+    <span class="tag css">CSS</span>
+    <span class="tag beginner">Beginner</span>
+    <span class="tag series">Series: Post 10</span>
+    <span class="tag">~11 min read</span>
+  </div>
+</div>
+
+<main class="article">
+
+  <h2>💬 "I Wrote the Rule — Why Isn't It Working?"</h2>
+
+  <p>You add a style. It does nothing. You check the spelling. Fine. You check the selector. Correct. You add <span class="il">!important</span> and it works but now something else breaks. You spend 20 minutes wondering if CSS is just broken.</p>
+
+  <p>It's not broken. <span class="key">CSS has a priority system called the cascade</span>, and there are two rules competing to style the same element — one is winning and the other is losing silently. Understanding which rule wins, and why, is what turns CSS debugging from guesswork into a five-minute fix.</p>
+
+  <div class="callout mindset">
+    <div class="callout-title">🧠 The Core Concept</div>
+    <p>When multiple CSS rules target the same element and the same property, only one value wins. CSS decides the winner using a scoring system called <strong>specificity</strong>, with a tiebreaker based on <strong>order</strong>. Knowing the scores ends the mystery.</p>
+  </div>
+
+  <h2>🧱 The Cascade — How CSS Decides</h2>
+
+  <p>The "C" in CSS stands for Cascading — and the cascade is the system that decides which rule wins when two conflict. Rules flow down in priority order. CSS evaluates three things, from most to least important:</p>
+
+  <div style="display:flex; flex-direction:column; gap:10px; margin:28px 0;">
+    <div style="background:rgba(255,107,107,0.08); border:1px solid rgba(255,107,107,0.2); border-radius:10px; padding:16px 20px; display:flex; align-items:center; gap:14px;">
+      <span style="font-family:'Fira Code',monospace; font-size:22px; color:var(--coral); font-weight:700; min-width:32px;">1</span>
+      <div><strong style="color:#fff;">Specificity</strong> <span style="color:var(--text-secondary);">— how targeted is the selector? More specific = higher priority.</span></div>
+    </div>
+    <div style="background:rgba(255,211,105,0.08); border:1px solid rgba(255,211,105,0.2); border-radius:10px; padding:16px 20px; display:flex; align-items:center; gap:14px;">
+      <span style="font-family:'Fira Code',monospace; font-size:22px; color:var(--gold); font-weight:700; min-width:32px;">2</span>
+      <div><strong style="color:#fff;">Order</strong> <span style="color:var(--text-secondary);">— if specificity ties, the rule that appears later in the file wins.</span></div>
+    </div>
+    <div style="background:rgba(105,210,231,0.08); border:1px solid rgba(105,210,231,0.15); border-radius:10px; padding:16px 20px; display:flex; align-items:center; gap:14px;">
+      <span style="font-family:'Fira Code',monospace; font-size:22px; color:var(--sky-blue); font-weight:700; min-width:32px;">3</span>
+      <div><strong style="color:#fff;">Origin</strong> <span style="color:var(--text-secondary);">— author styles (your CSS) override browser default styles.</span></div>
+    </div>
+  </div>
+
+  <h2>🧱 Specificity — The Scoring System</h2>
+
+  <p>Every CSS selector gets a score. Higher score wins. The score has three slots: <span class="il">[IDs] — [classes/attributes/pseudo-classes] — [elements/pseudo-elements]</span>. Count each type in your selector and that's your score.</p>
+
+  <div class="pyramid">
+    <div class="pyramid-row pr-inline">
+      <span class="pr-label">Inline styles</span>
+      <span class="pr-example">style="color: pink"</span>
+      <span class="pr-score">1-0-0-0 — beats everything</span>
+    </div>
+    <div class="pyramid-row pr-id">
+      <span class="pr-label">ID selectors</span>
+      <span class="pr-example">#hero { }</span>
+      <span class="pr-score">0-1-0-0</span>
+    </div>
+    <div class="pyramid-row pr-class">
+      <span class="pr-label">Class / attribute / pseudo-class</span>
+      <span class="pr-example">.card { } [type="text"] { } :hover { }</span>
+      <span class="pr-score">0-0-1-0</span>
+    </div>
+    <div class="pyramid-row pr-element">
+      <span class="pr-label">Element / pseudo-element</span>
+      <span class="pr-example">p { } h1 { } ::before { }</span>
+      <span class="pr-score">0-0-0-1</span>
+    </div>
+  </div>
+
+  <h3>Calculating the Score</h3>
+
+  <p>Count each type of selector and assign its slot value. The higher total score wins. When two selectors have the same score, the one written later in the file wins.</p>
+
+  <div class="score-demo">
+    <div class="score-row">
+      <div class="score-sel">p { }</div>
+      <div class="score-badge sb-low">0-0-0-1 — 1 element</div>
+    </div>
+    <div class="score-row">
+      <div class="score-sel">.card { }</div>
+      <div class="score-badge sb-low">0-0-1-0 — 1 class</div>
+    </div>
+    <div class="score-row">
+      <div class="score-sel">.card p { }</div>
+      <div class="score-badge sb-mid">0-0-1-1 — 1 class + 1 element</div>
+    </div>
+    <div class="score-row">
+      <div class="score-sel">.card .title { }</div>
+      <div class="score-badge sb-mid">0-0-2-0 — 2 classes</div>
+    </div>
+    <div class="score-row">
+      <div class="score-sel">#hero .card p { }</div>
+      <div class="score-badge sb-high">0-1-1-1 — 1 ID + 1 class + 1 element</div>
+    </div>
+    <div class="score-row">
+      <div class="score-sel">style="color: pink"</div>
+      <div class="score-badge sb-max">1-0-0-0 — inline beats all selectors</div>
+    </div>
+  </div>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">styles.css</div>
+      <div class="code-lang">CSS · Specificity in Practice</div>
+    </div>
+    <div class="code-body"><code><span class="c">/* Score: 0-0-0-1 — element selector */</span>
+<span class="sel">p</span> {
+  <span class="prop">color</span>: <span class="val">gray</span>;
+}
+
+<span class="c">/* Score: 0-0-1-0 — class selector. WINS over p { } */</span>
+<span class="sel-class">.intro</span> {
+  <span class="prop">color</span>: <span class="val">white</span>;
+}
+
+<span class="c">/* Score: 0-0-1-1 — class + element. WINS over .intro { } */</span>
+<span class="sel-class">.card</span> <span class="sel">p</span> {
+  <span class="prop">color</span>: <span class="val">hotpink</span>;
+}
+
+<span class="c">/* If the HTML is: &lt;div class="card"&gt;&lt;p class="intro"&gt;Hi&lt;/p&gt;&lt;/div&gt;
+   Both .intro and .card p match.
+   .card p wins (0-0-1-1 beats 0-0-1-0) — text is hotpink. */</span></code></div>
+  </div>
+
+  <h3>Order as a Tiebreaker</h3>
+
+  <p>When specificity is equal, the rule that appears <em>later</em> in the stylesheet wins. This is why the order of your CSS rules matters — and why you should write more specific overrides <em>after</em> your base styles.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">styles.css</div>
+      <div class="code-lang">CSS · Order Matters</div>
+    </div>
+    <div class="code-body"><code><span class="c">/* Same specificity (0-0-1-0) — ORDER decides the winner */</span>
+
+<span class="sel-class">.button</span> {
+  <span class="prop">background</span>: <span class="val">#b44aff</span>;  <span class="c">/* purple */</span>
+}
+
+<span class="sel-class">.button</span> {
+  <span class="prop">background</span>: <span class="val">#ff69b4</span>;  <span class="c">/* pink — THIS WINS. It comes last. */</span>
+}
+
+<span class="c">/* Classic pattern: base styles first, overrides after */</span>
+<span class="sel-class">.card</span>          { <span class="prop">background</span>: <span class="val">#12121a</span>; }
+<span class="sel-class">.card-featured</span> { <span class="prop">background</span>: <span class="val">#1a1a2e</span>; } <span class="c">/* same score, comes later → wins */</span></code></div>
+  </div>
+
+  <h3>Inheritance — Properties Passed Down</h3>
+
+  <p>Some CSS properties automatically pass their value to child elements. <span class="il">color</span>, <span class="il">font-family</span>, <span class="il">font-size</span>, <span class="il">line-height</span>, and <span class="il">letter-spacing</span> are inherited. <span class="il">margin</span>, <span class="il">padding</span>, <span class="il">border</span>, and <span class="il">background</span> are not.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">styles.css</div>
+      <div class="code-lang">CSS · Inheritance</div>
+    </div>
+    <div class="code-body"><code><span class="c">/* Set font on body — ALL children inherit it automatically */</span>
+<span class="sel">body</span> {
+  <span class="prop">font-family</span>: <span class="val">'Space Grotesk'</span>, <span class="val">sans-serif</span>;
+  <span class="prop">color</span>: <span class="val">#e0e0e8</span>;
+  <span class="c">/* Every p, h1, span, div etc inherits these values */</span>
+}
+
+<span class="c">/* Override only what you need to change */</span>
+<span class="sel-class">.code-label</span> {
+  <span class="prop">font-family</span>: <span class="val">'Fira Code'</span>, <span class="val">monospace</span>; <span class="c">/* overrides inherited */</span>
+}
+
+<span class="c">/* Force inheritance on a non-inheriting property */</span>
+<span class="sel-class">.match-parent</span> {
+  <span class="prop">border</span>: <span class="val">inherit</span>;   <span class="c">/* forces border to inherit from parent */</span>
+  <span class="prop">background</span>: <span class="val">inherit</span>;
+}</code></div>
+  </div>
+
+  <h3>!important — The Nuclear Option</h3>
+
+  <p><span class="il">!important</span> overrides all specificity and order. It seems like the answer to every stubborn style problem — and it is, in the short term. In the long term, it creates a specificity arms race where you end up adding <span class="il">!important</span> to override your other <span class="il">!important</span> rules, and your stylesheet becomes unmaintainable.</p>
+
+  <div class="callout warning">
+    <div class="callout-title">⚠️ !important — Use It Rarely</div>
+    <p>Legitimate uses: utility classes that must always apply (<span class="il">.hidden { display: none !important; }</span>), overriding third-party CSS you can't change, and temporary debugging. In your own CSS, if you're reaching for <span class="il">!important</span>, the real fix is usually to refactor your selectors so the right one has higher specificity naturally.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="mini-build">
+    <div class="mini-build-header">
+      <span style="font-size:22px;">🛠</span>
+      <h3>Mini Build: Break It and Fix It</h3>
+    </div>
+    <div class="mini-build-body">
+      <p>The best way to understand specificity is to deliberately cause conflicts and then resolve them correctly — without reaching for <span class="il">!important</span>.</p>
+
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-text"><p><strong>Set up conflicting rules.</strong> Write CSS that creates a specificity conflict and predict which color wins before opening the browser.</p></div>
+      </div>
+
+      <div class="code-window">
+        <div class="code-topbar">
+          <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+          <div class="code-filename">styles.css</div>
+          <div class="code-lang">CSS · Conflict Setup</div>
+        </div>
+        <div class="code-body"><code><span class="c">/* Before opening the browser — predict what color the paragraph will be */</span>
+
+<span class="sel">p</span> { <span class="prop">color</span>: <span class="val">gray</span>; }             <span class="c">/* 0-0-0-1 */</span>
+
+<span class="sel-class">.section</span> <span class="sel">p</span> { <span class="prop">color</span>: <span class="val">white</span>; } <span class="c">/* 0-0-1-1 */</span>
+
+<span class="sel-class">.intro</span> { <span class="prop">color</span>: <span class="val">#ff69b4</span>; }  <span class="c">/* 0-0-1-0 */</span>
+
+<span class="c">/* HTML: &lt;section class="section"&gt;&lt;p class="intro"&gt;Text&lt;/p&gt;&lt;/section&gt;
+   Which rule wins?
+   .section p → 0-0-1-1
+   .intro     → 0-0-1-0
+   Answer: white (from .section p — it scores higher) */</span></code></div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-text"><p><strong>Fix it without !important.</strong> To make <span class="il">.intro</span> win, raise its specificity instead of using <span class="il">!important</span>.</p></div>
+      </div>
+
+      <div class="code-window">
+        <div class="code-topbar">
+          <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+          <div class="code-filename">styles.css</div>
+          <div class="code-lang">CSS · Fix Without !important</div>
+        </div>
+        <div class="code-body"><code><span class="c">/* Option 1: add a class to beat .section p */</span>
+<span class="sel-class">.section</span> <span class="sel-class">.intro</span> { <span class="prop">color</span>: <span class="val">#ff69b4</span>; } <span class="c">/* 0-0-2-0 — wins */</span>
+
+<span class="c">/* Option 2: reorder so .intro comes after .section p */</span>
+<span class="sel-class">.section</span> <span class="sel">p</span> { <span class="prop">color</span>: <span class="val">white</span>; }
+<span class="sel-class">.intro</span>    { <span class="prop">color</span>: <span class="val">#ff69b4</span>; } <span class="c">/* same score, but LATER → wins */</span>
+
+<span class="c">/* Option 3: avoid the conflict entirely — use BEM naming */</span>
+<span class="sel-class">.section__intro</span> { <span class="prop">color</span>: <span class="val">#ff69b4</span>; } <span class="c">/* one class, no conflicts */</span></code></div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-text"><p><strong>Practice in DevTools.</strong> Open any page, inspect an element, and look at the Styles panel. Rules that are crossed out lost the specificity battle — the winning value is at the top. This is the clearest way to see the cascade in action.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="confidence-close">
+    <h2>💛 You Can Debug Your Own CSS Now</h2>
+    <p>The cascade isn't a mystery system — it's a scoring algorithm. Once you know the scores, you can look at any set of conflicting rules and predict exactly which one wins. That's a debugging superpower.</p>
+    <ul class="recap-list">
+      <li>The cascade prioritizes: specificity first, then order, then origin</li>
+      <li>Inline styles (1-0-0-0) beat IDs (0-1-0-0) beat classes (0-0-1-0) beat elements (0-0-0-1)</li>
+      <li>Count the selector types to calculate the score — higher wins</li>
+      <li>Equal scores? The rule written later in the file wins</li>
+      <li>Inherited properties flow from parent to child automatically</li>
+      <li><span class="il">!important</span> wins everything — but creates problems. Fix specificity instead.</li>
+      <li>Crossed-out styles in DevTools = lost the specificity battle (Post 13 covers the full DevTools debugging workflow)</li>
+    </ul>
+    <p>Next: Transitions, Transforms &amp; CSS Variables — motion, interactivity, and building a reusable design token system.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="devfession">
+    <div class="devfession-header">🧾 DevFession</div>
+    <div class="devfession-body">
+      <p>My first real project had seventeen <span class="il">!important</span> declarations. Seventeen. By the end I was writing <span class="il">color: pink !important</span> to override a <span class="il">color: pink !important</span> I'd written earlier in the same file. The stylesheet had become a war against itself.</p>
+      <p>The day I learned specificity scoring and refactored that project was genuinely satisfying. Every <span class="il">!important</span> came out. The file shrank. The styles all worked. The problem wasn't that CSS was frustrating — the problem was that I'd been brute-forcing past a system I didn't understand.</p>
+      <p>Learn the scoring. Open DevTools. Look at the crossed-out styles. Follow the trail. You'll fix in five minutes what used to take an hour.</p>
+    </div></div>
+
+
+  <nav class="post-nav">
+    <a href="09-responsive-design.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Responsive Design</span></a>
+    <a href="11-transitions-transforms-variables.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Transitions, Transforms, and Variables</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

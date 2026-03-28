@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Scope, Hoisting & Closures: Why Variables Disappear | CodeHerWay</title>
+<meta name="description" content="Where variables live, why var causes bugs, how hoisting works, and the power of closures. JavaScript scope demystified. CodeHerWay tutorial.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.scope-compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0;}
+@media(max-width:600px){.scope-compare{grid-template-columns:1fr;}}
+.scope-card{background:var(--bg-card);border-radius:10px;padding:16px;}
+.scope-bad{border:1px solid rgba(255,107,107,.25);}
+.scope-good{border:1px solid rgba(61,220,132,.25);}
+.scope-label{font-family:'Fira Code',monospace;font-size:12px;font-weight:700;margin-bottom:10px;}
+.scope-bad .scope-label{color:var(--coral);}
+.scope-good .scope-label{color:var(--green-tip);}
+.scope-card pre{font-family:'Fira Code',monospace;font-size:13px;color:var(--text-secondary);line-height:1.7;white-space:pre;}
+
+@media(max-width:375px){main{padding:20px 14px 48px!important;}.code-body{font-size:11.5px;}}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="chw-wrapper">
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Click</span> Post 11 of 15</div>
+  <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+  <span class="series-label">JavaScript, But Make It Click &nbsp;·&nbsp; Post 11 of 15</span>
+  <div class="post-number">Post 11 of 15</div>
+  <h1 class="post-title">JavaScript Scope, Hoisting & Closures</h1>
+  <p class="post-subtitle">Understanding where your variables live — and why some mysteriously disappear — fixes an entire category of confusing bugs.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 10 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Complete Beginners</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+<main id="main-content">
+<div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">Why Do My Variables Disappear?</h2><div class="section-line"></div></div>
+  <p>If you've ever gotten a <span class="hl-coral">ReferenceError: x is not defined</span> and had no idea why — this post is for you. The answer is almost always <span class="highlight">scope</span>: the rules that determine where a variable can be seen and used in your code.</p>
+<div class="section-header"><span class="section-icon">🌍</span><h2 class="section-title">The Three Scopes</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>The Temporal Dead Zone is a fancy name for a simple idea: <code class='il'>let</code> and <code class='il'>const</code> declarations are hoisted (JavaScript knows they exist), but you can't access them before the line where they're declared. Try it and you'll get a <code class='il'>ReferenceError</code>. The TDZ is the gap between 'JavaScript knows the variable exists' and 'JavaScript will let you use it.'</p>
+  </div>
+
+</div>  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — scope.js</div></div>
+    <div class="code-body"><span class="sy-comment">// 1. GLOBAL SCOPE — declared outside everything, accessible anywhere</span>
+<span class="sy-kw">const</span> <span class="sy-plain">siteName</span> = <span class="sy-str">"CodeHerWay"</span>
+
+<span class="sy-kw">function</span> <span class="sy-fn">greet</span>() {
+  <span class="sy-comment">// 2. FUNCTION SCOPE — only accessible inside this function</span>
+  <span class="sy-kw">const</span> <span class="sy-plain">message</span> = <span class="sy-str">"Hello!"</span>
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">siteName</span>)  <span class="sy-comment">// ✅ can access global</span>
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">message</span>)   <span class="sy-comment">// ✅ can access own scope</span>
+}
+
+<span class="sy-comment">// console.log(message)  ← ❌ ReferenceError: message not defined outside</span>
+
+<span class="sy-kw">if</span> (<span class="sy-bool">true</span>) {
+  <span class="sy-comment">// 3. BLOCK SCOPE — only accessible inside this { } block (let/const)</span>
+  <span class="sy-kw">const</span> <span class="sy-plain">blockVar</span> = <span class="sy-str">"I'm block scoped"</span>
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">blockVar</span>)  <span class="sy-comment">// ✅ works inside the block</span>
+}
+<span class="sy-comment">// console.log(blockVar)  ← ❌ ReferenceError outside the block</span></div>
+  </div><div class="section-header"><span class="section-icon">💀</span><h2 class="section-title">Why var Is a Trap</h2><div class="section-line"></div></div>
+  <div class="scope-compare">
+    <div class="scope-card scope-bad">
+      <div class="scope-label">❌ var — leaks out of blocks</div>
+      <pre><span class="sy-kw">if</span> (<span class="sy-bool">true</span>) {{
+  <span class="sy-kw">var</span> <span class="sy-plain">x</span> = <span class="sy-str">"leaked!"</span>
+}}
+<span class="sy-comment">// var escapes the block</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">x</span>)  <span class="sy-comment">// "leaked!" 😬</span></pre>
+    </div>
+    <div class="scope-card scope-good">
+      <div class="scope-label">✅ let/const — stays in block</div>
+      <pre><span class="sy-kw">if</span> (<span class="sy-bool">true</span>) {{
+  <span class="sy-kw">let</span> <span class="sy-plain">x</span> = <span class="sy-str">"contained"</span>
+}}
+<span class="sy-comment">// let stays in the block</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">x</span>)  <span class="sy-comment">// ReferenceError ✅</span></pre>
+    </div>
+  </div>
+<div class="section-header"><span class="section-icon">🪄</span><h2 class="section-title">Hoisting: JavaScript's Sneaky Move</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>Closures are one of those concepts that sounds complicated until you realize you've been using them all along. Every time you write a function inside another function, the inner function 'closes over' the outer variables — it keeps access to them even after the outer function has finished running. That's all a closure is. Useful for things like keeping a counter's value private.</p>
+  </div>
+
+</div>  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — hoisting.js</div></div>
+    <div class="code-body"><span class="sy-comment">// Function DECLARATIONS are fully hoisted — call before defining: works</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-fn">greet</span>())  <span class="sy-comment">// ✅ "Hello!" — works before definition</span>
+<span class="sy-kw">function</span> <span class="sy-fn">greet</span>() { <span class="sy-kw">return</span> <span class="sy-str">"Hello!"</span> }
+
+<span class="sy-comment">// var is hoisted but value is undefined until the assignment line</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">name</span>)    <span class="sy-comment">// undefined (not an error — just wrong)</span>
+<span class="sy-kw">var</span> <span class="sy-plain">name</span> = <span class="sy-str">"Jenna"</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">name</span>)    <span class="sy-comment">// "Jenna"</span>
+
+<span class="sy-comment">// let/const — TEMPORAL DEAD ZONE (TDZ)</span>
+<span class="sy-comment">// They ARE hoisted, but NOT initialized</span>
+<span class="sy-comment">// Accessing them before declaration throws ReferenceError</span>
+<span class="sy-comment">// console.log(city)  ← ❌ ReferenceError: Cannot access 'city' before initialization</span>
+<span class="sy-kw">const</span> <span class="sy-plain">city</span> = <span class="sy-str">"Chicago"</span></div>
+  </div>  <div class="callout callout-info">
+    <div class="callout-title">ℹ️ What Is the Temporal Dead Zone?</div>
+    <p>When JavaScript hoists a <code class="il">let</span> or <code class="il">const</span> declaration, the variable exists in memory but has no value — it's in a <strong>Temporal Dead Zone (TDZ)</strong> from the start of the block until the declaration line is reached. Accessing it during this window throws a ReferenceError. You'll see "TDZ" mentioned in documentation and error messages — now you know what it means.</p>
+  </div><div class="section-header"><span class="section-icon">🔮</span><h2 class="section-title">Closure: Scope's Secret Superpower</h2><div class="section-line"></div></div>
+  <p>A <span class="highlight">closure</span> happens when a function remembers variables from its outer scope — even after that outer function has finished running. You use closures constantly without realizing it: every event handler you write that references an outer variable is a closure.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — closure.js</div></div>
+    <div class="code-body"><span class="sy-comment">// The inner function "closes over" the outer variable</span>
+<span class="sy-kw">function</span> <span class="sy-fn">makeCounter</span>() {
+  <span class="sy-kw">let</span> <span class="sy-plain">count</span> = <span class="sy-num">0</span>   <span class="sy-comment">// private — can't be accessed from outside</span>
+  <span class="sy-kw">return</span> <span class="sy-kw">function</span>() {
+    <span class="sy-plain">count</span>++
+    <span class="sy-kw">return</span> <span class="sy-plain">count</span>
+  }
+}
+
+<span class="sy-kw">const</span> <span class="sy-fn">counter</span> = <span class="sy-fn">makeCounter</span>()
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-fn">counter</span>())  <span class="sy-comment">// 1</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-fn">counter</span>())  <span class="sy-comment">// 2</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-fn">counter</span>())  <span class="sy-comment">// 3</span>
+<span class="sy-comment">// count is "remembered" even though makeCounter() finished running</span>
+
+<span class="sy-comment">// You use closures constantly in event handlers:</span>
+<span class="sy-kw">function</span> <span class="sy-fn">makeClickHandler</span>(<span class="sy-plain">message</span>) {
+  <span class="sy-kw">return</span> () => <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">message</span>)  <span class="sy-comment">// "remembers" message</span>
+}
+<span class="sy-plain">btn</span>.<span class="sy-fn">addEventListener</span>(<span class="sy-str">"click"</span>, <span class="sy-fn">makeClickHandler</span>(<span class="sy-str">"Hello!"</span>))</div>
+  </div>  <div class="callout callout-mindset">
+    <div class="callout-title">🧠 Mindset Shift</div>
+    <p>Always declare variables before you use them. <code class="il">const</span> and <code class="il">let</span> give you a clear error if you get this wrong. <code class="il">var</span> silently gives you <code class="il">undefined</span> and lets you keep going — hiding the bug. That's exactly why we don't use it.</p>
+  </div>  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body"><p>I had a for loop using <span class="il" style="font-style:normal">var i</span> that was somehow affecting a variable called <span class="il" style="font-style:normal">i</span> elsewhere in my code. I spent two hours debugging it. Turns out <span class="il" style="font-style:normal">var</span> doesn't respect the loop's block — my loop's <span class="il" style="font-style:normal">i</span> was leaking into the outer function. Switched to <span class="il" style="font-style:normal">let i</span>. Fixed immediately. That was the last time I ever used <span class="il" style="font-style:normal">var</span>.</p></div>
+  </div>  <div class="mini-build">
+    <div class="mini-build-header"><span class="trophy">🏆</span><span class="mb-title">MINI BUILD — Debug a Scope Bug + Build a Closure</span></div>
+    <div class="mini-build-body"><p>Intentionally create scope bugs, read the errors, fix them — then build a closure.</p><div class="goal-label">Your steps:</div><ul class="step-list"><li><span class="step-num">01</span> Write a function with <code class="il">const secret = "password"</span> inside — log <code class="il">secret</span> outside. Read the ReferenceError.</li>
+<li><span class="step-num">02</span> Write an if block with <code class="il">var x = 10</span> inside — log <code class="il">x</span> outside. See the var leak.</li>
+<li><span class="step-num">03</span> Replace <code class="il">var</span> with <code class="il">let</span> — log <code class="il">x</span> outside. See the ReferenceError.</li>
+<li><span class="step-num">04</span> Call a function declaration before it appears in the file — confirm hoisting works.</li>
+<li><span class="step-num">05</span> Try to access a <code class="il">const</span> before its declaration — see the TDZ error.</li>
+<li><span class="step-num">06</span> Bonus: Build a <code class="il">makeCounter()</span> function using closure. Call it twice to create two independent counters — confirm they don't share state.</li></ul></div>
+  </div>  <div class="confidence-close">
+    <div class="cc-icon">💛</div>
+    <div class="cc-heading">You Just Understood a Whole Category of Bugs</div>
+    <p>Scope, hoisting, the TDZ, and closure — these explain countless confusing JavaScript behaviors. You know why variables disappear, why var is dangerous, and how functions remember their surroundings. Next: modern JavaScript syntax that makes your code cleaner and more expressive.</p>
+  </div>  <a class="next-post" href="js-click-post12-modern-js.html">
+    <div><div class="next-label">// next post →</div><div class="next-title">Post 12 — Modern JS You'll Actually Use (ES6+)</div></div>
+    <div class="next-arrow">→</div>
+  </a>
+
+  <nav class="post-nav">
+    <a href="click-10-events.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Events</span></a>
+    <a href="click-12-modern-js.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Modern JavaScript</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+</div>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

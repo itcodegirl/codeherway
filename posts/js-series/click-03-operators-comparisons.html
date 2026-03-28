@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Operators & Comparisons: ===, &&, || and Truthy/Falsy Explained | CodeHerWay</title>
+<meta name="description" content="Arithmetic, comparison, and logical operators — plus truthy/falsy values. The JS tools your code uses constantly. CodeHerWay JavaScript series.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.op-table{width:100%;border-collapse:collapse;margin:24px 0;font-size:15px;}
+.op-table th{text-align:left;padding:10px 14px;font-family:'Fira Code',monospace;font-size:12px;letter-spacing:.08em;color:var(--text-muted);border-bottom:1px solid rgba(255,255,255,.08);}
+.op-table td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--text-secondary);}
+.op-table tr:last-child td{border-bottom:none;}
+.op-table .op-sym{font-family:'Fira Code',monospace;color:var(--gold);font-weight:700;}
+.op-table .op-ex{font-family:'Fira Code',monospace;font-size:13px;color:var(--sky-blue);}
+.truthy-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0;}
+@media(max-width:600px){.truthy-grid{grid-template-columns:1fr;}}
+.truthy-card,.falsy-card{background:var(--bg-card);border-radius:10px;padding:16px;}
+.truthy-card{border:1px solid rgba(61,220,132,.2);}
+.falsy-card{border:1px solid rgba(255,107,107,.2);}
+.tcard-title{font-family:'Fira Code',monospace;font-size:13px;font-weight:700;margin-bottom:12px;}
+.truthy-card .tcard-title{color:var(--green-tip);}
+.falsy-card .tcard-title{color:var(--coral);}
+.tcard-list{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.tcard-list li{font-family:'Fira Code',monospace;font-size:13px;color:var(--text-secondary);padding:4px 0;}
+
+@media(max-width:375px){main{padding:20px 14px 48px!important;}.code-body{font-size:11.5px;}}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="chw-wrapper">
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Click</span> Post 03 of 15</div>
+  <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+  <span class="series-label">JavaScript, But Make It Click &nbsp;·&nbsp; Post 03 of 15</span>
+  <div class="post-number">Post 03 of 15</div>
+  <h1 class="post-title">JavaScript Operators & Comparisons</h1>
+  <p class="post-subtitle">JavaScript can do math, compare values, and make logical decisions. These are the tools that make that happen.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 9 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Complete Beginners</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+<main id="main-content">
+<div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">JavaScript Needs to Ask Questions</h2><div class="section-line"></div></div>
+  <p>Your code constantly needs to ask things. Is this user logged in? Is the score above zero? Did the user type something in the box? To answer those questions, JavaScript uses <span class="highlight">operators</span> — symbols that compare, combine, or transform values.</p>
+  <p>This post covers the three operator families you'll use constantly: arithmetic, comparison, and logical.</p>
+<div class="section-header"><span class="section-icon">🧮</span><h2 class="section-title">Arithmetic Operators</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>Pause on <code class='il'>===</code> vs <code class='il'>==</code> for a moment. The rule is: always use <code class='il'>===</code>. Triple equals checks both value AND type, so <code class='il'>5 === "5"</code> is false. Double equals coerces types and produces results that confuse everyone, including seniors. Just use triple equals. Always.</p>
+  </div>
+
+</div>
+  <p>JavaScript can do math. These work exactly like school — with one addition worth knowing: <span class="hl-gold">%</span> (modulo), which gives you the remainder after division.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — arithmetic.js</div></div>
+    <div class="code-body"><span class="sy-kw">const</span> <span class="sy-plain">a</span> = <span class="sy-num">10</span>
+<span class="sy-kw">const</span> <span class="sy-plain">b</span> = <span class="sy-num">3</span>
+
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">a</span> + <span class="sy-plain">b</span>)   <span class="sy-comment">// 13  — addition</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">a</span> - <span class="sy-plain">b</span>)   <span class="sy-comment">// 7   — subtraction</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">a</span> * <span class="sy-plain">b</span>)   <span class="sy-comment">// 30  — multiplication</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">a</span> / <span class="sy-plain">b</span>)   <span class="sy-comment">// 3.33 — division</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">a</span> % <span class="sy-plain">b</span>)   <span class="sy-comment">// 1   — remainder of 10 ÷ 3</span>
+
+<span class="sy-comment">// Assignment shortcuts</span>
+<span class="sy-kw">let</span> <span class="sy-plain">score</span> = <span class="sy-num">0</span>
+<span class="sy-plain">score</span> += <span class="sy-num">10</span>    <span class="sy-comment">// same as: score = score + 10  → 10</span>
+<span class="sy-plain">score</span> -= <span class="sy-num">3</span>     <span class="sy-comment">// same as: score = score - 3   → 7</span>
+<span class="sy-plain">score</span>++        <span class="sy-comment">// adds 1      → 8</span>
+<span class="sy-plain">score</span>--        <span class="sy-comment">// subtracts 1 → 7</span></div>
+  </div>  <div class="callout callout-warn">
+    <div class="callout-title">⚠️ Type Coercion Gotcha</div>
+    <p>The <code class="il">+</span> operator also joins strings. <code class="il">"5" + 3</span> gives <code class="il">"53"</span>, not <code class="il">8</span> — because one operand is a string, JavaScript converts the number to a string too. Order doesn't matter either: <code class="il">3 + "5"</span> also gives <code class="il">"35"</span>. When mixing types, be deliberate. Use <code class="il">Number("5") + 3</span> if you need math.</p>
+  </div><div class="section-header"><span class="section-icon">⚖️</span><h2 class="section-title">Comparison Operators</h2><div class="section-line"></div></div>
+  <p>These compare two values and always return <span class="hl-coral">true</span> or <span class="hl-coral">false</span>. There's one critical rule: <span class="highlight">always use === instead of ==</span>.</p>
+  <table class="op-table">
+    <thead><tr><th>Operator</th><th>Meaning</th><th>Example</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td class="op-sym">===</td><td>Strict equal (value AND type)</td><td class="op-ex">5 === 5</td><td>true</td></tr>
+      <tr><td class="op-sym">!==</td><td>Strict not equal</td><td class="op-ex">5 !== 3</td><td>true</td></tr>
+      <tr><td class="op-sym">==</td><td>Loose equal — converts types first ⚠️</td><td class="op-ex">5 == "5"</td><td>true ← bug risk</td></tr>
+      <tr><td class="op-sym">&gt;</td><td>Greater than</td><td class="op-ex">10 &gt; 5</td><td>true</td></tr>
+      <tr><td class="op-sym">&lt;</td><td>Less than</td><td class="op-ex">3 &lt; 1</td><td>false</td></tr>
+      <tr><td class="op-sym">&gt;=</td><td>Greater than or equal</td><td class="op-ex">5 &gt;= 5</td><td>true</td></tr>
+      <tr><td class="op-sym">&lt;=</td><td>Less than or equal</td><td class="op-ex">4 &lt;= 3</td><td>false</td></tr>
+    </tbody>
+  </table>
+  <div class="callout callout-mindset">
+    <div class="callout-title">🧠 === vs == — Always Strict</div>
+    <p><code class="il">==</span> converts types before comparing, so <code class="il">5 == "5"</span> is <code class="il">true</span> even though one is a number and one is a string. That's a bug waiting to happen. <code class="il">===</span> checks value AND type: <code class="il">5 === "5"</span> is <code class="il">false</span>. Use <code class="il">===</span>. Always. No exceptions.</p>
+  </div><div class="section-header"><span class="section-icon">🔗</span><h2 class="section-title">Logical Operators</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>Truthy and falsy is one of those concepts that feels weird until it suddenly feels obvious. Six values are falsy: <code class='il'>false</code>, <code class='il'>0</code>, <code class='il'>""</code>, <code class='il'>null</code>, <code class='il'>undefined</code>, and <code class='il'>NaN</code>. Everything else is truthy. Once you internalize this, reading conditional logic becomes effortless.</p>
+  </div>
+
+</div>  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — logical.js</div></div>
+    <div class="code-body"><span class="sy-kw">const</span> <span class="sy-plain">isLoggedIn</span> = <span class="sy-bool">true</span>
+<span class="sy-kw">const</span> <span class="sy-plain">isPro</span> = <span class="sy-bool">false</span>
+<span class="sy-kw">const</span> <span class="sy-plain">age</span> = <span class="sy-num">22</span>
+
+<span class="sy-comment">// && (AND) — BOTH must be true</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">isLoggedIn</span> && <span class="sy-plain">isPro</span>)    <span class="sy-comment">// false — isPro is false</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">isLoggedIn</span> && <span class="sy-plain">age</span> > <span class="sy-num">18</span>)  <span class="sy-comment">// true — both are true</span>
+
+<span class="sy-comment">// || (OR) — at least ONE must be true</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">isLoggedIn</span> || <span class="sy-plain">isPro</span>)    <span class="sy-comment">// true — isLoggedIn is true</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-bool">false</span> || <span class="sy-bool">false</span>)         <span class="sy-comment">// false — neither is true</span>
+
+<span class="sy-comment">// ! (NOT) — flips the value</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(!<span class="sy-plain">isLoggedIn</span>)   <span class="sy-comment">// false</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(!<span class="sy-plain">isPro</span>)        <span class="sy-comment">// true</span></div>
+  </div><div class="section-header"><span class="section-icon">⚡</span><h2 class="section-title">Truthy &amp; Falsy: JavaScript's Hidden Rules</h2><div class="section-line"></div></div>
+  <p>In JavaScript, every value is either <span class="hl-mint">truthy</span> or <span class="hl-coral">falsy</span>. Memorize the 6 falsy values. Everything else is truthy.</p>
+  <div class="truthy-grid">
+    <div class="falsy-card"><div class="tcard-title">❌ Falsy values (only 6)</div><ul class="tcard-list"><li>false</li><li>0</li><li>"" (empty string)</li><li>null</li><li>undefined</li><li>NaN</li></ul></div>
+    <div class="truthy-card"><div class="tcard-title">✅ Truthy (everything else)</div><ul class="tcard-list"><li>"hello" (any non-empty string)</li><li>1, -1, 3.14 (any non-zero number)</li><li>[] (even an empty array)</li><li>{} (even an empty object)</li><li>true</li></ul></div>
+  </div>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — truthy-in-practice.js</div></div>
+    <div class="code-body"><span class="sy-comment">// Instead of this verbose check:</span>
+<span class="sy-kw">if</span> (<span class="sy-plain">username</span> !== <span class="sy-str">""</span> && <span class="sy-plain">username</span> !== <span class="sy-bool">null</span> && <span class="sy-plain">username</span> !== <span class="sy-bool">undefined</span>) {
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"User exists"</span>)
+}
+
+<span class="sy-comment">// You can write this — same result, much cleaner:</span>
+<span class="sy-kw">if</span> (<span class="sy-plain">username</span>) {
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"User exists"</span>)
+}
+
+<span class="sy-comment">// ⚠️ Watch this gotcha — 0 is falsy!</span>
+<span class="sy-kw">const</span> <span class="sy-plain">cartCount</span> = <span class="sy-num">0</span>
+<span class="sy-kw">if</span> (<span class="sy-plain">cartCount</span>) {                   <span class="sy-comment">// 0 is falsy — this NEVER runs</span>
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Items in cart"</span>)
+}
+<span class="sy-kw">if</span> (<span class="sy-plain">cartCount</span> !== <span class="sy-bool">null</span>) {          <span class="sy-comment">// better: be specific about what you're checking</span>
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Cart is defined"</span>)
+}</div>
+  </div>  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body"><p>I used <span class="il" style="font-style:normal">==</span> for probably six months before someone in a code review pointed out why my form validation kept letting empty strings through. Turns out <span class="il" style="font-style:normal">"" == false</span> is <span class="il" style="font-style:normal">true</span> in JavaScript. I had no idea. Switched to <span class="il" style="font-style:normal">===</span> everywhere and immediately fixed three bugs I didn't even know I had.</p></div>
+  </div>  <div class="mini-build">
+    <div class="mini-build-header"><span class="trophy">🏆</span><span class="mb-title">MINI BUILD — Truthy/Falsy Cheat Sheet in the Console</span></div>
+    <div class="mini-build-body"><p>Open your <code class="il">script.js</span> and test every falsy value. Use <code class="il">Boolean()</span> to convert a value and see what JavaScript thinks of it.</p><div class="goal-label">Your steps:</div><ul class="step-list"><li><span class="step-num">01</span> Test each falsy value: <code class="il">console.log(Boolean(false))</span>, <code class="il">Boolean(0)</span>, <code class="il">Boolean("")</span>, <code class="il">Boolean(null)</span>, <code class="il">Boolean(undefined)</span>, <code class="il">Boolean(NaN)</span></li>
+<li><span class="step-num">02</span> Test truthy values: <code class="il">Boolean("hello")</span>, <code class="il">Boolean(1)</span>, <code class="il">Boolean([])</span>, <code class="il">Boolean({})</span></li>
+<li><span class="step-num">03</span> Try <code class="il">console.log(5 === "5")</span> vs <code class="il">console.log(5 == "5")</span> — see the difference</li>
+<li><span class="step-num">04</span> Try <code class="il">console.log("5" + 3)</span> and <code class="il">console.log(3 + "5")</span> — notice both give <code class="il">"53"</span>, not <code class="il">8</span></li>
+<li><span class="step-num">05</span> Bonus: write a truthy check for a username — <code class="il">if (username)</span> vs <code class="il">if (username !== null)</span></li></ul></div>
+  </div>  <div class="confidence-close">
+    <div class="cc-icon">💛</div>
+    <div class="cc-heading">You Can Make JavaScript Ask Questions</div>
+    <p>You now know the difference between <code class="il">===</span> and <code class="il">==</span>, what truthy and falsy mean, the string coercion gotcha, and how to combine conditions with logical operators. Next: putting these to work with if/else, switch, and the ternary operator.</p>
+  </div>  <a class="next-post" href="js-click-post04-making-decisions.html">
+    <div><div class="next-label">// next post →</div><div class="next-title">Post 04 — Making Decisions: If/Else, Switch &amp; Ternary</div></div>
+    <div class="next-arrow">→</div>
+  </a>
+
+  <nav class="post-nav">
+    <a href="click-02-variables-data-types.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Variables and Data Types</span></a>
+    <a href="click-04-making-decisions.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Making Decisions</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+</div>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

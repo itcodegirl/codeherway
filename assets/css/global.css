@@ -1,0 +1,287 @@
+/* ============================================
+   CODEHERWAY — GLOBAL DESIGN SYSTEM
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@1,700&family=JetBrains+Mono:wght@700&family=Dancing+Script:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+/* ── CSS Variables ── */
+:root {
+  /* Core palette */
+  --pink:          #ff69b4;
+  --purple:        #b44aff;
+  --teal:          #0D9488;
+  --teal-light:    #2DD4BF;
+
+  /* Extended palette (used in posts) */
+  --sky-blue:      #69d2e7;
+  --mint-green:    #7dffb3;
+  --gold:          #ffd369;
+  --coral:         #ff6b6b;
+  --green-tip:     #3ddc84;
+  --blue-info:     #4facfe;
+  --gray-comment:  #6a6a80;
+
+  /* Glows */
+  --pink-glow:     rgba(255,105,180,0.15);
+  --purple-glow:   rgba(180,74,255,0.15);
+
+  /* Backgrounds */
+  --bg:            #0A0A0F;
+  --bg-dark:       #0a0a0f;
+  --bg-card:       #12121A;
+  --bg-elevated:   #1A1A26;
+  --bg-code:       #1a1a2e;
+  --bg-code-alt:   #141422;
+  --border:        #2A2A3A;
+
+  /* Text */
+  --text:          #e0e0e8;
+  --text-primary:  #e0e0e8;
+  --text-secondary:#9595a8;
+  --text-muted:    #6a6a80;
+  --text-dim:      #6a6a80;
+  --white:         #FFFFFF;
+
+  /* Dot colors (code window) */
+  --dot-red:       #ff5f57;
+  --dot-yellow:    #ffbd2e;
+  --dot-green:     #28c840;
+
+  /* Gradients */
+  --gradient-pink:    linear-gradient(135deg, #ff69b4, #ff3cac, #e040a0);
+  --gradient-header:  linear-gradient(135deg, #b44aff 0%, #ff69b4 50%, #ff3cac 100%);
+  --grad-primary:     linear-gradient(135deg, #b44aff 0%, #ff69b4 50%, #ff3cac 100%);
+  --grad-teal:        linear-gradient(135deg, var(--teal), var(--teal-light));
+  --grad-full:        linear-gradient(135deg, var(--pink), var(--purple), var(--teal));
+
+  /* Typography */
+  --font-body:  'Space Grotesk', sans-serif;
+  --font-code:  'Fira Code', monospace;
+  --font-serif: 'Cormorant Garamond', serif;
+
+  /* Spacing */
+  --space-xs:  0.25rem;
+  --space-sm:  0.5rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+
+  /* Layout */
+  --max-width:      1200px;
+  --content-width:  760px;
+  --radius:         0.5rem;
+  --radius-lg:      1rem;
+
+  /* Transitions */
+  --transition: 0.2s ease;
+  --transition-slow: 0.4s ease;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 1rem;
+  min-height: 100vh;
+}
+
+/* ── Typography ── */
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.2;
+  font-weight: 700;
+  color: var(--text);
+}
+
+h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
+h2 { font-size: clamp(1.5rem, 3vw, 2.25rem); }
+h3 { font-size: clamp(1.2rem, 2.5vw, 1.75rem); }
+h4 { font-size: 1.25rem; }
+
+p { margin-bottom: var(--space-md); color: var(--text); }
+
+a {
+  color: var(--teal-light);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+a:hover { color: var(--pink); }
+
+code, pre {
+  font-family: var(--font-code);
+  font-size: 0.9em;
+}
+
+code {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.1em 0.4em;
+  color: var(--teal-light);
+}
+
+pre {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--text);
+}
+
+img { max-width: 100%; height: auto; display: block; }
+
+ul, ol { padding-left: var(--space-xl); margin-bottom: var(--space-md); }
+li { margin-bottom: var(--space-xs); }
+
+/* ── Layout Utilities ── */
+.container {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--space-xl);
+}
+
+.content-width {
+  max-width: var(--content-width);
+  margin: 0 auto;
+}
+
+.section { padding: var(--space-3xl) 0; }
+
+/* ── Gradient Text ── */
+.gradient-text {
+  background: var(--gradient-header);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-teal {
+  background: var(--grad-teal);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  border: none;
+  transition: all var(--transition);
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--grad-primary);
+  color: var(--white);
+}
+.btn-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+  color: var(--white);
+  box-shadow: 0 8px 24px rgba(255, 105, 180, 0.3);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.btn-outline:hover {
+  border-color: var(--pink);
+  color: var(--pink);
+  transform: translateY(-2px);
+}
+
+.btn-teal {
+  background: var(--grad-teal);
+  color: var(--white);
+}
+.btn-teal:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+  color: var(--white);
+  box-shadow: 0 8px 24px rgba(13, 148, 136, 0.3);
+}
+
+/* ── Cards ── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  transition: all var(--transition-slow);
+}
+
+.card:hover {
+  border-color: var(--pink);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(255, 105, 180, 0.1);
+}
+
+/* ── Tags / Badges ── */
+.tag {
+  display: inline-block;
+  padding: 0.2rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: var(--font-code);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.tag-pink   { background: rgba(255, 105, 180, 0.15); color: var(--pink); border: 1px solid rgba(255, 105, 180, 0.3); }
+.tag-purple { background: rgba(180, 74, 255, 0.15); color: var(--purple); border: 1px solid rgba(180, 74, 255, 0.3); }
+.tag-teal   { background: rgba(13, 148, 136, 0.15); color: var(--teal-light); border: 1px solid rgba(13, 148, 136, 0.3); }
+
+/* ── Divider ── */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: var(--space-2xl) 0;
+}
+
+.divider-gradient {
+  height: 1px;
+  background: var(--grad-full);
+  margin: var(--space-2xl) 0;
+  opacity: 0.4;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .container { padding: 0 var(--space-lg); }
+  .section { padding: var(--space-2xl) 0; }
+}
+
+@media (max-width: 480px) {
+  .container { padding: 0 var(--space-md); }
+}

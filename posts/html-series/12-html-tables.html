@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML Tables — Data, Not Layout | CodeHerWay</title>
+<meta name="description" content="Learn HTML tables the right way — thead, tbody, th, td, caption, colspan, and when (and when NOT) to use tables. Data only, never layout.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.hierarchy{background: var(--bg-code); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 28px; margin: 32px 0; font-family: 'Fira Code', monospace; font-size: 14px; line-height: 2.2;}
+.h-level{padding-left: 0;}
+.h-level-1{padding-left: 0; color: var(--pink); font-weight: 700;}
+.h-level-2{padding-left: 28px; color: var(--sky-blue);}
+.h-level-3{padding-left: 56px; color: var(--mint-green);}
+.h-level-4{padding-left: 84px; color: var(--gold);}
+.h-label{font-family: 'Space Grotesk', sans-serif; font-size: 12px; color: var(--text-muted); margin-left: 12px;}
+.do-dont{display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0;}
+.do-card, .dont-card{border-radius: 12px; padding: 22px; border: 1px solid;}
+.do-card{background: rgba(61,220,132,0.06); border-color: rgba(61,220,132,0.2);}
+.dont-card{background: rgba(255,107,107,0.06); border-color: rgba(255,107,107,0.2);}
+.do-card .card-badge{font-family: 'Fira Code', monospace; font-size: 13px; font-weight: 700; color: var(--green-tip); margin-bottom: 10px;}
+.dont-card .card-badge{font-family: 'Fira Code', monospace; font-size: 13px; font-weight: 700; color: var(--coral); margin-bottom: 10px;}
+.do-card .card-list, .dont-card .card-list{font-size: 14px; color: var(--text-secondary); line-height: 1.8;}
+.do-card .card-list div, .dont-card .card-list div{padding-left: 20px; text-indent: -20px; margin-bottom: 4px;}
+@media(max-width:640px){.do-dont { grid-template-columns: 1fr; }}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<!-- ═══════ HERO ═══════ -->
+<section class="hero">
+  <div class="post-label"><span class="series-tag">HTML Fundamentals</span> Post 12 of 20</div>
+  <div class="post-number">Post 12 · HTML Fundamentals</div>
+  <h1>HTML Tables:<br><span class="gradient-text">Data, Not Layout</span></h1>
+  <p class="hero-sub">Tables got a bad reputation because the old web used them for page layout. But for actual data — schedules, comparisons, pricing — they're exactly the right tool.</p>
+  <div class="tag-row">
+    <span class="tag html">#HTML</span>
+    <span class="tag html">#Tables</span>
+    <span class="tag">#Beginner</span>
+    <span class="tag">9 min read</span>
+  </div>
+</section>
+
+<!-- ═══════ ARTICLE ═══════ -->
+<main class="article">
+
+  <!-- ── INTRO ── -->
+  <p>If you've ever looked at a spreadsheet, a comparison chart, a class schedule, or a pricing grid — you've looked at tabular data. And in HTML, the way you present tabular data is with a <span class="il">&lt;table&gt;</span>.</p>
+
+  <p>But there's a history lesson here that matters: in the early web (late 90s, early 2000s), developers used tables to build <em>entire page layouts</em>. Navigation bars, sidebars, footers — all crammed into table rows and cells. It was a hack. It was messy. And when CSS came along and gave us Flexbox and Grid, the web moved on.</p>
+
+  <p>So now "tables are bad" became a common take. But that's wrong. <span class="key">Tables for layout</span> are bad. <span class="key">Tables for data</span> are exactly right. Let's learn how to build them properly.</p>
+
+  <!-- ── THE HIERARCHY ── -->
+  <h2>Table Structure — The Hierarchy</h2>
+
+  <p>A well-structured HTML table isn't just rows and cells thrown together. It has a clear hierarchy, and each piece serves a purpose — both visually and for accessibility. Here's how the pieces fit together:</p>
+
+  <div class="hierarchy">
+    <div class="h-level-1">&lt;table&gt; <span class="h-label">The container — wraps everything</span></div>
+    <div class="h-level-2">&lt;caption&gt; <span class="h-label">The table title — what is this data?</span></div>
+    <div class="h-level-2">&lt;thead&gt; <span class="h-label">Table head — column headers</span></div>
+    <div class="h-level-3">&lt;tr&gt; <span class="h-label">Table row</span></div>
+    <div class="h-level-4">&lt;th&gt; <span class="h-label">Header cell — bold, announced by screen readers</span></div>
+    <div class="h-level-2">&lt;tbody&gt; <span class="h-label">Table body — the actual data rows</span></div>
+    <div class="h-level-3">&lt;tr&gt; <span class="h-label">Table row</span></div>
+    <div class="h-level-4">&lt;td&gt; <span class="h-label">Data cell — individual piece of data</span></div>
+    <div class="h-level-2">&lt;tfoot&gt; <span class="h-label">Table foot — summaries, totals (optional)</span></div>
+    <div class="h-level-3">&lt;tr&gt; <span class="h-label">Table row</span></div>
+    <div class="h-level-4">&lt;td&gt; <span class="h-label">Footer cell</span></div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">ℹ️ Why Three Sections?</div>
+    <p><span class="il">&lt;thead&gt;</span>, <span class="il">&lt;tbody&gt;</span>, and <span class="il">&lt;tfoot&gt;</span> aren't just for organization — they're <strong>semantic</strong>. Screen readers use them to help users navigate the table. The browser can also use them to keep the header visible while scrolling a long table. Always include them.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── BASIC TABLE ── -->
+  <h2>Building Your First Table</h2>
+
+  <p>Let's build a real table — a course schedule for CodeHerWay. We'll use every structural element:</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-body">
+<span class="t">&lt;table&gt;</span>
+  <span class="t">&lt;caption&gt;</span>CodeHerWay Course Schedule<span class="t">&lt;/caption&gt;</span>
+
+  <span class="t">&lt;thead&gt;</span>
+    <span class="t">&lt;tr&gt;</span>
+      <span class="t">&lt;th&gt;</span>Week<span class="t">&lt;/th&gt;</span>
+      <span class="t">&lt;th&gt;</span>Topic<span class="t">&lt;/th&gt;</span>
+      <span class="t">&lt;th&gt;</span>Project<span class="t">&lt;/th&gt;</span>
+      <span class="t">&lt;th&gt;</span>Difficulty<span class="t">&lt;/th&gt;</span>
+    <span class="t">&lt;/tr&gt;</span>
+  <span class="t">&lt;/thead&gt;</span>
+
+  <span class="t">&lt;tbody&gt;</span>
+    <span class="t">&lt;tr&gt;</span>
+      <span class="t">&lt;td&gt;</span>1<span class="t">&lt;/td&gt;</span>
+      <span class="t">&lt;td&gt;</span>HTML Foundations<span class="t">&lt;/td&gt;</span>
+      <span class="t">&lt;td&gt;</span>Personal Bio Page<span class="t">&lt;/td&gt;</span>
+      <span class="t">&lt;td&gt;</span>Beginner<span class="t">&lt;/td&gt;</span>
+    <span class="t">&lt;/tr&gt;</span>
+    <span class="t">&lt;tr&gt;</span>
+      <span class="t">&lt;td&gt;</span>2<span class="t">&lt;/td&gt;</span>
+      <span class="t">&lt;td&gt;</span>CSS Styling<span class="t">&lt;/td&gt;</span>
+      <span class="t">&lt;td&gt;</span>Styled Portfolio<span class="t">&lt;/td&gt;</span>
+      <span class="t">&lt;td&gt;</span>Beginner<span class="t">&lt;/td&gt;</span>
+    <span class="t">&lt;/tr&gt;</span>
+    <span class="t">&lt;tr&gt;</span>
+      <span class="t">&lt;td&gt;</span>3<span class="t">&lt;/td&gt;</span>
+      <span class="t">&lt;td&gt;</span>JavaScript Basics<span class="t">&lt;/td&gt;</span>
+      <span class="t">&lt;td&gt;</span>Interactive Quiz<span class="t">&lt;/td&gt;</span>
+      <span class="t">&lt;td&gt;</span>Intermediate<span class="t">&lt;/td&gt;</span>
+    <span class="t">&lt;/tr&gt;</span>
+    <span class="t">&lt;tr&gt;</span>
+      <span class="t">&lt;td&gt;</span>4<span class="t">&lt;/td&gt;</span>
+      <span class="t">&lt;td&gt;</span>React Intro<span class="t">&lt;/td&gt;</span>
+      <span class="t">&lt;td&gt;</span>Component Library<span class="t">&lt;/td&gt;</span>
+      <span class="t">&lt;td&gt;</span>Intermediate<span class="t">&lt;/td&gt;</span>
+    <span class="t">&lt;/tr&gt;</span>
+  <span class="t">&lt;/tbody&gt;</span>
+
+  <span class="t">&lt;tfoot&gt;</span>
+    <span class="t">&lt;tr&gt;</span>
+      <span class="t">&lt;td</span> <span class="a">colspan</span>=<span class="s">"4"</span><span class="t">&gt;</span>
+        Total: 4 weeks · 4 projects
+      <span class="t">&lt;/td&gt;</span>
+    <span class="t">&lt;/tr&gt;</span>
+  <span class="t">&lt;/tfoot&gt;</span>
+<span class="t">&lt;/table&gt;</span>
+    </div>
+  </div>
+
+  <div class="render-label">↳ Browser Output</div>
+  <div class="render-box">
+    <table>
+      <caption>CodeHerWay Course Schedule</caption>
+      <thead>
+        <tr><th>Week</th><th>Topic</th><th>Project</th><th>Difficulty</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>HTML Foundations</td><td>Personal Bio Page</td><td>Beginner</td></tr>
+        <tr><td>2</td><td>CSS Styling</td><td>Styled Portfolio</td><td>Beginner</td></tr>
+        <tr><td>3</td><td>JavaScript Basics</td><td>Interactive Quiz</td><td>Intermediate</td></tr>
+        <tr><td>4</td><td>React Intro</td><td>Component Library</td><td>Intermediate</td></tr>
+      </tbody>
+      <tfoot>
+        <tr><td colspan="4">Total: 4 weeks · 4 projects</td></tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <p>Every row is a <span class="il">&lt;tr&gt;</span>. Every header cell is a <span class="il">&lt;th&gt;</span>. Every data cell is a <span class="il">&lt;td&gt;</span>. And the <span class="il">&lt;caption&gt;</span> tells everyone (including screen readers) what this table is about.</p>
+
+  <div class="sep"></div>
+
+  <!-- ── TH vs TD ── -->
+  <h2>&lt;th&gt; vs &lt;td&gt; — Headers vs Data</h2>
+
+  <p>This is a distinction beginners often skip. They put everything in <span class="il">&lt;td&gt;</span> cells and call it done. But <span class="il">&lt;th&gt;</span> exists for a reason:</p>
+
+  <p><span class="il">&lt;th&gt;</span> cells are <span class="key">header cells</span>. Browsers automatically bold them. Screen readers announce them as headers and use them to describe each column to the user. They're not just styled differently — they carry semantic meaning that says "this cell describes the cells below it."</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- ❌ All td — screen reader doesn't know which cells are headers --&gt;</span>
+<span class="t">&lt;tr&gt;</span>
+  <span class="t">&lt;td&gt;</span><span class="p">Name</span><span class="t">&lt;/td&gt;</span>
+  <span class="t">&lt;td&gt;</span><span class="p">Price</span><span class="t">&lt;/td&gt;</span>
+  <span class="t">&lt;td&gt;</span><span class="p">Rating</span><span class="t">&lt;/td&gt;</span>
+<span class="t">&lt;/tr&gt;</span>
+
+<span class="c">&lt;!-- ✅ th for headers — accessible and semantic --&gt;</span>
+<span class="t">&lt;tr&gt;</span>
+  <span class="t">&lt;th&gt;</span><span class="p">Name</span><span class="t">&lt;/th&gt;</span>
+  <span class="t">&lt;th&gt;</span><span class="p">Price</span><span class="t">&lt;/th&gt;</span>
+  <span class="t">&lt;th&gt;</span><span class="p">Rating</span><span class="t">&lt;/th&gt;</span>
+<span class="t">&lt;/tr&gt;</span>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">💡 Row Headers Too</div>
+    <p>Headers aren't just for columns. If the first cell in each row acts as a label for that row (like a person's name in a roster), use <span class="il">&lt;th scope="row"&gt;</span>. The <span class="il">scope</span> attribute tells assistive tech exactly what the header describes — <span class="il">"col"</span> for column headers, <span class="il">"row"</span> for row headers.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── COLSPAN + ROWSPAN ── -->
+  <h2>Merging Cells — colspan &amp; rowspan</h2>
+
+  <p>Sometimes a cell needs to stretch across multiple columns or multiple rows. That's what <span class="il">colspan</span> and <span class="il">rowspan</span> are for.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-body">
+<span class="t">&lt;table&gt;</span>
+  <span class="t">&lt;caption&gt;</span>Pricing Comparison<span class="t">&lt;/caption&gt;</span>
+  <span class="t">&lt;thead&gt;</span>
+    <span class="t">&lt;tr&gt;</span>
+      <span class="t">&lt;th&gt;</span>Feature<span class="t">&lt;/th&gt;</span>
+      <span class="t">&lt;th&gt;</span>Free<span class="t">&lt;/th&gt;</span>
+      <span class="t">&lt;th&gt;</span>Pro ($9/mo)<span class="t">&lt;/th&gt;</span>
+    <span class="t">&lt;/tr&gt;</span>
+  <span class="t">&lt;/thead&gt;</span>
+
+  <span class="t">&lt;tbody&gt;</span>
+    <span class="t">&lt;tr&gt;</span>
+      <span class="t">&lt;td&gt;</span>HTML Course<span class="t">&lt;/td&gt;</span>
+      <span class="t">&lt;td&gt;</span>✅<span class="t">&lt;/td&gt;</span>
+      <span class="t">&lt;td&gt;</span>✅<span class="t">&lt;/td&gt;</span>
+    <span class="t">&lt;/tr&gt;</span>
+    <span class="t">&lt;tr&gt;</span>
+      <span class="t">&lt;td&gt;</span>JavaScript Course<span class="t">&lt;/td&gt;</span>
+      <span class="t">&lt;td&gt;</span>❌<span class="t">&lt;/td&gt;</span>
+      <span class="t">&lt;td&gt;</span>✅<span class="t">&lt;/td&gt;</span>
+    <span class="t">&lt;/tr&gt;</span>
+    <span class="t">&lt;tr&gt;</span>
+      <span class="t">&lt;td&gt;</span>AI Code Mentor<span class="t">&lt;/td&gt;</span>
+      <span class="t">&lt;td&gt;</span>❌<span class="t">&lt;/td&gt;</span>
+      <span class="t">&lt;td&gt;</span>✅<span class="t">&lt;/td&gt;</span>
+    <span class="t">&lt;/tr&gt;</span>
+  <span class="t">&lt;/tbody&gt;</span>
+
+  <span class="t">&lt;tfoot&gt;</span>
+    <span class="t">&lt;tr&gt;</span>
+      <span class="c">&lt;!-- colspan spans across 3 columns --&gt;</span>
+      <span class="t">&lt;td</span> <span class="a">colspan</span>=<span class="s">"3"</span><span class="t">&gt;</span>
+        Start free. Upgrade when you're ready.
+      <span class="t">&lt;/td&gt;</span>
+    <span class="t">&lt;/tr&gt;</span>
+  <span class="t">&lt;/tfoot&gt;</span>
+<span class="t">&lt;/table&gt;</span>
+    </div>
+  </div>
+
+  <div class="render-label">↳ Browser Output</div>
+  <div class="render-box">
+    <table>
+      <caption>Pricing Comparison</caption>
+      <thead>
+        <tr><th>Feature</th><th>Free</th><th>Pro ($9/mo)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>HTML Course</td><td style="text-align:center;">✅</td><td style="text-align:center;">✅</td></tr>
+        <tr><td>JavaScript Course</td><td style="text-align:center;">❌</td><td style="text-align:center;">✅</td></tr>
+        <tr><td>AI Code Mentor</td><td style="text-align:center;">❌</td><td style="text-align:center;">✅</td></tr>
+      </tbody>
+      <tfoot>
+        <tr><td colspan="3">Start free. Upgrade when you're ready.</td></tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <p><span class="il">colspan="3"</span> makes that footer cell stretch across all three columns. <span class="il">rowspan</span> works the same way but vertically — a cell stretches down across multiple rows. You'll use <span class="il">colspan</span> far more often than <span class="il">rowspan</span>, but both exist when you need them.</p>
+
+  <div class="sep"></div>
+
+  <!-- ── WHEN TO USE ── -->
+  <h2>When to Use Tables (and When NOT To)</h2>
+
+  <p>This is the most important section of this post. The answer is simple, but people still get it wrong:</p>
+
+  <div class="do-dont">
+    <div class="do-card">
+      <div class="card-badge">✅ USE tables for</div>
+      <div class="card-list">
+        <div>📊 Spreadsheet-like data (schedules, stats)</div>
+        <div>💰 Pricing comparisons</div>
+        <div>📋 Feature matrices</div>
+        <div>🏆 Leaderboards and rankings</div>
+        <div>📈 Data that has rows AND columns</div>
+        <div>📅 Timetables and calendars</div>
+      </div>
+    </div>
+    <div class="dont-card">
+      <div class="card-badge">❌ DON'T use tables for</div>
+      <div class="card-list">
+        <div>🚫 Page layout (use CSS Grid/Flexbox)</div>
+        <div>🚫 Navigation menus</div>
+        <div>🚫 Card grids or galleries</div>
+        <div>🚫 Form layouts</div>
+        <div>🚫 Centering content on a page</div>
+        <div>🚫 Anything that isn't actual data</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout mindset">
+    <div class="callout-title">🧠 The Spreadsheet Test</div>
+    <p>Ask yourself: <strong>"Would this data make sense in a spreadsheet?"</strong> If the answer is yes — rows of data with consistent columns — use a table. If the answer is no, use CSS layout instead. It's that simple.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── DEVFESSION ── -->
+  <div class="devfession">
+    <div class="devfession-header">// dev_fession</div>
+    <div class="devfession-body">
+      <p>I avoided tables for <em>months</em> because I kept seeing "don't use tables" in every tutorial. I thought they were deprecated or something. So when I needed to display a comparison chart, I built it with a grid of divs. Thirty-two divs. For a 4×8 data grid.</p>
+      <p>Then someone looked at my code and said, "Why didn't you just use a table?"</p>
+      <p>I didn't have an answer. Tables aren't bad. Using them for layout is bad. For actual tabular data, they're the right tool. I rewrote it in five minutes and it was cleaner, more accessible, and half the code. 🤦‍♀️</p>
+    </div>
+    <div class="devfession-footer">
+      <span>@itcodegirl</span>
+      <span class="tagline">CodeHerWay</span>
+    </div>
+  </div>
+
+  <!-- ── CAPTION ── -->
+  <h2>Don't Forget &lt;caption&gt;</h2>
+
+  <p>The <span class="il">&lt;caption&gt;</span> element is the table's title. It goes directly inside the <span class="il">&lt;table&gt;</span> tag, before <span class="il">&lt;thead&gt;</span>. Most developers skip it, but it's important for accessibility — screen readers announce the caption so users know what the table is about before they start navigating it.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- Always include a caption --&gt;</span>
+<span class="t">&lt;table&gt;</span>
+  <span class="t">&lt;caption&gt;</span>
+    Q1 2026 Revenue by Product Line
+  <span class="t">&lt;/caption&gt;</span>
+  <span class="t">&lt;thead&gt;</span>
+    <span class="c">&lt;!-- ... --&gt;</span>
+  <span class="t">&lt;/thead&gt;</span>
+<span class="t">&lt;/table&gt;</span>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">💡 Styling Caption</div>
+    <p>Captions render above the table by default. If you want it below, use <span class="il">caption-side: bottom</span> in CSS. You can style it however you want — but don't remove it. Even if you visually hide it, keep it in the HTML for screen readers.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── MINI BUILD ── -->
+  <div class="mini-build">
+    <div class="mini-build-header">
+      <h3>🔨 Mini Build: Coding Bootcamp Comparison</h3>
+    </div>
+    <div class="mini-build-body">
+      <p>Build a comparison table for three coding bootcamps (real or fictional):</p>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">Add a <span class="sky">&lt;caption&gt;</span> that describes the table — something like "Top Coding Bootcamps Compared."</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">Create a <span class="sky">&lt;thead&gt;</span> with columns for: Name, Price, Duration, Format (online/in-person), and Rating.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">Fill the <span class="sky">&lt;tbody&gt;</span> with three rows of data — one per bootcamp. Use <span class="sky">&lt;th scope="row"&gt;</span> for each bootcamp name.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">Add a <span class="sky">&lt;tfoot&gt;</span> row that uses <span class="sky">colspan</span> to span all five columns with a note like "Prices as of March 2026."</div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-text">Bonus: Add a second table comparing CodeHerWay's course tracks (HTML, CSS, JavaScript, React) with columns for track name, lessons, projects, and difficulty level.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── WRAP UP ── -->
+  <h2>The Bottom Line</h2>
+
+  <p>HTML tables are simple once you understand the hierarchy: <span class="il">&lt;table&gt;</span> wraps everything, <span class="il">&lt;thead&gt;</span>/<span class="il">&lt;tbody&gt;</span>/<span class="il">&lt;tfoot&gt;</span> provide structure, <span class="il">&lt;tr&gt;</span> creates rows, <span class="il">&lt;th&gt;</span> marks headers, and <span class="il">&lt;td&gt;</span> holds the data.</p>
+
+  <p>Use <span class="il">&lt;caption&gt;</span> to title your tables. Use <span class="il">colspan</span> and <span class="il">rowspan</span> when cells need to span. And always, always remember: <strong>tables are for data, not layout.</strong> If it belongs in a spreadsheet, use a table. If it doesn't, use CSS.</p>
+
+  <p>Tables have a reputation problem they don't deserve. Use them correctly, and they're one of the cleanest, most accessible structures in HTML.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">🎉 Series Progress</div>
+    <p>That's 12 posts deep into HTML fundamentals. You've covered document structure, text, links, lists, images, forms, tables, accessibility, semantic elements, and more. You're not just learning HTML — you're building a real foundation. Keep going.</p>
+  </div>
+
+
+  <nav class="post-nav">
+    <a href="11-html-forms.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">HTML Forms</span></a>
+    <a href="13-file-structure.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">File Structure and Organization</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

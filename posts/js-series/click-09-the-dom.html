@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript DOM Manipulation: querySelector, classList & createElement Guide | CodeHerWay</title>
+<meta name="description" content="querySelector, classList, textContent, createElement — how JavaScript talks to your HTML. The aha moment of web development. CodeHerWay.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+
+@media(max-width:375px){main{padding:20px 14px 48px!important;}.code-body{font-size:11.5px;}}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="chw-wrapper">
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Click</span> Post 09 of 15</div>
+  <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+  <span class="series-label">JavaScript, But Make It Click &nbsp;·&nbsp; Post 09 of 15</span>
+  <div class="post-number">Post 09 of 15</div>
+  <h1 class="post-title">JavaScript DOM Manipulation</h1>
+  <p class="post-subtitle">This is the aha moment. JavaScript stops being invisible and starts changing what you see on screen.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 11 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Complete Beginners</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+<main id="main-content">
+<div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">This Is the Moment It Gets Real</h2><div class="section-line"></div></div>
+  <p>Everything you've learned so far — variables, functions, arrays, objects — has been pure JavaScript logic running in isolation. Today that changes. The <span class="highlight">DOM</span> is the bridge between your JavaScript and your HTML page. This is where code stops being invisible and starts <em>doing things you can see</em>.</p>
+<div class="section-header"><span class="section-icon">🌐</span><h2 class="section-title">What Is the DOM?</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>Here's why <code class='il'>querySelector</code> is almost always the right choice: it uses CSS selector syntax you already know. <code class='il'>"#submit-btn"</code>, <code class='il'>".card"</code>, <code class='il'>"form input[type='email']"</code> — all valid. It's more flexible than <code class='il'>getElementById</code> or <code class='il'>getElementsByClassName</code>, and it only returns one thing, which forces you to be specific.</p>
+  </div>
+
+</div>
+  <p>When a browser loads your HTML, it parses it into a tree of objects called the <span class="highlight">Document Object Model</span>. Every tag becomes a node. JavaScript can read, change, create, or remove any of those nodes in real time — without the page reloading.</p>
+  <div class="callout callout-info">
+    <div class="callout-title">ℹ️ Good to Know</div>
+    <p>The DOM isn't part of JavaScript — it's a browser API that JavaScript has access to. The <code class="il">document</span> object is your entry point to everything on the page. Think of it as a live, editable map of your HTML.</p>
+  </div><div class="section-header"><span class="section-icon">🔍</span><h2 class="section-title">Selecting Elements</h2><div class="section-line"></div></div>  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — selecting.js</div></div>
+    <div class="code-body"><span class="sy-comment">// querySelector — returns the FIRST match (uses CSS selector syntax)</span>
+<span class="sy-kw">const</span> <span class="sy-plain">heading</span> = <span class="sy-plain">document</span>.<span class="sy-fn">querySelector</span>(<span class="sy-str">"h1"</span>)
+<span class="sy-kw">const</span> <span class="sy-plain">btn</span>     = <span class="sy-plain">document</span>.<span class="sy-fn">querySelector</span>(<span class="sy-str">"#submit-btn"</span>)  <span class="sy-comment">// by id</span>
+<span class="sy-kw">const</span> <span class="sy-plain">card</span>    = <span class="sy-plain">document</span>.<span class="sy-fn">querySelector</span>(<span class="sy-str">".card"</span>)         <span class="sy-comment">// by class</span>
+
+<span class="sy-comment">// querySelectorAll — returns ALL matches as a NodeList</span>
+<span class="sy-comment">// NodeList supports forEach() and for...of, but NOT map/filter/reduce</span>
+<span class="sy-comment">// Use Array.from(nodeList) if you need full array methods</span>
+<span class="sy-kw">const</span> <span class="sy-plain">allItems</span> = <span class="sy-plain">document</span>.<span class="sy-fn">querySelectorAll</span>(<span class="sy-str">"li"</span>)
+<span class="sy-plain">allItems</span>.<span class="sy-fn">forEach</span>(<span class="sy-plain">item</span> => <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">item</span>.<span class="sy-prop">textContent</span>))
+
+<span class="sy-comment">// Convert to array for full array methods</span>
+<span class="sy-kw">const</span> <span class="sy-plain">itemsArray</span> = <span class="sy-fn">Array</span>.<span class="sy-fn">from</span>(<span class="sy-plain">allItems</span>)
+<span class="sy-kw">const</span> <span class="sy-plain">texts</span> = <span class="sy-plain">itemsArray</span>.<span class="sy-fn">map</span>(<span class="sy-plain">item</span> => <span class="sy-plain">item</span>.<span class="sy-prop">textContent</span>)
+
+<span class="sy-comment">// getElementById — old school but still fast</span>
+<span class="sy-kw">const</span> <span class="sy-plain">title</span> = <span class="sy-plain">document</span>.<span class="sy-fn">getElementById</span>(<span class="sy-str">"main-title"</span>)</div>
+  </div><div class="section-header"><span class="section-icon">✏️</span><h2 class="section-title">Modifying the DOM</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p><code class='il'>innerHTML</code> is powerful and dangerous in the same breath. It lets you inject HTML strings directly into the DOM — which is great for rendering templates. But if that string contains user input, you've just opened a door to XSS attacks. Rule of thumb: use <code class='il'>textContent</code> for user-supplied text, <code class='il'>innerHTML</code> only for your own trusted templates.</p>
+  </div>
+
+</div>  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — modifying.js</div></div>
+    <div class="code-body"><span class="sy-kw">const</span> <span class="sy-plain">heading</span> = <span class="sy-plain">document</span>.<span class="sy-fn">querySelector</span>(<span class="sy-str">"h1"</span>)
+
+<span class="sy-comment">// Text — safe, no HTML injection risk</span>
+<span class="sy-plain">heading</span>.<span class="sy-prop">textContent</span> = <span class="sy-str">"Updated Heading!"</span>
+
+<span class="sy-comment">// innerHTML — ⚠️ NEVER put user-typed content here (XSS risk)</span>
+<span class="sy-comment">// Only use with your own trusted strings</span>
+<span class="sy-plain">heading</span>.<span class="sy-prop">innerHTML</span> = <span class="sy-str">"Hello &lt;em&gt;World&lt;/em&gt;"</span>
+
+<span class="sy-comment">// Manage classes — preferred over inline styles</span>
+<span class="sy-plain">heading</span>.<span class="sy-prop">classList</span>.<span class="sy-fn">add</span>(<span class="sy-str">"active"</span>)
+<span class="sy-plain">heading</span>.<span class="sy-prop">classList</span>.<span class="sy-fn">remove</span>(<span class="sy-str">"hidden"</span>)
+<span class="sy-plain">heading</span>.<span class="sy-prop">classList</span>.<span class="sy-fn">toggle</span>(<span class="sy-str">"dark-mode"</span>)    <span class="sy-comment">// adds if missing, removes if present</span>
+<span class="sy-plain">heading</span>.<span class="sy-prop">classList</span>.<span class="sy-fn">contains</span>(<span class="sy-str">"active"</span>)     <span class="sy-comment">// returns true or false</span>
+
+<span class="sy-comment">// Inline style — use sparingly, classList is usually better</span>
+<span class="sy-plain">heading</span>.<span class="sy-prop">style</span>.<span class="sy-prop">color</span> = <span class="sy-str">"hotpink"</span>    <span class="sy-comment">// camelCase for CSS properties</span>
+<span class="sy-plain">heading</span>.<span class="sy-prop">style</span>.<span class="sy-prop">fontSize</span> = <span class="sy-str">"2rem"</span>   <span class="sy-comment">// NOT font-size</span></div>
+  </div>
+  <div class="callout callout-tip" role="note">
+    <div class="callout-title">💡 NodeList Is Not an Array</div>
+    <p><code class="il">querySelectorAll()</code> returns a NodeList, not an array. You can loop it with <code class="il">for...of</code>, but array methods like <code class="il">.map()</code> and <code class="il">.filter()</code> won't work directly. Convert it first: <code class="il">Array.from(document.querySelectorAll("li"))</code>. Need a refresher on array methods? <a href="js-click-post07-arrays.html" style="color:var(--sky-blue);font-weight:600">Post 07: Arrays</a> has you covered.</p>
+  </div>
+
+<div class="section-header"><span class="section-icon">➕</span><h2 class="section-title">Creating New Elements</h2><div class="section-line"></div></div>  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — creating.js</div></div>
+    <div class="code-body"><span class="sy-comment">// createElement — creates a new element (not on the page yet)</span>
+<span class="sy-kw">const</span> <span class="sy-plain">newCard</span> = <span class="sy-plain">document</span>.<span class="sy-fn">createElement</span>(<span class="sy-str">"div"</span>)
+<span class="sy-plain">newCard</span>.<span class="sy-prop">classList</span>.<span class="sy-fn">add</span>(<span class="sy-str">"card"</span>)
+<span class="sy-plain">newCard</span>.<span class="sy-prop">textContent</span> = <span class="sy-str">"I was created by JavaScript!"</span>
+
+<span class="sy-comment">// append — add it to the page</span>
+<span class="sy-plain">document</span>.<span class="sy-fn">querySelector</span>(<span class="sy-str">".container"</span>).<span class="sy-fn">append</span>(<span class="sy-plain">newCard</span>)
+
+<span class="sy-comment">// innerHTML for generating lots of HTML at once (your own content only)</span>
+<span class="sy-kw">const</span> <span class="sy-plain">list</span> = <span class="sy-plain">document</span>.<span class="sy-fn">querySelector</span>(<span class="sy-str">"#user-list"</span>)
+<span class="sy-kw">const</span> <span class="sy-plain">users</span> = [<span class="sy-str">"Jenna"</span>, <span class="sy-str">"Maya"</span>, <span class="sy-str">"Sara"</span>]
+<span class="sy-plain">list</span>.<span class="sy-prop">innerHTML</span> = <span class="sy-plain">users</span>.<span class="sy-fn">map</span>(<span class="sy-plain">u</span> => <span class="sy-str">`&lt;li&gt;${<span class="sy-plain">u</span>}&lt;/li&gt;`</span>).<span class="sy-fn">join</span>(<span class="sy-str">""</span>)
+
+<span class="sy-comment">// remove — delete an element</span>
+<span class="sy-plain">document</span>.<span class="sy-fn">querySelector</span>(<span class="sy-str">".old-banner"</span>)?.<span class="sy-fn">remove</span>()  <span class="sy-comment">// ?. prevents error if not found</span></div>
+  </div>  <div class="callout callout-warn">
+    <div class="callout-title">⚠️ innerHTML + User Input = XSS</div>
+    <p>If you put text a user typed into <code class="il">innerHTML</span>, a malicious user could inject scripts that run as part of your page. Always use <code class="il">textContent</span> for any content that came from user input. Reserve <code class="il">innerHTML</span> for your own trusted HTML template strings.</p>
+  </div>  <div class="callout callout-tip">
+    <div class="callout-title">💡 Pro Tip</div>
+    <p>Prefer <code class="il">classList</span> over <code class="il">style</span> for visual changes. Define styles in CSS, toggle class names in JavaScript. This keeps your styling in CSS where it belongs — JS just controls which classes are applied.</p>
+  </div>  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body"><p>The first time I changed a heading's text with JavaScript and watched the page update without refreshing, I literally said "wait" out loud to no one. I'd been learning HTML and CSS for weeks and everything felt static. That one <span class="il" style="font-style:normal">textContent</span> change was the moment the whole thing clicked. JavaScript controls what you actually see.</p></div>
+  </div>  <div class="mini-build">
+    <div class="mini-build-header"><span class="trophy">🏆</span><span class="mb-title">MINI BUILD — Button Changes the Headline</span></div>
+    <div class="mini-build-body"><p>Connect JavaScript to HTML and make a button change what's on screen.</p><div class="goal-label">Your steps:</div><ul class="step-list"><li><span class="step-num">01</span> Add an <code class="il">&lt;h1 id="title"&gt;Original Heading&lt;/h1&gt;</span> to your HTML</li>
+<li><span class="step-num">02</span> Add a <code class="il">&lt;button id="change-btn"&gt;Change Heading&lt;/button&gt;</span></li>
+<li><span class="step-num">03</span> In JS: select both elements with <code class="il">querySelector</span></li>
+<li><span class="step-num">04</span> When the button is clicked, change the heading's <code class="il">textContent</span></li>
+<li><span class="step-num">05</span> Also change the color using <code class="il">classList.add()</span> — define the color class in CSS</li>
+<li><span class="step-num">06</span> Bonus: use <code class="il">createElement</span> and <code class="il">append()</span> to add a new <code class="il">&lt;p&gt;</span> to the page when the button is clicked</li></ul></div>
+  </div>  <div class="confidence-close">
+    <div class="cc-icon">💛</div>
+    <div class="cc-heading">JavaScript Just Touched Your Page</div>
+    <p>You can now select any element, read it, change it, create new ones, and delete them. Next: events — which let your users trigger those changes themselves.</p>
+  </div>  <a class="next-post" href="js-click-post10-events.html">
+    <div><div class="next-label">// next post →</div><div class="next-title">Post 10 — Events: Making Things Interactive</div></div>
+    <div class="next-arrow">→</div>
+  </a>
+
+  <nav class="post-nav">
+    <a href="click-08-objects.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Objects</span></a>
+    <a href="click-10-events.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Events</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+</div>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

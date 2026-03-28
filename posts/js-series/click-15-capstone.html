@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build a JavaScript API Dashboard: Beginner Capstone Project | CodeHerWay</title>
+<meta name="description" content="Build a complete JavaScript project: fetch a real API, render data to the DOM, handle errors, and add search. All 14 skills in one build. CodeHerWay.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin:24px 0;}
+.skill-badge{background:var(--bg-card);border:1px solid rgba(180,74,255,.2);border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text-primary);}
+.skill-num{font-family:'Fira Code',monospace;font-size:11px;color:var(--purple);background:rgba(180,74,255,.1);border-radius:4px;padding:1px 6px;white-space:nowrap;}
+.phase-header{background:linear-gradient(135deg,rgba(180,74,255,.1),rgba(255,105,180,.05));border:1px solid rgba(180,74,255,.2);border-radius:10px;padding:12px 20px;margin:32px 0 16px;display:flex;align-items:center;gap:12px;}
+.phase-num{font-family:'Fira Code',monospace;font-size:12px;font-weight:700;color:var(--purple);}
+.phase-title{font-size:16px;font-weight:700;color:var(--text-primary);}
+.annotation{background:var(--bg-card);border:1px solid rgba(180,74,255,.2);border-radius:12px;overflow:hidden;margin:24px 0;}
+.annotation-header{background:var(--bg-code-alt);border-bottom:1px solid rgba(255,255,255,.06);padding:10px 16px;display:flex;align-items:center;gap:10px;}
+.annotation-dots{display:flex;gap:6px;}
+.annotation-dot{width:12px;height:12px;border-radius:50%;}
+.annotation-lang{font-family:'Fira Code',monospace;font-size:11px;color:var(--text-muted);margin-left:auto;}
+.annotation-body{padding:0;font-family:'Fira Code',monospace;font-size:13px;line-height:1.9;overflow-x:auto;}
+.ann-line{display:flex;border-bottom:1px solid rgba(255,255,255,.03);}
+.ann-line:last-child{border-bottom:none;}
+.ann-code{flex:1;padding:2px 24px;white-space:pre;color:var(--text-secondary);}
+.ann-note{width:260px;flex-shrink:0;padding:2px 20px 2px 0;font-size:11px;color:var(--purple);opacity:.8;display:flex;align-items:center;border-left:1px solid rgba(180,74,255,.1);}
+@media(max-width:720px){.ann-note{display:none;}}
+
+@media(max-width:375px){main{padding:20px 14px 48px!important;}.code-body{font-size:11.5px;}}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="chw-wrapper">
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Click</span> Post 15 of 15</div>
+  <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+  <span class="series-label">JavaScript, But Make It Click &nbsp;·&nbsp; Post 15 of 15</span>
+  <div class="post-number">Post 15 of 15</div>
+  <h1 class="post-title">Build a JavaScript API Dashboard</h1>
+  <p class="post-subtitle">14 posts of skills. One project. This is where it all comes together.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 15 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Intermediate</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+<main id="main-content">
+<div class="section-header"><span class="section-icon">🏆</span><h2 class="section-title">You Made It. Now Build Something.</h2><div class="section-line"></div></div>
+  <p>This is the capstone. You're going to build a <span class="highlight">Mini API Dashboard</span> that fetches real user data from a public API, renders it as interactive cards, and lets users search and filter — all from scratch, using everything from Posts 01–14.</p>
+  <p>No frameworks. No libraries. Just JavaScript, HTML, and CSS. This is exactly the kind of project you'd include in a portfolio or describe in a junior dev interview.</p>
+<div class="section-header"><span class="section-icon">🧠</span><h2 class="section-title">The 14 Skills You're Using</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>Before you write any code: read through the entire project blueprint first. Know what you're building end to end before touching the keyboard. This habit — plan before you code — is the single biggest difference between developers who finish projects and developers who get stuck after 30 minutes.</p>
+  </div>
+
+</div>
+  <div class="skills-grid">
+    <div class="skill-badge"><span class="skill-num">01</span> Variables</div>
+    <div class="skill-badge"><span class="skill-num">02</span> Data Types</div>
+    <div class="skill-badge"><span class="skill-num">03</span> Operators</div>
+    <div class="skill-badge"><span class="skill-num">04</span> Conditionals</div>
+    <div class="skill-badge"><span class="skill-num">05</span> Functions</div>
+    <div class="skill-badge"><span class="skill-num">06</span> Loops</div>
+    <div class="skill-badge"><span class="skill-num">07</span> Arrays</div>
+    <div class="skill-badge"><span class="skill-num">08</span> Objects</div>
+    <div class="skill-badge"><span class="skill-num">09</span> DOM</div>
+    <div class="skill-badge"><span class="skill-num">10</span> Events</div>
+    <div class="skill-badge"><span class="skill-num">11</span> Scope / Closure</div>
+    <div class="skill-badge"><span class="skill-num">12</span> Modern JS</div>
+    <div class="skill-badge"><span class="skill-num">13</span> Error Handling</div>
+    <div class="skill-badge"><span class="skill-num">14</span> Async / Fetch</div>
+  </div>
+<div class="section-header"><span class="section-icon">🗺️</span><h2 class="section-title">Project Blueprint</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>If you get stuck, here's the debugging order: check the console, check the network tab, add <code class='il'>console.log()</code> at each step to see where the data stops flowing. Most bugs in projects like this fall into one of three categories: the element selector is wrong, the API response isn't shaped how you expect, or an async function is missing <code class='il'>await</code>. Check those three things first.</p>
+  </div>
+
+</div>
+  <div class="phase-header"><span class="phase-num">PHASE 01</span><span class="phase-title">HTML Structure</span></div>
+  <p>Keep it minimal. Four elements are all you need: a title, a search input, a status message container, and a cards grid.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">HTML — index.html</div></div>
+    <div class="code-body"><span class="sy-tag">&lt;body&gt;</span>
+  <span class="sy-tag">&lt;h1&gt;</span>User Dashboard<span class="sy-tag">&lt;/h1&gt;</span>
+  <span class="sy-tag">&lt;input</span> <span class="sy-attr">type</span>=<span class="sy-str">"text"</span> <span class="sy-attr">id</span>=<span class="sy-str">"search"</span> <span class="sy-attr">placeholder</span>=<span class="sy-str">"Search by name or city..."</span><span class="sy-tag">&gt;</span>
+  <span class="sy-tag">&lt;p</span> <span class="sy-attr">id</span>=<span class="sy-str">"status"</span><span class="sy-tag">&gt;&lt;/p&gt;</span>
+  <span class="sy-tag">&lt;div</span> <span class="sy-attr">id</span>=<span class="sy-str">"cards"</span><span class="sy-tag">&gt;&lt;/div&gt;</span>
+  <span class="sy-tag">&lt;button</span> <span class="sy-attr">id</span>=<span class="sy-str">"load-btn"</span><span class="sy-tag">&gt;</span>Load Users<span class="sy-tag">&lt;/button&gt;</span>
+  <span class="sy-tag">&lt;script</span> <span class="sy-attr">src</span>=<span class="sy-str">"script.js"</span><span class="sy-tag">&gt;&lt;/script&gt;</span>
+<span class="sy-tag">&lt;/body&gt;</span></div>
+  </div>
+  <div class="phase-header"><span class="phase-num">PHASE 02</span><span class="phase-title">Annotated JavaScript</span></div>
+  <p>Every line below is labeled with the concept it uses. Read the annotations as you write.</p>
+  <div class="annotation">
+    <div class="annotation-header">
+      <div class="annotation-dots"><div class="annotation-dot dot-r" style="background:var(--dot-red)"></div><div class="annotation-dot dot-y" style="background:var(--dot-yellow)"></div><div class="annotation-dot dot-g" style="background:var(--dot-green)"></div></div>
+      <div class="annotation-lang">script.js — annotated</div>
+    </div>
+    <div class="annotation-body">
+      <div class="ann-line"><div class="ann-code"><span class="sy-comment">// ─── DOM Selection (Post 09) ───────────────────────────────────────</span></div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code"><span class="sy-kw">const</span> cardsEl  = <span class="sy-plain">document</span>.<span class="sy-fn">querySelector</span>(<span class="sy-str">"#cards"</span>)</div><div class="ann-note">querySelector → Post 09</div></div>
+      <div class="ann-line"><div class="ann-code"><span class="sy-kw">const</span> searchEl = <span class="sy-plain">document</span>.<span class="sy-fn">querySelector</span>(<span class="sy-str">"#search"</span>)</div><div class="ann-note">const → Post 02</div></div>
+      <div class="ann-line"><div class="ann-code"><span class="sy-kw">const</span> statusEl = <span class="sy-plain">document</span>.<span class="sy-fn">querySelector</span>(<span class="sy-str">"#status"</span>)</div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code"><span class="sy-kw">const</span> loadBtn  = <span class="sy-plain">document</span>.<span class="sy-fn">querySelector</span>(<span class="sy-str">"#load-btn"</span>)</div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code"></div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code"><span class="sy-comment">// ─── State (Post 02, 08) ────────────────────────────────────────────</span></div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code"><span class="sy-kw">let</span> allUsers = []   <span class="sy-comment">// starts empty; populated after fetch</span></div><div class="ann-note">let + array → Posts 02, 07</div></div>
+      <div class="ann-line"><div class="ann-code"><span class="sy-kw">let</span> isLoaded = <span class="sy-bool">false</span> <span class="sy-comment">// guard against double-fetch</span></div><div class="ann-note">boolean flag → Post 02</div></div>
+      <div class="ann-line"><div class="ann-code"></div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code"><span class="sy-comment">// ─── User Card Component (Posts 05, 08, 12) ────────────────────────</span></div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code"><span class="sy-kw">function</span> <span class="sy-fn">userCard</span>(<span class="sy-plain">user</span>) {{</div><div class="ann-note">function → Post 05</div></div>
+      <div class="ann-line"><div class="ann-code">  <span class="sy-kw">const</span> {{ <span class="sy-plain">name</span>, <span class="sy-plain">email</span>, <span class="sy-plain">phone</span>, <span class="sy-prop">address</span>: {{ <span class="sy-plain">city</span> }} }} = <span class="sy-plain">user</span></div><div class="ann-note">destructuring → Post 12</div></div>
+      <div class="ann-line"><div class="ann-code">  <span class="sy-kw">return</span> <span class="sy-str">`&lt;div class="card"&gt;</span></div><div class="ann-note">template literal → Post 12</div></div>
+      <div class="ann-line"><div class="ann-code">    <span class="sy-str">  &lt;h3&gt;${{<span class="sy-plain">name</span>}}&lt;/h3&gt;</span></div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code">    <span class="sy-str">  &lt;p&gt;${{<span class="sy-plain">email</span>}}&lt;/p&gt;</span></div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code">    <span class="sy-str">  &lt;p&gt;${{<span class="sy-plain">phone</span>}}&lt;/p&gt;</span></div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code">    <span class="sy-str">  &lt;p&gt;${{<span class="sy-plain">city</span>}}&lt;/p&gt;</span></div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code">  <span class="sy-str">&lt;/div&gt;`</span></div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code">}}</div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code"></div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code"><span class="sy-comment">// ─── Render Function (Posts 07, 09) ────────────────────────────────</span></div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code"><span class="sy-kw">function</span> <span class="sy-fn">render</span>(<span class="sy-plain">users</span>) {{</div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code">  <span class="sy-kw">if</span> (<span class="sy-plain">users</span>.<span class="sy-prop">length</span> === <span class="sy-num">0</span>) {{</div><div class="ann-note">conditional → Post 04</div></div>
+      <div class="ann-line"><div class="ann-code">    <span class="sy-plain">cardsEl</span>.<span class="sy-prop">innerHTML</span> = <span class="sy-str">"&lt;p&gt;No users match your search.&lt;/p&gt;"</span></div><div class="ann-note">innerHTML → Post 09</div></div>
+      <div class="ann-line"><div class="ann-code">    <span class="sy-kw">return</span></div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code">  }}</div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code">  <span class="sy-plain">cardsEl</span>.<span class="sy-prop">innerHTML</span> = <span class="sy-plain">users</span>.<span class="sy-fn">map</span>(<span class="sy-fn">userCard</span>).<span class="sy-fn">join</span>(<span class="sy-str">""</span>)</div><div class="ann-note">.map() → Post 07</div></div>
+      <div class="ann-line"><div class="ann-code">}}</div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code"></div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code"><span class="sy-comment">// ─── Fetch (Posts 13, 14) ───────────────────────────────────────────</span></div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code"><span class="sy-kw">async</span> <span class="sy-kw">function</span> <span class="sy-fn">loadUsers</span>() {{</div><div class="ann-note">async function → Post 14</div></div>
+      <div class="ann-line"><div class="ann-code">  <span class="sy-kw">if</span> (<span class="sy-plain">isLoaded</span>) <span class="sy-kw">return</span>   <span class="sy-comment">// prevent duplicate fetches</span></div><div class="ann-note">guard clause → Post 04</div></div>
+      <div class="ann-line"><div class="ann-code">  <span class="sy-plain">loadBtn</span>.<span class="sy-prop">disabled</span> = <span class="sy-bool">true</span></div><div class="ann-note">disable during fetch → Post 10</div></div>
+      <div class="ann-line"><div class="ann-code">  <span class="sy-plain">statusEl</span>.<span class="sy-prop">textContent</span> = <span class="sy-str">"Loading..."</span></div><div class="ann-note">DOM manipulation → Post 09</div></div>
+      <div class="ann-line"><div class="ann-code">  <span class="sy-kw">try</span> {{</div><div class="ann-note">try/catch → Post 13</div></div>
+      <div class="ann-line"><div class="ann-code">    <span class="sy-kw">const</span> <span class="sy-plain">res</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">"https://jsonplaceholder.typicode.com/users"</span>)</div><div class="ann-note">fetch + await → Post 14</div></div>
+      <div class="ann-line"><div class="ann-code">    <span class="sy-kw">if</span> (!<span class="sy-plain">res</span>.<span class="sy-prop">ok</span>) <span class="sy-kw">throw</span> <span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-str">`HTTP error: ${{<span class="sy-plain">res</span>.<span class="sy-prop">status</span>}}`</span>)</div><div class="ann-note">response.ok check → Post 14</div></div>
+      <div class="ann-line"><div class="ann-code">    <span class="sy-plain">allUsers</span> = <span class="sy-kw">await</span> <span class="sy-plain">res</span>.<span class="sy-fn">json</span>()</div><div class="ann-note">.json() → Post 14</div></div>
+      <div class="ann-line"><div class="ann-code">    <span class="sy-plain">isLoaded</span> = <span class="sy-bool">true</span></div><div class="ann-note">state update → Post 02</div></div>
+      <div class="ann-line"><div class="ann-code">    <span class="sy-fn">render</span>(<span class="sy-plain">allUsers</span>)</div><div class="ann-note">call render → Post 05</div></div>
+      <div class="ann-line"><div class="ann-code">    <span class="sy-plain">statusEl</span>.<span class="sy-prop">textContent</span> = <span class="sy-str">""</span></div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code">  }} <span class="sy-kw">catch</span> (<span class="sy-plain">error</span>) {{</div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code">    <span class="sy-plain">statusEl</span>.<span class="sy-prop">textContent</span> = <span class="sy-str">`Error: ${{<span class="sy-plain">error</span>.<span class="sy-prop">message</span>}}`</span></div><div class="ann-note">error.message → Post 13</div></div>
+      <div class="ann-line"><div class="ann-code">  }} <span class="sy-kw">finally</span> {{</div><div class="ann-note">finally → Post 13</div></div>
+      <div class="ann-line"><div class="ann-code">    <span class="sy-comment">// Always runs — restore button state</span></div><div class="ann-note">runs on success AND error</div></div>
+      <div class="ann-line"><div class="ann-code">    <span class="sy-plain">loadBtn</span>.<span class="sy-prop">disabled</span> = <span class="sy-bool">false</span></div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code">  }}</div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code">}}</div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code"></div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code"><span class="sy-comment">// ─── Search/Filter (Posts 03, 07, 10, 12) ──────────────────────────</span></div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code"><span class="sy-plain">searchEl</span>.<span class="sy-fn">addEventListener</span>(<span class="sy-str">"input"</span>, (<span class="sy-plain">e</span>) => {{</div><div class="ann-note">addEventListener → Post 10</div></div>
+      <div class="ann-line"><div class="ann-code">  <span class="sy-kw">const</span> <span class="sy-plain">query</span> = <span class="sy-plain">e</span>.<span class="sy-prop">target</span>.<span class="sy-prop">value</span>.<span class="sy-fn">toLowerCase</span>()</div><div class="ann-note">event.target → Post 10</div></div>
+      <div class="ann-line"><div class="ann-code">  <span class="sy-comment">// Note: if this were a real API search, you'd debounce this</span></div><div class="ann-note">see Debouncing note below</div></div>
+      <div class="ann-line"><div class="ann-code">  <span class="sy-kw">const</span> <span class="sy-plain">filtered</span> = <span class="sy-plain">allUsers</span>.<span class="sy-fn">filter</span>((<span class="sy-plain">u</span>) => {{</div><div class="ann-note">.filter() → Post 07</div></div>
+      <div class="ann-line"><div class="ann-code">    <span class="sy-kw">const</span> {{ <span class="sy-plain">name</span>, <span class="sy-prop">address</span>: {{ <span class="sy-plain">city</span> }} }} = <span class="sy-plain">u</span></div><div class="ann-note">destructuring → Post 12</div></div>
+      <div class="ann-line"><div class="ann-code">    <span class="sy-kw">return</span> <span class="sy-plain">name</span>.<span class="sy-fn">toLowerCase</span>().<span class="sy-fn">includes</span>(<span class="sy-plain">query</span>)</div><div class="ann-note">.includes() → Post 07</div></div>
+      <div class="ann-line"><div class="ann-code">        || <span class="sy-plain">city</span>.<span class="sy-fn">toLowerCase</span>().<span class="sy-fn">includes</span>(<span class="sy-plain">query</span>)</div><div class="ann-note">search by city too</div></div>
+      <div class="ann-line"><div class="ann-code">  }})</div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code">  <span class="sy-fn">render</span>(<span class="sy-plain">filtered</span>)</div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code">}})</div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code"></div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code"><span class="sy-comment">// ─── Button Click (Post 10) ─────────────────────────────────────────</span></div><div class="ann-note"></div></div>
+      <div class="ann-line"><div class="ann-code"><span class="sy-plain">loadBtn</span>.<span class="sy-fn">addEventListener</span>(<span class="sy-str">"click"</span>, <span class="sy-fn">loadUsers</span>)</div><div class="ann-note">event listener → Post 10</div></div>
+    </div>
+  </div>
+  <div class="callout callout-info">
+    <div class="callout-title">ℹ️ About Debouncing</div>
+    <p>The search filter runs on every keystroke. For a local array of 10 users this is fine. If you were sending a real API request on each keypress, you'd debounce it — delay the request until the user stops typing for ~300ms. Worth knowing the pattern exists even if you don't need it here.</p>
+  </div><div class="section-header"><span class="section-icon">📋</span><h2 class="section-title">Stretch Goals</h2><div class="section-line"></div></div>
+  <p>Finished? Here are ways to level up the project and make it portfolio-worthy:</p>
+  <div class="callout callout-tip">
+    <div class="callout-title">💡 Stretch Goals</div>
+    <p><strong>Sort users</strong> alphabetically with a toggle button. <strong>Paginate</strong> the results — show 3 at a time with Next/Prev buttons. <strong>Detail modal</strong> — click a card to show full address and company info. <strong>localStorage</strong> — cache the users so the fetch only happens once across page loads. <strong>Dark mode toggle</strong> — use <code class="il">classList.toggle</span> on the body.</p>
+  </div>  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body"><p>When I finished my first API project, I kept refreshing the page just to watch the data load. Data from the actual internet, showing up in MY HTML, in MY browser. That's not nothing. That's the whole thing. You just built an application that talks to a server and shows the response on screen. That's a real skill now.</p></div>
+  </div>
+  <div class="confidence-close">
+    <div class="cc-icon">🏆</div>
+    <div class="cc-heading">You Completed the Series. You Are a JavaScript Developer.</div>
+    <p>Look at what you just built: a project that uses variables, functions, arrays, objects, DOM manipulation, event listeners, async fetch, error handling, modern syntax, closures, and scope — all working together in one application. That's not a student project. That's a real app. Put it in your portfolio. Tell the story of how you built it. You earned this.</p>
+  </div>
+  <div style="background:var(--bg-card);border:1px solid rgba(255,211,105,.2);border-radius:12px;padding:24px;margin-top:32px;text-align:center;">
+    <div style="font-family:'Fira Code',monospace;font-size:12px;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;">Next Series</div>
+    <div style="font-size:22px;font-weight:700;color:var(--text-primary);margin-bottom:8px;">JavaScript, But Make It Async</div>
+    <p style="font-size:15px;color:var(--text-secondary);">Deep dive into Promises, the event loop, async patterns, and building real apps that handle data like a pro.</p>
+  </div>
+
+  <div class="bridge-banner">
+    <div class="bridge-icon">→</div>
+    <div class="bridge-content">
+      <div class="bridge-label">→ What Comes Next</div>
+      <div class="bridge-title">JavaScript, But Make It Async — 18 posts</div>
+      <p class="bridge-desc">You just used async/await and fetch in the capstone. The Async series goes much deeper: event loop internals, error handling, AbortController, real API authentication, state management, debounce/throttle, and 8 production patterns you'll use on the job.</p>
+      <a class="bridge-btn" href="async-post01-event-loop.html">Read it →</a>
+    </div>
+  </div>
+
+
+  <nav class="post-nav" style="grid-template-columns:1fr">
+    <a href="click-14-async.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Async JavaScript</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+</div>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

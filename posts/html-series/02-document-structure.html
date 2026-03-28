@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post 2 — Document Structure: The Non-Negotiable Skeleton | CodeHerWay</title>
+<meta name="description" content="Every HTML file starts the same way. Learn the boilerplate — DOCTYPE, html, head, body — and understand why each piece exists. This is where everything begins.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.part-grid{display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 32px 0;}
+.part-card{background: var(--bg-code); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 24px; transition: border-color 0.3s, transform 0.3s;}
+.part-card:hover{transform: translateY(-2px);}
+.part-card:nth-child(1){border-color: rgba(255,105,180,0.2);}
+.part-card:nth-child(1):hover{border-color: var(--pink);}
+.part-card:nth-child(2){border-color: rgba(180,74,255,0.2);}
+.part-card:nth-child(2):hover{border-color: var(--purple);}
+.part-card:nth-child(3){border-color: rgba(105,210,231,0.2);}
+.part-card:nth-child(3):hover{border-color: var(--sky-blue);}
+.part-card:nth-child(4){border-color: rgba(255,211,105,0.2);}
+.part-card:nth-child(4):hover{border-color: var(--gold);}
+.part-card:nth-child(5){border-color: rgba(125,255,179,0.2);}
+.part-card:nth-child(5):hover{border-color: var(--mint-green);}
+.pc-icon{font-size: 28px; margin-bottom: 10px;}
+.pc-name{font-family: 'Fira Code', monospace; font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 4px;}
+.pc-role{font-family: 'Fira Code', monospace; font-size: 12px; color: var(--text-muted); margin-bottom: 10px;}
+.pc-desc{font-size: 14px; color: var(--text-secondary); line-height: 1.65;}
+@media(max-width:640px){.part-grid { grid-template-columns: 1fr; }}
+</style>
+</head>
+<body>
+
+  <div id="site-header"></div>
+
+<section class="hero">
+  <div class="post-label">
+    <span class="series-tag">HTML Fundamentals</span>
+    Post 02 of 20
+  </div>
+  <h1>Document Structure:<br><span class="gradient-text">The Non-Negotiable Skeleton</span></h1>
+  <p class="hero-sub">Every HTML file on the internet starts with the same bones. Before you write a single paragraph, link, or image — you need to understand the boilerplate. This is where everything begins.</p>
+</section>
+
+<main class="article">
+
+  <p>Open any website on the internet. View its source code. Somewhere at the very top, you'll find the same structure. Every page. Every site. Every time. It's the skeleton that every HTML document is built on — and if you skip it or get it wrong, the browser has to guess what you meant. Browsers are bad at guessing.</p>
+
+  <p>This isn't the exciting part of web development. There are no animations here. No colors. No interactivity. But this is the <span class="key">foundation</span>. Every piece of HTML you write for the rest of your career sits inside this structure. So let's understand it completely.</p>
+
+  <div class="sep"></div>
+
+  <h2>The Complete Boilerplate</h2>
+
+  <p>Here it is — the minimum valid HTML5 document. Type this from memory. Every time you start a new project, this is line one through line thirteen:</p>
+
+  <div class="code-window">
+    <div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML · index.html</div></div>
+    <div class="code-body"><span class="t">&lt;!DOCTYPE html&gt;</span>
+<span class="t">&lt;html</span> <span class="a">lang</span>=<span class="s">"en"</span><span class="t">&gt;</span>
+<span class="t">&lt;head&gt;</span>
+  <span class="t">&lt;meta</span> <span class="a">charset</span>=<span class="s">"UTF-8"</span> <span class="t">/&gt;</span>
+  <span class="t">&lt;meta</span> <span class="a">name</span>=<span class="s">"viewport"</span>
+        <span class="a">content</span>=<span class="s">"width=device-width, initial-scale=1.0"</span> <span class="t">/&gt;</span>
+  <span class="t">&lt;title&gt;</span>My Page<span class="t">&lt;/title&gt;</span>
+<span class="t">&lt;/head&gt;</span>
+<span class="t">&lt;body&gt;</span>
+  <span class="c">&lt;!-- Your visible content goes here --&gt;</span>
+<span class="t">&lt;/body&gt;</span>
+<span class="t">&lt;/html&gt;</span></div>
+  </div>
+
+  <p>That's it. Thirteen lines. Every website on the planet starts with some version of this. Let's break down each piece so you understand <em>why</em> it's there — not just <em>what</em> it does.</p>
+
+  <div class="sep"></div>
+
+  <h2>The Five Essential Parts</h2>
+
+  <div class="part-grid">
+    <div class="part-card">
+      <div class="pc-icon">📋</div>
+      <div class="pc-name">&lt;!DOCTYPE html&gt;</div>
+      <div class="pc-role">The declaration</div>
+      <div class="pc-desc">Not an HTML tag — it's an instruction to the browser. Says "this document uses HTML5." Without it, the browser enters "quirks mode" and renders things unpredictably.</div>
+    </div>
+    <div class="part-card">
+      <div class="pc-icon">🌳</div>
+      <div class="pc-name">&lt;html&gt;</div>
+      <div class="pc-role">The root element</div>
+      <div class="pc-desc">The container for everything. Every element on the page lives inside &lt;html&gt;. The <code>lang="en"</code> attribute tells browsers and screen readers the page language.</div>
+    </div>
+    <div class="part-card">
+      <div class="pc-icon">🧠</div>
+      <div class="pc-name">&lt;head&gt;</div>
+      <div class="pc-role">The brain (invisible)</div>
+      <div class="pc-desc">Metadata — information about the page that users don't see. Character encoding, viewport settings, the page title, stylesheet links, and meta tags all live here.</div>
+    </div>
+    <div class="part-card">
+      <div class="pc-icon">👁️</div>
+      <div class="pc-name">&lt;body&gt;</div>
+      <div class="pc-role">The visible content</div>
+      <div class="pc-desc">Everything the user sees — text, images, links, buttons, forms, videos. If it shows up on screen, it goes in the body. One body per document.</div>
+    </div>
+    <div class="part-card">
+      <div class="pc-icon">📑</div>
+      <div class="pc-name">&lt;title&gt;</div>
+      <div class="pc-role">The page title</div>
+      <div class="pc-desc">Shows in the browser tab, bookmarks, and Google search results. Not displayed on the page itself — it lives in the &lt;head&gt;. Every page needs a unique, descriptive title.</div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <h2>1. &lt;!DOCTYPE html&gt; — "This Is HTML5"</h2>
+
+  <p>The <span class="il">&lt;!DOCTYPE html&gt;</span> declaration must be the very first line of your document. It's not an element — it's an instruction that tells the browser which version of HTML to use for rendering.</p>
+
+  <div class="code-window">
+    <div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">The DOCTYPE</div></div>
+    <div class="code-body"><span class="c">&lt;!-- HTML5 — what you'll always use --&gt;</span>
+<span class="t">&lt;!DOCTYPE html&gt;</span>
+
+<span class="c">&lt;!-- What older DOCTYPEs used to look like (HTML 4.01) --&gt;</span>
+<span class="c">&lt;!-- &lt;!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"</span>
+<span class="c">     "http://www.w3.org/TR/html4/strict.dtd"&gt; --&gt;</span>
+<span class="c">&lt;!-- Yeah. We don't miss that. --&gt;</span></div>
+  </div>
+
+  <p>HTML5 simplified this to five words. Just <span class="il">&lt;!DOCTYPE html&gt;</span>. Always lowercase or uppercase — browsers don't care. But you need it. Without it, the browser switches to <span class="key">quirks mode</span> — a compatibility mode that renders your page using old, inconsistent rules from the early 2000s.</p>
+
+  <div class="callout warn">
+    <div class="callout-title">⚠️ Quirks Mode Is Real</div>
+    <p>If you forget the DOCTYPE, the browser doesn't just ignore it — it actively changes how it renders your page. Box model calculations change. Default margins change. Your CSS behaves differently. And because the differences are <em>subtle</em>, you might not even realize quirks mode is the problem. The fix is always the same: make sure <span class="il">&lt;!DOCTYPE html&gt;</span> is on line one.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <h2>2. &lt;html lang="en"&gt; — The Root</h2>
+
+  <p>The <span class="il">&lt;html&gt;</span> element wraps everything — it's the root of the entire document. Only two things go directly inside it: <span class="il">&lt;head&gt;</span> and <span class="il">&lt;body&gt;</span>.</p>
+
+  <p>The <span class="il">lang</span> attribute is small but important. It tells browsers, screen readers, and translation tools which language the page content is in.</p>
+
+  <div class="code-window">
+    <div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML</div></div>
+    <div class="code-body"><span class="c">&lt;!-- English page --&gt;</span>
+<span class="t">&lt;html</span> <span class="a">lang</span>=<span class="s">"en"</span><span class="t">&gt;</span>
+
+<span class="c">&lt;!-- Spanish page --&gt;</span>
+<span class="t">&lt;html</span> <span class="a">lang</span>=<span class="s">"es"</span><span class="t">&gt;</span>
+
+<span class="c">&lt;!-- Japanese page --&gt;</span>
+<span class="t">&lt;html</span> <span class="a">lang</span>=<span class="s">"ja"</span><span class="t">&gt;</span></div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">ℹ️ Why lang Matters</div>
+    <p>Screen readers use the <span class="il">lang</span> attribute to choose the correct pronunciation engine. Without it, a screen reader might try to read French text with English pronunciation rules — making it incomprehensible. Google also uses it to serve your page to the right audience. Always set it.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <h2>3. &lt;head&gt; — The Invisible Brain</h2>
+
+  <p>The <span class="il">&lt;head&gt;</span> is where you put everything the browser needs to know <em>before</em> it starts rendering the page. Nothing inside the head is visible to users. At minimum, the head should contain three things:</p>
+
+  <div class="code-window">
+    <div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML · The Minimum &lt;head&gt;</div></div>
+    <div class="code-body"><span class="t">&lt;head&gt;</span>
+  <span class="c">&lt;!-- 1. Character encoding — always first --&gt;</span>
+  <span class="t">&lt;meta</span> <span class="a">charset</span>=<span class="s">"UTF-8"</span> <span class="t">/&gt;</span>
+
+  <span class="c">&lt;!-- 2. Viewport — makes responsive design work --&gt;</span>
+  <span class="t">&lt;meta</span> <span class="a">name</span>=<span class="s">"viewport"</span>
+        <span class="a">content</span>=<span class="s">"width=device-width, initial-scale=1.0"</span> <span class="t">/&gt;</span>
+
+  <span class="c">&lt;!-- 3. Page title — shows in browser tab --&gt;</span>
+  <span class="t">&lt;title&gt;</span>CodeHerWay — Learn to Code<span class="t">&lt;/title&gt;</span>
+<span class="t">&lt;/head&gt;</span></div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">💡 What Else Goes in &lt;head&gt;?</div>
+    <p>Beyond these three essentials, the head is where you'll link CSS stylesheets (<span class="il">&lt;link&gt;</span>), add meta descriptions for SEO, include Open Graph tags for social sharing, and link JavaScript with <span class="il">&lt;script defer&gt;</span>. We cover all of these in later posts — but they all live in the head.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <h2>4. &lt;body&gt; — Where Users Live</h2>
+
+  <p>The <span class="il">&lt;body&gt;</span> is the stage. Everything the user sees, clicks, reads, or interacts with goes here. One <span class="il">&lt;body&gt;</span> per document. No exceptions.</p>
+
+  <div class="code-window">
+    <div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML</div></div>
+    <div class="code-body"><span class="t">&lt;body&gt;</span>
+
+  <span class="t">&lt;header&gt;</span>
+    <span class="t">&lt;h1&gt;</span>Welcome to CodeHerWay<span class="t">&lt;/h1&gt;</span>
+    <span class="t">&lt;nav&gt;</span>...<span class="t">&lt;/nav&gt;</span>
+  <span class="t">&lt;/header&gt;</span>
+
+  <span class="t">&lt;main&gt;</span>
+    <span class="t">&lt;p&gt;</span>Your content goes here.<span class="t">&lt;/p&gt;</span>
+  <span class="t">&lt;/main&gt;</span>
+
+  <span class="t">&lt;footer&gt;</span>
+    <span class="t">&lt;p&gt;</span>&amp;copy; 2026 CodeHerWay<span class="t">&lt;/p&gt;</span>
+  <span class="t">&lt;/footer&gt;</span>
+
+<span class="t">&lt;/body&gt;</span></div>
+  </div>
+
+  <div class="render-label">↳ Browser Output</div>
+  <div class="render-box">
+    <h1 style="font-size:24px;margin-bottom:4px;color:#1a1a2e;">Welcome to CodeHerWay</h1>
+    <p style="margin-bottom:12px;">Your content goes here.</p>
+    <p style="font-size:13px;color:#888;">&copy; 2026 CodeHerWay</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <h2>5. Indentation &amp; Readability</h2>
+
+  <p>HTML doesn't care about whitespace. You could write your entire page on one line and the browser would render it identically. But <em>you</em> are not a browser. Indentation communicates <span class="key">structure</span>.</p>
+
+  <div class="code-window">
+    <div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">Comparison</div></div>
+    <div class="code-body"><span class="c">&lt;!-- ❌ No indentation — impossible to read --&gt;</span>
+<span class="t">&lt;html&gt;&lt;head&gt;&lt;title&gt;</span>Page<span class="t">&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;header&gt;&lt;h1&gt;</span>Hi<span class="t">&lt;/h1&gt;&lt;/header&gt;&lt;main&gt;&lt;p&gt;</span>Text<span class="t">&lt;/p&gt;&lt;/main&gt;&lt;/body&gt;&lt;/html&gt;</span>
+
+<span class="c">&lt;!-- ✅ Properly indented — structure is clear --&gt;</span>
+<span class="t">&lt;html&gt;</span>
+  <span class="t">&lt;head&gt;</span>
+    <span class="t">&lt;title&gt;</span>Page<span class="t">&lt;/title&gt;</span>
+  <span class="t">&lt;/head&gt;</span>
+  <span class="t">&lt;body&gt;</span>
+    <span class="t">&lt;header&gt;</span>
+      <span class="t">&lt;h1&gt;</span>Hi<span class="t">&lt;/h1&gt;</span>
+    <span class="t">&lt;/header&gt;</span>
+    <span class="t">&lt;main&gt;</span>
+      <span class="t">&lt;p&gt;</span>Text<span class="t">&lt;/p&gt;</span>
+    <span class="t">&lt;/main&gt;</span>
+  <span class="t">&lt;/body&gt;</span>
+<span class="t">&lt;/html&gt;</span></div>
+  </div>
+
+  <div class="callout mindset">
+    <div class="callout-title">🧠 Code Is Read More Than It's Written</div>
+    <p>You write a line of code once. You (or someone else) will <em>read</em> it dozens of times — when debugging, when adding features, when reviewing. Clean indentation isn't about being neat. It's about making your code understandable at a glance. Start building the habit now.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <h2>Bonus: HTML Comments</h2>
+
+  <p>HTML comments are invisible to the user but visible in the source code. Use them to leave notes for yourself or other developers.</p>
+
+  <div class="code-window">
+    <div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML</div></div>
+    <div class="code-body"><span class="c">&lt;!-- This is a comment. Browsers ignore it. --&gt;</span>
+
+<span class="c">&lt;!-- TODO: Add navigation links --&gt;</span>
+<span class="t">&lt;nav&gt;</span>...<span class="t">&lt;/nav&gt;</span>
+
+<span class="c">&lt;!-- Hero Section --&gt;</span>
+<span class="t">&lt;section</span> <span class="a">class</span>=<span class="s">"hero"</span><span class="t">&gt;</span>
+  ...
+<span class="t">&lt;/section&gt;</span>
+<span class="c">&lt;!-- End Hero Section --&gt;</span></div>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="devfession">
+    <div class="devfession-header">// dev_fession</div>
+    <div class="devfession-body">
+      <p>The first HTML file I ever created was just a <span class="il">&lt;p&gt;</span> tag with some text. No DOCTYPE. No html tag. No head. No body. Just raw text with a tag around it.</p>
+      <p>And you know what? It worked. The browser displayed it. And I thought, "Cool, I don't need all that boilerplate stuff."</p>
+      <p>Fast forward three weeks — my CSS wasn't applying correctly, my page looked different in every browser, and my responsive design was completely broken on mobile. The fix? Adding the boilerplate I'd been skipping. The DOCTYPE, the viewport meta tag, the charset declaration. All those "unnecessary" lines were the reason everything else was falling apart. 🫠</p>
+    </div>
+    <div class="devfession-footer">
+      <span>@itcodegirl</span>
+      <span class="tagline">CodeHerWay</span>
+    </div>
+  </div>
+
+  <div class="mini-build">
+    <div class="mini-build-header"><h3>🔨 Mini Build: Your First Proper HTML Page</h3></div>
+    <div class="mini-build-body">
+      <p>Create a complete, properly structured HTML page from scratch — no copy-pasting:</p>
+      <div class="step"><div class="step-num">1</div><div class="step-text">Create a new file called <span class="sky">index.html</span>. Type the <span class="sky">&lt;!DOCTYPE html&gt;</span> declaration on line one. No peeking.</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text">Add the <span class="sky">&lt;html lang="en"&gt;</span> root element. Inside it, create the <span class="sky">&lt;head&gt;</span> with charset, viewport, and a <span class="sky">&lt;title&gt;</span> that says your name.</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text">Create the <span class="sky">&lt;body&gt;</span>. Add an <span class="sky">&lt;h1&gt;</span> with your name, a <span class="sky">&lt;p&gt;</span> introducing yourself, and a second <span class="sky">&lt;p&gt;</span> explaining why you're learning to code.</div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text">Add at least two <span class="sky">HTML comments</span> — one marking the header area and one marking the content area.</div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-text">Open it in your browser. Check the browser tab — does your title show up? Right-click → View Source. Confirm your structure is clean and properly indented.</div></div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <h2>The Bottom Line</h2>
+
+  <p>Every HTML document needs the same skeleton: <span class="il">&lt;!DOCTYPE html&gt;</span> declares HTML5, <span class="il">&lt;html&gt;</span> wraps everything, <span class="il">&lt;head&gt;</span> holds metadata the browser needs, and <span class="il">&lt;body&gt;</span> holds everything the user sees. Add a <span class="il">charset</span>, a <span class="il">viewport</span>, and a <span class="il">&lt;title&gt;</span> inside the head — and you're ready to build.</p>
+
+  <nav class="post-nav">
+    <a href="01-what-is-html.html" class="post-nav-link">
+      <span class="nav-label">← Previous</span>
+      <span class="nav-title">What HTML Actually Is (And Why It's Not Scary)</span>
+    </a>
+    <a href="03-elements-tags-attributes.html" class="post-nav-link next">
+      <span class="nav-label">Next →</span>
+      <span class="nav-title">Elements, Tags & Attributes</span>
+    </a>
+  </nav>
+
+  <div class="post-back">
+    <a href="../../blog.html" class="btn-back">← Back to All Posts</a>
+  </div>
+
+</main>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

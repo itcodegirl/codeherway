@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Async JavaScript: Promises, async/await & fetch() for Beginners | CodeHerWay</title>
+<meta name="description" content="Promises, async/await, fetch, and the event loop — your introduction to async JavaScript. How real apps wait without freezing. CodeHerWay.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+
+@media(max-width:375px){main{padding:20px 14px 48px!important;}.code-body{font-size:11.5px;}}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="chw-wrapper">
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Click</span> Post 14 of 15</div>
+  <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+  <span class="series-label">JavaScript, But Make It Click &nbsp;·&nbsp; Post 14 of 15</span>
+  <div class="post-number">Post 14 of 15</div>
+  <h1 class="post-title">Async JavaScript</h1>
+  <p class="post-subtitle">The internet doesn't respond instantly. async/await is how JavaScript waits — without freezing.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 12 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Intermediate</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+<main id="main-content">
+<div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">JavaScript Has to Wait Sometimes</h2><div class="section-line"></div></div>
+  <p>So far every line of code you've written runs instantly, in order, top to bottom. But real apps need to <em>wait</em> — wait for a server to respond, wait for a file to load, wait for a user to do something. That's <span class="highlight">asynchronous JavaScript</span>, and it changes how you think about code entirely.</p>
+<div class="section-header"><span class="section-icon">⏱️</span><h2 class="section-title">The Problem: JavaScript Is Single-Threaded</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>Promises are just a formalized way of saying 'I don't have this value yet, but I will.' They're not magic — they're objects with three states: pending, fulfilled, rejected. The reason async/await was invented is that Promise chains with <code class='il'>.then().then().then()</code> got hard to read. <code class='il'>await</code> just pauses execution until the Promise resolves, so you can write async code that reads top-to-bottom like normal code.</p>
+  </div>
+
+</div>  <div class="callout callout-info">
+    <div class="callout-title">ℹ️ Why This Matters</div>
+    <p>JavaScript runs one thing at a time on a single thread. If it waited for every network request to finish before running anything else, your page would freeze every time you fetched data. Async lets JavaScript <em>kick off</em> a long operation and continue running other code, then come back and handle the result when it's ready.</p>
+  </div><div class="section-header"><span class="section-icon">🤝</span><h2 class="section-title">Promises: A Contract for Future Values</h2><div class="section-line"></div></div>  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — promises.js</div></div>
+    <div class="code-body"><span class="sy-comment">// A Promise represents a value that will arrive sometime in the future</span>
+<span class="sy-comment">// It starts "pending" and eventually "resolves" (success) or "rejects" (fail)</span>
+
+<span class="sy-kw">const</span> <span class="sy-plain">myPromise</span> = <span class="sy-kw">new</span> <span class="sy-fn">Promise</span>((<span class="sy-plain">resolve</span>, <span class="sy-plain">reject</span>) => {
+  <span class="sy-kw">const</span> <span class="sy-plain">success</span> = <span class="sy-bool">true</span>
+  <span class="sy-kw">if</span> (<span class="sy-plain">success</span>) {
+    <span class="sy-fn">resolve</span>(<span class="sy-str">"Data loaded!"</span>)
+  } <span class="sy-kw">else</span> {
+    <span class="sy-fn">reject</span>(<span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-str">"Something failed"</span>))
+  }
+})
+
+<span class="sy-plain">myPromise</span>
+  .<span class="sy-fn">then</span>(<span class="sy-plain">data</span> => <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">data</span>))          <span class="sy-comment">// runs on success: "Data loaded!"</span>
+  .<span class="sy-fn">catch</span>(<span class="sy-plain">error</span> => <span class="sy-method">console</span>.<span class="sy-fn">error</span>(<span class="sy-plain">error</span>))     <span class="sy-comment">// runs on failure</span>
+  .<span class="sy-fn">finally</span>(() => <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Done either way"</span>))
+
+<span class="sy-comment">// Promise.all — run multiple async operations IN PARALLEL</span>
+<span class="sy-comment">// Returns when ALL resolve, rejects if ANY fail</span>
+<span class="sy-kw">const</span> [<span class="sy-plain">users</span>, <span class="sy-plain">posts</span>] = <span class="sy-kw">await</span> <span class="sy-fn">Promise</span>.<span class="sy-fn">all</span>([
+  <span class="sy-fn">fetch</span>(<span class="sy-str">"/api/users"</span>).<span class="sy-fn">then</span>(<span class="sy-plain">r</span> => <span class="sy-plain">r</span>.<span class="sy-fn">json</span>()),
+  <span class="sy-fn">fetch</span>(<span class="sy-str">"/api/posts"</span>).<span class="sy-fn">then</span>(<span class="sy-plain">r</span> => <span class="sy-plain">r</span>.<span class="sy-fn">json</span>()),
+])
+<span class="sy-comment">// Both fetches run at the same time — much faster than sequential awaits</span></div>
+  </div><div class="section-header"><span class="section-icon">✨</span><h2 class="section-title">async/await: Promises That Read Like Normal Code</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>The most important thing to know about <code class='il'>fetch()</code>: it only rejects on network failure. A 404, a 500, a server error — none of those cause <code class='il'>fetch()</code> to throw. You have to check <code class='il'>response.ok</code> yourself. This is the number one beginner mistake with fetch, and it leads to bugs where errors are silently swallowed.</p>
+  </div>
+
+</div>  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — async-await.js</div></div>
+    <div class="code-body"><span class="sy-comment">// async makes a function return a Promise</span>
+<span class="sy-comment">// await pauses execution until the Promise resolves</span>
+
+<span class="sy-kw">async</span> <span class="sy-kw">function</span> <span class="sy-fn">getUser</span>() {
+  <span class="sy-kw">try</span> {
+    <span class="sy-kw">const</span> <span class="sy-plain">response</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">"https://jsonplaceholder.typicode.com/users/1"</span>)
+
+    <span class="sy-comment">// ⚠️ CRITICAL: fetch ONLY rejects on network failure (offline, DNS, CORS)</span>
+    <span class="sy-comment">// 404, 500, and other HTTP errors do NOT cause fetch to reject</span>
+    <span class="sy-comment">// You MUST check response.ok to catch HTTP-level errors</span>
+    <span class="sy-kw">if</span> (!<span class="sy-plain">response</span>.<span class="sy-prop">ok</span>) {
+      <span class="sy-kw">throw</span> <span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-str">`HTTP error: ${<span class="sy-plain">response</span>.<span class="sy-prop">status</span>}`</span>)
+    }
+
+    <span class="sy-kw">const</span> <span class="sy-plain">user</span> = <span class="sy-kw">await</span> <span class="sy-plain">response</span>.<span class="sy-fn">json</span>()
+    <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">user</span>.<span class="sy-prop">name</span>)
+
+  } <span class="sy-kw">catch</span> (<span class="sy-plain">error</span>) {
+    <span class="sy-method">console</span>.<span class="sy-fn">error</span>(<span class="sy-str">"Fetch failed:"</span>, <span class="sy-plain">error</span>.<span class="sy-prop">message</span>)
+  } <span class="sy-kw">finally</span> {
+    <span class="sy-comment">// runs whether fetch succeeded or failed</span>
+    <span class="sy-fn">hideLoadingSpinner</span>()
+  }
+}</div>
+  </div>  <div class="callout callout-warn">
+    <div class="callout-title">⚠️ The #1 fetch Mistake</div>
+    <p><strong>fetch does not throw on HTTP errors.</strong> A 404 "Not Found" or 500 "Server Error" response will <em>not</em> cause fetch to reject — it "succeeds" from JavaScript's perspective because the network request completed. Only a network failure (no internet, DNS error, CORS block) rejects a fetch promise. <em>That's why you must always check <code class="il">response.ok</span></em>. Skipping this check means your code silently proceeds with broken/empty data.</p>
+  </div>  <div class="callout callout-info" role="note">
+    <div class="callout-title">ℹ️ Quick Primer: JSON</div>
+    <p>When you fetch data from an API, it comes back as JSON — JavaScript Object Notation. It looks like a JavaScript object but it's actually just text. Two methods you'll use constantly:</p>
+    <p style="margin-top:8px"><code class="il">response.json()</code> — parses the JSON text into a real JavaScript object. This is what you call on every fetch response.</p>
+    <p style="margin-top:8px;margin-bottom:0"><code class="il">JSON.stringify(obj)</code> — converts a JS object back to JSON text. Used when you want to save data to localStorage or send data in a POST request body.</p>
+  </div>
+
+<div class="section-header"><span class="section-icon">🔄</span><h2 class="section-title">A Complete Fetch Workflow</h2><div class="section-line"></div></div>  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — fetch-complete.js</div></div>
+    <div class="code-body"><span class="sy-kw">async</span> <span class="sy-kw">function</span> <span class="sy-fn">loadPosts</span>() {
+  <span class="sy-kw">const</span> <span class="sy-plain">container</span> = <span class="sy-plain">document</span>.<span class="sy-fn">querySelector</span>(<span class="sy-str">"#posts"</span>)
+
+  <span class="sy-kw">try</span> {
+    <span class="sy-comment">// Show loading state</span>
+    <span class="sy-plain">container</span>.<span class="sy-prop">innerHTML</span> = <span class="sy-str">"&lt;p&gt;Loading...&lt;/p&gt;"</span>
+
+    <span class="sy-kw">const</span> <span class="sy-plain">response</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">"https://jsonplaceholder.typicode.com/posts?_limit=5"</span>)
+
+    <span class="sy-kw">if</span> (!<span class="sy-plain">response</span>.<span class="sy-prop">ok</span>) <span class="sy-kw">throw</span> <span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-str">`HTTP error: ${<span class="sy-plain">response</span>.<span class="sy-prop">status</span>}`</span>)
+
+    <span class="sy-kw">const</span> <span class="sy-plain">posts</span> = <span class="sy-kw">await</span> <span class="sy-plain">response</span>.<span class="sy-fn">json</span>()
+
+    <span class="sy-comment">// Render posts into the DOM</span>
+    <span class="sy-plain">container</span>.<span class="sy-prop">innerHTML</span> = <span class="sy-plain">posts</span>.<span class="sy-fn">map</span>(<span class="sy-plain">post</span> => <span class="sy-str">`
+      &lt;article&gt;
+        &lt;h3&gt;${<span class="sy-plain">post</span>.<span class="sy-prop">title</span>}&lt;/h3&gt;
+        &lt;p&gt;${<span class="sy-plain">post</span>.<span class="sy-prop">body</span>}&lt;/p&gt;
+      &lt;/article&gt;
+    `</span>).<span class="sy-fn">join</span>(<span class="sy-str">""</span>)
+
+  } <span class="sy-kw">catch</span> (<span class="sy-plain">error</span>) {
+    <span class="sy-plain">container</span>.<span class="sy-prop">innerHTML</span> = <span class="sy-str">`&lt;p class="error"&gt;Failed to load: ${<span class="sy-plain">error</span>.<span class="sy-prop">message</span>}&lt;/p&gt;`</span>
+
+  } <span class="sy-kw">finally</span> {
+    <span class="sy-comment">// Runs whether fetch succeeded or failed</span>
+    <span class="sy-comment">// Great place to hide loading spinners or re-enable buttons</span>
+    <span class="sy-plain">loadButton</span>.<span class="sy-prop">disabled</span> = <span class="sy-bool">false</span>
+    <span class="sy-plain">loadButton</span>.<span class="sy-prop">textContent</span> = <span class="sy-str">"Load Posts"</span>
+  }
+}</div>
+  </div>  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body"><p>I spent three days convinced my fetch was broken because the API was returning 404 but my code wasn't catching it as an error. It was running the success path with an empty or broken response. No one told me fetch doesn't throw on 404. I thought it did. I thought HTTP errors were errors. They are. Just not to fetch. Always check <span class="il" style="font-style:normal">response.ok</span>. Always.</p></div>
+  </div>  <div class="mini-build">
+    <div class="mini-build-header"><span class="trophy">🏆</span><span class="mb-title">MINI BUILD — Fetch Real Data and Render It</span></div>
+    <div class="mini-build-body"><p>Hit a public API and display the results on screen — the most fundamental real-world JavaScript task.</p><div class="goal-label">Your steps:</div><ul class="step-list"><li><span class="step-num">01</span> Set up an HTML page with an <code class="il">#output</span> div and a "Load Users" button</li>
+<li><span class="step-num">02</span> Write an <code class="il">async function loadUsers()</span> that fetches from <code class="il">https://jsonplaceholder.typicode.com/users</span></li>
+<li><span class="step-num">03</span> Show a loading message before the fetch</li>
+<li><span class="step-num">04</span> Check <code class="il">response.ok</span> — throw a descriptive error if false: <code class="il">new Error("HTTP error: " + response.status)</span></li>
+<li><span class="step-num">05</span> Parse the JSON and render each user's name and email into the <code class="il">#output</span> div using <code class="il">innerHTML</span></li>
+<li><span class="step-num">06</span> Add a <code class="il">catch</span> block that displays the error message, and a <code class="il">finally</span> block that hides the loading state</li>
+<li><span class="step-num">07</span> Bonus: use <code class="il">Promise.all</span> to fetch both users AND posts simultaneously, then render both</li></ul></div>
+  </div>    <div class="bridge-banner">
+    <div class="bridge-icon">→</div>
+    <div class="bridge-content">
+      <div class="bridge-label">→ Next Series</div>
+      <div class="bridge-title">Ready to go deeper? JavaScript, But Make It Async</div>
+      <p class="bridge-desc">This post introduced async/await and fetch. The Async series picks up exactly here — event loop internals, Promises from scratch, fetch patterns, error handling, real APIs, and 8 production patterns. 18 posts, zero hand-waving.</p>
+      <a class="bridge-btn" href="async-post01-event-loop.html">Read it →</a>
+    </div>
+  </div>
+
+<div class="confidence-close">
+    <div class="cc-icon">💛</div>
+    <div class="cc-heading">You Can Now Talk to the Internet</div>
+    <p>Async/await, fetch, response.ok, Promise.all — you have the full toolkit for working with real APIs. One post left: the capstone where you put all 14 skills together in a single project.</p>
+  </div>  <a class="next-post" href="js-click-post15-capstone.html">
+    <div><div class="next-label">// next post →</div><div class="next-title">Post 15 — Capstone: Mini API Dashboard</div></div>
+    <div class="next-arrow">→</div>
+  </a>
+
+  <nav class="post-nav">
+    <a href="click-13-debugging.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Debugging and try/catch</span></a>
+    <a href="click-15-capstone.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Capstone Project</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+</div>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Variables & Data Types: const, let, and Why var Is Retired | CodeHerWay</title>
+<meta name="description" content="Learn const, let, strings, numbers, booleans, and why var is the one we don't talk about. Beginner JavaScript tutorial from CodeHerWay.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+
+@media(max-width:480px){
+    .post-hero{padding:28px 16px 24px;}
+    .series-label{font-size:11.5px;margin-bottom:8px;}
+    .post-subtitle{font-size:15px;margin-bottom:18px;padding:0 8px;}
+    .tag{font-size:12px;padding:5px 10px;}
+    main{padding:24px 16px 52px!important;}
+    .section-title{font-size:17px;}
+    .code-body{font-size:12px;padding:14px;line-height:1.7;}
+    .callout{padding:14px 16px;}.callout-title{font-size:14px;}.callout p{font-size:14px;}
+    .devfession-body{padding:16px;}.devfession-body p{font-size:14px;}
+    .mini-build-body{padding:16px;}.mini-build-body p{font-size:14px;}
+    .step-list li{font-size:14px;}
+    .confidence-close{padding:18px 16px;}.confidence-close .cc-heading{font-size:17px;}.confidence-close p{font-size:14px;}
+    .next-post{padding:14px 16px;}.next-title{font-size:14px;}
+    p{font-size:15px;}
+  }
+@media(max-width:375px){
+    main{padding:20px 14px 48px!important;}
+    .code-body{font-size:11.5px;padding:12px;}
+    .section-title{font-size:16px;}
+  }
+.type-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin:24px 0;}
+.type-card{background:var(--bg-card);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:16px;}
+.type-name{font-family:'Fira Code',monospace;font-size:13px;font-weight:700;margin-bottom:4px;}
+.type-example{font-family:'Fira Code',monospace;font-size:12px;color:var(--text-muted);margin-bottom:6px;}
+.type-desc{font-size:13px;color:var(--text-muted);line-height:1.5;}
+.t-string{border-top:3px solid var(--gold);}
+.t-string .type-name{color:var(--gold);}
+.t-number{border-top:3px solid var(--coral);}
+.t-number .type-name{color:var(--coral);}
+.t-bool{border-top:3px solid var(--pink);}
+.t-bool .type-name{color:var(--pink);}
+.t-undef{border-top:3px solid var(--text-muted);}
+.t-undef .type-name{color:var(--text-muted);}
+.t-null{border-top:3px solid var(--sky-blue);}
+.t-null .type-name{color:var(--sky-blue);}
+.t-nan{border-top:3px solid var(--coral);}
+.t-nan .type-name{color:var(--coral);}
+.keyword-compare{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:24px 0;}
+@media(max-width:600px){.keyword-compare{grid-template-columns:1fr 1fr;}.type-grid{grid-template-columns:1fr 1fr;}}
+.kw-card{background:var(--bg-card);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:16px;text-align:center;}
+.kw-word{font-family:'Fira Code',monospace;font-size:18px;font-weight:700;margin-bottom:8px;}
+.kw-badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-bottom:8px;}
+.kw-desc{font-size:13px;color:var(--text-muted);line-height:1.5;}
+.kw-const{border-top:3px solid var(--mint-green);}
+.kw-const .kw-word{color:var(--mint-green);}
+.kw-const .kw-badge{background:rgba(125,255,179,.1);color:var(--mint-green);}
+.kw-let{border-top:3px solid var(--sky-blue);}
+.kw-let .kw-word{color:var(--sky-blue);}
+.kw-let .kw-badge{background:rgba(105,210,231,.1);color:var(--sky-blue);}
+.kw-var{border-top:3px solid var(--coral);}
+.kw-var .kw-word{color:var(--coral);}
+.kw-var .kw-badge{background:rgba(255,107,107,.1);color:var(--coral);}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="chw-wrapper">
+<a class="skip-link" href="#main-content">Skip to main content</a>
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Click</span> Post 02 of 15</div>
+  <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+  <span class="series-label">JavaScript, But Make It Click &nbsp;·&nbsp; Post 02 of 15</span>
+  <div style="text-align:center;width:100%;padding:0 12px;"><h1 class="post-title">JavaScript Variables & Data Types</h1></div>
+  <p class="post-subtitle">JavaScript needs to remember things. Variables are how you make that happen — and what you store in them matters.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 10 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Complete Beginners</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+<main id="main-content">
+<div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">JavaScript Has a Memory Problem (On Purpose)</h2><div class="section-line"></div></div>
+  <p>JavaScript is smart, but it doesn't remember anything on its own. Every time you tell it something — a name, a number, a true/false value — it forgets it the second it's done using it. Unless you store it somewhere.</p>
+  <p>That's what variables are for. A variable is a <span class="highlight">named container</span> that holds a value so your code can use it later, change it, and pass it around.</p>
+<div class="section-header"><span class="section-icon">🧱</span><h2 class="section-title">let, const, and the One We Don't Talk About</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>Stop here for a second. <code class='il'>const</code> vs <code class='il'>let</code> is one of those things that clicks immediately for some people and never quite clicks for others. The rule is simple: start with <code class='il'>const</code>. If you try to change it and JavaScript complains, switch to <code class='il'>let</code>. That's genuinely the whole decision process.</p>
+  </div>
+
+</div>
+  <div class="keyword-compare">
+    <div class="kw-card kw-const"><div class="kw-word">const</div><div class="kw-badge">use by default</div><div class="kw-desc">Value won't be reassigned. Use this for most things.</div></div>
+    <div class="kw-card kw-let"><div class="kw-word">let</div><div class="kw-badge">use when it changes</div><div class="kw-desc">Value will be reassigned. Use for counters, user input.</div></div>
+    <div class="kw-card kw-var"><div class="kw-word">var</div><div class="kw-badge">don't use</div><div class="kw-desc">Old way. Causes confusing scope bugs. You'll see it in legacy code.</div></div>
+  </div>
+  <div class="code-window" role="region" aria-label="Code: JavaScript — variables.js">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — variables.js</div></div>
+    <div class="code-body" tabindex="0" aria-hidden="true"><span class="sy-comment">// const — for values that won't be reassigned</span>
+<span class="sy-kw">const</span> <span class="sy-plain">name</span> = <span class="sy-str">"Jenna"</span>
+<span class="sy-kw">const</span> <span class="sy-plain">maxScore</span> = <span class="sy-num">100</span>
+
+<span class="sy-comment">// let — for values that will change</span>
+<span class="sy-kw">let</span> <span class="sy-plain">score</span> = <span class="sy-num">0</span>
+<span class="sy-kw">let</span> <span class="sy-plain">isLoggedIn</span> = <span class="sy-bool">false</span>
+
+<span class="sy-comment">// Reassigning let — totally fine</span>
+<span class="sy-plain">score</span> = <span class="sy-num">10</span>
+<span class="sy-plain">isLoggedIn</span> = <span class="sy-bool">true</span>
+
+<span class="sy-comment">// Reassigning const — throws an error ❌</span>
+<span class="sy-comment">// name = "someone else"  ← TypeError: Assignment to constant variable</span></div>
+  </div>  <div class="callout callout-tip" role="note">
+    <div class="callout-title">💡 Pro Tip</div>
+    <p>Default to <code class="il">const</code>. Only reach for <code class="il">let</code> when you know the value will change. This forces you to think about what should and shouldn't change — and that's a great habit.</p>
+  </div><div class="section-header"><span class="section-icon">🗂️</span><h2 class="section-title">Data Types: What Can You Store?</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p><code class='il'>typeof null</code> returning <code class='il'>"object"</code> is a 30-year-old JavaScript bug that was never fixed because too much code depends on the broken behavior. You're not confused — it's just wrong. Remember it, laugh about it, move on.</p>
+  </div>
+
+</div>
+  <div class="type-grid">
+    <div class="type-card t-string"><div class="type-name">String</div><div class="type-example">"Hello" / 'World' / `Hi`</div><div class="type-desc">Text. Always wrapped in quotes.</div></div>
+    <div class="type-card t-number"><div class="type-name">Number</div><div class="type-example">42 / 3.14 / -7</div><div class="type-desc">Any number — integers and decimals both.</div></div>
+    <div class="type-card t-bool"><div class="type-name">Boolean</div><div class="type-example">true / false</div><div class="type-desc">Only two values. No quotes. Used for decisions.</div></div>
+    <div class="type-card t-undef"><div class="type-name">Undefined</div><div class="type-example">let x</div><div class="type-desc">Declared but never given a value.</div></div>
+    <div class="type-card t-null"><div class="type-name">Null</div><div class="type-example">let x = null</div><div class="type-desc">Intentionally empty — e.g. before an API call returns.</div></div>
+    <div class="type-card t-nan"><div class="type-name">NaN</div><div class="type-example">parseInt("hello")</div><div class="type-desc">Not a Number. Returned when math fails.</div></div>
+  </div>
+  <div class="code-window" role="region" aria-label="Code: JavaScript — data-types.js">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — data-types.js</div></div>
+    <div class="code-body" tabindex="0" aria-hidden="true"><span class="sy-kw">const</span> <span class="sy-plain">username</span>  = <span class="sy-str">"codegirlJenna"</span>     <span class="sy-comment">// String</span>
+<span class="sy-kw">const</span> <span class="sy-plain">age</span>       = <span class="sy-num">27</span>                  <span class="sy-comment">// Number</span>
+<span class="sy-kw">const</span> <span class="sy-plain">isPro</span>     = <span class="sy-bool">true</span>               <span class="sy-comment">// Boolean</span>
+<span class="sy-kw">let</span>   <span class="sy-plain">nickname</span>             <span class="sy-comment">// Undefined (no value yet)</span>
+<span class="sy-kw">let</span>   <span class="sy-plain">profilePic</span> = <span class="sy-bool">null</span>  <span class="sy-comment">// Null (hasn't loaded yet)</span>
+
+<span class="sy-comment">// typeof tells you what type a variable holds</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-kw">typeof</span> <span class="sy-plain">username</span>)  <span class="sy-comment">// "string"</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-kw">typeof</span> <span class="sy-plain">age</span>)       <span class="sy-comment">// "number"</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-kw">typeof</span> <span class="sy-plain">isPro</span>)     <span class="sy-comment">// "boolean"</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-kw">typeof</span> <span class="sy-plain">nickname</span>)  <span class="sy-comment">// "undefined"</span>
+
+<span class="sy-comment">// NaN — what you get when math goes wrong</span>
+<span class="sy-kw">const</span> <span class="sy-plain">bad</span> = <span class="sy-fn">parseInt</span>(<span class="sy-str">"hello"</span>)
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">bad</span>)             <span class="sy-comment">// NaN</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-fn">isNaN</span>(<span class="sy-plain">bad</span>))       <span class="sy-comment">// true</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-kw">typeof</span> <span class="sy-plain">bad</span>)       <span class="sy-comment">// "number" ← famous JS quirk: NaN is typeof "number"</span></div>
+  </div>  <div class="callout callout-warn" role="alert">
+    <div class="callout-title">⚠️ Two Famous JS Quirks — Know These</div>
+    <p><strong>typeof null === "object"</strong> — even though <code class="il">null</code> means "no value," <code class="il">typeof null</code> returns <code class="il">"object"</code>. A 30-year-old JavaScript bug.<br><br><strong>typeof NaN === "number"</strong> — NaN stands for Not a Number, but its type is <code class="il">"number"</code>. Use <code class="il">isNaN(value)</code> to check for it.</p>
+  </div><div class="section-header"><span class="section-icon">✏️</span><h2 class="section-title">Naming Your Variables</h2><div class="section-line"></div></div>  <div class="code-window" role="region" aria-label="Code: JavaScript — naming.js">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — naming.js</div></div>
+    <div class="code-body" tabindex="0" aria-hidden="true"><span class="sy-comment">// ✅ Good naming — camelCase, descriptive</span>
+<span class="sy-kw">const</span> <span class="sy-plain">firstName</span> = <span class="sy-str">"Jenna"</span>
+<span class="sy-kw">const</span> <span class="sy-plain">userAge</span> = <span class="sy-num">27</span>
+<span class="sy-kw">let</span> <span class="sy-plain">isSubscribed</span> = <span class="sy-bool">false</span>
+
+<span class="sy-comment">// ❌ Bad naming — vague, confusing, or illegal</span>
+<span class="sy-kw">const</span> <span class="sy-plain">x</span> = <span class="sy-str">"Jenna"</span>           <span class="sy-comment">// what is x?</span>
+<span class="sy-comment">// const 1stName = "Jenna"  // can't start with a number ← SyntaxError</span>
+<span class="sy-comment">// const my-name = "Jenna"  // hyphens aren't allowed</span>
+<span class="sy-comment">// const let = "Jenna"      // reserved words can't be variable names</span></div>
+  </div>  <div class="callout callout-mindset" role="note">
+    <div class="callout-title">🧠 Mindset Shift</div>
+    <p>Good variable names are the first form of documentation. <code class="il">isLoggedIn</code> tells you everything. <code class="il">x</code> tells you nothing. Name things like you're writing notes for your future self — because you are.</p>
+  </div>  <div class="devfession" role="note" aria-label="Dev Fession: a developer confession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body"><p>I named every variable <span style="font-style:normal;font-family:'Fira Code',monospace;font-size:.88em;color:#69d2e7;background:rgba(105,210,231,.08);border:1px solid rgba(105,210,231,.2);border-radius:4px;padding:1px 5px;">x</span>, <span style="font-style:normal;font-family:'Fira Code',monospace;font-size:.88em;color:#69d2e7;background:rgba(105,210,231,.08);border:1px solid rgba(105,210,231,.2);border-radius:4px;padding:1px 5px;">y</span>, and <span style="font-style:normal;font-family:'Fira Code',monospace;font-size:.88em;color:#69d2e7;background:rgba(105,210,231,.08);border:1px solid rgba(105,210,231,.2);border-radius:4px;padding:1px 5px;">data</span> for the first three months. Then I tried reading something I wrote two weeks earlier and had absolutely no idea what <span style="font-style:normal;font-family:'Fira Code',monospace;font-size:.88em;color:#69d2e7;background:rgba(105,210,231,.08);border:1px solid rgba(105,210,231,.2);border-radius:4px;padding:1px 5px;">let d2 = x + y</span> was doing. Descriptive names feel slow to type and immediately feel fast to understand.</p></div>
+  </div>  <div class="mini-build" role="region" aria-label="Mini Build: Store Your Dev Profile">
+    <div class="mini-build-header"><span class="trophy">🏆</span><span class="mb-title">MINI BUILD — Store Your Dev Profile</span></div>
+    <div class="mini-build-body"><p>Build a little developer profile using variables. Then log everything to the console.</p><div class="goal-label">Your steps:</div><ul class="step-list"><li><span class="step-num">01</span> Create a <code class="il">const</code> for your name (string)</li>
+<li><span class="step-num">02</span> Create a <code class="il">const</code> for your favorite language (string)</li>
+<li><span class="step-num">03</span> Create a <code class="il">const</code> for years coding (number)</li>
+<li><span class="step-num">04</span> Create a <code class="il">let</code> for whether you're currently job hunting (boolean)</li>
+<li><span class="step-num">05</span> Log each variable with a label: <code class="il">console.log("Name:", name)</code></li>
+<li><span class="step-num">06</span> Use <code class="il">typeof</code> to check the type of each variable</li>
+<li><span class="step-num">07</span> Try <code class="il">parseInt("not a number")</code> — see NaN in the wild</li>
+<li><span class="step-num">08</span> Bonus: try reassigning a <code class="il">const</code> and read the error message carefully</li></ul></div>
+  </div>  <div class="confidence-close">
+    <div class="cc-icon">💛</div>
+    <div class="cc-heading">You Just Gave JavaScript a Memory</div>
+    <p>Variables are the foundation of everything. You know how to declare them correctly, what to store in them, how to name them, and what those weird NaN and null quirks actually are. Next: operators and comparisons.</p>
+  </div>  <a class="next-post" href="js-click-post03-operators-comparisons.html" aria-label="Next: Operators &amp; Comparisons">
+    <div><div class="next-label">// next post →</div><div class="next-title">Post 03 — Operators &amp; Comparisons</div></div>
+    <div class="next-arrow">→</div>
+  </a>
+
+  <nav class="post-nav">
+    <a href="click-01-what-javascript-does.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">What JavaScript Does</span></a>
+    <a href="click-03-operators-comparisons.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Operators and Comparisons</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+</div>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

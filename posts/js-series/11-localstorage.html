@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript localStorage & sessionStorage: Caching, Persistence & Safe Usage | CodeHerWay</title>
+<meta name="description" content="Persist data between page loads, cache API responses, save preferences — without a database. Browser storage tutorial from CodeHerWay.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.compare-local .compare-header{background:rgba(0,229,255,.08);color:var(--accent);}
+.compare-session .compare-header{background:rgba(180,74,255,.08);color:var(--purple);}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Async</span> Post 05 of 10</div>
+  <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+  <div class="series-line"><span class="series-label">⚡ JavaScript, But Make It Async</span><span class="post-number">Post 05 of 10</span></div>
+  <h1 class="post-title">JavaScript localStorage & sessionStorage</h1>
+  <p class="post-subtitle">Persisting data between page loads, caching API responses, saving user preferences — without a database.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 11 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Intermediate</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+<main>
+  <div class="back-ref"><span class="br-arrow">←</span> Builds on <strong>JS Async — Post 10</strong>: Working With Real APIs</div>
+
+  <div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">What They Are and Why They Matter</h2><div class="section-line"></div></div>
+  <p><span class="highlight">localStorage</span> and <span class="highlight">sessionStorage</span> are key-value stores built into the browser. They let you save data on the client — no server, no database, no network request required. Close a tab, reopen it, and localStorage is still there. sessionStorage clears when the tab closes.</p>
+  <p>These come up constantly in real projects and portfolio work: caching API responses, remembering a user's last search, persisting a shopping cart, saving theme preferences. And they're a staple of frontend interviews. You need to know them cold.</p>
+
+  <div class="section-header"><span class="section-icon">⚖️</span><h2 class="section-title">localStorage vs sessionStorage</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>Everything in localStorage is a string. That's the rule and the source of the most common localStorage bugs. <code class='il'>localStorage.setItem('count', 5)</code> stores the string <code class='il'>"5"</code>, not the number <code class='il'>5</code>. Always use <code class='il'>JSON.stringify()</code> when storing and <code class='il'>JSON.parse()</code> when reading back. Wrap the parse in try/catch — if the stored value is corrupt, <code class='il'>JSON.parse()</code> will throw.</p>
+  </div>
+
+</div>
+  <div class="compare-grid">
+    <div class="compare-card compare-local">
+      <div class="compare-header">localStorage</div>
+      <div class="compare-body">Persists until explicitly cleared. Survives tab closes, browser restarts. Shared across all tabs on the same origin. Use for: preferences, cached data, saved state.</div>
+    </div>
+    <div class="compare-card compare-session">
+      <div class="compare-header">sessionStorage</div>
+      <div class="compare-body">Lives only for the current tab session. Clears on tab close. Not shared between tabs. Use for: temporary wizard state, form progress, one-time flows.</div>
+    </div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🔧</span><h2 class="section-title">The Core API</h2><div class="section-line"></div></div>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — storage-api.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// The same 4 methods work on both localStorage and sessionStorage</span>
+
+<span class="sy-comment">// SET — values must be strings</span>
+<span class="sy-plain">localStorage</span>.<span class="sy-fn">setItem</span>(<span class="sy-str">"theme"</span>, <span class="sy-str">"dark"</span>)
+<span class="sy-plain">localStorage</span>.<span class="sy-fn">setItem</span>(<span class="sy-str">"count"</span>, <span class="sy-method">String</span>(<span class="sy-num">42</span>))          <span class="sy-comment">// numbers → strings</span>
+<span class="sy-plain">localStorage</span>.<span class="sy-fn">setItem</span>(<span class="sy-str">"user"</span>, <span class="sy-method">JSON</span>.<span class="sy-fn">stringify</span>({ <span class="sy-prop">name</span>: <span class="sy-str">"Jenna"</span> }))  <span class="sy-comment">// objects → JSON</span>
+
+<span class="sy-comment">// GET — always returns a string or null</span>
+<span class="sy-plain">localStorage</span>.<span class="sy-fn">getItem</span>(<span class="sy-str">"theme"</span>)       <span class="sy-comment">// "dark"</span>
+<span class="sy-plain">localStorage</span>.<span class="sy-fn">getItem</span>(<span class="sy-str">"missing"</span>)     <span class="sy-comment">// null — key doesn't exist</span>
+
+<span class="sy-comment">// Parse back to original type</span>
+<span class="sy-kw">const</span> <span class="sy-plain">count</span> = <span class="sy-method">Number</span>(<span class="sy-plain">localStorage</span>.<span class="sy-fn">getItem</span>(<span class="sy-str">"count"</span>))
+<span class="sy-kw">const</span> <span class="sy-plain">user</span>  = <span class="sy-method">JSON</span>.<span class="sy-fn">parse</span>(<span class="sy-plain">localStorage</span>.<span class="sy-fn">getItem</span>(<span class="sy-str">"user"</span>))
+
+<span class="sy-comment">// REMOVE — delete a single key</span>
+<span class="sy-plain">localStorage</span>.<span class="sy-fn">removeItem</span>(<span class="sy-str">"theme"</span>)
+
+<span class="sy-comment">// CLEAR — delete everything (use with caution)</span>
+<span class="sy-plain">localStorage</span>.<span class="sy-fn">clear</span>()
+
+<span class="sy-comment">// CHECK LENGTH — how many keys are stored</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">localStorage</span>.<span class="sy-prop">length</span>)</pre></div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🛡️</span><h2 class="section-title">Safe Storage Wrapper</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>The TTL (time-to-live) cache pattern is genuinely useful for real projects: store data along with a timestamp, check on retrieval whether the data has expired, re-fetch if it has. This gives you the performance benefit of caching without serving users stale data indefinitely. It's the pattern the Capstone uses.</p>
+  </div>
+
+</div>
+  <p>Raw localStorage is fine for simple cases, but it has footguns: it throws if storage is full, it can throw in private browsing mode in some browsers, and parsing JSON without error handling will crash on corrupted data. A wrapper handles all of that.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — storage-wrapper.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// A safe storage wrapper — handles JSON, errors, and type coercion</span>
+<span class="sy-kw">const</span> <span class="sy-plain">storage</span> = {
+  <span class="sy-fn">get</span>(<span class="sy-plain">key</span>, <span class="sy-plain">fallback</span> = <span class="sy-bool">null</span>) {
+    <span class="sy-kw">try</span> {
+      <span class="sy-kw">const</span> <span class="sy-plain">item</span> = <span class="sy-plain">localStorage</span>.<span class="sy-fn">getItem</span>(<span class="sy-plain">key</span>)
+      <span class="sy-kw">return</span> <span class="sy-plain">item</span> !== <span class="sy-bool">null</span> ? <span class="sy-method">JSON</span>.<span class="sy-fn">parse</span>(<span class="sy-plain">item</span>) : <span class="sy-plain">fallback</span>
+    } <span class="sy-kw">catch</span> {
+      <span class="sy-kw">return</span> <span class="sy-plain">fallback</span>  <span class="sy-comment">// corrupted JSON or storage unavailable</span>
+    }
+  },
+
+  <span class="sy-fn">set</span>(<span class="sy-plain">key</span>, <span class="sy-plain">value</span>) {
+    <span class="sy-kw">try</span> {
+      <span class="sy-plain">localStorage</span>.<span class="sy-fn">setItem</span>(<span class="sy-plain">key</span>, <span class="sy-method">JSON</span>.<span class="sy-fn">stringify</span>(<span class="sy-plain">value</span>))
+      <span class="sy-kw">return</span> <span class="sy-bool">true</span>
+    } <span class="sy-kw">catch</span> {
+      <span class="sy-method">console</span>.<span class="sy-fn">warn</span>(<span class="sy-str">"Storage write failed"</span>, <span class="sy-plain">key</span>)
+      <span class="sy-kw">return</span> <span class="sy-bool">false</span>  <span class="sy-comment">// storage full or unavailable</span>
+    }
+  },
+
+  <span class="sy-fn">remove</span>(<span class="sy-plain">key</span>) {
+    <span class="sy-kw">try</span> { <span class="sy-plain">localStorage</span>.<span class="sy-fn">removeItem</span>(<span class="sy-plain">key</span>) } <span class="sy-kw">catch</span> {}
+  },
+
+  <span class="sy-fn">has</span>(<span class="sy-plain">key</span>) {
+    <span class="sy-kw">return</span> <span class="sy-plain">localStorage</span>.<span class="sy-fn">getItem</span>(<span class="sy-plain">key</span>) !== <span class="sy-bool">null</span>
+  }
+}
+
+<span class="sy-comment">// Clean usage — no JSON.parse/stringify clutter at the call site</span>
+<span class="sy-plain">storage</span>.<span class="sy-fn">set</span>(<span class="sy-str">"user"</span>, { <span class="sy-prop">name</span>: <span class="sy-str">"Jenna"</span>, <span class="sy-prop">theme</span>: <span class="sy-str">"dark"</span> })
+<span class="sy-kw">const</span> <span class="sy-plain">user</span> = <span class="sy-plain">storage</span>.<span class="sy-fn">get</span>(<span class="sy-str">"user"</span>, {})  <span class="sy-comment">// {} is the fallback</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">user</span>.<span class="sy-prop">name</span>)  <span class="sy-comment">// "Jenna"</span></pre></div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">⚡</span><h2 class="section-title">Caching API Responses</h2><div class="section-line"></div></div>
+  <p>One of the most practical uses: cache API data to avoid redundant network requests. The pattern: check localStorage first, return cached data if it exists and isn't too old, fetch and cache if not.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — api-cache.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// Cache API responses with a TTL (time to live)</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">fetchWithCache</span>(<span class="sy-plain">url</span>, <span class="sy-plain">ttlMs</span> = <span class="sy-num">5</span> * <span class="sy-num">60</span> * <span class="sy-num">1000</span>) {
+  <span class="sy-kw">const</span> <span class="sy-plain">cacheKey</span> = <span class="sy-str">`cache:</span>${<span class="sy-plain">url</span>}<span class="sy-str">`</span>
+  <span class="sy-kw">const</span> <span class="sy-plain">cached</span>   = <span class="sy-plain">storage</span>.<span class="sy-fn">get</span>(<span class="sy-plain">cacheKey</span>)
+
+  <span class="sy-kw">if</span> (<span class="sy-plain">cached</span> && <span class="sy-method">Date</span>.<span class="sy-fn">now</span>() - <span class="sy-plain">cached</span>.<span class="sy-prop">timestamp</span> < <span class="sy-plain">ttlMs</span>) {
+    <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Cache hit:"</span>, <span class="sy-plain">url</span>)
+    <span class="sy-kw">return</span> <span class="sy-plain">cached</span>.<span class="sy-prop">data</span>  <span class="sy-comment">// fresh cache — no network request</span>
+  }
+
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Cache miss — fetching:"</span>, <span class="sy-plain">url</span>)
+  <span class="sy-kw">const</span> <span class="sy-plain">res</span>  = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-plain">url</span>)
+  <span class="sy-kw">const</span> <span class="sy-plain">data</span> = <span class="sy-kw">await</span> <span class="sy-plain">res</span>.<span class="sy-fn">json</span>()
+
+  <span class="sy-plain">storage</span>.<span class="sy-fn">set</span>(<span class="sy-plain">cacheKey</span>, { <span class="sy-prop">data</span>, <span class="sy-prop">timestamp</span>: <span class="sy-method">Date</span>.<span class="sy-fn">now</span>() })
+  <span class="sy-kw">return</span> <span class="sy-plain">data</span>
+}
+
+<span class="sy-comment">// Second call returns cached data — no network trip</span>
+<span class="sy-kw">await</span> <span class="sy-fn">fetchWithCache</span>(<span class="sy-str">"https://jsonplaceholder.typicode.com/users"</span>)
+<span class="sy-kw">await</span> <span class="sy-fn">fetchWithCache</span>(<span class="sy-str">"https://jsonplaceholder.typicode.com/users"</span>)  <span class="sy-comment">// cache hit</span></pre></div>
+  </div>
+  <div class="callout callout-accent">
+    <div class="callout-title">⚡ This Is Your Capstone Cache</div>
+    <p>The Post 18 weather dashboard uses this exact caching pattern to store the last fetched weather data. When a user revisits the page, they see cached data instantly while a fresh fetch happens in the background. This is called <strong>stale-while-revalidate</strong> and it makes UIs feel dramatically faster.</p>
+  </div>
+
+  <div class="section-header"><span class="section-icon">⚠️</span><h2 class="section-title">What NOT to Store in localStorage</h2><div class="section-line"></div></div>
+  <div class="callout callout-warn">
+    <div class="callout-title">⚠️ Security Warning</div>
+    <p>localStorage is accessible by any JavaScript running on your page — including third-party scripts. Never store passwords, authentication tokens, credit card numbers, or any truly sensitive user data. localStorage is vulnerable to XSS attacks. Authentication tokens belong in httpOnly cookies managed by your server — not in localStorage.</p>
+  </div>
+
+  <div class="section-header"><span class="section-icon">📡</span><h2 class="section-title">The storage Event</h2><div class="section-line"></div></div>
+  <p>When localStorage changes in one tab, other tabs on the same origin receive a <span class="il">storage</span> event. This is the native way to sync state across tabs without a backend.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — storage-event.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// Listen for changes from OTHER tabs (not the current one)</span>
+<span class="sy-plain">window</span>.<span class="sy-fn">addEventListener</span>(<span class="sy-str">"storage"</span>, (<span class="sy-plain">e</span>) => {
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Key changed:"</span>, <span class="sy-plain">e</span>.<span class="sy-prop">key</span>)
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Old value:"</span>, <span class="sy-plain">e</span>.<span class="sy-prop">oldValue</span>)
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"New value:"</span>, <span class="sy-plain">e</span>.<span class="sy-prop">newValue</span>)
+
+  <span class="sy-kw">if</span> (<span class="sy-plain">e</span>.<span class="sy-prop">key</span> === <span class="sy-str">"theme"</span>) {
+    <span class="sy-fn">applyTheme</span>(<span class="sy-plain">e</span>.<span class="sy-prop">newValue</span>)  <span class="sy-comment">// sync theme across tabs instantly</span>
+  }
+})
+
+<span class="sy-comment">// Example: user changes theme in Tab A → Tab B updates automatically</span>
+<span class="sy-comment">// This fires ONLY in other tabs — not the tab that made the change</span></pre></div>
+  </div>
+
+  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body">
+      <p>I built a dark mode toggle for a project and was so proud of it. Then I realized refreshing the page reset it to light mode every time because I never persisted the preference. Fixing it took two lines: <span class="il" style="font-style:normal;">localStorage.setItem("theme", mode)</span> on toggle and <span class="il" style="font-style:normal;">storage.get("theme", "light")</span> on page load. Two lines. I had shipped something that forgot what you told it the moment you refreshed. localStorage is the difference between an app that remembers you and one that makes you repeat yourself constantly.</p>
+    </div>
+  </div>
+
+  <div class="mini-build">
+    <div class="mini-build-header"><span class="trophy">🔬</span><span class="mb-title">MINI BUILD — Preference-Saving Weather App</span></div>
+    <div class="mini-build-body">
+      <p>Add localStorage persistence to the weather app from Post 10. When the user selects a city, save it. On reload, restore it automatically.</p>
+      <div class="goal-label">Exercises:</div>
+      <ul class="step-list">
+        <li><span class="step-num">01</span> Build the <span class="il">storage</span> wrapper from this post</li>
+        <li><span class="step-num">02</span> Save the selected city to localStorage on change</li>
+        <li><span class="step-num">03</span> On page load, read the saved city and pre-select it in the UI</li>
+        <li><span class="step-num">04</span> Add the <span class="il">fetchWithCache(url, ttlMs)</span> pattern — cache weather data for 5 minutes</li>
+        <li><span class="step-num">05</span> Verify caching works: open DevTools → Application → localStorage and confirm the cached data is there</li>
+        <li><span class="step-num">06</span> Add a "Clear cache" button that removes all <span class="il">cache:</span>-prefixed keys</li>
+        <li><span class="step-num">07</span> Bonus: open two tabs, change the city in one, and listen for the <span class="il">storage</span> event in the other</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="confidence-close">
+    <div class="cc-icon">⚡</div>
+    <div class="cc-heading">Your App Remembers Now</div>
+    <p>Preferences, cached data, session state — localStorage and sessionStorage are the simplest path from "forgets everything on refresh" to "remembers everything you told it." Next: state management without a framework — building the reactive data layer your UI needs.</p>
+  </div>
+  <a class="next-post" href="#"><div><div class="next-label">// next post →</div><div class="next-title">Post 12 — State Management Without a Framework</div></div><div class="next-arrow">→</div></a>
+
+  <nav class="post-nav">
+    <a href="10-real-apis.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Working With Real APIs</span></a>
+    <a href="12-state-management.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">State Management Without React</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

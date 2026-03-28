@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Validation & Best Practices — Writing HTML Like a Professional | CodeHerWay</title>
+<meta name="description" content="Learn the habits that separate beginner code from professional code — W3C validation, clean indentation, consistent naming, meaningful classes, and logical hierarchy.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.tag.best{border-color: rgba(125,255,179,0.3); color: var(--mint-green);}
+.practice-grid{display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 32px 0;}
+.prac-card{background: var(--bg-code); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 24px; transition: border-color 0.3s, transform 0.3s; position: relative; overflow: hidden;}
+.prac-card:hover{transform: translateY(-2px);}
+.prac-card::before{content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;}
+.prac-card:nth-child(1){border-color: rgba(105,210,231,0.2);}
+.prac-card:nth-child(1):hover{border-color: var(--sky-blue);}
+.prac-card:nth-child(1)::before{background: var(--sky-blue);}
+.prac-card:nth-child(2){border-color: rgba(255,105,180,0.2);}
+.prac-card:nth-child(2):hover{border-color: var(--pink);}
+.prac-card:nth-child(2)::before{background: var(--pink);}
+.prac-card:nth-child(3){border-color: rgba(125,255,179,0.2);}
+.prac-card:nth-child(3):hover{border-color: var(--mint-green);}
+.prac-card:nth-child(3)::before{background: var(--mint-green);}
+.prac-card:nth-child(4){border-color: rgba(255,211,105,0.2);}
+.prac-card:nth-child(4):hover{border-color: var(--gold);}
+.prac-card:nth-child(4)::before{background: var(--gold);}
+.prac-card:nth-child(5){border-color: rgba(180,74,255,0.2);}
+.prac-card:nth-child(5):hover{border-color: var(--purple);}
+.prac-card:nth-child(5)::before{background: var(--purple);}
+.prac-icon{font-size: 28px; margin-bottom: 10px;}
+.prac-name{font-family: 'Fira Code', monospace; font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 8px;}
+.prac-desc{font-size: 14px; color: var(--text-secondary); line-height: 1.65;}
+.checklist-title{font-family: 'Fira Code', monospace; font-size: 16px; font-weight: 700; color: var(--mint-green); margin-bottom: 16px;}
+.check-item{display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; font-size: 15px; line-height: 1.6;}
+.check-item:last-child{margin-bottom: 0;}
+.check-box{width: 22px; height: 22px; border-radius: 6px; border: 2px solid rgba(125,255,179,0.3); flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--mint-green);}
+@media(max-width:640px){.practice-grid { grid-template-columns: 1fr; }}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<!-- ═══════ HERO ═══════ -->
+<section class="hero">
+  <div class="post-label"><span class="series-tag">HTML Fundamentals</span> Post 18 of 20</div>
+  <div class="post-number">Post 18 · HTML Fundamentals</div>
+  <h1>Validation &amp; Best Practices:<br><span class="gradient-text">Writing Code Like a Pro</span></h1>
+  <p class="hero-sub">Knowing HTML syntax isn't enough. Professionals write code that's clean, consistent, validated, and readable — code that other developers (including future you) can understand at a glance.</p>
+  <div class="tag-row">
+    <span class="tag html">#HTML</span>
+    <span class="tag best">#BestPractices</span>
+    <span class="tag best">#CleanCode</span>
+    <span class="tag">10 min read</span>
+  </div>
+</section>
+
+<!-- ═══════ ARTICLE ═══════ -->
+<main class="article">
+
+  <!-- ── INTRO ── -->
+  <p>There's a difference between code that <em>works</em> and code that's <em>good</em>. Working code displays the right content in the browser. Good code does that <em>and</em> is clean, maintainable, accessible, validated, and readable by anyone who opens the file — including you six months from now.</p>
+
+  <p>This post covers the five practices that separate beginner HTML from professional HTML. None of them are complicated. All of them are habits. Start using them now and they'll become automatic.</p>
+
+  <!-- ── THE FIVE PRACTICES ── -->
+  <h2>The Five Best Practices</h2>
+
+  <div class="practice-grid">
+    <div class="prac-card">
+      <div class="prac-icon">✅</div>
+      <div class="prac-name">W3C Validation</div>
+      <div class="prac-desc">Run your code through the official validator to catch silent errors that browsers hide from you. Zero errors = solid foundation.</div>
+    </div>
+    <div class="prac-card">
+      <div class="prac-icon">📐</div>
+      <div class="prac-name">Clean Indentation</div>
+      <div class="prac-desc">Consistent spacing that reveals your document's structure at a glance. Two spaces or one tab — pick one, never mix.</div>
+    </div>
+    <div class="prac-card">
+      <div class="prac-icon">📛</div>
+      <div class="prac-name">Consistent Naming</div>
+      <div class="prac-desc">Lowercase, hyphenated file names and IDs. No spaces, no camelCase in HTML. One convention across the entire project.</div>
+    </div>
+    <div class="prac-card">
+      <div class="prac-icon">🏷️</div>
+      <div class="prac-name">Meaningful Classes</div>
+      <div class="prac-desc">Class names that describe what an element IS, not what it looks like. <code>.card-title</code> beats <code>.big-red-text</code> every time.</div>
+    </div>
+    <div class="prac-card">
+      <div class="prac-icon">🏗️</div>
+      <div class="prac-name">Logical Hierarchy</div>
+      <div class="prac-desc">Semantic elements in the right order. Headings that don't skip levels. A structure that reads like an outline, not a jumble.</div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── W3C VALIDATOR ── -->
+  <h2>1. W3C Validation — Your Code's Spellcheck</h2>
+
+  <p>The <span class="key">W3C HTML Validator</span> is the official tool for checking whether your HTML is valid. Think of it as a spellcheck for your code — it catches errors you didn't know were there.</p>
+
+  <p>Go to <span class="il">validator.w3.org</span>, paste your code or URL, and hit Check. It returns a list of every error and warning in your document — unclosed tags, invalid attributes, incorrect nesting, missing required elements, and more.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">Validator Workflow</div>
+    </div>
+    <div class="code-body">
+<span class="c">// Step 1: Write your HTML</span>
+<span class="c">// Step 2: Go to validator.w3.org</span>
+<span class="c">// Step 3: Paste code or enter URL</span>
+<span class="c">// Step 4: Fix errors from top to bottom</span>
+<span class="c">//         (one fix often resolves multiple errors)</span>
+<span class="c">// Step 5: Re-validate until clean</span>
+
+<span class="c">// Pro tip: Also available as VS Code extensions</span>
+<span class="c">// Search "W3C Validation" or "HTMLHint" in extensions</span>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">💡 Fix Top-Down</div>
+    <p>When the validator returns 20 errors, don't panic. Fix the <strong>first</strong> error and re-validate. Often a single unclosed tag at the top of the document causes a cascade of errors below it. Fixing one error might eliminate ten others. Always work from the top of the error list down.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── INDENTATION ── -->
+  <h2>2. Clean Indentation — Structure You Can See</h2>
+
+  <p>Indentation isn't about aesthetics — it's about <span class="key">communication</span>. Proper indentation reveals the parent-child relationships in your HTML at a glance. When you see two elements at the same indent level, you know they're siblings. When one is indented deeper, you know it's a child.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML · Indentation</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- ❌ Inconsistent indentation --&gt;</span>
+<span class="t">&lt;main&gt;</span>
+<span class="t">&lt;section&gt;</span>
+      <span class="t">&lt;h2&gt;</span>About<span class="t">&lt;/h2&gt;</span>
+  <span class="t">&lt;p&gt;</span>Some text.<span class="t">&lt;/p&gt;</span>
+        <span class="t">&lt;p&gt;</span>More text.<span class="t">&lt;/p&gt;</span>
+<span class="t">&lt;/section&gt;</span>
+    <span class="t">&lt;section&gt;</span>
+<span class="t">&lt;h2&gt;</span>Contact<span class="t">&lt;/h2&gt;</span>
+  <span class="t">&lt;/section&gt;</span>
+<span class="t">&lt;/main&gt;</span>
+
+<span class="c">&lt;!-- ✅ Consistent 2-space indentation --&gt;</span>
+<span class="t">&lt;main&gt;</span>
+  <span class="t">&lt;section&gt;</span>
+    <span class="t">&lt;h2&gt;</span>About<span class="t">&lt;/h2&gt;</span>
+    <span class="t">&lt;p&gt;</span>Some text.<span class="t">&lt;/p&gt;</span>
+    <span class="t">&lt;p&gt;</span>More text.<span class="t">&lt;/p&gt;</span>
+  <span class="t">&lt;/section&gt;</span>
+  <span class="t">&lt;section&gt;</span>
+    <span class="t">&lt;h2&gt;</span>Contact<span class="t">&lt;/h2&gt;</span>
+  <span class="t">&lt;/section&gt;</span>
+<span class="t">&lt;/main&gt;</span>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">ℹ️ Tabs vs Spaces</div>
+    <p>The great debate: 2 spaces, 4 spaces, or tabs? It doesn't matter which you pick. What matters is that you pick <strong>one</strong> and use it everywhere. Most web teams use 2 spaces. Set this in your editor's settings (VS Code: "Tab Size: 2" and "Insert Spaces: true") and never think about it again.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── NAMING ── -->
+  <h2>3. Consistent Naming — One Convention, Everywhere</h2>
+
+  <p>File names, IDs, and classes should follow the same pattern across your entire project. The web standard is <span class="key">lowercase with hyphens</span> (kebab-case). No spaces. No uppercase. No underscores (in HTML — CSS methodologies like BEM use them, which is fine).</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">Naming Conventions</div>
+    </div>
+    <div class="code-body">
+<span class="c">// ❌ Inconsistent naming</span>
+<span class="s">index.html</span>
+<span class="s">AboutPage.html</span>
+<span class="s">my contact.html</span>
+
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"MainHeader"</span><span class="t">&gt;</span>
+<span class="t">&lt;div</span> <span class="a">id</span>=<span class="s">"side_bar"</span><span class="t">&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"card wrapper"</span><span class="t">&gt;</span>  <span class="c">&lt;!-- two classes, not one --&gt;</span>
+
+<span class="c">// ✅ Consistent kebab-case</span>
+<span class="s">index.html</span>
+<span class="s">about.html</span>
+<span class="s">contact.html</span>
+
+<span class="t">&lt;header</span> <span class="a">class</span>=<span class="s">"main-header"</span><span class="t">&gt;</span>
+<span class="t">&lt;aside</span> <span class="a">id</span>=<span class="s">"side-bar"</span><span class="t">&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"card-wrapper"</span><span class="t">&gt;</span>
+    </div>
+  </div>
+
+  <p>Consistent naming prevents bugs (case-sensitive servers break <span class="il">About.html</span> vs <span class="il">about.html</span>), makes your code searchable, and shows other developers that you care about craft. It's a small thing that signals professionalism.</p>
+
+  <div class="sep"></div>
+
+  <!-- ── MEANINGFUL CLASSES ── -->
+  <h2>4. Meaningful Class Names — Describe the What, Not the How</h2>
+
+  <p>This is where beginners and professionals diverge most visibly. Beginners name classes based on how things <em>look</em>. Professionals name classes based on what things <em>are</em>.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML · Class Names</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- ❌ Appearance-based names --&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"big-red-text"</span><span class="t">&gt;</span>...<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"left-box"</span><span class="t">&gt;</span>...<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"blue-border"</span><span class="t">&gt;</span>...<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"box1"</span><span class="t">&gt;</span>...<span class="t">&lt;/div&gt;</span>
+
+<span class="c">&lt;!-- ✅ Purpose-based names --&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"error-message"</span><span class="t">&gt;</span>...<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;aside</span> <span class="a">class</span>=<span class="s">"sidebar"</span><span class="t">&gt;</span>...<span class="t">&lt;/aside&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"card-featured"</span><span class="t">&gt;</span>...<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"testimonial"</span><span class="t">&gt;</span>...<span class="t">&lt;/div&gt;</span>
+    </div>
+  </div>
+
+  <p>Why? Because appearance changes. You might redesign and that "big red text" becomes small and blue. Now the class name is a lie. But an <span class="il">error-message</span> is always an error message — regardless of how it's styled. Name things by their role, not their appearance.</p>
+
+  <div class="callout mindset">
+    <div class="callout-title">🧠 The Newspaper Test</div>
+    <p>If someone read only your class names — without seeing the page — could they understand the structure? <span class="il">hero-section</span>, <span class="il">course-card</span>, <span class="il">pricing-table</span>, <span class="il">testimonial-quote</span> — these tell a story. <span class="il">box1</span>, <span class="il">red-thing</span>, <span class="il">container3</span> — these tell nothing. Aim for class names that describe the content's purpose.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── LOGICAL HIERARCHY ── -->
+  <h2>5. Logical Hierarchy — HTML as an Outline</h2>
+
+  <p>Your HTML document should read like a structured outline. Headings shouldn't skip levels. Semantic elements should wrap the right content. The order of elements should follow a logical flow that makes sense even without CSS.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML · Logical Structure</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- ❌ Skipped heading levels, illogical order --&gt;</span>
+<span class="t">&lt;h1&gt;</span>My Portfolio<span class="t">&lt;/h1&gt;</span>
+<span class="t">&lt;h4&gt;</span>About Me<span class="t">&lt;/h4&gt;</span>      <span class="c">&lt;!-- Skipped h2 and h3 --&gt;</span>
+<span class="t">&lt;h2&gt;</span>Projects<span class="t">&lt;/h2&gt;</span>
+<span class="t">&lt;h6&gt;</span>Project One<span class="t">&lt;/h6&gt;</span>   <span class="c">&lt;!-- Skipped h3, h4, h5 --&gt;</span>
+
+<span class="c">&lt;!-- ✅ Sequential hierarchy --&gt;</span>
+<span class="t">&lt;h1&gt;</span>My Portfolio<span class="t">&lt;/h1&gt;</span>
+
+<span class="t">&lt;section&gt;</span>
+  <span class="t">&lt;h2&gt;</span>About Me<span class="t">&lt;/h2&gt;</span>
+  <span class="t">&lt;p&gt;</span>...<span class="t">&lt;/p&gt;</span>
+<span class="t">&lt;/section&gt;</span>
+
+<span class="t">&lt;section&gt;</span>
+  <span class="t">&lt;h2&gt;</span>Projects<span class="t">&lt;/h2&gt;</span>
+  <span class="t">&lt;article&gt;</span>
+    <span class="t">&lt;h3&gt;</span>Project One<span class="t">&lt;/h3&gt;</span>
+    <span class="t">&lt;p&gt;</span>...<span class="t">&lt;/p&gt;</span>
+  <span class="t">&lt;/article&gt;</span>
+  <span class="t">&lt;article&gt;</span>
+    <span class="t">&lt;h3&gt;</span>Project Two<span class="t">&lt;/h3&gt;</span>
+    <span class="t">&lt;p&gt;</span>...<span class="t">&lt;/p&gt;</span>
+  <span class="t">&lt;/article&gt;</span>
+<span class="t">&lt;/section&gt;</span>
+    </div>
+  </div>
+
+  <p>The rule is simple: <span class="il">h1</span> → <span class="il">h2</span> → <span class="il">h3</span> → <span class="il">h4</span>. Never skip a level. Screen readers generate a navigable table of contents from your headings — if you skip from h1 to h4, there are gaps in that outline that confuse users.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">💡 The Disable-CSS Test</div>
+    <p>Try disabling CSS in your browser (DevTools → Elements → uncheck all styles). Does your page still make sense? Can you read it top-to-bottom and understand the content hierarchy? If yes, your HTML structure is solid. If it's a jumbled mess without CSS, your HTML is relying too much on styling for structure.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── DEVFESSION ── -->
+  <div class="devfession">
+    <div class="devfession-header">// dev_fession</div>
+    <div class="devfession-body">
+      <p>I used to name my CSS classes after how they looked: <span class="il">.big-bold</span>, <span class="il">.red-box</span>, <span class="il">.left-column</span>. Then I redesigned my portfolio and moved the sidebar to the right side of the page. The class was still called <span class="il">.left-column</span>. Rendering on the right.</p>
+      <p>A developer friend looked at my code and said, "Why is your right sidebar called left-column?" I had no good answer.</p>
+      <p>That's when I switched to naming things by what they <em>are</em>: <span class="il">.sidebar</span>, <span class="il">.error-alert</span>, <span class="il">.course-card</span>. The names survived every redesign after that. 🏷️</p>
+    </div>
+    <div class="devfession-footer">
+      <span>@itcodegirl</span>
+      <span class="tagline">CodeHerWay</span>
+    </div>
+  </div>
+
+  <!-- ── PRE-DEPLOY CHECKLIST ── -->
+  <h2>The Pre-Deploy Checklist</h2>
+
+  <p>Before you ship any page, run through this checklist. Print it out. Tape it to your monitor. Make it a habit until you don't need it anymore:</p>
+
+  <div class="checklist">
+    <div class="checklist-title">✅ HTML Quality Checklist</div>
+    <div class="check-item"><div class="check-box">☐</div> <div>Passes W3C Validator with zero errors and zero warnings</div></div>
+    <div class="check-item"><div class="check-box">☐</div> <div>DOCTYPE, charset, viewport, and title are all present</div></div>
+    <div class="check-item"><div class="check-box">☐</div> <div>Only one <span class="il">&lt;h1&gt;</span> per page, headings don't skip levels</div></div>
+    <div class="check-item"><div class="check-box">☐</div> <div>Semantic elements used (header, nav, main, section, article, footer)</div></div>
+    <div class="check-item"><div class="check-box">☐</div> <div>Every <span class="il">&lt;img&gt;</span> has a meaningful <span class="il">alt</span> attribute</div></div>
+    <div class="check-item"><div class="check-box">☐</div> <div>Every form input has a <span class="il">&lt;label&gt;</span> with matching for/id</div></div>
+    <div class="check-item"><div class="check-box">☐</div> <div>All links have descriptive text (not "click here")</div></div>
+    <div class="check-item"><div class="check-box">☐</div> <div>Indentation is consistent (2 spaces throughout)</div></div>
+    <div class="check-item"><div class="check-box">☐</div> <div>File names are lowercase with hyphens, no spaces</div></div>
+    <div class="check-item"><div class="check-box">☐</div> <div>Class names describe purpose, not appearance</div></div>
+    <div class="check-item"><div class="check-box">☐</div> <div>Page makes sense with CSS disabled</div></div>
+    <div class="check-item"><div class="check-box">☐</div> <div>Tested on mobile (DevTools device mode or real device)</div></div>
+  </div>
+
+  <!-- ── MINI BUILD ── -->
+  <div class="mini-build">
+    <div class="mini-build-header">
+      <h3>🔨 Mini Build: Code Audit Your Portfolio</h3>
+    </div>
+    <div class="mini-build-body">
+      <p>Take your portfolio (or any previous project from this series) and audit it against professional standards:</p>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">Run it through the <span class="sky">W3C Validator</span>. Fix every error and warning until you reach zero. Document how many errors you found.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">Check your <span class="sky">indentation</span>. Is it consistent? If not, reformat the entire file with 2-space indentation. Configure your editor to do this automatically going forward.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">Review every <span class="sky">class name</span> and <span class="sky">ID</span>. Replace any appearance-based names with purpose-based names. Update the corresponding CSS.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">Check your <span class="sky">heading hierarchy</span>. Does your page have one h1? Do headings follow h1 → h2 → h3 order without skipping? Fix any gaps.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-text">Disable CSS in DevTools and read your page. Does the content still make sense in order? If not, restructure your HTML until it reads like a proper document without any styling.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── WRAP UP ── -->
+  <h2>The Bottom Line</h2>
+
+  <p>Professional HTML isn't about knowing more tags — it's about the habits you build around the tags you already know. Validate your code. Indent consistently. Name things by their purpose. Follow a logical heading hierarchy. And audit your work before you ship it.</p>
+
+  <p>These five practices are what interviewers notice when they look at your code. They're what teammates appreciate when they inherit your project. And they're what <em>you'll</em> appreciate when you come back to your own code six months later and can actually understand it.</p>
+
+  <p>Write HTML that works. Then make it HTML that's <em>good</em>.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">🎉 Series Milestone — 18 Posts Complete</div>
+    <p>This HTML Fundamentals series has taken you from a blank file to professional-grade HTML — document structure, text, links, images, lists, semantic elements, forms, tables, media, file organization, meta tags, accessibility, DevTools, common mistakes, and best practices. You have a <strong>complete HTML foundation</strong>. Everything from here — CSS, JavaScript, React — builds on what you've learned. The hard part is done. Now go build.</p>
+  </div>
+
+
+  <nav class="post-nav">
+    <a href="17-common-mistakes.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Common Beginner Mistakes</span></a>
+    <a href="19-intermediate-concepts.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Intermediate Concepts</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forms — The Most Critical Skill in HTML | CodeHerWay</title>
+<meta name="description" content="Master HTML forms — every input type, form element, and attribute you need to know. Labels, fieldsets, validation, and building forms that actually work.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.el-grid{display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 32px 0;}
+.el-card{background: var(--bg-code); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 18px; transition: border-color 0.3s, transform 0.3s;}
+.el-card:hover{transform: translateY(-2px);}
+.el-card .el-tag{font-family: 'Fira Code', monospace; font-size: 15px; font-weight: 700; margin-bottom: 6px;}
+.el-card .el-desc{font-size: 13px; color: var(--text-secondary); line-height: 1.55;}
+.el-card.pink{border-color: rgba(255,105,180,0.2);}
+.el-card.pink:hover{border-color: var(--pink);}
+.el-card.pink .el-tag{color: var(--pink);}
+.el-card.sky{border-color: rgba(105,210,231,0.2);}
+.el-card.sky:hover{border-color: var(--sky-blue);}
+.el-card.sky .el-tag{color: var(--sky-blue);}
+.el-card.mint{border-color: rgba(125,255,179,0.2);}
+.el-card.mint:hover{border-color: var(--mint-green);}
+.el-card.mint .el-tag{color: var(--mint-green);}
+.el-card.gold{border-color: rgba(255,211,105,0.2);}
+.el-card.gold:hover{border-color: var(--gold);}
+.el-card.gold .el-tag{color: var(--gold);}
+.el-card.purple{border-color: rgba(180,74,255,0.2);}
+.el-card.purple:hover{border-color: var(--purple);}
+.el-card.purple .el-tag{color: var(--purple);}
+.el-card.coral{border-color: rgba(255,107,107,0.2);}
+.el-card.coral:hover{border-color: var(--coral);}
+.el-card.coral .el-tag{color: var(--coral);}
+.input-grid{display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 32px 0;}
+.input-chip{background: var(--bg-code); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 12px 14px; text-align: center; font-family: 'Fira Code', monospace; font-size: 13px; transition: all 0.3s;}
+.input-chip:hover{transform: translateY(-2px);}
+.input-chip .chip-icon{font-size: 22px; margin-bottom: 6px;}
+.input-chip .chip-type{color: var(--sky-blue); font-weight: 600; margin-bottom: 2px;}
+.input-chip .chip-desc{font-size: 11px; color: var(--text-muted); font-family: 'Space Grotesk', sans-serif;}
+.attr-grid{display: grid; grid-template-columns: auto 1fr; gap: 6px 18px; margin: 32px 0; background: var(--bg-code); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 24px 28px; align-items: center;}
+.attr-name{font-family: 'Fira Code', monospace; font-size: 14px; padding: 4px 12px; border-radius: 6px; background: rgba(255,105,180,0.1); color: var(--pink); width: fit-content;}
+.attr-desc{font-size: 15px; color: var(--text-secondary);}
+@media(max-width:640px){.el-grid { grid-template-columns: 1fr 1fr; } .input-grid { grid-template-columns: repeat(2, 1fr); } .attr-grid { grid-template-columns: 1fr; }}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<!-- ═══════ HERO ═══════ -->
+<section class="hero">
+  <div class="post-label"><span class="series-tag">HTML Fundamentals</span> Post 11 of 20</div>
+  <div class="post-number">Post 11 · HTML Fundamentals</div>
+  <h1>HTML Forms:<br><span class="gradient-text">The Most Critical Skill</span></h1>
+  <p class="hero-sub">Contact forms, login screens, sign-up flows, search bars, checkout pages — forms are everywhere. If you can't build forms, you can't build the web.</p>
+  <div class="tag-row">
+    <span class="tag html">#HTML</span>
+    <span class="tag html">#Forms</span>
+    <span class="tag">#Critical</span>
+    <span class="tag">12 min read</span>
+  </div>
+</section>
+
+<!-- ═══════ ARTICLE ═══════ -->
+<main class="article">
+
+  <!-- ── INTRO ── -->
+  <p>Every meaningful interaction on the web starts with a form. Logging into your email? Form. Searching Google? Form. Buying something online? Form. Signing up for a newsletter? Form. Submitting a job application? Form.</p>
+
+  <p>If HTML is the language of the web, forms are the <span class="key">conversation</span> — the part where the user talks back. And if you don't understand how forms work at the HTML level, you'll struggle with everything that comes after: JavaScript form handling, backend processing, validation, and user experience.</p>
+
+  <p>This isn't a nice-to-have. Forms are a critical skill. Let's build one from scratch.</p>
+
+  <!-- ── THE ANATOMY ── -->
+  <h2>The Anatomy of a Form</h2>
+
+  <p>Every form starts with the <span class="il">&lt;form&gt;</span> element. This is the container that wraps all your inputs, labels, and buttons. It tells the browser: "everything inside here is a form that collects data."</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- The simplest form possible --&gt;</span>
+<span class="t">&lt;form</span> <span class="a">action</span>=<span class="s">"/submit"</span> <span class="a">method</span>=<span class="s">"POST"</span><span class="t">&gt;</span>
+  <span class="t">&lt;label</span> <span class="a">for</span>=<span class="s">"name"</span><span class="t">&gt;</span>Name<span class="t">&lt;/label&gt;</span>
+  <span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"text"</span> <span class="a">id</span>=<span class="s">"name"</span> <span class="a">name</span>=<span class="s">"name"</span><span class="t"> /&gt;</span>
+
+  <span class="t">&lt;button</span> <span class="a">type</span>=<span class="s">"submit"</span><span class="t">&gt;</span>Send<span class="t">&lt;/button&gt;</span>
+<span class="t">&lt;/form&gt;</span>
+    </div>
+  </div>
+
+  <p>Three things are happening here: the <span class="il">&lt;label&gt;</span> tells the user (and screen readers) what the input is for, the <span class="il">&lt;input&gt;</span> collects the data, and the <span class="il">&lt;button&gt;</span> submits it. The <span class="il">action</span> attribute says where to send the data, and <span class="il">method</span> says how (GET or POST).</p>
+
+  <p>That's the skeleton. Now let's meet every piece you can put inside it.</p>
+
+  <div class="sep"></div>
+
+  <!-- ── FORM ELEMENTS ── -->
+  <h2>Form Elements — The Building Blocks</h2>
+
+  <p>HTML gives you eight core form elements. You don't need to memorize them — you need to understand what each one does and when to reach for it.</p>
+
+  <div class="el-grid">
+    <div class="el-card pink">
+      <div class="el-tag">&lt;input&gt;</div>
+      <div class="el-desc">The Swiss army knife. Handles text, email, passwords, checkboxes, radio buttons, files, and more — based on the <code>type</code> attribute.</div>
+    </div>
+    <div class="el-card sky">
+      <div class="el-tag">&lt;textarea&gt;</div>
+      <div class="el-desc">Multi-line text input. Messages, bios, comments — anywhere users need to write more than a single line.</div>
+    </div>
+    <div class="el-card mint">
+      <div class="el-tag">&lt;select&gt;</div>
+      <div class="el-desc">Dropdown menu. Contains <code>&lt;option&gt;</code> elements. Use when there are multiple predefined choices.</div>
+    </div>
+    <div class="el-card gold">
+      <div class="el-tag">&lt;button&gt;</div>
+      <div class="el-desc">Submits the form or triggers an action. Always use this instead of <code>&lt;input type="submit"&gt;</code> — it's more flexible.</div>
+    </div>
+    <div class="el-card purple">
+      <div class="el-tag">&lt;label&gt;</div>
+      <div class="el-desc">Names an input. Critical for accessibility. Links to the input via <code>for</code> and <code>id</code>. Clicking it focuses the input.</div>
+    </div>
+    <div class="el-card coral">
+      <div class="el-tag">&lt;fieldset&gt; + &lt;legend&gt;</div>
+      <div class="el-desc">Groups related inputs together with a visible border and title. Perfect for radio groups and multi-section forms.</div>
+    </div>
+  </div>
+
+  <h3>A Real Form Using All Six</h3>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-body">
+<span class="t">&lt;form</span> <span class="a">action</span>=<span class="s">"/signup"</span> <span class="a">method</span>=<span class="s">"POST"</span><span class="t">&gt;</span>
+
+  <span class="c">&lt;!-- Text input with label --&gt;</span>
+  <span class="t">&lt;label</span> <span class="a">for</span>=<span class="s">"fullname"</span><span class="t">&gt;</span>Full Name<span class="t">&lt;/label&gt;</span>
+  <span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"text"</span> <span class="a">id</span>=<span class="s">"fullname"</span> <span class="a">name</span>=<span class="s">"fullname"</span>
+         <span class="a">placeholder</span>=<span class="s">"Jenna Zawaski"</span> <span class="a">required</span><span class="t"> /&gt;</span>
+
+  <span class="c">&lt;!-- Email input --&gt;</span>
+  <span class="t">&lt;label</span> <span class="a">for</span>=<span class="s">"email"</span><span class="t">&gt;</span>Email<span class="t">&lt;/label&gt;</span>
+  <span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"email"</span> <span class="a">id</span>=<span class="s">"email"</span> <span class="a">name</span>=<span class="s">"email"</span> <span class="a">required</span><span class="t"> /&gt;</span>
+
+  <span class="c">&lt;!-- Textarea for multi-line --&gt;</span>
+  <span class="t">&lt;label</span> <span class="a">for</span>=<span class="s">"bio"</span><span class="t">&gt;</span>Tell us about yourself<span class="t">&lt;/label&gt;</span>
+  <span class="t">&lt;textarea</span> <span class="a">id</span>=<span class="s">"bio"</span> <span class="a">name</span>=<span class="s">"bio"</span> <span class="a">rows</span>=<span class="s">"4"</span>
+            <span class="a">placeholder</span>=<span class="s">"I love coding because..."</span><span class="t">&gt;&lt;/textarea&gt;</span>
+
+  <span class="c">&lt;!-- Dropdown select --&gt;</span>
+  <span class="t">&lt;label</span> <span class="a">for</span>=<span class="s">"track"</span><span class="t">&gt;</span>Choose your track<span class="t">&lt;/label&gt;</span>
+  <span class="t">&lt;select</span> <span class="a">id</span>=<span class="s">"track"</span> <span class="a">name</span>=<span class="s">"track"</span><span class="t">&gt;</span>
+    <span class="t">&lt;option</span> <span class="a">value</span>=<span class="s">""</span><span class="t">&gt;</span>Select one...<span class="t">&lt;/option&gt;</span>
+    <span class="t">&lt;option</span> <span class="a">value</span>=<span class="s">"html"</span><span class="t">&gt;</span>HTML &amp; CSS<span class="t">&lt;/option&gt;</span>
+    <span class="t">&lt;option</span> <span class="a">value</span>=<span class="s">"js"</span><span class="t">&gt;</span>JavaScript<span class="t">&lt;/option&gt;</span>
+    <span class="t">&lt;option</span> <span class="a">value</span>=<span class="s">"react"</span><span class="t">&gt;</span>React<span class="t">&lt;/option&gt;</span>
+  <span class="t">&lt;/select&gt;</span>
+
+  <span class="c">&lt;!-- Fieldset with radio buttons --&gt;</span>
+  <span class="t">&lt;fieldset&gt;</span>
+    <span class="t">&lt;legend&gt;</span>Experience Level<span class="t">&lt;/legend&gt;</span>
+    <span class="t">&lt;label&gt;</span>
+      <span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"radio"</span> <span class="a">name</span>=<span class="s">"level"</span> <span class="a">value</span>=<span class="s">"beginner"</span><span class="t"> /&gt;</span>
+      Beginner
+    <span class="t">&lt;/label&gt;</span>
+    <span class="t">&lt;label&gt;</span>
+      <span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"radio"</span> <span class="a">name</span>=<span class="s">"level"</span> <span class="a">value</span>=<span class="s">"intermediate"</span><span class="t"> /&gt;</span>
+      Intermediate
+    <span class="t">&lt;/label&gt;</span>
+    <span class="t">&lt;label&gt;</span>
+      <span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"radio"</span> <span class="a">name</span>=<span class="s">"level"</span> <span class="a">value</span>=<span class="s">"advanced"</span><span class="t"> /&gt;</span>
+      Advanced
+    <span class="t">&lt;/label&gt;</span>
+  <span class="t">&lt;/fieldset&gt;</span>
+
+  <span class="t">&lt;button</span> <span class="a">type</span>=<span class="s">"submit"</span><span class="t">&gt;</span>Join CodeHerWay<span class="t">&lt;/button&gt;</span>
+<span class="t">&lt;/form&gt;</span>
+    </div>
+  </div>
+
+  <div class="render-label">↳ Browser Output</div>
+  <div class="render-box">
+    <form onsubmit="return false;">
+      <label for="demo-name">Full Name</label>
+      <input type="text" id="demo-name" placeholder="Jenna Zawaski" />
+      <label for="demo-email">Email</label>
+      <input type="email" id="demo-email" placeholder="jenna@codeherway.com" />
+      <label for="demo-bio">Tell us about yourself</label>
+      <textarea id="demo-bio" rows="3" placeholder="I love coding because..."></textarea>
+      <label for="demo-track">Choose your track</label>
+      <select id="demo-track">
+        <option value="">Select one...</option>
+        <option value="html">HTML &amp; CSS</option>
+        <option value="js">JavaScript</option>
+        <option value="react">React</option>
+      </select>
+      <fieldset>
+        <legend>Experience Level</legend>
+        <label style="display:block;margin-bottom:6px;font-weight:400;"><input type="radio" name="demo-level" value="beginner" style="margin-right:8px;" />Beginner</label>
+        <label style="display:block;margin-bottom:6px;font-weight:400;"><input type="radio" name="demo-level" value="intermediate" style="margin-right:8px;" />Intermediate</label>
+        <label style="display:block;font-weight:400;"><input type="radio" name="demo-level" value="advanced" style="margin-right:8px;" />Advanced</label>
+      </fieldset>
+      <button type="button">Join CodeHerWay</button>
+    </form>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">💡 Why Labels Matter (Again)</div>
+    <p>We covered this in the accessibility post, but it's worth repeating: every <span class="il">&lt;input&gt;</span> needs a <span class="il">&lt;label&gt;</span>. The <span class="il">for</span> attribute on the label must match the <span class="il">id</span> on the input. This is how screen readers identify what each field is for — and it lets users click the label text to focus the input.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── INPUT TYPES ── -->
+  <h2>Input Types — The Full Toolkit</h2>
+
+  <p>The <span class="il">&lt;input&gt;</span> element is the most versatile tag in all of HTML. By changing the <span class="il">type</span> attribute, you completely change what it does. Here are the types you need to know:</p>
+
+  <div class="input-grid">
+    <div class="input-chip">
+      <div class="chip-icon">✏️</div>
+      <div class="chip-type">text</div>
+      <div class="chip-desc">Single-line text</div>
+    </div>
+    <div class="input-chip">
+      <div class="chip-icon">📧</div>
+      <div class="chip-type">email</div>
+      <div class="chip-desc">Validates email format</div>
+    </div>
+    <div class="input-chip">
+      <div class="chip-icon">🔒</div>
+      <div class="chip-type">password</div>
+      <div class="chip-desc">Masked characters</div>
+    </div>
+    <div class="input-chip">
+      <div class="chip-icon">🔢</div>
+      <div class="chip-type">number</div>
+      <div class="chip-desc">Numeric + arrows</div>
+    </div>
+    <div class="input-chip">
+      <div class="chip-icon">📅</div>
+      <div class="chip-type">date</div>
+      <div class="chip-desc">Date picker UI</div>
+    </div>
+    <div class="input-chip">
+      <div class="chip-icon">☑️</div>
+      <div class="chip-type">checkbox</div>
+      <div class="chip-desc">Toggle on/off</div>
+    </div>
+    <div class="input-chip">
+      <div class="chip-icon">🔘</div>
+      <div class="chip-type">radio</div>
+      <div class="chip-desc">Pick one of many</div>
+    </div>
+    <div class="input-chip">
+      <div class="chip-icon">📎</div>
+      <div class="chip-type">file</div>
+      <div class="chip-desc">Upload a file</div>
+    </div>
+  </div>
+
+  <p>Each type gives you <span class="key">built-in browser behavior for free</span>. The <span class="il">email</span> type validates the format automatically. The <span class="il">date</span> type shows a native date picker. The <span class="il">number</span> type adds increment/decrement arrows. You don't need JavaScript for any of this — the browser handles it.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML · Input Types in Action</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- Password — characters are masked --&gt;</span>
+<span class="t">&lt;label</span> <span class="a">for</span>=<span class="s">"pw"</span><span class="t">&gt;</span>Password<span class="t">&lt;/label&gt;</span>
+<span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"password"</span> <span class="a">id</span>=<span class="s">"pw"</span> <span class="a">name</span>=<span class="s">"pw"</span> <span class="a">required</span><span class="t"> /&gt;</span>
+
+<span class="c">&lt;!-- Number — shows increment arrows --&gt;</span>
+<span class="t">&lt;label</span> <span class="a">for</span>=<span class="s">"age"</span><span class="t">&gt;</span>Age<span class="t">&lt;/label&gt;</span>
+<span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"number"</span> <span class="a">id</span>=<span class="s">"age"</span> <span class="a">name</span>=<span class="s">"age"</span> <span class="a">min</span>=<span class="s">"13"</span> <span class="a">max</span>=<span class="s">"120"</span><span class="t"> /&gt;</span>
+
+<span class="c">&lt;!-- Date — native date picker --&gt;</span>
+<span class="t">&lt;label</span> <span class="a">for</span>=<span class="s">"start"</span><span class="t">&gt;</span>Start Date<span class="t">&lt;/label&gt;</span>
+<span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"date"</span> <span class="a">id</span>=<span class="s">"start"</span> <span class="a">name</span>=<span class="s">"start"</span><span class="t"> /&gt;</span>
+
+<span class="c">&lt;!-- Checkbox — independent toggles --&gt;</span>
+<span class="t">&lt;label&gt;</span>
+  <span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"checkbox"</span> <span class="a">name</span>=<span class="s">"terms"</span> <span class="a">required</span><span class="t"> /&gt;</span>
+  I agree to the terms
+<span class="t">&lt;/label&gt;</span>
+
+<span class="c">&lt;!-- File upload --&gt;</span>
+<span class="t">&lt;label</span> <span class="a">for</span>=<span class="s">"resume"</span><span class="t">&gt;</span>Upload Resume<span class="t">&lt;/label&gt;</span>
+<span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"file"</span> <span class="a">id</span>=<span class="s">"resume"</span> <span class="a">name</span>=<span class="s">"resume"</span>
+       <span class="a">accept</span>=<span class="s">".pdf,.doc,.docx"</span><span class="t"> /&gt;</span>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">ℹ️ Checkbox vs Radio</div>
+    <p><strong>Checkboxes</strong> are independent — the user can check as many as they want. Use them for things like "select your interests" or "I agree to the terms."</p>
+    <p><strong>Radio buttons</strong> are exclusive — only one can be selected at a time within the same <span class="il">name</span> group. Use them for "pick one" choices like experience level or payment method.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── FORM ATTRIBUTES ── -->
+  <h2>Form Attributes — The Controls</h2>
+
+  <p>Attributes are how you configure form behavior. These six are the ones you'll use constantly:</p>
+
+  <div class="attr-grid">
+    <div class="attr-name">required</div>
+    <div class="attr-desc">Prevents submission if the field is empty. The browser shows a built-in error message — no JavaScript needed.</div>
+
+    <div class="attr-name">placeholder</div>
+    <div class="attr-desc">Shows hint text inside the input. Disappears when the user types. <strong>Never</strong> use as a replacement for a label.</div>
+
+    <div class="attr-name">name</div>
+    <div class="attr-desc">The key that gets sent with the form data. Without a <code>name</code>, the input's value doesn't get submitted at all.</div>
+
+    <div class="attr-name">value</div>
+    <div class="attr-desc">Sets the default or current value of the input. For radio/checkbox, this is the data sent when that option is selected.</div>
+
+    <div class="attr-name">action</div>
+    <div class="attr-desc">Goes on the <code>&lt;form&gt;</code> tag. The URL where the form data gets sent when submitted.</div>
+
+    <div class="attr-name">method</div>
+    <div class="attr-desc">Goes on the <code>&lt;form&gt;</code> tag. Either <code>GET</code> (data in URL — search queries) or <code>POST</code> (data in body — login, signup).</div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-title">⚠️ The "name" Trap</div>
+    <p>This catches beginners <em>constantly</em>. You build a beautiful form, hit submit, and the data doesn't arrive on the server. Why? Because you forgot the <span class="il">name</span> attribute on your inputs. Without <span class="il">name</span>, the browser doesn't include that field in the submission. It's invisible.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── FIELDSET + LEGEND ── -->
+  <h2>Fieldset + Legend — Grouping Related Inputs</h2>
+
+  <p><span class="il">&lt;fieldset&gt;</span> and <span class="il">&lt;legend&gt;</span> are the unsung heroes of form structure. They visually and semantically group related inputs together — which is especially important for accessibility. Screen readers announce the legend as context for every field inside the group.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-body">
+<span class="t">&lt;form</span> <span class="a">action</span>=<span class="s">"/apply"</span> <span class="a">method</span>=<span class="s">"POST"</span><span class="t">&gt;</span>
+
+  <span class="t">&lt;fieldset&gt;</span>
+    <span class="t">&lt;legend&gt;</span>Personal Info<span class="t">&lt;/legend&gt;</span>
+    <span class="t">&lt;label</span> <span class="a">for</span>=<span class="s">"fname"</span><span class="t">&gt;</span>First Name<span class="t">&lt;/label&gt;</span>
+    <span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"text"</span> <span class="a">id</span>=<span class="s">"fname"</span> <span class="a">name</span>=<span class="s">"fname"</span> <span class="a">required</span><span class="t"> /&gt;</span>
+    <span class="t">&lt;label</span> <span class="a">for</span>=<span class="s">"lname"</span><span class="t">&gt;</span>Last Name<span class="t">&lt;/label&gt;</span>
+    <span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"text"</span> <span class="a">id</span>=<span class="s">"lname"</span> <span class="a">name</span>=<span class="s">"lname"</span> <span class="a">required</span><span class="t"> /&gt;</span>
+  <span class="t">&lt;/fieldset&gt;</span>
+
+  <span class="t">&lt;fieldset&gt;</span>
+    <span class="t">&lt;legend&gt;</span>Which courses interest you?<span class="t">&lt;/legend&gt;</span>
+    <span class="t">&lt;label&gt;</span>
+      <span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"checkbox"</span> <span class="a">name</span>=<span class="s">"courses"</span> <span class="a">value</span>=<span class="s">"html"</span><span class="t"> /&gt;</span>
+      HTML &amp; CSS
+    <span class="t">&lt;/label&gt;</span>
+    <span class="t">&lt;label&gt;</span>
+      <span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"checkbox"</span> <span class="a">name</span>=<span class="s">"courses"</span> <span class="a">value</span>=<span class="s">"js"</span><span class="t"> /&gt;</span>
+      JavaScript
+    <span class="t">&lt;/label&gt;</span>
+    <span class="t">&lt;label&gt;</span>
+      <span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"checkbox"</span> <span class="a">name</span>=<span class="s">"courses"</span> <span class="a">value</span>=<span class="s">"react"</span><span class="t"> /&gt;</span>
+      React
+    <span class="t">&lt;/label&gt;</span>
+  <span class="t">&lt;/fieldset&gt;</span>
+
+  <span class="t">&lt;button</span> <span class="a">type</span>=<span class="s">"submit"</span><span class="t">&gt;</span>Apply Now<span class="t">&lt;/button&gt;</span>
+<span class="t">&lt;/form&gt;</span>
+    </div>
+  </div>
+
+  <div class="render-label">↳ Browser Output</div>
+  <div class="render-box">
+    <form onsubmit="return false;">
+      <fieldset>
+        <legend>Personal Info</legend>
+        <label for="demo-fn">First Name</label>
+        <input type="text" id="demo-fn" placeholder="Jenna" />
+        <label for="demo-ln">Last Name</label>
+        <input type="text" id="demo-ln" placeholder="Zawaski" />
+      </fieldset>
+      <fieldset>
+        <legend>Which courses interest you?</legend>
+        <label style="display:block;margin-bottom:6px;font-weight:400;"><input type="checkbox" name="demo-courses" value="html" style="margin-right:8px;" />HTML &amp; CSS</label>
+        <label style="display:block;margin-bottom:6px;font-weight:400;"><input type="checkbox" name="demo-courses" value="js" style="margin-right:8px;" />JavaScript</label>
+        <label style="display:block;font-weight:400;"><input type="checkbox" name="demo-courses" value="react" style="margin-right:8px;" />React</label>
+      </fieldset>
+      <button type="button">Apply Now</button>
+    </form>
+  </div>
+
+  <div class="callout mindset">
+    <div class="callout-title">🧠 Think of Fieldset Like a Section</div>
+    <p>Just like you use <span class="il">&lt;section&gt;</span> to group related page content, use <span class="il">&lt;fieldset&gt;</span> to group related form fields. The <span class="il">&lt;legend&gt;</span> is like the section heading — it tells users (and screen readers) what the group is about.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── GET vs POST ── -->
+  <h2>GET vs POST — When to Use Which</h2>
+
+  <p>The <span class="il">method</span> attribute on your form determines <em>how</em> data gets sent:</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">Comparison</div>
+    </div>
+    <div class="code-body">
+<span class="c">// GET — data goes in the URL</span>
+<span class="c">// example.com/search?q=html+forms</span>
+<span class="c">// ✅ Search forms, filters, bookmarkable results</span>
+<span class="c">// ❌ Never for passwords or sensitive data</span>
+
+<span class="t">&lt;form</span> <span class="a">action</span>=<span class="s">"/search"</span> <span class="a">method</span>=<span class="s">"GET"</span><span class="t">&gt;</span>
+  <span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"search"</span> <span class="a">name</span>=<span class="s">"q"</span><span class="t"> /&gt;</span>
+<span class="t">&lt;/form&gt;</span>
+
+<span class="c">// POST — data goes in the request body</span>
+<span class="c">// Not visible in URL, not cached, not bookmarkable</span>
+<span class="c">// ✅ Login, signup, contact forms, file uploads</span>
+
+<span class="t">&lt;form</span> <span class="a">action</span>=<span class="s">"/login"</span> <span class="a">method</span>=<span class="s">"POST"</span><span class="t">&gt;</span>
+  <span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"email"</span> <span class="a">name</span>=<span class="s">"email"</span><span class="t"> /&gt;</span>
+  <span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"password"</span> <span class="a">name</span>=<span class="s">"password"</span><span class="t"> /&gt;</span>
+<span class="t">&lt;/form&gt;</span>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">💡 Quick Rule</div>
+    <p>If the user is <strong>reading or searching</strong> → <span class="il">GET</span>. If the user is <strong>creating, updating, or submitting private data</strong> → <span class="il">POST</span>.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── DEVFESSION ── -->
+  <div class="devfession">
+    <div class="devfession-header">// dev_fession</div>
+    <div class="devfession-body">
+      <p>I spent an entire afternoon debugging why my contact form wasn't sending data. I checked the JavaScript. I checked the backend. I rewrote the fetch call three times.</p>
+      <p>The problem? I forgot <span class="il">name</span> attributes on every single input. The form was submitting an empty object. Every field was there visually, but to the server, it was a ghost form. Nothing was coming through.</p>
+      <p>Now the first thing I check on any form bug: <em>"Do all my inputs have names?"</em> 🫠</p>
+    </div>
+    <div class="devfession-footer">
+      <span>@itcodegirl</span>
+      <span class="tagline">CodeHerWay</span>
+    </div>
+  </div>
+
+  <!-- ── MINI BUILD ── -->
+  <div class="mini-build">
+    <div class="mini-build-header">
+      <h3>🔨 Mini Build: CodeHerWay Signup Form</h3>
+    </div>
+    <div class="mini-build-body">
+      <p>Build a complete signup form for CodeHerWay with these requirements:</p>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">A <span class="sky">&lt;fieldset&gt;</span> for "Account Info" with text inputs for name and email, plus a password input. All three fields should be <span class="sky">required</span>.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">A <span class="sky">&lt;fieldset&gt;</span> for "Your Background" with a <span class="sky">&lt;select&gt;</span> dropdown for experience level (Beginner, Intermediate, Advanced) and a <span class="sky">&lt;textarea&gt;</span> asking "What do you want to build?"</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">A <span class="sky">&lt;fieldset&gt;</span> with checkboxes for course interest: HTML &amp; CSS, JavaScript, React, and Python.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">A checkbox for "I agree to the terms" with the <span class="sky">required</span> attribute.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-text">A submit <span class="sky">&lt;button&gt;</span>. Make sure every input has a <span class="sky">label</span>, a <span class="sky">name</span>, and an <span class="sky">id</span>. Set the form method to <span class="sky">POST</span>.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── WRAP UP ── -->
+  <h2>The Bottom Line</h2>
+
+  <p>Forms are how users communicate with your site. Every login, every signup, every search, every checkout — it all runs through HTML forms. Understanding form elements, input types, and attributes at this level means you'll never be confused when JavaScript and backend code start interacting with them.</p>
+
+  <p>Build forms with proper labels. Use the right input types — let the browser work for you. Always include <span class="il">name</span> attributes. Group related fields with <span class="il">&lt;fieldset&gt;</span>. And use <span class="il">required</span> before reaching for JavaScript validation.</p>
+
+  <p>This isn't optional knowledge. This is the foundation everything else gets built on.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">⬆️ Next Up</div>
+    <p><strong>Post 12: HTML Tables</strong> — Tables get a bad reputation because people used to use them for layout. But for actual tabular data? They're the right tool for the job. Next up, we're building tables the right way.</p>
+  </div>
+
+
+  <nav class="post-nav">
+    <a href="10-accessibility-basics.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Accessibility (A11Y Basics)</span></a>
+    <a href="12-html-tables.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">HTML Tables</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

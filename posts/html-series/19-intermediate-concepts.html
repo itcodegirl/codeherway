@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intermediate HTML Concepts — Beyond the Basics | CodeHerWay</title>
+<meta name="description" content="Level up your HTML — entities, data attributes, custom attributes, microdata, the template element, and DOM structure awareness. The bridge between beginner and intermediate.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.tag.inter{border-color: rgba(180,74,255,0.3); color: var(--purple);}
+.entity-grid{display: grid; grid-template-columns: auto auto 1fr; gap: 4px 20px; margin: 32px 0; background: var(--bg-code); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 24px 28px; align-items: center;}
+.ent-code{font-family: 'Fira Code', monospace; font-size: 14px; color: var(--pink);}
+.ent-render{font-size: 18px; text-align: center; min-width: 40px;}
+.ent-desc{font-size: 14px; color: var(--text-secondary);}
+.ent-header{font-family: 'Fira Code', monospace; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.06); margin-bottom: 4px;}
+.concept-grid{display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 32px 0;}
+.concept-card{background: var(--bg-code); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 20px; text-align: center; transition: border-color 0.3s, transform 0.3s;}
+.concept-card:hover{transform: translateY(-2px);}
+.concept-card:nth-child(1){border-color: rgba(255,105,180,0.2);}
+.concept-card:nth-child(1):hover{border-color: var(--pink);}
+.concept-card:nth-child(2){border-color: rgba(105,210,231,0.2);}
+.concept-card:nth-child(2):hover{border-color: var(--sky-blue);}
+.concept-card:nth-child(3){border-color: rgba(125,255,179,0.2);}
+.concept-card:nth-child(3):hover{border-color: var(--mint-green);}
+.concept-card:nth-child(4){border-color: rgba(255,211,105,0.2);}
+.concept-card:nth-child(4):hover{border-color: var(--gold);}
+.concept-card:nth-child(5){border-color: rgba(180,74,255,0.2);}
+.concept-card:nth-child(5):hover{border-color: var(--purple);}
+.concept-card:nth-child(6){border-color: rgba(255,107,107,0.2);}
+.concept-card:nth-child(6):hover{border-color: var(--coral);}
+.cc-name{font-family: 'Fira Code', monospace; font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px;}
+.cc-desc{font-size: 12px; color: var(--text-muted); line-height: 1.5;}
+@media(max-width:640px){.concept-grid { grid-template-columns: repeat(2, 1fr); } .entity-grid { grid-template-columns: auto auto 1fr; font-size: 13px; }}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<!-- ═══════ HERO ═══════ -->
+<section class="hero">
+  <div class="post-label"><span class="series-tag">HTML Fundamentals</span> Post 19 of 20</div>
+  <div class="post-number">Post 19 · HTML Fundamentals</div>
+  <h1>Intermediate Concepts:<br><span class="gradient-text">Beyond the Basics</span></h1>
+  <p class="hero-sub">You've mastered the fundamentals. Now it's time for the features that make experienced developers faster and more precise — entities, data attributes, templates, and DOM awareness.</p>
+  <div class="tag-row">
+    <span class="tag html">#HTML</span>
+    <span class="tag inter">#Intermediate</span>
+    <span class="tag inter">#LevelUp</span>
+    <span class="tag">11 min read</span>
+  </div>
+</section>
+
+<!-- ═══════ ARTICLE ═══════ -->
+<main class="article">
+
+  <!-- ── INTRO ── -->
+  <p>Everything up to this point has been the foundation — the non-negotiable stuff every HTML developer must know. Now we're crossing into the territory where you start to build <em>smarter</em>, not just correctly. These are the features that power real-world applications, component libraries, and dynamic websites.</p>
+
+  <div class="concept-grid">
+    <div class="concept-card">
+      <div class="cc-icon">🔤</div>
+      <div class="cc-name">Entities</div>
+      <div class="cc-desc">Special characters the browser can't read literally</div>
+    </div>
+    <div class="concept-card">
+      <div class="cc-icon">📦</div>
+      <div class="cc-name">Data Attributes</div>
+      <div class="cc-desc">Custom data stored directly on HTML elements</div>
+    </div>
+    <div class="concept-card">
+      <div class="cc-icon">🏷️</div>
+      <div class="cc-name">Custom Attributes</div>
+      <div class="cc-desc">Extending HTML with your own metadata</div>
+    </div>
+    <div class="concept-card">
+      <div class="cc-icon">🔍</div>
+      <div class="cc-name">Microdata</div>
+      <div class="cc-desc">Structured data search engines understand</div>
+    </div>
+    <div class="concept-card">
+      <div class="cc-icon">📋</div>
+      <div class="cc-name">Templates</div>
+      <div class="cc-desc">Reusable HTML that doesn't render until called</div>
+    </div>
+    <div class="concept-card">
+      <div class="cc-icon">🌳</div>
+      <div class="cc-name">DOM Awareness</div>
+      <div class="cc-desc">Understanding how browsers see your HTML</div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── ENTITIES ── -->
+  <h2>1. HTML Entities — Special Characters</h2>
+
+  <p>Some characters have special meaning in HTML. The <span class="il">&lt;</span> symbol starts a tag. The <span class="il">&amp;</span> symbol starts an entity. If you want to <em>display</em> these characters as text instead of having the browser interpret them as code, you need <span class="key">HTML entities</span>.</p>
+
+  <div class="entity-grid">
+    <div class="ent-header">Code</div>
+    <div class="ent-header">Renders</div>
+    <div class="ent-header">Use Case</div>
+
+    <div class="ent-code">&amp;lt;</div>
+    <div class="ent-render">&lt;</div>
+    <div class="ent-desc">Less-than sign — display a tag as text</div>
+
+    <div class="ent-code">&amp;gt;</div>
+    <div class="ent-render">&gt;</div>
+    <div class="ent-desc">Greater-than sign</div>
+
+    <div class="ent-code">&amp;amp;</div>
+    <div class="ent-render">&amp;</div>
+    <div class="ent-desc">Ampersand — used in URLs and text</div>
+
+    <div class="ent-code">&amp;nbsp;</div>
+    <div class="ent-render">&nbsp;&middot;</div>
+    <div class="ent-desc">Non-breaking space — prevents line break</div>
+
+    <div class="ent-code">&amp;copy;</div>
+    <div class="ent-render">&copy;</div>
+    <div class="ent-desc">Copyright symbol</div>
+
+    <div class="ent-code">&amp;mdash;</div>
+    <div class="ent-render">&mdash;</div>
+    <div class="ent-desc">Em dash — like this one</div>
+
+    <div class="ent-code">&amp;quot;</div>
+    <div class="ent-render">&quot;</div>
+    <div class="ent-desc">Double quote — safe inside attribute values</div>
+
+    <div class="ent-code">&amp;hearts;</div>
+    <div class="ent-render">&hearts;</div>
+    <div class="ent-desc">Heart symbol (decorative)</div>
+  </div>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML · Entities in Practice</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- Displaying HTML code as text --&gt;</span>
+<span class="t">&lt;p&gt;</span>Use <span class="p">&amp;lt;</span>strong<span class="p">&amp;gt;</span> to make text bold.<span class="t">&lt;/p&gt;</span>
+<span class="c">&lt;!-- Renders: Use &lt;strong&gt; to make text bold. --&gt;</span>
+
+<span class="c">&lt;!-- Copyright footer --&gt;</span>
+<span class="t">&lt;footer&gt;</span><span class="p">&amp;copy;</span> 2026 CodeHerWay <span class="p">&amp;mdash;</span> All rights reserved.<span class="t">&lt;/footer&gt;</span>
+
+<span class="c">&lt;!-- Non-breaking space to prevent awkward line breaks --&gt;</span>
+<span class="t">&lt;p&gt;</span>Price: $9<span class="p">&amp;nbsp;</span>/month<span class="t">&lt;/p&gt;</span>
+<span class="c">&lt;!-- "$9" and "/month" will never split across lines --&gt;</span>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">💡 When You Need Entities</div>
+    <p>You <strong>must</strong> use entities for <span class="il">&lt;</span>, <span class="il">&gt;</span>, and <span class="il">&amp;</span> when they appear in text content — otherwise the browser interprets them as HTML. For other symbols like &copy; and &mdash;, you can also type the actual Unicode character directly if your charset is UTF-8 (which it should be). But entities make your code more explicit and portable.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── DATA ATTRIBUTES ── -->
+  <h2>2. Data Attributes — Your Custom Data Layer</h2>
+
+  <p>This is where HTML starts talking to JavaScript. <span class="key">Data attributes</span> let you store custom information directly on any HTML element — information that JavaScript can read, filter, and act on. They all follow the same pattern: <span class="il">data-*</span>.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML · Data Attributes</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- Storing metadata on elements --&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"course-card"</span>
+     <span class="a">data-course-id</span>=<span class="s">"html-101"</span>
+     <span class="a">data-difficulty</span>=<span class="s">"beginner"</span>
+     <span class="a">data-price</span>=<span class="s">"9"</span><span class="t">&gt;</span>
+  <span class="t">&lt;h3&gt;</span>HTML Fundamentals<span class="t">&lt;/h3&gt;</span>
+  <span class="t">&lt;p&gt;</span>Start your coding journey here.<span class="t">&lt;/p&gt;</span>
+<span class="t">&lt;/div&gt;</span>
+
+<span class="c">&lt;!-- Button that knows what it controls --&gt;</span>
+<span class="t">&lt;button</span> <span class="a">data-action</span>=<span class="s">"toggle-menu"</span>
+        <span class="a">data-target</span>=<span class="s">"#main-nav"</span><span class="t">&gt;</span>
+  Menu
+<span class="t">&lt;/button&gt;</span>
+
+<span class="c">&lt;!-- Product with sortable data --&gt;</span>
+<span class="t">&lt;li</span> <span class="a">data-category</span>=<span class="s">"javascript"</span>
+    <span class="a">data-level</span>=<span class="s">"intermediate"</span>
+    <span class="a">data-release</span>=<span class="s">"2026-03"</span><span class="t">&gt;</span>
+  JavaScript Deep Dive
+<span class="t">&lt;/li&gt;</span>
+    </div>
+  </div>
+
+  <p>Data attributes are invisible to users but accessible to JavaScript via <span class="il">element.dataset</span>. When you build filters, sort features, tabs, accordions, or any interactive component — data attributes are how the HTML tells JavaScript what to do.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">JavaScript · Reading Data Attributes</div>
+    </div>
+    <div class="code-body">
+<span class="c">// Access via dataset (camelCase conversion)</span>
+<span class="p">const card = document.querySelector('.course-card');</span>
+
+<span class="p">card.dataset.courseId</span>     <span class="c">// "html-101"</span>
+<span class="p">card.dataset.difficulty</span>   <span class="c">// "beginner"</span>
+<span class="p">card.dataset.price</span>        <span class="c">// "9"</span>
+
+<span class="c">// Note: data-course-id becomes dataset.courseId</span>
+<span class="c">// Hyphens convert to camelCase automatically</span>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">ℹ️ Rules for Data Attributes</div>
+    <p>The name must start with <span class="il">data-</span> followed by at least one character. Use only lowercase letters, numbers, hyphens, dots, colons, and underscores. The value is always a string — if you need a number, you'll parse it in JavaScript. And you can have as many data attributes on a single element as you need.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── MICRODATA ── -->
+  <h2>3. Microdata — Talking to Search Engines</h2>
+
+  <p>Microdata is structured data you add to your HTML to help search engines understand what your content <em>means</em> — not just what it says. When Google shows star ratings, recipe times, event dates, or FAQ dropdowns in search results, that's microdata (or its siblings, JSON-LD and RDFa) at work.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML · Microdata Example</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- A course with structured data --&gt;</span>
+<span class="t">&lt;div</span> <span class="a">itemscope</span> <span class="a">itemtype</span>=<span class="s">"https://schema.org/Course"</span><span class="t">&gt;</span>
+  <span class="t">&lt;h2</span> <span class="a">itemprop</span>=<span class="s">"name"</span><span class="t">&gt;</span>HTML Fundamentals<span class="t">&lt;/h2&gt;</span>
+  <span class="t">&lt;p</span> <span class="a">itemprop</span>=<span class="s">"description"</span><span class="t">&gt;</span>
+    Learn HTML from scratch — the complete beginner course.
+  <span class="t">&lt;/p&gt;</span>
+  <span class="t">&lt;span</span> <span class="a">itemprop</span>=<span class="s">"provider"</span><span class="t">&gt;</span>CodeHerWay<span class="t">&lt;/span&gt;</span>
+<span class="t">&lt;/div&gt;</span>
+    </div>
+  </div>
+
+  <p>The <span class="il">itemscope</span> attribute says "this element contains structured data." The <span class="il">itemtype</span> points to a vocabulary (schema.org) that defines what kind of thing it is. And <span class="il">itemprop</span> labels each piece of data within it.</p>
+
+  <div class="callout mindset">
+    <div class="callout-title">🧠 You Don't Need to Master This Yet</div>
+    <p>Microdata is an introduction — you should know it exists and what it does. In practice, most developers use <strong>JSON-LD</strong> (a script-based format) instead of inline microdata because it's easier to maintain. But understanding the concept — that you can tell search engines "this is a course, this is its name, this is the provider" — is the important part.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── TEMPLATE ── -->
+  <h2>4. The &lt;template&gt; Element — Hidden Until Needed</h2>
+
+  <p>The <span class="il">&lt;template&gt;</span> element holds HTML that the browser <span class="key">does not render</span> until JavaScript explicitly clones and inserts it. It's perfect for components that need to be created dynamically — like cards that get added when data loads, or rows that appear when users click "Add Item."</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML + JS · Template Element</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- HTML: Define the template (invisible on page) --&gt;</span>
+<span class="t">&lt;template</span> <span class="a">id</span>=<span class="s">"course-template"</span><span class="t">&gt;</span>
+  <span class="t">&lt;article</span> <span class="a">class</span>=<span class="s">"course-card"</span><span class="t">&gt;</span>
+    <span class="t">&lt;h3</span> <span class="a">class</span>=<span class="s">"course-title"</span><span class="t">&gt;&lt;/h3&gt;</span>
+    <span class="t">&lt;p</span> <span class="a">class</span>=<span class="s">"course-desc"</span><span class="t">&gt;&lt;/p&gt;</span>
+    <span class="t">&lt;span</span> <span class="a">class</span>=<span class="s">"course-level"</span><span class="t">&gt;&lt;/span&gt;</span>
+  <span class="t">&lt;/article&gt;</span>
+<span class="t">&lt;/template&gt;</span>
+
+<span class="c">// JavaScript: Clone and use it</span>
+<span class="p">const template = document.getElementById('course-template');</span>
+<span class="p">const clone = template.content.cloneNode(true);</span>
+
+<span class="p">clone.querySelector('.course-title').textContent = 'CSS Mastery';</span>
+<span class="p">clone.querySelector('.course-desc').textContent = 'Flexbox, Grid, and beyond.';</span>
+<span class="p">clone.querySelector('.course-level').textContent = 'Intermediate';</span>
+
+<span class="p">document.querySelector('.course-list').appendChild(clone);</span>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">💡 Why Not Just Use innerHTML?</div>
+    <p>You <em>could</em> build HTML strings in JavaScript and inject them with <span class="il">innerHTML</span>. But templates are cleaner, safer (no XSS injection risk), and keep your HTML structure in the HTML file where it belongs — not buried inside JavaScript strings. When you move to frameworks like React, this same concept becomes "components."</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── DOM AWARENESS ── -->
+  <h2>5. DOM Structure Awareness</h2>
+
+  <p>You've seen the DOM tree in DevTools. Now it's time to understand it conceptually — because this understanding is the <span class="key">bridge to JavaScript</span>.</p>
+
+  <p>The DOM (Document Object Model) is the browser's live representation of your HTML. Every element becomes a <span class="key">node</span> in a tree structure. Nodes have parent-child relationships, sibling relationships, and they can be selected, modified, created, and removed by JavaScript.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">DOM Relationships</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- This HTML... --&gt;</span>
+<span class="t">&lt;main&gt;</span>                   <span class="c">&lt;!-- parent --&gt;</span>
+  <span class="t">&lt;h1&gt;</span>Title<span class="t">&lt;/h1&gt;</span>          <span class="c">&lt;!-- child, sibling of p --&gt;</span>
+  <span class="t">&lt;p&gt;</span>Paragraph<span class="t">&lt;/p&gt;</span>      <span class="c">&lt;!-- child, sibling of h1 --&gt;</span>
+<span class="t">&lt;/main&gt;</span>
+
+<span class="c">// ...creates this DOM tree:</span>
+<span class="c">//</span>
+<span class="c">//   main (parent)</span>
+<span class="c">//   ├── h1 (firstChild)</span>
+<span class="c">//   │   └── "Title" (text node)</span>
+<span class="c">//   └── p (lastChild)</span>
+<span class="c">//       └── "Paragraph" (text node)</span>
+<span class="c">//</span>
+<span class="c">// main.children → [h1, p]</span>
+<span class="c">// h1.parentElement → main</span>
+<span class="c">// h1.nextElementSibling → p</span>
+<span class="c">// p.previousElementSibling → h1</span>
+    </div>
+  </div>
+
+  <p>When you write <span class="il">document.querySelector('.card')</span> in JavaScript, you're searching this tree. When you call <span class="il">element.appendChild()</span>, you're adding a new node. Every JavaScript framework — React, Vue, Angular — ultimately manipulates this same DOM tree. Understanding its structure now means JavaScript will make sense immediately when you get there.</p>
+
+  <div class="callout mindset">
+    <div class="callout-title">🧠 Think in Nodes</div>
+    <p>Start looking at your HTML not as text, but as a tree. Every element is a node with a parent, potential children, and potential siblings. This mental model is the foundation for CSS selectors, JavaScript DOM manipulation, and framework component trees. The HTML you write is the <em>blueprint</em> — the DOM is the <em>building</em> the browser constructs from it.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── DEVFESSION ── -->
+  <div class="devfession">
+    <div class="devfession-header">// dev_fession</div>
+    <div class="devfession-body">
+      <p>I tried to display <span class="il">&lt;h1&gt;</span> as text on my blog post about HTML tags. Instead of using <span class="il">&amp;lt;h1&amp;gt;</span>, I wrote the actual <span class="il">&lt;h1&gt;</span> tag directly in my paragraph. The browser obviously interpreted it as a real heading — so my blog post had about seventeen h1 tags and my "code example" was rendering as a giant headline in the middle of my paragraph.</p>
+      <p>Took me longer than I'd like to admit to figure out I needed entities. Now whenever I'm writing about HTML <em>inside</em> HTML, entities are the first thing I reach for. 🤦‍♀️</p>
+    </div>
+    <div class="devfession-footer">
+      <span>@itcodegirl</span>
+      <span class="tagline">CodeHerWay</span>
+    </div>
+  </div>
+
+  <!-- ── MINI BUILD ── -->
+  <div class="mini-build">
+    <div class="mini-build-header">
+      <h3>🔨 Mini Build: Interactive Course Catalog</h3>
+    </div>
+    <div class="mini-build-body">
+      <p>Build an HTML-only course catalog that's ready for JavaScript to bring it to life:</p>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">Create four course cards. Each card should have <span class="sky">data-category</span> (html, css, javascript, react), <span class="sky">data-level</span> (beginner, intermediate, advanced), and <span class="sky">data-price</span> attributes.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">Add a <span class="sky">&lt;template&gt;</span> element with a "course card" structure that could be cloned to add new courses dynamically.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">Use HTML entities to display code examples within the card descriptions — e.g., "Learn <span class="sky">&amp;lt;div&amp;gt;</span> and <span class="sky">&amp;lt;span&amp;gt;</span> elements."</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">Add filter buttons above the catalog with <span class="sky">data-filter</span> attributes matching the categories. These won't work without JavaScript, but the HTML hooks are in place.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-text">Include a copyright footer using the <span class="sky">&amp;copy;</span> entity, an <span class="sky">&amp;mdash;</span> em dash, and a <span class="sky">&amp;nbsp;</span> non-breaking space between "CodeHerWay" and the year.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── WRAP UP ── -->
+  <h2>The Bottom Line</h2>
+
+  <p>These intermediate concepts are the bridge between "I can write HTML" and "I can build dynamic applications." Entities let you display special characters safely. Data attributes store custom information on elements for JavaScript to use. Templates hold reusable HTML that renders on demand. And DOM awareness gives you the mental model to understand how browsers — and JavaScript — actually work with your code.</p>
+
+  <p>You're not just writing markup anymore. You're designing a data structure that JavaScript, CSS, and search engines can all interact with. That's intermediate thinking.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">⬆️ Next Up</div>
+    <p><strong>Post 20: How HTML Connects to JavaScript</strong> — The grand finale. IDs and classes as hooks, forms interacting with JS, DOM manipulation, and event listeners. This is where your HTML knowledge becomes the foundation for everything interactive.</p>
+  </div>
+
+
+  <nav class="post-nav">
+    <a href="18-validation-best-practices.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Validation and Best Practices</span></a>
+    <a href="20-html-js-connection.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">HTML Meets JavaScript</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

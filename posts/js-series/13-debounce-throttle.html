@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Debounce vs Throttle: Build Both From Scratch + Real-World Uses | CodeHerWay</title>
+<meta name="description" content="Control how often a function fires. Debounce for search inputs, throttle for scroll events. Build both from scratch. CodeHerWay.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.compare-debounce{border:1px solid rgba(0,229,255,.2);border-top:3px solid var(--accent);}
+.compare-throttle{border:1px solid rgba(180,74,255,.2);border-top:3px solid var(--purple);}
+.compare-debounce .compare-header{color:var(--accent);}
+.compare-throttle .compare-header{color:var(--purple);}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Async</span> Post 07 of 10</div>
+  <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+  <div class="series-line"><span class="series-label">⚡ JavaScript, But Make It Async</span><span class="post-number">Post 07 of 10</span></div>
+  <h1 class="post-title">JavaScript Debounce vs Throttle</h1>
+  <p class="post-subtitle">Two tools that control how often a function fires — and the difference between them is the difference between a smooth app and a crushed server.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 11 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Intermediate</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+<main>
+  <div class="back-ref"><span class="br-arrow">←</span> Builds on <strong>JS Async — Post 12</strong>: State Management Without a Framework</div>
+
+  <div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">The Problem: Too Many Function Calls</h2><div class="section-line"></div></div>
+  <p>Some events fire constantly. A user typing fires <span class="il">input</span> on every keystroke. A user scrolling fires <span class="il">scroll</span> tens of times per second. A window resize fires <span class="il">resize</span> hundreds of times while dragging. If you're making fetch calls, updating the DOM, or doing any expensive work in those handlers — you have a performance problem.</p>
+  <p>Debounce and throttle are the two standard solutions. They both limit how often a function runs, but they do it in fundamentally different ways — and choosing the wrong one makes your UI feel broken.</p>
+
+  <div class="section-header"><span class="section-icon">⚖️</span><h2 class="section-title">Debounce vs Throttle — The Difference</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>The difference between debounce and throttle trips people up. Here's the clearest mental model: debounce says 'wait until you stop doing that, then fire once.' Throttle says 'you can fire, but not more often than once every X milliseconds.' Search boxes use debounce (wait until typing stops). Scroll progress bars use throttle (update every 100ms, not every frame).</p>
+  </div>
+
+</div>
+  <div class="compare-grid">
+    <div class="compare-card compare-debounce">
+      <div class="compare-header">⏳ Debounce</div>
+      <div class="compare-body"><strong style="color:var(--text-primary)">Wait until they stop.</strong> Delays execution until the event hasn't fired for N milliseconds. Perfect for search inputs — you want to search after the user finishes typing, not on every keystroke.</div>
+    </div>
+    <div class="compare-card compare-throttle">
+      <div class="compare-header">⚡ Throttle</div>
+      <div class="compare-body"><strong style="color:var(--text-primary)">Limit to once per N ms.</strong> Guarantees the function runs at most once per interval, no matter how many events fire. Perfect for scroll — you want regular updates, just not 60 per second.</div>
+    </div>
+  </div>
+  <div class="callout callout-accent">
+    <div class="callout-title">⚡ The One-Line Memory Aid</div>
+    <p><strong>Debounce:</strong> "Call me when you're done." — <strong>Throttle:</strong> "Call me, but not more than once a second." If you can only remember one rule: search inputs get debounce, scroll handlers get throttle.</p>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🏗️</span><h2 class="section-title">Building Debounce From Scratch</h2><div class="section-line"></div></div>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — debounce.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// Debounce — delays calling fn until N ms after the last call</span>
+<span class="sy-kw">function</span> <span class="sy-fn">debounce</span>(<span class="sy-plain">fn</span>, <span class="sy-plain">delay</span>) {
+  <span class="sy-kw">let</span> <span class="sy-plain">timer</span>
+
+  <span class="sy-kw">return</span> <span class="sy-kw">function</span>(...<span class="sy-plain">args</span>) {
+    <span class="sy-fn">clearTimeout</span>(<span class="sy-plain">timer</span>)  <span class="sy-comment">// cancel the previous scheduled call</span>
+    <span class="sy-plain">timer</span> = <span class="sy-fn">setTimeout</span>(() => <span class="sy-plain">fn</span>.<span class="sy-fn">apply</span>(<span class="sy-kw">this</span>, <span class="sy-plain">args</span>), <span class="sy-plain">delay</span>)
+  }
+}
+
+<span class="sy-comment">// Usage — search fires 300ms after the user stops typing</span>
+<span class="sy-kw">const</span> <span class="sy-plain">debouncedSearch</span> = <span class="sy-fn">debounce</span>(<span class="sy-kw">async</span> (<span class="sy-plain">query</span>) => {
+  <span class="sy-kw">const</span> <span class="sy-plain">results</span> = <span class="sy-kw">await</span> <span class="sy-fn">searchAPI</span>(<span class="sy-plain">query</span>)
+  <span class="sy-fn">renderResults</span>(<span class="sy-plain">results</span>)
+}, <span class="sy-num">300</span>)
+
+<span class="sy-plain">document</span>.<span class="sy-fn">querySelector</span>(<span class="sy-str">"#search"</span>).<span class="sy-fn">addEventListener</span>(<span class="sy-str">"input"</span>, <span class="sy-plain">e</span> => {
+  <span class="sy-fn">debouncedSearch</span>(<span class="sy-plain">e</span>.<span class="sy-prop">target</span>.<span class="sy-prop">value</span>)
+})
+
+<span class="sy-comment">// What happens when you type "hello" fast:</span>
+<span class="sy-comment">// h    → timer set for 300ms</span>
+<span class="sy-comment">// he   → timer cancelled, new timer set for 300ms</span>
+<span class="sy-comment">// hel  → timer cancelled, new timer set for 300ms</span>
+<span class="sy-comment">// hell → timer cancelled, new timer set for 300ms</span>
+<span class="sy-comment">// hello → timer cancelled, new timer set for 300ms</span>
+<span class="sy-comment">// (user stops typing)</span>
+<span class="sy-comment">// 300ms later → search("hello") fires ONCE ✓</span></pre></div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">⚡</span><h2 class="section-title">Building Throttle From Scratch</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>Clearing the timer is the crucial line in every debounce implementation. Without <code class='il'>clearTimeout(timer)</code>, every keystroke creates a new timer and none of them cancel the old one — you've just added a delay, not a debounce. The whole point is that each new call resets the clock. One final call after the user stops — that's debounce.</p>
+  </div>
+
+</div>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — throttle.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// Throttle — guarantees fn runs at most once per interval</span>
+<span class="sy-kw">function</span> <span class="sy-fn">throttle</span>(<span class="sy-plain">fn</span>, <span class="sy-plain">interval</span>) {
+  <span class="sy-kw">let</span> <span class="sy-plain">lastCall</span> = <span class="sy-num">0</span>
+
+  <span class="sy-kw">return</span> <span class="sy-kw">function</span>(...<span class="sy-plain">args</span>) {
+    <span class="sy-kw">const</span> <span class="sy-plain">now</span> = <span class="sy-method">Date</span>.<span class="sy-fn">now</span>()
+
+    <span class="sy-kw">if</span> (<span class="sy-plain">now</span> - <span class="sy-plain">lastCall</span> >= <span class="sy-plain">interval</span>) {
+      <span class="sy-plain">lastCall</span> = <span class="sy-plain">now</span>
+      <span class="sy-kw">return</span> <span class="sy-plain">fn</span>.<span class="sy-fn">apply</span>(<span class="sy-kw">this</span>, <span class="sy-plain">args</span>)
+    }
+    <span class="sy-comment">// else: discard the call — too soon</span>
+  }
+}
+
+<span class="sy-comment">// Usage — scroll position logged at most every 200ms</span>
+<span class="sy-kw">const</span> <span class="sy-plain">throttledScroll</span> = <span class="sy-fn">throttle</span>(() => {
+  <span class="sy-kw">const</span> <span class="sy-plain">scrollY</span> = <span class="sy-plain">window</span>.<span class="sy-prop">scrollY</span>
+  <span class="sy-fn">updateProgressBar</span>(<span class="sy-plain">scrollY</span>)
+}, <span class="sy-num">200</span>)
+
+<span class="sy-plain">window</span>.<span class="sy-fn">addEventListener</span>(<span class="sy-str">"scroll"</span>, <span class="sy-plain">throttledScroll</span>)
+
+<span class="sy-comment">// What happens when you scroll for 1 second:</span>
+<span class="sy-comment">// Scroll event fires ~60 times (60fps)</span>
+<span class="sy-comment">// Throttle at 200ms = fires at: 0ms, 200ms, 400ms, 600ms, 800ms, 1000ms</span>
+<span class="sy-comment">// Result: 6 calls instead of 60 ← 10x fewer DOM updates</span></pre></div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🔧</span><h2 class="section-title">Real-World Use Cases</h2><div class="section-line"></div></div>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — use-cases.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// DEBOUNCE use cases:</span>
+
+<span class="sy-comment">// 1. Search input — wait until user stops typing</span>
+<span class="sy-kw">const</span> <span class="sy-plain">search</span> = <span class="sy-fn">debounce</span>(<span class="sy-plain">query</span> => <span class="sy-fn">fetchResults</span>(<span class="sy-plain">query</span>), <span class="sy-num">300</span>)
+
+<span class="sy-comment">// 2. Form auto-save — don't save every keystroke</span>
+<span class="sy-kw">const</span> <span class="sy-plain">autoSave</span> = <span class="sy-fn">debounce</span>(<span class="sy-plain">data</span> => <span class="sy-fn">saveToServer</span>(<span class="sy-plain">data</span>), <span class="sy-num">1000</span>)
+
+<span class="sy-comment">// 3. Window resize — recalculate layout after done resizing</span>
+<span class="sy-kw">const</span> <span class="sy-plain">onResize</span> = <span class="sy-fn">debounce</span>(() => <span class="sy-fn">recalcLayout</span>(), <span class="sy-num">150</span>)
+<span class="sy-plain">window</span>.<span class="sy-fn">addEventListener</span>(<span class="sy-str">"resize"</span>, <span class="sy-plain">onResize</span>)
+
+<span class="sy-comment">// THROTTLE use cases:</span>
+
+<span class="sy-comment">// 1. Scroll position — update header/progress bar smoothly</span>
+<span class="sy-kw">const</span> <span class="sy-plain">onScroll</span> = <span class="sy-fn">throttle</span>(() => <span class="sy-fn">updateHeader</span>(), <span class="sy-num">100</span>)
+<span class="sy-plain">window</span>.<span class="sy-fn">addEventListener</span>(<span class="sy-str">"scroll"</span>, <span class="sy-plain">onScroll</span>)
+
+<span class="sy-comment">// 2. Mouse move — only update every 50ms during drag</span>
+<span class="sy-kw">const</span> <span class="sy-plain">onMouseMove</span> = <span class="sy-fn">throttle</span>(<span class="sy-plain">e</span> => <span class="sy-fn">updateDragPosition</span>(<span class="sy-plain">e</span>), <span class="sy-num">50</span>)
+
+<span class="sy-comment">// 3. Game loop / canvas — cap update rate</span>
+<span class="sy-kw">const</span> <span class="sy-plain">gameUpdate</span> = <span class="sy-fn">throttle</span>(() => <span class="sy-fn">renderFrame</span>(), <span class="sy-num">16</span>)  <span class="sy-comment">// ~60fps cap</span></pre></div>
+  </div>
+  <div class="callout callout-tip">
+    <div class="callout-title">💡 Lodash Has These Too</div>
+    <p>Lodash's <span class="il">_.debounce()</span> and <span class="il">_.throttle()</span> are battle-tested with additional options like leading/trailing edge control. In a real project, reach for lodash if it's already in your dependencies. In interviews, you'll be asked to implement them from scratch — which is why you just did.</p>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🧪</span><h2 class="section-title">Combining With AbortController</h2><div class="section-line"></div></div>
+  <p>Debounce reduces how often you fetch. AbortController cancels stale fetches. Together they're the complete solution for search inputs — far fewer requests, and the ones that do fire can still be cancelled if a new one starts.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — debounce-abort.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// The complete search pattern: debounce + AbortController</span>
+<span class="sy-kw">let</span> <span class="sy-plain">controller</span>
+
+<span class="sy-kw">const</span> <span class="sy-plain">search</span> = <span class="sy-fn">debounce</span>(<span class="sy-kw">async</span> (<span class="sy-plain">query</span>) => {
+  <span class="sy-kw">if</span> (<span class="sy-plain">controller</span>) <span class="sy-plain">controller</span>.<span class="sy-fn">abort</span>()
+  <span class="sy-plain">controller</span> = <span class="sy-kw">new</span> <span class="sy-fn">AbortController</span>()
+
+  <span class="sy-kw">try</span> {
+    <span class="sy-kw">const</span> <span class="sy-plain">res</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">`/api/search?q=</span>${<span class="sy-plain">query</span>}<span class="sy-str">`</span>, {
+      <span class="sy-prop">signal</span>: <span class="sy-plain">controller</span>.<span class="sy-prop">signal</span>
+    })
+    <span class="sy-kw">const</span> <span class="sy-plain">data</span> = <span class="sy-kw">await</span> <span class="sy-plain">res</span>.<span class="sy-fn">json</span>()
+    <span class="sy-fn">renderResults</span>(<span class="sy-plain">data</span>)
+  } <span class="sy-kw">catch</span> (<span class="sy-plain">err</span>) {
+    <span class="sy-kw">if</span> (<span class="sy-plain">err</span>.<span class="sy-prop">name</span> !== <span class="sy-str">"AbortError"</span>) <span class="sy-fn">showError</span>(<span class="sy-plain">err</span>)
+  }
+}, <span class="sy-num">300</span>)
+
+<span class="sy-comment">// Debounce: waits 300ms before even making the request</span>
+<span class="sy-comment">// AbortController: cancels it if the user types again in that 300ms</span>
+<span class="sy-comment">// Together: essentially 0 wasted requests</span></pre></div>
+  </div>
+
+  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body">
+      <p>I built a project dashboard that filtered a list of cards on every keypress in a search box. No debounce. It worked fine with 20 cards. Then the client added 2,000 cards and a CSS filter effect that recalculated on every input event. On slow machines, the page froze while typing. Users thought it was broken. Adding a 150ms debounce — one function, one line of change — made it smooth as glass. The client thought I'd done major performance work. I told them the truth, mostly. I left out the part where it took me 30 seconds.</p>
+    </div>
+  </div>
+
+  <div class="mini-build">
+    <div class="mini-build-header"><span class="trophy">🔬</span><span class="mb-title">MINI BUILD — Debounced Search With Counter</span></div>
+    <div class="mini-build-body">
+      <p>Build a search input with a visible counter showing how many times the handler fires — with and without debounce. Make the difference impossible to miss.</p>
+      <div class="goal-label">Exercises:</div>
+      <ul class="step-list">
+        <li><span class="step-num">01</span> Build the <span class="il">debounce(fn, delay)</span> function from scratch</li>
+        <li><span class="step-num">02</span> Build the <span class="il">throttle(fn, interval)</span> function from scratch</li>
+        <li><span class="step-num">03</span> Create a search input — log to a visible counter how many times the raw handler fires</li>
+        <li><span class="step-num">04</span> Wrap it in <span class="il">debounce(fn, 300)</span> — add a second counter showing debounced calls. Type fast. Watch the difference.</li>
+        <li><span class="step-num">05</span> Add a scroll handler — log raw scroll events vs throttled at 200ms to two counters</li>
+        <li><span class="step-num">06</span> Combine debounce + AbortController in the search — verify in the Network tab that only one request fires per "pause"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="confidence-close">
+    <div class="cc-icon">⚡</div>
+    <div class="cc-heading">You Can Now Control the Chaos</div>
+    <p>Debounce for "wait until done." Throttle for "at most once per interval." These are classics — every frontend interview asks about them, and now you can implement both from memory. Next: coordinating data from multiple APIs in a single view.</p>
+  </div>
+  <a class="next-post" href="#"><div><div class="next-label">// next post →</div><div class="next-title">Post 14 — Working With Multiple APIs</div></div><div class="next-arrow">→</div></a>
+
+  <nav class="post-nav">
+    <a href="12-state-management.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">State Management Without React</span></a>
+    <a href="14-multiple-apis.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Fetching From Multiple APIs</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

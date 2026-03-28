@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript State Management Without React: Build a Reactive Store from Scratch | CodeHerWay</title>
+<meta name="description" content="Build a reactive mini-store in vanilla JS. Understand what React useState is actually doing before React hides it from you. CodeHerWay.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Async</span> Post 12 of 16</div>
+  <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+  <div class="series-line"><span class="series-label">⚡ JavaScript, But Make It Async</span><span class="post-number">Post 12 of 18</span></div>
+  <h1 class="post-title">JavaScript State Management Without React</h1>
+  <p class="post-subtitle">Build a reactive mini-store in vanilla JS. Understand what React's useState is actually doing — before React hides it from you.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 12 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Intermediate</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+<main>
+  <div class="back-ref"><span class="br-arrow">←</span> Builds on <strong>JS Async — Post 11</strong>: localStorage &amp; sessionStorage</div>
+
+  <div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">What "State" Actually Means</h2><div class="section-line"></div></div>
+  <p><span class="highlight">State</span> is any data that, when it changes, should cause the UI to update. The current user. Whether a modal is open. A list of loaded posts. The selected city in a weather app. These aren't static — they change over time in response to user actions and async data.</p>
+  <p>Frameworks like React and Vue manage state for you with clever abstractions. But knowing how to manage state in vanilla JS is what makes you understand what those frameworks are actually doing — and what makes you dangerous in interviews. This post builds a mini reactive store from scratch.</p>
+
+  <div class="section-header"><span class="section-icon">🧱</span><h2 class="section-title">The Problem With Variables Everywhere</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>'State' is just a fancy word for 'data that changes over time and should cause the UI to update when it does.' The current user. Whether a modal is open. A list of search results. The loading status. Once you see your app through the lens of state, you'll understand why React, Vue, and Svelte exist — and why you should understand this pattern before reaching for them.</p>
+  </div>
+
+</div>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — spaghetti-state.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// The "scatter variables everywhere" approach — works until it doesn't</span>
+<span class="sy-kw">let</span> <span class="sy-plain">currentUser</span>  = <span class="sy-bool">null</span>
+<span class="sy-kw">let</span> <span class="sy-plain">isLoading</span>    = <span class="sy-bool">false</span>
+<span class="sy-kw">let</span> <span class="sy-plain">posts</span>        = []
+<span class="sy-kw">let</span> <span class="sy-plain">selectedCity</span> = <span class="sy-str">"chicago"</span>
+<span class="sy-kw">let</span> <span class="sy-plain">error</span>        = <span class="sy-bool">null</span>
+
+<span class="sy-comment">// When one changes, you manually update the UI everywhere it's used</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">loadPosts</span>() {
+  <span class="sy-plain">isLoading</span> = <span class="sy-bool">true</span>
+  <span class="sy-fn">renderLoading</span>()     <span class="sy-comment">// remember to update the UI</span>
+
+  <span class="sy-kw">try</span> {
+    <span class="sy-plain">posts</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetchPosts</span>()
+    <span class="sy-plain">isLoading</span> = <span class="sy-bool">false</span>
+    <span class="sy-fn">renderPosts</span>()      <span class="sy-comment">// remember to update the UI</span>
+    <span class="sy-fn">renderStatus</span>()     <span class="sy-comment">// remember to update the UI</span>
+  } <span class="sy-kw">catch</span> (<span class="sy-plain">err</span>) {
+    <span class="sy-plain">error</span>     = <span class="sy-plain">err</span>
+    <span class="sy-plain">isLoading</span> = <span class="sy-bool">false</span>
+    <span class="sy-fn">renderError</span>()      <span class="sy-comment">// remember to update the UI</span>
+    <span class="sy-fn">renderStatus</span>()     <span class="sy-comment">// remember to update AGAIN</span>
+  }
+}
+<span class="sy-comment">// The problem: state is scattered, UI updates are manual and easy to miss</span></pre></div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🏗️</span><h2 class="section-title">A Reactive Mini Store</h2><div class="section-line"></div></div>
+  <p>The solution: a single source of truth. One object holds all state. When state changes, subscribers are notified automatically. This is the same model React's useState, Vue's reactive(), and Redux all use.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — mini-store.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// A minimal reactive store — ~25 lines, no dependencies</span>
+<span class="sy-kw">function</span> <span class="sy-fn">createStore</span>(<span class="sy-plain">initialState</span>) {
+  <span class="sy-kw">let</span> <span class="sy-plain">state</span>       = { ...<span class="sy-plain">initialState</span> }
+  <span class="sy-kw">let</span> <span class="sy-plain">subscribers</span> = []
+
+  <span class="sy-kw">return</span> {
+    <span class="sy-comment">// Read current state</span>
+    <span class="sy-fn">getState</span>() {
+      <span class="sy-kw">return</span> { ...<span class="sy-plain">state</span> }  <span class="sy-comment">// spread prevents accidental mutation</span>
+    },
+
+    <span class="sy-comment">// Update state and notify subscribers</span>
+    <span class="sy-fn">setState</span>(<span class="sy-plain">updates</span>) {
+      <span class="sy-plain">state</span> = { ...<span class="sy-plain">state</span>, ...<span class="sy-plain">updates</span> }
+      <span class="sy-plain">subscribers</span>.<span class="sy-fn">forEach</span>(<span class="sy-plain">fn</span> => <span class="sy-fn">fn</span>({ ...<span class="sy-plain">state</span> }))
+    },
+
+    <span class="sy-comment">// Subscribe to state changes</span>
+    <span class="sy-fn">subscribe</span>(<span class="sy-plain">fn</span>) {
+      <span class="sy-plain">subscribers</span>.<span class="sy-fn">push</span>(<span class="sy-plain">fn</span>)
+      <span class="sy-kw">return</span> () => {
+        <span class="sy-plain">subscribers</span> = <span class="sy-plain">subscribers</span>.<span class="sy-fn">filter</span>(<span class="sy-plain">s</span> => <span class="sy-plain">s</span> !== <span class="sy-plain">fn</span>)  <span class="sy-comment">// unsubscribe</span>
+      }
+    }
+  }
+}
+
+<span class="sy-comment">// Create a store for our weather app</span>
+<span class="sy-kw">const</span> <span class="sy-plain">store</span> = <span class="sy-fn">createStore</span>({
+  <span class="sy-prop">city</span>:      <span class="sy-str">"chicago"</span>,
+  <span class="sy-prop">weather</span>:   <span class="sy-bool">null</span>,
+  <span class="sy-prop">loading</span>:   <span class="sy-bool">false</span>,
+  <span class="sy-prop">error</span>:     <span class="sy-bool">null</span>
+})
+
+<span class="sy-comment">// Subscribe — render is called automatically on any state change</span>
+<span class="sy-plain">store</span>.<span class="sy-fn">subscribe</span>(<span class="sy-plain">state</span> => <span class="sy-fn">render</span>(<span class="sy-plain">state</span>))
+
+<span class="sy-comment">// Async action — updates state, subscribers do the rendering</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">fetchWeather</span>(<span class="sy-plain">city</span>) {
+  <span class="sy-plain">store</span>.<span class="sy-fn">setState</span>({ <span class="sy-prop">loading</span>: <span class="sy-bool">true</span>, <span class="sy-prop">error</span>: <span class="sy-bool">null</span> })
+  <span class="sy-kw">try</span> {
+    <span class="sy-kw">const</span> <span class="sy-plain">weather</span> = <span class="sy-kw">await</span> <span class="sy-fn">getWeather</span>(<span class="sy-plain">city</span>)
+    <span class="sy-plain">store</span>.<span class="sy-fn">setState</span>({ <span class="sy-prop">weather</span>, <span class="sy-prop">loading</span>: <span class="sy-bool">false</span> })
+  } <span class="sy-kw">catch</span> (<span class="sy-plain">err</span>) {
+    <span class="sy-plain">store</span>.<span class="sy-fn">setState</span>({ <span class="sy-prop">error</span>: <span class="sy-plain">err</span>.<span class="sy-prop">message</span>, <span class="sy-prop">loading</span>: <span class="sy-bool">false</span> })
+  }
+}</pre></div>
+  </div>
+  <div class="callout callout-accent">
+    <div class="callout-title">⚡ This Is What React Does</div>
+    <p>React's <span class="il">useState</span> is this store pattern, baked in. When you call <span class="il">setState()</span>, React re-renders your component — which is React calling its subscribers. When you use <span class="il">useEffect</span>, you're subscribing to state changes. Understanding this model makes learning React dramatically easier.</p>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🎨</span><h2 class="section-title">Connecting State to the DOM</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>The subscriber pattern (pub/sub, observer pattern) is one of the most widely used patterns in UI development. Your store calls all its subscribers whenever state changes. Each subscriber re-renders the part of the UI it owns. This is exactly what React's <code class='il'>useState</code> and Redux do. Building it yourself first means you're never confused by what a framework is actually doing.</p>
+  </div>
+
+</div>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — dom-rendering.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// One render function driven entirely by state</span>
+<span class="sy-kw">function</span> <span class="sy-fn">render</span>(<span class="sy-plain">state</span>) {
+  <span class="sy-kw">const</span> <span class="sy-plain">app</span> = <span class="sy-plain">document</span>.<span class="sy-fn">querySelector</span>(<span class="sy-str">"#app"</span>)
+
+  <span class="sy-kw">if</span> (<span class="sy-plain">state</span>.<span class="sy-prop">loading</span>) {
+    <span class="sy-plain">app</span>.<span class="sy-prop">innerHTML</span> = <span class="sy-str">"&lt;p&gt;Loading weather...&lt;/p&gt;"</span>
+    <span class="sy-kw">return</span>
+  }
+
+  <span class="sy-kw">if</span> (<span class="sy-plain">state</span>.<span class="sy-prop">error</span>) {
+    <span class="sy-plain">app</span>.<span class="sy-prop">innerHTML</span> = <span class="sy-str">`
+      &lt;div class="error"&gt;
+        &lt;p&gt;</span>${<span class="sy-plain">state</span>.<span class="sy-prop">error</span>}<span class="sy-str">&lt;/p&gt;
+        &lt;button id="retry"&gt;Try again&lt;/button&gt;
+      &lt;/div&gt;
+    `</span>
+    <span class="sy-plain">document</span>.<span class="sy-fn">querySelector</span>(<span class="sy-str">"#retry"</span>)
+      .<span class="sy-fn">addEventListener</span>(<span class="sy-str">"click"</span>, () => <span class="sy-fn">fetchWeather</span>(<span class="sy-plain">state</span>.<span class="sy-prop">city</span>))
+    <span class="sy-kw">return</span>
+  }
+
+  <span class="sy-kw">if</span> (<span class="sy-plain">state</span>.<span class="sy-prop">weather</span>) {
+    <span class="sy-kw">const</span> { <span class="sy-plain">temperature_2m</span>, <span class="sy-plain">wind_speed_10m</span> } = <span class="sy-plain">state</span>.<span class="sy-prop">weather</span>.<span class="sy-prop">current</span>
+    <span class="sy-plain">app</span>.<span class="sy-prop">innerHTML</span> = <span class="sy-str">`
+      &lt;h2&gt;</span>${<span class="sy-plain">state</span>.<span class="sy-prop">city</span>.<span class="sy-fn">toUpperCase</span>()}<span class="sy-str">&lt;/h2&gt;
+      &lt;p&gt;</span>${<span class="sy-plain">temperature_2m</span>}<span class="sy-str">°F — Wind: </span>${<span class="sy-plain">wind_speed_10m</span>}<span class="sy-str"> mph&lt;/p&gt;
+    `</span>
+  }
+}
+
+<span class="sy-comment">// City selector triggers a state update — render handles the rest</span>
+<span class="sy-plain">document</span>.<span class="sy-fn">querySelector</span>(<span class="sy-str">"#city-select"</span>).<span class="sy-fn">addEventListener</span>(<span class="sy-str">"change"</span>, <span class="sy-plain">e</span> => {
+  <span class="sy-plain">store</span>.<span class="sy-fn">setState</span>({ <span class="sy-prop">city</span>: <span class="sy-plain">e</span>.<span class="sy-prop">target</span>.<span class="sy-prop">value</span> })
+  <span class="sy-fn">fetchWeather</span>(<span class="sy-plain">e</span>.<span class="sy-prop">target</span>.<span class="sy-prop">value</span>)
+})</pre></div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">⚡</span><h2 class="section-title">Adding localStorage Persistence to the Store</h2><div class="section-line"></div></div>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — persistent-store.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// A store that automatically persists to localStorage</span>
+<span class="sy-kw">function</span> <span class="sy-fn">createPersistentStore</span>(<span class="sy-plain">key</span>, <span class="sy-plain">initialState</span>) {
+  <span class="sy-comment">// Restore from localStorage on init, fall back to initialState</span>
+  <span class="sy-kw">const</span> <span class="sy-plain">saved</span>   = <span class="sy-plain">storage</span>.<span class="sy-fn">get</span>(<span class="sy-plain">key</span>)
+  <span class="sy-kw">const</span> <span class="sy-plain">store</span>   = <span class="sy-fn">createStore</span>({ ...<span class="sy-plain">initialState</span>, ...<span class="sy-plain">saved</span> })
+
+  <span class="sy-comment">// Persist to localStorage on every state change</span>
+  <span class="sy-plain">store</span>.<span class="sy-fn">subscribe</span>(<span class="sy-plain">state</span> => {
+    <span class="sy-plain">storage</span>.<span class="sy-fn">set</span>(<span class="sy-plain">key</span>, {
+      <span class="sy-prop">city</span>: <span class="sy-plain">state</span>.<span class="sy-prop">city</span>  <span class="sy-comment">// only persist what makes sense to persist</span>
+    })
+  })
+
+  <span class="sy-kw">return</span> <span class="sy-plain">store</span>
+}
+
+<span class="sy-comment">// Now city preference survives page refresh</span>
+<span class="sy-kw">const</span> <span class="sy-plain">store</span> = <span class="sy-fn">createPersistentStore</span>(<span class="sy-str">"weather-app"</span>, {
+  <span class="sy-prop">city</span>: <span class="sy-str">"chicago"</span>, <span class="sy-prop">weather</span>: <span class="sy-bool">null</span>, <span class="sy-prop">loading</span>: <span class="sy-bool">false</span>, <span class="sy-prop">error</span>: <span class="sy-bool">null</span>
+})</pre></div>
+  </div>
+  <div class="callout callout-mindset">
+    <div class="callout-title">🧠 Mindset Shift</div>
+    <p>This is the pattern your portfolio projects should follow. Instead of scattered variables and manual DOM updates, one store, one render function, automatic persistence. Your code becomes easier to reason about, easier to debug, and easier to explain in interviews — because you can point to exactly where all your state lives.</p>
+  </div>
+
+  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body">
+      <p>I once built a weather app with 14 different global variables. They were all over the place — some in functions, some at the top of the file, some inside event handlers. It worked. It also took me an hour to find a bug where <span class="il" style="font-style:normal;">isLoading</span> wasn't being reset in the error path because I'd updated the variable but forgotten to call the render function. When I rebuilt it with a store pattern, that bug became impossible — setState always notified subscribers, there was no way to change state without the UI updating. Impossible bugs are better than fixed bugs.</p>
+    </div>
+  </div>
+
+  <div class="mini-build">
+    <div class="mini-build-header"><span class="trophy">🔬</span><span class="mb-title">MINI BUILD — Weather App With a Reactive Store</span></div>
+    <div class="mini-build-body">
+      <p>Rebuild the weather app from Posts 10–11 using the store pattern. One state object. One render function. All the async logic in action creators.</p>
+      <div class="goal-label">Exercises:</div>
+      <ul class="step-list">
+        <li><span class="step-num">01</span> Build <span class="il">createStore(initialState)</span> with <span class="il">getState()</span>, <span class="il">setState()</span>, and <span class="il">subscribe()</span></li>
+        <li><span class="step-num">02</span> Create a store with <span class="il">{ city, weather, loading, error }</span></li>
+        <li><span class="step-num">03</span> Write a single <span class="il">render(state)</span> function that handles all four states: loading, error, success, and empty</li>
+        <li><span class="step-num">04</span> Subscribe <span class="il">render</span> to the store</li>
+        <li><span class="step-num">05</span> Write <span class="il">fetchWeather(city)</span> that uses <span class="il">setState()</span> instead of scattered variables</li>
+        <li><span class="step-num">06</span> Add city selector — on change, update state and fetch</li>
+        <li><span class="step-num">07</span> Upgrade to <span class="il">createPersistentStore()</span> — confirm city survives page refresh</li>
+      </ul>
+    </div>
+  </div>
+
+    <div class="bridge-banner">
+    <div class="bridge-icon">→</div>
+    <div class="bridge-content">
+      <div class="bridge-label">→ Ready for Frameworks?</div>
+      <div class="bridge-title">This is exactly what React's useState does</div>
+      <p class="bridge-desc">The reactive store you built in this post is the same pattern React uses under the hood. When you're ready, the React series picks up here — but now you'll actually understand what React is hiding from you.</p>
+      <a class="bridge-btn" href="react-post01-why-react.html">Read it →</a>
+    </div>
+  </div>
+
+<div class="confidence-close">
+    <div class="cc-icon">⚡</div>
+    <div class="cc-heading">You Just Built a Mini Redux</div>
+    <p>A store, subscribers, state updates, persistence — this is the architecture behind every state management library ever written. You didn't need any of them to build it. Next: debounce and throttle — controlling how often your async functions fire.</p>
+  </div>
+  <a class="next-post" href="#"><div><div class="next-label">// next post →</div><div class="next-title">Post 13 — Debounce &amp; Throttle</div></div><div class="next-arrow">→</div></a>
+
+  <nav class="post-nav">
+    <a href="async-11-localstorage.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">localStorage</span></a>
+    <a href="async-13-debounce-throttle.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Debounce vs Throttle</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

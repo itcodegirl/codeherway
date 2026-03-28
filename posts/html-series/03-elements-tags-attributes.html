@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post 3 — Elements, Tags & Attributes | CodeHerWay</title>
+<meta name="description" content="Three words that describe literally everything in HTML. Understand these and nothing in the language will ever surprise you again.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.anatomy-visual{background:var(--bg-code);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:32px;margin:32px 0;text-align:center;}
+.anatomy-line{font-family:"Fira Code",monospace;font-size:20px;margin-bottom:16px;letter-spacing:1px;}
+.anatomy-labels{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;}
+.anatomy-label{font-family:"Fira Code",monospace;font-size:12px;padding:5px 14px;border-radius:6px;}
+.anatomy-label.pink-l{background:rgba(255,105,180,0.12);color:var(--pink);}
+.anatomy-label.blue-l{background:rgba(105,210,231,0.12);color:var(--sky-blue);}
+.anatomy-label.gold-l{background:rgba(255,211,105,0.12);color:var(--gold);}
+.anatomy-label.green-l{background:rgba(125,255,179,0.12);color:var(--mint-green);}
+.anatomy-label.purple-l{background:rgba(180,74,255,0.12);color:var(--purple);}
+.attr-table-wrap{margin:32px 0;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.06);box-shadow:0 8px 32px rgba(0,0,0,0.3);}
+.attr-table{width:100%;border-collapse:collapse;font-size:15px;}
+.attr-table thead{background:linear-gradient(135deg,rgba(180,74,255,0.15),rgba(255,105,180,0.1));}
+.attr-table th{padding:14px 20px;text-align:left;font-weight:600;color:var(--purple);border-bottom:2px solid rgba(180,74,255,0.2);font-size:14px;}
+.attr-table td{padding:13px 20px;border-bottom:1px solid rgba(255,255,255,0.04);}
+.attr-table tbody tr{background:var(--bg-code);transition:background 0.2s;}
+.attr-table tbody tr:hover{background:rgba(180,74,255,0.04);}
+.attr-table tbody tr:nth-child(even){background:var(--bg-code-alt);}
+@media(max-width:640px){.anatomy-line{font-size:14px;}}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<section class="hero">
+  <div class="post-label"><span class="series-tag">HTML Fundamentals</span> Post 03 of 20</div>
+  <h1>Elements, Tags <span class="gradient-text">&amp; Attributes</span></h1>
+  <p class="hero-sub">Three words that describe literally everything in HTML. Understand these and nothing in the language will ever surprise you again.</p>
+  <div class="tag-row"><span class="tag html">tags</span><span class="tag html">elements</span><span class="tag html">attributes</span><span class="tag html">self-closing</span></div>
+</section>
+<main class="article">
+  <h2>The Three Words That Explain All of HTML</h2>
+  <p>Every single piece of HTML is built from just three concepts: <span class="key">elements</span>, <span class="key">tags</span>, and <span class="key">attributes</span>. Once you understand how these work together, you can read any HTML document on the internet.</p>
+  <div class="callout mindset"><div class="callout-title">🧠 Mindset Shift</div><p>Don't memorize every HTML tag — understand the <em>pattern</em>. Once you get how tags, elements, and attributes work together, learning any new tag is just filling in a template you already know.</p></div>
+  <div class="sep"></div>
+  <h2>Tags: The Labels</h2>
+  <p>A <span class="key">tag</span> is a keyword wrapped in angle brackets. Most tags come in pairs:</p>
+  <div class="anatomy-visual">
+    <div class="anatomy-line"><span class="t">&lt;p&gt;</span><span style="color:var(--text-primary)">This is a paragraph.</span><span class="t">&lt;/p&gt;</span></div>
+    <div class="anatomy-labels"><span class="anatomy-label pink-l">Opening tag</span><span class="anatomy-label gold-l">Content</span><span class="anatomy-label pink-l">Closing tag</span></div>
+  </div>
+  <div class="code-window"><div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML</div></div>
+  <div class="code-body"><code><span class="t">&lt;h1&gt;</span>This is a heading<span class="t">&lt;/h1&gt;</span>
+<span class="t">&lt;p&gt;</span>This is a paragraph<span class="t">&lt;/p&gt;</span>
+<span class="t">&lt;strong&gt;</span>This is bold text<span class="t">&lt;/strong&gt;</span>
+<span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"https://codeherway.com"</span><span class="t">&gt;</span>This is a link<span class="t">&lt;/a&gt;</span></code></div></div>
+  <div class="callout tip"><div class="callout-title">💡 Pro Tip</div><p>The most common beginner bug: forgetting the closing tag. If your bold text never stops being bold, check for a missing <span class="il">&lt;/strong&gt;</span>. The browser will try to "fix" it, usually in the worst possible way.</p></div>
+  <div class="sep"></div>
+  <h2>Elements: The Full Package</h2>
+  <p>An <span class="key">element</span> is the entire unit — opening tag, content, and closing tag together.</p>
+  <div class="anatomy-visual">
+    <div class="anatomy-line"><span class="t">&lt;p&gt;</span><span style="color:var(--text-primary)">Hello, world.</span><span class="t">&lt;/p&gt;</span></div>
+    <div class="anatomy-labels"><span class="anatomy-label purple-l">This entire thing is one "element"</span></div>
+  </div>
+  <div class="callout info"><div class="callout-title">ℹ️ Good to Know</div><p>Elements can be <span class="key">nested</span> inside each other. Nesting is how you build complex structures from simple pieces — HTML's superpower.</p></div>
+  <div class="code-window"><div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML</div></div>
+  <div class="code-body"><code><span class="t">&lt;p&gt;</span>I am learning <span class="t">&lt;strong&gt;</span>HTML<span class="t">&lt;/strong&gt;</span> and it's <span class="t">&lt;em&gt;</span>actually making sense<span class="t">&lt;/em&gt;</span>.<span class="t">&lt;/p&gt;</span></code></div></div>
+  <div class="sep"></div>
+  <h2>Self-Closing Elements</h2>
+  <p>Some elements are <span class="key">self-closing</span> — they don't wrap around content. They <em>are</em> the content.</p>
+  <div class="code-window"><div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML</div></div>
+  <div class="code-body"><code><span class="t">&lt;img</span> <span class="a">src</span>=<span class="s">"photo.jpg"</span> <span class="a">alt</span>=<span class="s">"A sunset over the lake"</span> <span class="t">/&gt;</span>
+<span class="t">&lt;br /&gt;</span>
+<span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"text"</span> <span class="a">name</span>=<span class="s">"username"</span> <span class="t">/&gt;</span>
+<span class="t">&lt;hr /&gt;</span></code></div></div>
+  <div class="sep"></div>
+  <h2>Attributes: The Details</h2>
+  <p><span class="key">Attributes</span> go inside the opening tag using the pattern: <span class="il">name="value"</span>. Never in the closing tag.</p>
+  <div class="anatomy-visual">
+    <div class="anatomy-line" style="font-size:17px;"><span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"https://codeherway.com"</span> <span class="a">target</span>=<span class="s">"_blank"</span><span class="t">&gt;</span><span style="color:var(--text-primary)">Visit</span><span class="t">&lt;/a&gt;</span></div>
+    <div class="anatomy-labels"><span class="anatomy-label pink-l">Tag</span><span class="anatomy-label blue-l">Attribute</span><span class="anatomy-label gold-l">Value</span><span class="anatomy-label blue-l">Attribute</span><span class="anatomy-label gold-l">Value</span><span class="anatomy-label green-l">Content</span></div>
+  </div>
+  <div class="sep"></div>
+  <h2>The 10 Attributes You'll Use Constantly</h2>
+  <div class="attr-table-wrap">
+    <table class="attr-table">
+      <thead><tr><th>Attribute</th><th>What It Does</th><th>Used On</th></tr></thead>
+      <tbody>
+        <tr><td><span class="il">class</span></td><td>Names element for CSS. Reusable across many elements.</td><td>Any</td></tr>
+        <tr><td><span class="il">id</span></td><td>Unique name — one per page.</td><td>Any</td></tr>
+        <tr><td><span class="il">href</span></td><td>URL destination for a link.</td><td><span class="il">&lt;a&gt;</span></td></tr>
+        <tr><td><span class="il">src</span></td><td>File path to an image, video, or script.</td><td><span class="il">&lt;img&gt;</span>, <span class="il">&lt;script&gt;</span></td></tr>
+        <tr><td><span class="il">alt</span></td><td>Alternative text for images. Read by screen readers.</td><td><span class="il">&lt;img&gt;</span></td></tr>
+        <tr><td><span class="il">title</span></td><td>Tooltip shown on hover.</td><td>Any</td></tr>
+        <tr><td><span class="il">target</span></td><td>Where a link opens. <span class="il">_blank</span> = new tab.</td><td><span class="il">&lt;a&gt;</span></td></tr>
+        <tr><td><span class="il">type</span></td><td>Kind of input — text, email, password, submit.</td><td><span class="il">&lt;input&gt;</span>, <span class="il">&lt;button&gt;</span></td></tr>
+        <tr><td><span class="il">name</span></td><td>Identifier for form data sent to server.</td><td><span class="il">&lt;input&gt;</span>, <span class="il">&lt;select&gt;</span></td></tr>
+        <tr><td><span class="il">value</span></td><td>Default value of a form field.</td><td><span class="il">&lt;input&gt;</span>, <span class="il">&lt;option&gt;</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3>class vs. id</h3>
+  <p><span class="key">class</span> is reusable — same class on many elements. <span class="key">id</span> must be unique — only one element per page. When in doubt, use a class.</p>
+  <div class="code-window"><div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML</div></div>
+  <div class="code-body"><code><span class="c">&lt;!-- class: reusable --&gt;</span>
+<span class="t">&lt;p</span> <span class="a">class</span>=<span class="s">"intro-text"</span><span class="t">&gt;</span>First paragraph.<span class="t">&lt;/p&gt;</span>
+<span class="t">&lt;p</span> <span class="a">class</span>=<span class="s">"intro-text"</span><span class="t">&gt;</span>Second paragraph, same style.<span class="t">&lt;/p&gt;</span>
+
+<span class="c">&lt;!-- id: unique --&gt;</span>
+<span class="t">&lt;section</span> <span class="a">id</span>=<span class="s">"about"</span><span class="t">&gt;</span><span class="t">&lt;h2&gt;</span>About Me<span class="t">&lt;/h2&gt;</span><span class="t">&lt;/section&gt;</span></code></div></div>
+  <div class="sep"></div>
+  <div class="devfession">
+    <div class="devfession-header">🔥 Dev_Fession</div>
+    <div class="devfession-body">
+      <p>When I first started writing HTML, I treated attributes like decorations — I'd throw in a <span class="il">class</span> when a tutorial told me to, but had no idea why. I'd leave <span class="il">alt</span> empty on every image because "who reads that?"</p>
+      <p>Turns out: screen readers read that. Google reads that. Every empty <span class="il">alt=""</span> I shipped was a silent "I don't care about the people using my website." I didn't mean it that way. But intent doesn't override impact.</p>
+      <p>Now I write <span class="il">alt</span> text on every single image and actually read what attributes do before using them. It takes five extra seconds and makes your code accessible and professional.</p>
+    </div>
+    <div class="devfession-footer"><span>CodeHerWay // HTML Course</span><span class="tagline">Code it. Own it. Her way.</span></div>
+  </div>
+  <div class="mini-build">
+    <div class="mini-build-header"><h3>🏆 Mini Build: Personal Profile Card</h3></div>
+    <div class="mini-build-body">
+      <p>Build a profile card using everything from this post:</p>
+      <div class="step"><div class="step-num">1</div><div class="step-text">Create a <span class="sky">&lt;div&gt;</span> with <span class="sky">class="profile-card"</span> and <span class="sky">id="my-card"</span>.</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text">Add an <span class="sky">&lt;img /&gt;</span> with <span class="sky">src</span> and a descriptive <span class="sky">alt</span> attribute.</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text">Add an <span class="sky">&lt;h2&gt;</span> with your name and a <span class="sky">&lt;p&gt;</span> with a short bio.</div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text">Add an <span class="sky">&lt;a&gt;</span> link to your GitHub with <span class="sky">href</span> and <span class="sky">target="_blank"</span>.</div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-text">Add an <span class="sky">&lt;input /&gt;</span> with <span class="sky">type="email"</span>, <span class="sky">name</span>, and <span class="sky">placeholder</span>.</div></div>
+    </div>
+  </div>
+  <div class="sep"></div>
+  <h2>Recap</h2>
+  <p><span class="key">Tags</span> are the angle-bracket labels. <span class="key">Elements</span> are the full package. <span class="key">Attributes</span> are extra details in the opening tag using <span class="il">name="value"</span> syntax. Together, these three concepts are the entire grammar of HTML.</p>
+  <nav class="post-nav">
+    <a href="02-document-structure.html" class="post-nav-link"><span class="nav-label">← Previous</span><span class="nav-title">Document Structure: The Non-Negotiable Skeleton</span></a>
+    <a href="04-text-content-elements.html" class="post-nav-link next"><span class="nav-label">Next →</span><span class="nav-title">Text &amp; Content Elements</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">← Back to All Posts</a></div>
+</main>
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

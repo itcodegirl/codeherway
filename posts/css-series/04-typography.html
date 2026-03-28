@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <title>CSS Typography for Beginners: Fonts, Line Height, and Why Your Site Looks Off — CodeHerWay</title>
+<meta name="description" content="Nine times out of ten, the reason a beginner site looks almost right is the typography. Master font-family, font-size, line-height, letter-spacing, and Google Fonts in this CSS tutorial.">
+ <link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.green-key{color: var(--mint-green); font-weight: 700;}
+.prop{color: var(--sky-blue);}
+.val{color: var(--mint-green);}
+.sel{color: var(--pink);}
+.sel-class{color: var(--gold);}
+.sel-pseudo{color: var(--purple);}
+.callout.psych{background: rgba(255,105,180,0.05); border-color: var(--pink);}
+.callout.psych  .callout-title{color: var(--pink);}
+.font-compare{display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0;}
+.font-compare{display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0;}
+.font-panel{border-radius: 12px; padding: 28px; border: 1px solid rgba(255,255,255,0.06);}
+.font-panel.before{background: #111118;}
+.font-panel.after{background: #111118; border-color: rgba(125,255,179,0.15);}
+.fp-label{font-family: 'Fira Code', monospace; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 18px; padding: 4px 12px; display: inline-block; border-radius: 4px;}
+.fp-label.bad{background: rgba(255,107,107,0.1); color: var(--coral);}
+.fp-label.good{background: rgba(125,255,179,0.1); color: var(--mint-green);}
+.fp-before-headline{font-family: 'Times New Roman', Times, serif; font-size: 22px; color: #ccc; margin-bottom: 10px; line-height: 1.2;}
+.fp-before-body{font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #888; line-height: 1.4;}
+.fp-before-meta{font-family: Arial, sans-serif; font-size: 12px; color: #555; margin-bottom: 10px;}
+.fp-after-headline{font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 8px; line-height: 1.25; letter-spacing: -0.3px;}
+.fp-after-meta{font-family: 'Fira Code', monospace; font-size: 11px; color: var(--pink); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px;}
+.fp-after-body{font-family: 'Space Grotesk', sans-serif; font-size: 14px; color: var(--text-secondary); line-height: 1.75;}
+.unit-demo{background: var(--bg-code); border-radius: 12px; border: 1px solid rgba(255,255,255,0.06); overflow: hidden; margin: 32px 0;}
+.unit-demo-header{padding: 14px 22px; border-bottom: 1px solid rgba(255,255,255,0.05); font-family: 'Fira Code', monospace; font-size: 12px; color: var(--text-muted); background: rgba(255,255,255,0.02);}
+.unit-demo-body{padding: 28px 24px; display: flex; flex-direction: column; gap: 20px;}
+.unit-row{display: flex; align-items: baseline; gap: 20px; flex-wrap: wrap;}
+.unit-label{font-family: 'Fira Code', monospace; font-size: 11px; color: var(--text-muted); width: 80px; flex-shrink: 0;}
+.unit-sample-px{color: var(--sky-blue); font-family: 'Space Grotesk', sans-serif; font-weight: 700;}
+.unit-sample-rem{color: var(--mint-green); font-family: 'Space Grotesk', sans-serif; font-weight: 700;}
+.size-12px{font-size: 12px;}
+.size-14px{font-size: 14px;}
+.size-16px{font-size: 16px;}
+.size-20px{font-size: 20px;}
+.size-24px{font-size: 24px;}
+.size-32px{font-size: 32px;}
+.size-07rem{font-size: 0.75rem;}
+.size-088rem{font-size: 0.875rem;}
+.size-1rem{font-size: 1rem;}
+.size-125rem{font-size: 1.25rem;}
+.size-15rem{font-size: 1.5rem;}
+.size-2rem{font-size: 2rem;}
+.lh-demo{display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin: 32px 0;}
+.lh-panel{background: var(--bg-code); border-radius: 12px; padding: 22px; border: 1px solid rgba(255,255,255,0.06);}
+.lh-label{font-family: 'Fira Code', monospace; font-size: 12px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;}
+.lh-val{font-weight: 700;}
+.lh-tight  .lh-val{color: var(--coral);}
+.lh-normal .lh-val{color: var(--gold);}
+.lh-relaxed .lh-val{color: var(--mint-green);}
+.lh-text{font-family: 'Space Grotesk', sans-serif; font-size: 14px; color: var(--text-secondary);}
+.lh-tight  .lh-text{line-height: 1.1;}
+.lh-normal .lh-text{line-height: 1.5;}
+.lh-relaxed .lh-text{line-height: 1.9;}
+.ls-stack{display: flex; flex-direction: column; gap: 14px; margin: 28px 0; padding: 28px; background: var(--bg-code); border-radius: 12px; border: 1px solid rgba(255,255,255,0.06);}
+.ls-row{display: flex; align-items: center; gap: 18px; flex-wrap: wrap;}
+.ls-tag{font-family: 'Fira Code', monospace; font-size: 11px; color: var(--text-muted); width: 120px; flex-shrink: 0;}
+.ls-sample{font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: #fff;}
+.ls-neg{letter-spacing: -1px; color: var(--coral);}
+.ls-0{letter-spacing: 0px;  color: var(--text-primary);}
+.ls-1{letter-spacing: 1px;  color: var(--sky-blue);}
+.ls-2{letter-spacing: 2px;  color: var(--gold);}
+.ls-4{letter-spacing: 4px;  color: var(--mint-green);}
+.ls-use{font-family: 'Fira Code', monospace; font-size: 11px; padding: 2px 10px; border-radius: 4px; background: rgba(255,255,255,0.04); color: var(--text-muted);}
+.pair-grid{display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0;}
+.pair-card{background: var(--bg-code); border-radius: 12px; padding: 24px; border: 1px solid rgba(255,255,255,0.06);}
+.pair-tag{font-family: 'Fira Code', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px;}
+.pair-heading{font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 8px; line-height: 1.3;}
+.pair-body{font-size: 13px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 14px;}
+.pair-names{display: flex; gap: 8px; flex-wrap: wrap;}
+.pair-badge{font-family: 'Fira Code', monospace; font-size: 11px; padding: 3px 10px; border-radius: 4px;}
+.pb-display{background: rgba(180,74,255,0.1); color: var(--purple);}
+.pb-body{background: rgba(105,210,231,0.1); color: var(--sky-blue);}
+.p1-h{font-family: 'Space Grotesk', sans-serif; font-weight: 700;}
+.p1-b{font-family: 'Space Grotesk', sans-serif; font-weight: 400;}
+.p2-h{font-family: Georgia, 'Times New Roman', serif; font-weight: 700; font-style: italic;}
+.p2-b{font-family: 'Space Grotesk', sans-serif; font-weight: 400;}
+.p3-h{font-family: 'Fira Code', monospace; font-weight: 700;}
+.p3-b{font-family: 'Space Grotesk', sans-serif; font-weight: 400;}
+.p4-h{font-family: 'Space Grotesk', sans-serif; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; font-size: 16px !important;}
+.p4-b{font-family: 'Space Grotesk', sans-serif; font-weight: 400;}
+.prop-table-wrap{margin: 32px 0; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06);}
+.prop-table{width: 100%; border-collapse: collapse; font-size: 14.5px;}
+.prop-table thead{background: linear-gradient(135deg, rgba(180,74,255,0.15), rgba(255,105,180,0.1));}
+.prop-table th{padding: 13px 18px; text-align: left; font-weight: 600; color: var(--purple); border-bottom: 2px solid rgba(180,74,255,0.2); font-size: 13px;}
+.prop-table td{padding: 12px 18px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: top;}
+.prop-table tbody tr{background: var(--bg-code); transition: background 0.2s;}
+.prop-table tbody tr:hover{background: rgba(180,74,255,0.04);}
+.prop-table tbody tr:nth-child(even){background: var(--bg-code-alt);}
+.blog-demo-wrap{margin: 32px 0; border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06);}
+.blog-demo-topbar{padding: 12px 18px; background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: space-between;}
+.blog-demo-topbar .bar-dots{display: flex; gap: 7px;}
+.blog-demo-topbar .bar-dots span{width: 12px; height: 12px; border-radius: 50%;}
+.blog-demo-topbar .bar-label{font-family: 'Fira Code', monospace; font-size: 11px; color: var(--text-muted);}
+.blog-article-demo{background: #0e0e16; padding: 48px 40px; font-family: 'Space Grotesk', sans-serif;}
+.art-kicker{font-family: 'Fira Code', monospace; font-size: 11px; color: var(--pink); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; display: block;}
+.art-headline{font-size: clamp(22px, 3.5vw, 30px); font-weight: 700; color: #fff; line-height: 1.2; letter-spacing: -0.4px; margin-bottom: 14px;}
+.art-meta{font-family: 'Fira Code', monospace; font-size: 12px; color: var(--text-muted); margin-bottom: 28px; display: flex; gap: 16px; flex-wrap: wrap;}
+.art-meta span{display: flex; align-items: center; gap: 6px;}
+.art-divider{height: 1px; background: rgba(255,255,255,0.06); margin-bottom: 28px;}
+.art-lead{font-size: 18px; color: var(--text-secondary); line-height: 1.75; margin-bottom: 22px; font-weight: 500;}
+.art-body{font-size: 16px; color: #8a8a9f; line-height: 1.85; margin-bottom: 20px;}
+.art-subhead{font-size: 19px; font-weight: 700; color: #e0e0e8; margin: 32px 0 14px; letter-spacing: -0.2px;}
+.art-tag-row{display: flex; gap: 8px; flex-wrap: wrap; margin-top: 28px;}
+.art-tag{font-family: 'Fira Code', monospace; font-size: 11px; padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.08); color: var(--text-muted);}
+@media(max-width:640px){.code-body { font-size: 12px; padding: 14px; } .code-topbar { padding: 10px 14px; } .code-lang { font-size: 10px; padding: 2px 8px; } .code-filename { font-size: 10px; } .hero h1 { font-size: clamp(26px, 8vw, 40px); } .hero-sub { font-size: 16px; } .hero { padding: 32px 16px 28px; } .article { padding: 0 16px 60px; } .article h2 { font-size: 22px; margin: 40px 0 14px; } .article h3 { font-size: 18px; margin: 28px 0 12px; } .callout { padding: 18px; } .devfession-body { padding: 20px; } .devfession-header { font-size: 15px; padding: 14px 20px; } .devfession-footer { flex-direction: column; gap: 4px; font-size: 11px; padding: 12px 20px; } .mini-build-body { padding: 20px; } .mini-build-header { padding: 14px 20px; } .mini-build-header h3 { font-size: 17px; } .confidence-close { padding: 22px 20px; } .confidence-close::before { display: none; } .step { gap: 10px; } .step-num { width: 26px; height: 26px; font-size: 12px; flex-shrink: 0; } .tag { font-size: 11px; padding: 4px 10px; } .post-number { font-size: 11px; letter-spacing: 1px; } .sep { margin: 32px 0; } .font-compare { grid-template-columns: 1fr; } .blog-article-demo { padding: 28px 20px; }}
+@media (max-width: 480px){
+   .code-body { font-size: 11.5px; padding: 12px; }
+   .hero h1 { font-size: clamp(24px, 9vw, 32px); }
+   .il { white-space: normal; word-break: break-word; }
+   .unit-grid, .compare-2, .before-after, .phase-grid,
+   .lh-demo, .pair-grid, .ba-grid, .font-compare { grid-template-columns: 1fr; }
+   .shadow-grid { grid-template-columns: 1fr 1fr; }
+   .swatch-row { gap: 8px; }
+   .swatch { min-width: 90px; }
+   .pyramid-row { flex-direction: column; gap: 6px; align-items: flex-start; }
+   .score-row { flex-direction: column; gap: 6px; }
+   .score-sel { min-width: unset; }
+   .recap-item { flex-wrap: wrap; gap: 4px; }
+   .recap-title { width: 100%; }
+   .checklist { padding: 14px; }
+   .demo-row { padding: 16px 12px; gap: 12px; }
+   .series-nav-divider { display: none; }
+   .connect-arrow { display: none; }
+   .compare-grid { grid-template-columns: 1fr; }
+   .layer-margin { padding: 20px; }
+   .layer-border { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+ <div id="site-header"></div>
+<!-- ─── HERO ─── -->
+<div class="hero">
+ <div class="post-label"><span class="series-tag">CSS, But Make It Powerful</span> Post 04 of 14 </div>
+ <div class="post-number">CSS Series · Post 04</div>
+ <h1>Typography That<br><span class="gradient-text">Doesn't Look Like 2003</span></h1>
+ <p class="hero-sub">Good typography is the single fastest upgrade you can make to any site. Master these properties once and your work will immediately look more intentional, more polished, more <em>you</em>.</p>
+ <div class="tag-row">
+  <span class="tag css">CSS</span>
+  <span class="tag beginner">Beginner</span>
+  <span class="tag series">Series: Post 04</span>
+  <span class="tag">~14 min read</span>
+ </div>
+</div>
+
+<!-- ─── ARTICLE ─── -->
+<main class="article">
+
+ <!-- 💬 RELATABLE INTRO -->
+ <h2>💬 "My Site Looks Fine But Also… Kind of Wrong?"</h2>
+
+ <p>Your HTML is clean. Your layout isn't broken. But something still feels off — like your page looks like it was built by someone learning versus someone who knows what they're doing. You can't pinpoint exactly what it is.</p>
+
+ <p>Nine times out of ten? It's the typography.</p>
+
+ <p>Not the colors. Not the layout. The <em>fonts</em>. The line spacing. The size of the body text. The way the headings don't feel like headings. These details are invisible when they're right and unmistakable when they're wrong — and most beginners never get told which properties to touch.</p>
+
+ <p><span class="key">Good typography makes beginner sites look intermediate. Instantly.</span> Not because it's magic — it's because typography is what trained eyes notice first, and most beginners never get told to look at it. It's the difference between "someone made this" and "someone designed this."</p>
+
+ <div class="callout psych">
+  <div class="callout-title">💛 The Confidence Layer</div>
+  <p>Here's the thing nobody tells you: professional-looking typography isn't hard to achieve. It takes about eight properties, one Google Fonts import, and the willingness to actually look at your text. That's it. By the end of this post, your sites will look different — in a good way.</p>
+ </div>
+
+ <!-- ─── BEFORE / AFTER ─── -->
+ <h2>🧠 What a Difference Typography Makes</h2>
+ <p>Same content. Same HTML structure. Wildly different result:</p>
+
+ <div class="font-compare">
+  <div class="font-panel before">
+   <div class="fp-label bad">✗ Default Browser Fonts</div>
+   <div class="fp-before-meta">TUTORIAL — March 2025</div>
+   <div class="fp-before-headline">What CSS Actually Does And Why It Matters For Everyone</div>
+   <div class="fp-before-body">CSS is the presentation layer of the web. When you understand how it connects to HTML you can start building websites that look exactly like what you intended instead of whatever the browser decides.</div>
+  </div>
+  <div class="font-panel after">
+   <div class="fp-label good">✓ Google Fonts + Typography Properties</div>
+   <div class="fp-after-meta">Tutorial · March 2025</div>
+   <div class="fp-after-headline">What CSS Actually Does And Why It Matters</div>
+   <div class="fp-after-body">CSS is the presentation layer of the web. When you understand how it connects to HTML, you can start building websites that look exactly like what you intended — not whatever the browser decides.</div>
+  </div>
+ </div>
+
+ <p>The content is nearly identical. The typography properties changed everything. Let's go through each one.</p>
+
+ <!-- 🧱 TECHNICAL BREAKDOWN -->
+ <h2>🧱 The Properties, One by One</h2>
+
+ <h3>1. font-family — Choosing Your Typeface</h3>
+
+ <p><span class="il">font-family</span> sets which font is used. You can list multiple options separated by commas — this is called a <strong>font stack</strong>. The browser uses the first one it can find, falling through to the next if it can't load it. The last option should always be a generic family: <span class="il">serif</span>, <span class="il">sans-serif</span>, or <span class="il">monospace</span>.</p>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">styles.css</div>
+   <div class="code-lang">CSS · font-family</div>
+  </div>
+  <div class="code-body"><code><span class="sel">body</span> {
+ <span class="c">/* Font stack: try each left to right */</span>
+ <span class="prop">font-family</span>: <span class="val">'Space Grotesk'</span>, <span class="val">system-ui</span>, <span class="val">sans-serif</span>;
+}
+
+<span class="sel">h1</span>, <span class="sel">h2</span>, <span class="sel">h3</span> {
+ <span class="c">/* Headings can use the same or a different face */</span>
+ <span class="prop">font-family</span>: <span class="val">'Space Grotesk'</span>, <span class="val">sans-serif</span>;
+}
+
+<span class="sel">code</span>, <span class="sel">pre</span> {
+ <span class="c">/* Code always uses a monospace font */</span>
+ <span class="prop">font-family</span>: <span class="val">'Fira Code'</span>, <span class="val">'Courier New'</span>, <span class="val">monospace</span>;
+}
+
+<span class="c">/* Without a Google Fonts import, custom fonts won't load.
+  We'll cover that in the Google Fonts section below. */</span></code></div>
+ </div>
+
+ <h3>2. font-size — Size with Intention</h3>
+
+ <p>The browser default is <span class="il">16px</span> for body text. That's your baseline. Everything you set in CSS is relative to that — or it should be.</p>
+
+ <div class="unit-demo">
+  <div class="unit-demo-header">font-size: px vs rem — side by side</div>
+  <div class="unit-demo-body">
+   <div class="unit-row">
+    <div class="unit-label" style="color:var(--sky-blue);">px</div>
+    <div class="unit-label" style="color:var(--mint-green);">rem</div>
+    <div class="unit-label" style="color:var(--text-muted); font-size:11px;">visual size</div>
+   </div>
+   <div class="unit-row">
+    <span class="unit-label unit-sample-px size-12px">12px</span>
+    <span class="unit-label unit-sample-rem size-07rem">0.75rem</span>
+    <span style="font-size:12px; color:var(--text-muted); font-family:'Space Grotesk',sans-serif;">captions, metadata</span>
+   </div>
+   <div class="unit-row">
+    <span class="unit-label unit-sample-px size-14px">14px</span>
+    <span class="unit-label unit-sample-rem size-088rem">0.875rem</span>
+    <span style="font-size:14px; color:var(--text-muted); font-family:'Space Grotesk',sans-serif;">small body, card text</span>
+   </div>
+   <div class="unit-row">
+    <span class="unit-label unit-sample-px size-16px">16px</span>
+    <span class="unit-label unit-sample-rem size-1rem">1rem</span>
+    <span style="font-size:16px; color:var(--text-muted); font-family:'Space Grotesk',sans-serif;">base body text</span>
+   </div>
+   <div class="unit-row">
+    <span class="unit-label unit-sample-px size-20px">20px</span>
+    <span class="unit-label unit-sample-rem size-125rem">1.25rem</span>
+    <span style="font-size:20px; color:var(--text-muted); font-family:'Space Grotesk',sans-serif;">large body / lead</span>
+   </div>
+   <div class="unit-row">
+    <span class="unit-label unit-sample-px size-24px">24px</span>
+    <span class="unit-label unit-sample-rem size-15rem">1.5rem</span>
+    <span style="font-size:24px; color:var(--text-muted); font-family:'Space Grotesk',sans-serif;">h3 / subheading</span>
+   </div>
+   <div class="unit-row">
+    <span class="unit-label unit-sample-px size-32px">32px</span>
+    <span class="unit-label unit-sample-rem size-2rem">2rem</span>
+    <span style="font-size:32px; color:var(--text-muted); font-family:'Space Grotesk',sans-serif;">h1 / headline</span>
+   </div>
+  </div>
+ </div>
+
+ <h3>3. rem vs px — Which One to Use</h3>
+
+ <p><span class="il">px</span> is an absolute unit — 16px is always 16px no matter what. <span class="il">rem</span> is relative to the root font size (the <span class="il">html</span> element). By default, <span class="il">1rem = 16px</span>.</p>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">styles.css</div>
+   <div class="code-lang">CSS · rem vs px</div>
+  </div>
+  <div class="code-body"><code><span class="c">/* px — fixed, predictable, doesn't scale */</span>
+<span class="sel">body</span> {
+ <span class="prop">font-size</span>: <span class="val">16px</span>;  <span class="c">/* always 16px, ignores user preferences */</span>
+}
+
+<span class="c">/* rem — relative to root, scales with user settings */</span>
+<span class="sel">html</span> {
+ <span class="prop">font-size</span>: <span class="val">16px</span>;  <span class="c">/* set the root, 1rem = 16px */</span>
+}
+
+<span class="sel">body</span> {
+ <span class="prop">font-size</span>: <span class="val">1rem</span>;  <span class="c">/* = 16px */</span>
+}
+
+<span class="sel">h2</span> {
+ <span class="prop">font-size</span>: <span class="val">1.75rem</span>; <span class="c">/* = 28px — scales proportionally */</span>
+}
+
+<span class="sel">small</span> {
+ <span class="prop">font-size</span>: <span class="val">0.875rem</span>;<span class="c">/* = 14px */</span>
+}
+
+<span class="c">/* Use rem for font-size. Use px for borders, shadows, fine details. */</span></code></div>
+ </div>
+
+ <div class="callout tip">
+  <div class="callout-title">✦ The Practical Rule</div>
+  <p>Use <span class="il">rem</span> for all font sizes and most spacing. Use <span class="il">px</span> for borders, box shadows, and other small precise details that shouldn't scale. This gives you fluid, accessible text sizing with precise control over decorative details.</p>
+ </div>
+
+ <h3>4. font-weight — Light to Heavy</h3>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">styles.css</div>
+   <div class="code-lang">CSS · font-weight</div>
+  </div>
+  <div class="code-body"><code><span class="c">/* Named values */</span>
+<span class="sel-class">.light</span>  { <span class="prop">font-weight</span>: <span class="val">300</span>; } <span class="c">/* thin, airy */</span>
+<span class="sel-class">.regular</span> { <span class="prop">font-weight</span>: <span class="val">400</span>; } <span class="c">/* body text  */</span>
+<span class="sel-class">.medium</span>  { <span class="prop">font-weight</span>: <span class="val">500</span>; } <span class="c">/* slightly heavier body */</span>
+<span class="sel-class">.semibold</span> { <span class="prop">font-weight</span>: <span class="val">600</span>; } <span class="c">/* labels, UI */</span>
+<span class="sel-class">.bold</span>   { <span class="prop">font-weight</span>: <span class="val">700</span>; } <span class="c">/* headings  */</span>
+<span class="sel-class">.black</span>  { <span class="prop">font-weight</span>: <span class="val">900</span>; } <span class="c">/* display, impact */</span>
+
+<span class="c">/* The font must have these weights loaded — a font
+  loaded with only 400 & 700 won't render 300 or 600 */</span></code></div>
+ </div>
+
+ <h3>5. line-height — The Most Underrated Property</h3>
+
+ <p><span class="il">line-height</span> controls the space between lines of text. It is, without question, the most impactful typography property that beginners ignore. Too tight and text feels claustrophobic. Too loose and it falls apart. The sweet spot for body text is usually <span class="il">1.6</span> to <span class="il">1.8</span>.</p>
+
+ <div class="lh-demo">
+  <div class="lh-panel lh-tight">
+   <div class="lh-label"><span>line-height:</span><span class="lh-val">1.1</span></div>
+   <div class="lh-text">CSS is the presentation layer of the web. Learn it and your layouts become intentional, not accidental.</div>
+  </div>
+  <div class="lh-panel lh-normal">
+   <div class="lh-label"><span>line-height:</span><span class="lh-val">1.5</span></div>
+   <div class="lh-text">CSS is the presentation layer of the web. Learn it and your layouts become intentional, not accidental.</div>
+  </div>
+  <div class="lh-panel lh-relaxed">
+   <div class="lh-label"><span>line-height:</span><span class="lh-val">1.9</span></div>
+   <div class="lh-text">CSS is the presentation layer of the web. Learn it and your layouts become intentional, not accidental.</div>
+  </div>
+ </div>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">styles.css</div>
+   <div class="code-lang">CSS · line-height</div>
+  </div>
+  <div class="code-body"><code><span class="sel">body</span> {
+ <span class="prop">line-height</span>: <span class="val">1.75</span>; <span class="c">/* unitless — relative to font-size. Best practice. */</span>
+}
+
+<span class="sel">h1</span>, <span class="sel">h2</span>, <span class="sel">h3</span> {
+ <span class="prop">line-height</span>: <span class="val">1.15</span>; <span class="c">/* headings need tighter spacing — they're large */</span>
+}
+
+<span class="sel-class">.lead</span> {
+ <span class="prop">line-height</span>: <span class="val">1.6</span>;  <span class="c">/* intro text, slightly open */</span>
+}
+
+<span class="c">/* Rule of thumb:
+  Headings → 1.1 – 1.25 (tight, impactful)
+  Body text → 1.6 – 1.8  (readable, airy)
+  Captions → 1.4 – 1.5  (compact but clear) */</span></code></div>
+ </div>
+
+ <h3>6. letter-spacing — Presence and Breath</h3>
+
+ <p><span class="il">letter-spacing</span> controls the space between individual characters. Small adjustments make a massive difference in feel. Negative values tighten the text — great for bold display headlines. Positive values open it up — essential for small uppercase labels.</p>
+
+ <div class="ls-stack">
+  <div class="ls-row">
+   <div class="ls-tag">-1px (tight)</div>
+   <div class="ls-sample ls-neg">DISPLAY HEADLINE BOLD</div>
+   <div class="ls-use">large headings, impact</div>
+  </div>
+  <div class="ls-row">
+   <div class="ls-tag">0 (default)</div>
+   <div class="ls-sample ls-0">Body text reads naturally here</div>
+   <div class="ls-use">paragraphs, body</div>
+  </div>
+  <div class="ls-row">
+   <div class="ls-tag">1px</div>
+   <div class="ls-sample ls-1">Subheading or UI label</div>
+   <div class="ls-use">h3, nav items</div>
+  </div>
+  <div class="ls-row">
+   <div class="ls-tag">2px</div>
+   <div class="ls-sample ls-2">Category Tag</div>
+   <div class="ls-use">badges, small labels</div>
+  </div>
+  <div class="ls-row">
+   <div class="ls-tag">4px</div>
+   <div class="ls-sample ls-4" style="font-size:12px; text-transform:uppercase;">UPPERCASE EYEBROW</div>
+   <div class="ls-use">kickers, eyebrows</div>
+  </div>
+ </div>
+
+ <h3>7. text-transform — Control the Case</h3>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">styles.css</div>
+   <div class="code-lang">CSS · text-transform</div>
+  </div>
+  <div class="code-body"><code><span class="sel-class">.kicker</span> {
+ <span class="prop">text-transform</span>: <span class="val">uppercase</span>;  <span class="c">/* LOOKS LIKE THIS */</span>
+ <span class="prop">letter-spacing</span>: <span class="val">2px</span>;     <span class="c">/* always pair with letter-spacing */</span>
+ <span class="prop">font-size</span>: <span class="val">0.75rem</span>;     <span class="c">/* and a smaller size */</span>
+}
+
+<span class="sel-class">.title-case</span> {
+ <span class="prop">text-transform</span>: <span class="val">capitalize</span>;  <span class="c">/* Capitalizes Every Word */</span>
+}
+
+<span class="sel-class">.lowercase</span> {
+ <span class="prop">text-transform</span>: <span class="val">lowercase</span>;  <span class="c">/* forces all lowercase */</span>
+}
+
+<span class="c">/* text-transform is CSS-only — the HTML stays unchanged.
+  You can write lowercase in the file and display UPPERCASE in the browser. */</span></code></div>
+ </div>
+
+ <div class="callout tip">
+  <div class="callout-title">✦ The Uppercase + Letter-spacing Combo</div>
+  <p>Whenever you use <span class="il">text-transform: uppercase</span>, also add <span class="il">letter-spacing: 1.5px</span> or more. Uppercase letters set too tightly look cramped — they need air. This combination is how every professional "eyebrow" label or category tag is styled. It's a small thing that reads as very intentional.</p>
+ </div>
+
+ <h3>8. Google Fonts — Free Custom Typefaces in 3 Lines</h3>
+
+ <p>Google Fonts gives you hundreds of free, high-quality typefaces. You import them with a <span class="il">&lt;link&gt;</span> tag in your HTML head, then reference them by name in your CSS. Here's the complete workflow:</p>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">index.html</div>
+   <div class="code-lang">HTML · Step 1 — Import the font</div>
+  </div>
+  <div class="code-body"><code><span class="t">&lt;head&gt;</span>
+ <span class="c">&lt;!-- 1. Go to fonts.google.com
+    2. Pick a font, select the weights you need
+    3. Copy the link tag they give you, paste here --&gt;</span>
+
+ <span class="t">&lt;link</span> <span class="a">rel</span>=<span class="s">"preconnect"</span> <span class="a">href</span>=<span class="s">"https://fonts.googleapis.com"</span><span class="t">&gt;</span>
+ <span class="t">&lt;link</span> <span class="a">rel</span>=<span class="s">"preconnect"</span> <span class="a">href</span>=<span class="s">"https://fonts.gstatic.com"</span> <span class="a">crossorigin</span><span class="t">&gt;</span>
+ <span class="t">&lt;link</span> <span class="a">href</span>=<span class="s">"https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap"</span> <span class="a">rel</span>=<span class="s">"stylesheet"</span><span class="t">&gt;</span>
+
+ <span class="t">&lt;link</span> <span class="a">rel</span>=<span class="s">"stylesheet"</span> <span class="a">href</span>=<span class="s">"styles.css"</span><span class="t">&gt;</span>
+<span class="t">&lt;/head&gt;</span></code></div>
+ </div>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">styles.css</div>
+   <div class="code-lang">CSS · Step 2 — Use it by name</div>
+  </div>
+  <div class="code-body"><code><span class="sel">body</span> {
+ <span class="c">/* Use the exact name from Google Fonts, in quotes */</span>
+ <span class="prop">font-family</span>: <span class="val">'Space Grotesk'</span>, <span class="val">sans-serif</span>;
+}
+
+<span class="c">/* That's it. The font loads from Google's CDN
+  and applies to every element that inherits from body. */</span></code></div>
+ </div>
+
+ <p>Here are four pairings worth bookmarking. Each has a completely different personality — and none of them require a design degree to pull off:</p>
+
+ <div class="pair-grid">
+  <div class="pair-card">
+   <div class="pair-tag">Pairing 01 — Modern Tech</div>
+   <div class="pair-heading p1-h">The Future of Frontend</div>
+   <div class="pair-body p1-b">Clean, geometric, confident. Works for portfolios, SaaS landing pages, and anything that should feel current.</div>
+   <div class="pair-names">
+    <span class="pair-badge pb-display">Space Grotesk 700</span>
+    <span class="pair-badge pb-body">Space Grotesk 400</span>
+   </div>
+  </div>
+  <div class="pair-card">
+   <div class="pair-tag">Pairing 02 — Editorial Warmth</div>
+   <div class="pair-heading p2-h">The Future of Frontend</div>
+   <div class="pair-body p2-b">Serif italic display with a clean body creates editorial tension — great for blogs and long-form content.</div>
+   <div class="pair-names">
+    <span class="pair-badge pb-display">Georgia Italic 700</span>
+    <span class="pair-badge pb-body">Space Grotesk 400</span>
+   </div>
+  </div>
+  <div class="pair-card">
+   <div class="pair-tag">Pairing 03 — Dev / Code Aesthetic</div>
+   <div class="pair-heading p3-h">The Future of Frontend</div>
+   <div class="pair-body p3-b">Monospace headings read as technical and intentional. Perfect for dev blogs, tutorials, and CodeHerWay-style content.</div>
+   <div class="pair-names">
+    <span class="pair-badge pb-display">Fira Code 700</span>
+    <span class="pair-badge pb-body">Space Grotesk 400</span>
+   </div>
+  </div>
+  <div class="pair-card">
+   <div class="pair-tag">Pairing 04 — Bold Statement</div>
+   <div class="pair-heading p4-h">The Future of Frontend</div>
+   <div class="pair-body p4-b">All-caps tight tracking on the display makes a statement before the reader reads a word. High impact, use sparingly.</div>
+   <div class="pair-names">
+    <span class="pair-badge pb-display">Space Grotesk uppercase</span>
+    <span class="pair-badge pb-body">Space Grotesk 400</span>
+   </div>
+  </div>
+ </div>
+
+ <!-- QUICK REF TABLE -->
+ <h3>Quick Reference: All Seven Properties</h3>
+ <div class="prop-table-wrap">
+  <table class="prop-table">
+   <thead>
+    <tr>
+     <th>Property</th>
+     <th>What It Controls</th>
+     <th>Good Starting Values</th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr>
+     <td><span class="il">font-family</span></td>
+     <td>Which typeface renders</td>
+     <td>Always end with <span class="il">sans-serif</span> fallback</td>
+    </tr>
+    <tr>
+     <td><span class="il">font-size</span></td>
+     <td>How large the text is</td>
+     <td><span class="il">1rem</span> body · <span class="il">2rem+</span> headlines</td>
+    </tr>
+    <tr>
+     <td><span class="il">font-weight</span></td>
+     <td>Thin to heavy</td>
+     <td><span class="il">400</span> body · <span class="il">700</span> headings</td>
+    </tr>
+    <tr>
+     <td><span class="il">line-height</span></td>
+     <td>Space between lines</td>
+     <td><span class="il">1.75</span> body · <span class="il">1.15</span> headlines</td>
+    </tr>
+    <tr>
+     <td><span class="il">letter-spacing</span></td>
+     <td>Space between characters</td>
+     <td><span class="il">-0.3px</span> headlines · <span class="il">1.5px</span> labels</td>
+    </tr>
+    <tr>
+     <td><span class="il">text-transform</span></td>
+     <td>Forces case in the browser</td>
+     <td><span class="il">uppercase</span> for kickers and tags</td>
+    </tr>
+    <tr>
+     <td><span class="il">color</span></td>
+     <td>Text color</td>
+     <td>Use 2–3 tones: primary, secondary, muted</td>
+    </tr>
+   </tbody>
+  </table>
+ </div>
+
+ <div class="sep"></div>
+
+ <!-- 🛠 MINI BUILD -->
+ <div class="mini-build">
+  <div class="mini-build-header">
+   <span style="font-size:22px;">🛠</span>
+   <h3>Mini Build: A Styled Blog Article</h3>
+  </div>
+  <div class="mini-build-body">
+   <p>You're going to build a clean, readable blog article layout using all seven typography properties. By the end it should look like something you'd actually want to read — not the default browser rendering from 2003.</p>
+
+   <div class="step">
+    <div class="step-num">01</div>
+    <div class="step-text">
+     <p><strong>Import your Google Font.</strong> Go to <a href="https://fonts.google.com" target="_blank" style="color:var(--pink);">fonts.google.com</a> and find <strong>Space Grotesk</strong>. Select weights 400, 600, and 700. Copy the <span class="il">&lt;link&gt;</span> snippet and paste it into your <span class="il">&lt;head&gt;</span> before your stylesheet link.</p>
+    </div>
+   </div>
+
+   <div class="step">
+    <div class="step-num">02</div>
+    <div class="step-text">
+     <p><strong>Write the article HTML.</strong> Structure matters here — use the right elements for each piece of content.</p>
+    </div>
+   </div>
+
+   <div class="code-window">
+    <div class="code-topbar">
+     <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+     <div class="code-filename">index.html</div>
+     <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-body"><code><span class="t">&lt;article</span> <span class="a">class</span>=<span class="s">"blog-post"</span><span class="t">&gt;</span>
+
+ <span class="t">&lt;span</span> <span class="a">class</span>=<span class="s">"post-kicker"</span><span class="t">&gt;</span>Tutorial · CSS Series<span class="t">&lt;/span&gt;</span>
+ <span class="t">&lt;h1</span> <span class="a">class</span>=<span class="s">"post-title"</span><span class="t">&gt;</span>What CSS Actually Does<span class="t">&lt;/h1&gt;</span>
+ <span class="t">&lt;p</span> <span class="a">class</span>=<span class="s">"post-meta"</span><span class="t">&gt;</span>March 2025 · 8 min read<span class="t">&lt;/p&gt;</span>
+
+ <span class="t">&lt;p</span> <span class="a">class</span>=<span class="s">"post-lead"</span><span class="t">&gt;</span>
+  CSS is the presentation layer of the web.
+  Learn it, and your layouts become intentional — not accidental.
+ <span class="t">&lt;/p&gt;</span>
+
+ <span class="t">&lt;h2</span> <span class="a">class</span>=<span class="s">"post-subhead"</span><span class="t">&gt;</span>How Browsers Use CSS<span class="t">&lt;/h2&gt;</span>
+ <span class="t">&lt;p</span> <span class="a">class</span>=<span class="s">"post-body"</span><span class="t">&gt;</span>
+  When a browser loads a page, it reads your HTML structure
+  first, then applies CSS rules to decide how everything looks.
+  The two languages are always working together.
+ <span class="t">&lt;/p&gt;</span>
+
+<span class="t">&lt;/article&gt;</span></code></div>
+   </div>
+
+   <div class="step">
+    <div class="step-num">03</div>
+    <div class="step-text">
+     <p><strong>Add the typography CSS.</strong> Every class gets intentional type settings — nothing is left to browser defaults.</p>
+    </div>
+   </div>
+
+   <div class="code-window">
+    <div class="code-topbar">
+     <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+     <div class="code-filename">styles.css</div>
+     <div class="code-lang">CSS</div>
+    </div>
+    <div class="code-body"><code><span class="sel">*</span> { <span class="prop">margin</span>: <span class="val">0</span>; <span class="prop">padding</span>: <span class="val">0</span>; <span class="prop">box-sizing</span>: <span class="val">border-box</span>; }
+
+<span class="sel">body</span> {
+ <span class="prop">background</span>: <span class="val">#0a0a0f</span>;
+ <span class="prop">color</span>: <span class="val">#e0e0e8</span>;
+ <span class="prop">font-family</span>: <span class="val">'Space Grotesk'</span>, <span class="val">sans-serif</span>;
+ <span class="prop">font-size</span>: <span class="val">1rem</span>;
+ <span class="prop">line-height</span>: <span class="val">1.75</span>;
+ <span class="prop">padding</span>: <span class="val">48px 24px</span>;
+}
+
+<span class="sel-class">.blog-post</span> {
+ <span class="prop">max-width</span>: <span class="val">680px</span>;
+ <span class="prop">margin</span>: <span class="val">0 auto</span>;
+}
+
+<span class="sel-class">.post-kicker</span> {
+ <span class="prop">display</span>: <span class="val">block</span>;
+ <span class="prop">font-size</span>: <span class="val">0.75rem</span>;
+ <span class="prop">font-weight</span>: <span class="val">600</span>;
+ <span class="prop">text-transform</span>: <span class="val">uppercase</span>;
+ <span class="prop">letter-spacing</span>: <span class="val">2px</span>;
+ <span class="prop">color</span>: <span class="val">#ff69b4</span>;
+ <span class="prop">margin-bottom</span>: <span class="val">12px</span>;
+}
+
+<span class="sel-class">.post-title</span> {
+ <span class="prop">font-size</span>: <span class="val">2.25rem</span>;
+ <span class="prop">font-weight</span>: <span class="val">700</span>;
+ <span class="prop">line-height</span>: <span class="val">1.15</span>;
+ <span class="prop">letter-spacing</span>: <span class="val">-0.4px</span>;
+ <span class="prop">color</span>: <span class="val">#ffffff</span>;
+ <span class="prop">margin-bottom</span>: <span class="val">10px</span>;
+}
+
+<span class="sel-class">.post-meta</span> {
+ <span class="prop">font-size</span>: <span class="val">0.8rem</span>;
+ <span class="prop">color</span>: <span class="val">#6a6a80</span>;
+ <span class="prop">margin-bottom</span>: <span class="val">28px</span>;
+}
+
+<span class="sel-class">.post-lead</span> {
+ <span class="prop">font-size</span>: <span class="val">1.15rem</span>;
+ <span class="prop">font-weight</span>: <span class="val">500</span>;
+ <span class="prop">color</span>: <span class="val">#b0b0c0</span>;
+ <span class="prop">line-height</span>: <span class="val">1.65</span>;
+ <span class="prop">margin-bottom</span>: <span class="val">32px</span>;
+}
+
+<span class="sel-class">.post-subhead</span> {
+ <span class="prop">font-size</span>: <span class="val">1.35rem</span>;
+ <span class="prop">font-weight</span>: <span class="val">700</span>;
+ <span class="prop">line-height</span>: <span class="val">1.25</span>;
+ <span class="prop">color</span>: <span class="val">#e0e0e8</span>;
+ <span class="prop">margin-bottom</span>: <span class="val">14px</span>;
+}
+
+<span class="sel-class">.post-body</span> {
+ <span class="prop">font-size</span>: <span class="val">1rem</span>;
+ <span class="prop">color</span>: <span class="val">#8a8a9f</span>;
+ <span class="prop">line-height</span>: <span class="val">1.85</span>;
+}</code></div>
+   </div>
+
+   <div class="step">
+    <div class="step-num">04</div>
+    <div class="step-text">
+     <p><strong>Here's what it looks like when it's done.</strong> This is the exact CSS above rendered live — no extra tricks, no extra tools:</p>
+    </div>
+   </div>
+
+   <!-- LIVE BLOG DEMO -->
+   <div class="blog-demo-wrap">
+    <div class="blog-demo-topbar">
+     <div class="bar-dots">
+      <span style="background:var(--dot-red)"></span>
+      <span style="background:var(--dot-yellow)"></span>
+      <span style="background:var(--dot-green)"></span>
+     </div>
+     <div class="bar-label">your finished blog article</div>
+    </div>
+    <div class="blog-article-demo">
+     <span class="art-kicker">Tutorial · CSS Series</span>
+     <h1 class="art-headline">What CSS Actually Does and Why It Changes Everything</h1>
+     <div class="art-meta">
+      <span>📅 March 2025</span>
+      <span>⏱ 8 min read</span>
+      <span>✍️ CodeHerWay</span>
+     </div>
+     <div class="art-divider"></div>
+     <p class="art-lead">CSS is the presentation layer of the web. Learn it and your layouts become intentional — not accidental. Not "whatever the browser decided."</p>
+     <div class="art-subhead">How Browsers Use CSS</div>
+     <p class="art-body">When a browser loads a page, it reads your HTML structure first, then applies CSS rules to decide how everything looks. The two languages are always working together — HTML says what it is, CSS says how it appears.</p>
+     <p class="art-body">Before CSS, every webpage looked like a university document from 1996. After CSS, the same content can become anything. That's not decoration. That's control.</p>
+     <div class="art-tag-row">
+      <span class="art-tag">CSS</span>
+      <span class="art-tag">Beginner</span>
+      <span class="art-tag">Typography</span>
+     </div>
+    </div>
+   </div>
+
+   <div class="callout tip" style="margin-top: 24px; margin-bottom: 0;">
+    <div class="callout-title">✦ Notice What You Did</div>
+    <p>Three distinct text colors (white headline, muted lead, gray body). Two different line-heights. Uppercase + letter-spacing on the kicker. Negative letter-spacing on the headline. All of it working together to create visual hierarchy. That's what typography is — a system of decisions, not random font choices.</p>
+   </div>
+  </div>
+ </div>
+
+ <!-- 💛 CONFIDENCE CLOSE -->
+ <div class="confidence-close">
+  <h2>💛 Typography Is the Fastest Upgrade You'll Ever Make</h2>
+  <p>People who look at a website and say "this looks professional" are almost always responding to typography before anything else — before color, before layout, before images. It's the first thing trained eyes see and the last thing beginners think to fix.</p>
+  <p>Now you're thinking about it. Here's what you now have that you didn't before:</p>
+  <ul class="recap-list">
+   <li><span class="il">font-family</span> with a proper font stack — and Google Fonts loaded correctly</li>
+   <li><span class="il">font-size</span> in <span class="il">rem</span> so text scales like it's supposed to</li>
+   <li><span class="il">line-height</span> set intentionally for both headings and body text</li>
+   <li><span class="il">letter-spacing</span> that makes uppercase labels and display text breathe</li>
+   <li><span class="il">text-transform</span> for consistent, CSS-driven case control</li>
+   <li>A type hierarchy system: kicker → headline → lead → body → meta</li>
+   <li>A finished blog article that looks like something you built on purpose</li>
+  </ul>
+  <p>Next up: Colors and Units — hex, RGB, HSL, opacity, and why <span class="il">rem</span> and <span class="il">%</span> will change how you think about sizing everything. Typography sets the voice. Color sets the mood.</p>
+ </div>
+
+ <div class="sep"></div>
+
+ <!-- 🧾 DEVFESSION -->
+ <div class="devfession">
+  <div class="devfession-header">🧾 DevFession</div>
+  <div class="devfession-body">
+   <p>My first five projects all used Arial. Not because I made a choice — because I never changed it. The browser decided. I just let it.</p>
+   <p>And the worst part is I didn't even know that's why my sites looked off. I'd spend hours tweaking colors and layouts thinking something was wrong with those. Colors were fine. Layout was fine. My typography was just completely unaddressed, and it was making everything else look amateur by association.</p>
+   <p>The day I figured out <span class="il">line-height: 1.75</span> changed my body text was the day I genuinely felt like I understood CSS for the first time. It was such a small thing. Such an absurdly small thing. But suddenly my text had <em>air</em> — it had room to breathe. And the whole page felt different.</p>
+   <p>If your site looks "almost right," go look at your typography first. Nine times out of ten, that's where the answer is hiding.</p>
+  </div></div>
+  </div>
+  <div style="text-align: center;">
+  </div>
+  <div style="text-align: right;">
+  </div>
+ </div>
+
+
+ <nav class="post-nav">
+  <a href="03-box-model.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">The CSS Box Model</span></a>
+  <a href="05-colors-and-units.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">CSS Colors and Units</span></a>
+ </nav>
+ <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+ <div id="site-footer"></div>
+ <script src="../../assets/js/main.js"></script>
+</body>
+</html>

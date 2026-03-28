@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSS Flexbox for Beginners: Centering, Spacing, and One-Dimensional Layouts — CodeHerWay</title>
+<meta name="description" content="Flexbox is the CSS property that makes layouts finally feel logical. Learn justify-content, align-items, flex-wrap, gap, and how to build navbars, card grids, and footers — all in one post.">
+  <link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.prop{color: var(--sky-blue);}
+.val{color: var(--mint-green);}
+.sel{color: var(--pink);}
+.sel-class{color: var(--gold);}
+.flex-stage{background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 20px; margin: 20px 0;}
+.flex-stage-label{font-family: 'Fira Code', monospace; font-size: 11px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 14px;}
+.flex-item{background: rgba(180,74,255,0.15); border: 1px solid rgba(180,74,255,0.3); border-radius: 6px; padding: 10px 16px; font-family: 'Fira Code', monospace; font-size: 13px; color: var(--purple); white-space: normal; word-break: break-word;}
+.f-row{display: flex; flex-direction: row; gap: 10px;}
+.f-col{display: flex; flex-direction: column; gap: 10px;}
+.f-center{display: flex; justify-content: center; align-items: center; gap: 10px; min-height: 80px;}
+.f-between{display: flex; justify-content: space-between; align-items: center; gap: 10px;}
+.f-wrap{display: flex; flex-wrap: wrap; gap: 10px;}
+.f-end{display: flex; justify-content: flex-end; align-items: center; gap: 10px;}
+.f-stretch{display: flex; align-items: stretch; gap: 10px; min-height: 80px;}
+.flex-item-tall{background: rgba(105,210,231,0.12); border: 1px solid rgba(105,210,231,0.3); border-radius: 6px; padding: 10px 16px; font-family: 'Fira Code', monospace; font-size: 13px; color: var(--sky-blue);}
+.axis-diagram{background: var(--bg-code); border-radius: 12px; padding: 28px; margin: 28px 0; border: 1px solid rgba(255,255,255,0.06);}
+.axis-row{display: flex; align-items: center; gap: 16px; margin-bottom: 16px;}
+.axis-arrow{flex: 1; height: 2px; background: linear-gradient(90deg, var(--pink), transparent); position: relative;}
+.axis-arrow::after{content: '→'; position: absolute; right: -8px; top: -10px; color: var(--pink); font-size: 16px;}
+.axis-label{font-family: 'Fira Code', monospace; font-size: 12px; color: var(--pink); min-width: 80px;}
+.axis-arrow-v{width: 2px; height: 60px; background: linear-gradient(180deg, var(--sky-blue), transparent); position: relative; margin: 0 auto;}
+.axis-arrow-v::after{content: '↓'; position: absolute; bottom: -16px; left: -5px; color: var(--sky-blue); font-size: 16px;}
+.demo-navbar{display: flex; justify-content: space-between; align-items: center; background: #12121a; border-radius: 10px; padding: 14px 24px; margin: 20px 0; border: 1px solid rgba(255,255,255,0.06);}
+.demo-nav-logo{font-family: 'Fira Code', monospace; font-weight: 700; font-size: 15px; background: var(--gradient-header); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;}
+.demo-nav-links{display: flex; gap: 24px;}
+.demo-nav-links a{font-size: 13px; color: var(--text-secondary); text-decoration: none;}
+.demo-card-grid{display: flex; gap: 16px; flex-wrap: wrap; margin: 20px 0;}
+.demo-card-item{background: #12121a; border-radius: 10px; padding: 20px; border: 1px solid rgba(255,255,255,0.06); flex: 1; min-width: 180px;}
+.demo-card-item .dci-tag{font-family: 'Fira Code', monospace; font-size: 11px; color: var(--pink); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;}
+.demo-card-item .dci-title{font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 6px;}
+.demo-card-item .dci-body{font-size: 12px; color: var(--text-muted);}
+.demo-footer{display: flex; justify-content: space-between; align-items: center; background: #12121a; border-radius: 10px; padding: 16px 24px; margin: 20px 0; border: 1px solid rgba(255,255,255,0.06); flex-wrap: wrap; gap: 12px;}
+.demo-footer-logo{font-family: 'Fira Code', monospace; font-size: 13px; font-weight: 700; color: var(--text-secondary);}
+.demo-footer-links{display: flex; gap: 16px;}
+.demo-footer-links a{font-size: 12px; color: var(--text-muted); text-decoration: none;}
+@media (max-width: 480px){
+      .code-body { font-size: 11.5px; padding: 12px; }
+      .hero h1 { font-size: clamp(24px, 9vw, 32px); }
+      .il { white-space: normal; word-break: break-word; }
+      .unit-grid, .compare-2, .before-after, .phase-grid,
+      .lh-demo, .pair-grid, .ba-grid, .font-compare { grid-template-columns: 1fr; }
+      .shadow-grid { grid-template-columns: 1fr 1fr; }
+      .swatch-row { gap: 8px; }
+      .swatch { min-width: 90px; }
+      .pyramid-row { flex-direction: column; gap: 6px; align-items: flex-start; }
+      .score-row { flex-direction: column; gap: 6px; }
+      .score-sel { min-width: unset; }
+      .recap-item { flex-wrap: wrap; gap: 4px; }
+      .recap-title { width: 100%; }
+      .checklist { padding: 14px; }
+      .demo-row { padding: 16px 12px; gap: 12px; }
+      .series-nav-divider { display: none; }
+      .connect-arrow { display: none; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .layer-margin { padding: 20px; }
+      .layer-border { padding: 16px; }
+    }
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+
+<div class="hero">
+  <div class="post-label"><span class="series-tag">CSS, But Make It Powerful</span> Post 07 of 14</div>
+  <div class="post-number">CSS Series · Post 07</div>
+  <h1>Flexbox<br><span class="gradient-text">Your First Layout Superpower</span></h1>
+  <p class="hero-sub">Flexbox is the property that makes layouts finally feel logical. Centering, spacing, distributing — things that used to take hacks and guesswork now take two or three lines.</p>
+  <div class="tag-row">
+    <span class="tag css">CSS</span>
+    <span class="tag beginner">Beginner</span>
+    <span class="tag series">Series: Post 07</span>
+    <span class="tag">~15 min read</span>
+  </div>
+</div>
+
+<main class="article">
+
+  <h2>💬 "Why Won't This Just Center?"</h2>
+
+  <p>Before Flexbox, centering something vertically in CSS was famously painful. People wrote blog posts about it. The solutions involved absolute positioning and negative margins and hoping nothing broke on mobile.</p>
+
+  <p>Then Flexbox arrived. And the answer became two lines. Two. After years of hacks and workarounds, it's genuinely that simple now. <span class="key">Flexbox is a one-dimensional layout system</span> — it arranges items either in a row or a column, and gives you direct control over how they're spaced, aligned, and distributed.</p>
+
+  <div class="callout mindset">
+    <div class="callout-title">🧠 The Mental Model</div>
+    <p>Flexbox has two players: the <strong>container</strong> (the parent you put <span class="il">display: flex</span> on) and the <strong>items</strong> (the direct children). Most Flexbox properties go on the container. A few go on individual items. Keep this separation clear and it all makes sense.</p>
+  <p><strong>Quick axes rule:</strong> The main axis is the direction your items are flowing. In a row, main = horizontal. In a column, main = vertical. <span class="il">justify-content</span> always controls the main axis. <span class="il">align-items</span> always controls the other one. Draw the axes once — you'll never mix them up again.</p>
+  </div>
+
+  <h2>🧱 The Flex Axes</h2>
+
+  <p>Every Flexbox layout has two axes. The <span class="pink-key">main axis</span> is the direction items flow (horizontal by default). The <span class="sky-key">cross axis</span> is perpendicular to it. Which axis is which depends on <span class="il">flex-direction</span>.</p>
+
+  <div class="axis-diagram">
+    <div style="display:flex; gap:40px; align-items:flex-start; flex-wrap:wrap;">
+      <div>
+        <div style="font-family:'Fira Code',monospace; font-size:11px; color:var(--text-muted); margin-bottom:10px;">flex-direction: row (default)</div>
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
+          <div style="height:2px; width:140px; background:linear-gradient(90deg,var(--pink),transparent); position:relative;"><span style="position:absolute;right:-8px;top:-10px;color:var(--pink);">→</span></div>
+          <span style="font-family:'Fira Code',monospace; font-size:11px; color:var(--pink);">main axis</span>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <div style="width:2px; height:50px; background:linear-gradient(180deg,var(--sky-blue),transparent); position:relative;"><span style="position:absolute;bottom:-16px;left:-5px;color:var(--sky-blue);">↓</span></div>
+          <span style="font-family:'Fira Code',monospace; font-size:11px; color:var(--sky-blue); margin-left:10px;">cross axis</span>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:'Fira Code',monospace; font-size:11px; color:var(--text-muted); margin-bottom:10px;">flex-direction: column</div>
+        <div style="display:flex; gap:8px; align-items:center; margin-bottom:8px;">
+          <div style="width:2px; height:50px; background:linear-gradient(180deg,var(--pink),transparent); position:relative;"><span style="position:absolute;bottom:-16px;left:-5px;color:var(--pink);">↓</span></div>
+          <span style="font-family:'Fira Code',monospace; font-size:11px; color:var(--pink); margin-left:10px;">main axis</span>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center; margin-top:16px;">
+          <div style="height:2px; width:100px; background:linear-gradient(90deg,var(--sky-blue),transparent); position:relative;"><span style="position:absolute;right:-8px;top:-10px;color:var(--sky-blue);">→</span></div>
+          <span style="font-family:'Fira Code',monospace; font-size:11px; color:var(--sky-blue);">cross axis</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>🧱 Container Properties</h2>
+
+  <h3>display: flex + flex-direction</h3>
+
+  <div class="flex-stage">
+    <div class="flex-stage-label">flex-direction: row (default)</div>
+    <div class="f-row">
+      <div class="flex-item">Item 1</div>
+      <div class="flex-item">Item 2</div>
+      <div class="flex-item">Item 3</div>
+    </div>
+  </div>
+
+  <div class="flex-stage">
+    <div class="flex-stage-label">flex-direction: column</div>
+    <div class="f-col">
+      <div class="flex-item">Item 1</div>
+      <div class="flex-item">Item 2</div>
+      <div class="flex-item">Item 3</div>
+    </div>
+  </div>
+
+  <h3>justify-content — Spacing Along the Main Axis</h3>
+
+  <p>Controls how items are distributed along the main axis (horizontally in a row, vertically in a column).</p>
+
+  <div class="flex-stage">
+    <div class="flex-stage-label">justify-content: flex-start (default)</div>
+    <div class="f-row" style="justify-content:flex-start;">
+      <div class="flex-item">A</div><div class="flex-item">B</div><div class="flex-item">C</div>
+    </div>
+  </div>
+
+  <div class="flex-stage">
+    <div class="flex-stage-label">justify-content: center</div>
+    <div class="f-row" style="justify-content:center;">
+      <div class="flex-item">A</div><div class="flex-item">B</div><div class="flex-item">C</div>
+    </div>
+  </div>
+
+  <div class="flex-stage">
+    <div class="flex-stage-label">justify-content: space-between</div>
+    <div class="f-row" style="justify-content:space-between;">
+      <div class="flex-item">A</div><div class="flex-item">B</div><div class="flex-item">C</div>
+    </div>
+  </div>
+
+  <div class="flex-stage">
+    <div class="flex-stage-label">justify-content: space-around</div>
+    <div class="f-row" style="justify-content:space-around;">
+      <div class="flex-item">A</div><div class="flex-item">B</div><div class="flex-item">C</div>
+    </div>
+  </div>
+
+  <div class="flex-stage">
+    <div class="flex-stage-label">justify-content: flex-end</div>
+    <div class="f-end">
+      <div class="flex-item">A</div><div class="flex-item">B</div><div class="flex-item">C</div>
+    </div>
+  </div>
+
+  <h3>align-items — Alignment Along the Cross Axis</h3>
+
+  <p>Controls how items align on the cross axis (vertically in a row, horizontally in a column). This is the property that makes vertical centering trivial.</p>
+
+  <div class="flex-stage">
+    <div class="flex-stage-label">align-items: center — vertical centering (finally)</div>
+    <div class="f-center" style="background:rgba(255,255,255,0.02); border-radius:6px;">
+      <div class="flex-item">Short</div>
+      <div class="flex-item" style="padding:20px 16px;">Tall item</div>
+      <div class="flex-item">Short</div>
+    </div>
+  </div>
+
+  <div class="flex-stage">
+    <div class="flex-stage-label">align-items: stretch (default) — items fill cross axis height</div>
+    <div class="f-stretch">
+      <div class="flex-item">A</div>
+      <div class="flex-item" style="padding:20px 16px;">Tall B</div>
+      <div class="flex-item">C</div>
+    </div>
+  </div>
+
+  <h3>gap — Space Between Items</h3>
+
+  <p><span class="il">gap</span> is the cleanest way to add space between flex items. Unlike margins, it only creates space <em>between</em> items — no extra space at the edges.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">styles.css</div>
+      <div class="code-lang">CSS · gap</div>
+    </div>
+    <div class="code-body"><code><span class="sel-class">.container</span> {
+  <span class="prop">display</span>: <span class="val">flex</span>;
+  <span class="prop">gap</span>: <span class="val">16px</span>;         <span class="c">/* same gap in all directions */</span>
+  <span class="prop">gap</span>: <span class="val">20px 12px</span>;    <span class="c">/* row-gap: 20px, column-gap: 12px */</span>
+  <span class="prop">row-gap</span>: <span class="val">20px</span>;     <span class="c">/* vertical gap only */</span>
+  <span class="prop">column-gap</span>: <span class="val">12px</span>; <span class="c">/* horizontal gap only */</span>
+}</code></div>
+  </div>
+
+  <h3>flex-wrap — Let Items Wrap to New Lines</h3>
+
+  <p>By default, flex items never wrap — they squish to fit in one line. <span class="il">flex-wrap: wrap</span> lets them break onto multiple rows, which is the foundation of responsive flex layouts.</p>
+
+  <div class="flex-stage">
+    <div class="flex-stage-label">flex-wrap: wrap — items flow onto multiple rows</div>
+    <div class="f-wrap">
+      <div class="flex-item">Card 1</div>
+      <div class="flex-item">Card 2</div>
+      <div class="flex-item">Card 3</div>
+      <div class="flex-item">Card 4</div>
+      <div class="flex-item">Card 5</div>
+      <div class="flex-item">Card 6</div>
+    </div>
+  </div>
+
+  <h3>The Perfect Center — Two Lines (Finally)</h3>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">styles.css</div>
+      <div class="code-lang">CSS · centering anything</div>
+    </div>
+    <div class="code-body"><code><span class="c">/* Center a div both horizontally AND vertically */</span>
+<span class="sel-class">.center-me</span> {
+  <span class="prop">display</span>: <span class="val">flex</span>;
+  <span class="prop">justify-content</span>: <span class="val">center</span>; <span class="c">/* horizontal */</span>
+  <span class="prop">align-items</span>: <span class="val">center</span>;    <span class="c">/* vertical */</span>
+  <span class="prop">min-height</span>: <span class="val">100vh</span>;        <span class="c">/* parent needs height */</span>
+}
+
+<span class="c">/* That's it. That's the answer. */</span></code></div>
+  </div>
+
+  <h2>🧱 Real-World Flexbox</h2>
+
+  <h3>Navbar</h3>
+
+  <div class="demo-navbar">
+    <div class="demo-nav-logo">CodeHerWay</div>
+    <div class="demo-nav-links">
+      <a href="#">HTML</a>
+      <a href="#">CSS</a>
+      <a href="#">JS</a>
+    </div>
+  </div>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">styles.css</div>
+      <div class="code-lang">CSS · Flex Navbar</div>
+    </div>
+    <div class="code-body"><code><span class="sel-class">.navbar</span> {
+  <span class="prop">display</span>: <span class="val">flex</span>;
+  <span class="prop">justify-content</span>: <span class="val">space-between</span>; <span class="c">/* logo left, links right */</span>
+  <span class="prop">align-items</span>: <span class="val">center</span>;           <span class="c">/* vertical center */</span>
+  <span class="prop">padding</span>: <span class="val">16px 24px</span>;
+  <span class="prop">background</span>: <span class="val">#12121a</span>;
+}
+
+<span class="sel-class">.nav-links</span> {
+  <span class="prop">display</span>: <span class="val">flex</span>;
+  <span class="prop">gap</span>: <span class="val">24px</span>;
+  <span class="prop">list-style</span>: <span class="val">none</span>;
+}</code></div>
+  </div>
+
+  <h3>Card Grid</h3>
+
+  <div class="demo-card-grid">
+    <div class="demo-card-item">
+      <div class="dci-tag">Post 01</div>
+      <div class="dci-title">What CSS Does</div>
+      <div class="dci-body">Presentation, not decoration.</div>
+    </div>
+    <div class="demo-card-item">
+      <div class="dci-tag">Post 02</div>
+      <div class="dci-title">Selectors</div>
+      <div class="dci-body">How CSS knows what to target.</div>
+    </div>
+    <div class="demo-card-item">
+      <div class="dci-tag">Post 03</div>
+      <div class="dci-title">Box Model</div>
+      <div class="dci-body">Why spacing makes sense now.</div>
+    </div>
+  </div>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">styles.css</div>
+      <div class="code-lang">CSS · Flex Card Grid</div>
+    </div>
+    <div class="code-body"><code><span class="sel-class">.card-grid</span> {
+  <span class="prop">display</span>: <span class="val">flex</span>;
+  <span class="prop">gap</span>: <span class="val">20px</span>;
+  <span class="prop">flex-wrap</span>: <span class="val">wrap</span>; <span class="c">/* cards wrap on small screens */</span>
+}
+
+<span class="sel-class">.card</span> {
+  <span class="prop">flex</span>: <span class="val">1</span>;          <span class="c">/* each card grows to fill space equally */
+  /* flex: 1 = flex-grow:1, flex-shrink:1, flex-basis:0 — share space equally */</span>
+  <span class="prop">min-width</span>: <span class="val">220px</span>; <span class="c">/* prevents cards getting too narrow */</span>
+  <span class="prop">background</span>: <span class="val">#12121a</span>;
+  <span class="prop">border-radius</span>: <span class="val">12px</span>;
+  <span class="prop">padding</span>: <span class="val">24px</span>;
+}</code></div>
+  </div>
+
+  <h3>Footer</h3>
+
+  <div class="demo-footer">
+    <div class="demo-footer-logo">CodeHerWay</div>
+    <div class="demo-footer-links">
+      <a href="#">Privacy</a>
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="mini-build">
+    <div class="mini-build-header">
+      <span style="font-size:22px;">🛠</span>
+      <h3>Mini Build: Full Flex Page Layout</h3>
+    </div>
+    <div class="mini-build-body">
+      <p>Put it all together: a navbar, a card grid, and a footer — all built with Flexbox. No absolute positioning, no inline-block hacks, no guessing.</p>
+
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-text"><p><strong>HTML structure</strong> — three semantic sections, each with the right class.</p></div>
+      </div>
+
+      <div class="code-window">
+        <div class="code-topbar">
+          <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+          <div class="code-filename">index.html</div>
+          <div class="code-lang">HTML</div>
+        </div>
+        <div class="code-body"><code><span class="t">&lt;nav</span> <span class="a">class</span>=<span class="s">"navbar"</span><span class="t">&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"logo"</span><span class="t">&gt;</span>CodeHerWay<span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;ul</span> <span class="a">class</span>=<span class="s">"nav-links"</span><span class="t">&gt;</span>
+    <span class="t">&lt;li&gt;&lt;a</span> <span class="a">href</span>=<span class="s">"#"</span><span class="t">&gt;</span>HTML<span class="t">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="t">&lt;li&gt;&lt;a</span> <span class="a">href</span>=<span class="s">"#"</span><span class="t">&gt;</span>CSS<span class="t">&lt;/a&gt;&lt;/li&gt;</span>
+    <span class="t">&lt;li&gt;&lt;a</span> <span class="a">href</span>=<span class="s">"#"</span><span class="t">&gt;</span>JS<span class="t">&lt;/a&gt;&lt;/li&gt;</span>
+  <span class="t">&lt;/ul&gt;</span>
+<span class="t">&lt;/nav&gt;</span>
+
+<span class="t">&lt;main</span> <span class="a">class</span>=<span class="s">"card-grid"</span><span class="t">&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"card"</span><span class="t">&gt;</span>...<span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"card"</span><span class="t">&gt;</span>...<span class="t">&lt;/div&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"card"</span><span class="t">&gt;</span>...<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;/main&gt;</span>
+
+<span class="t">&lt;footer</span> <span class="a">class</span>=<span class="s">"footer"</span><span class="t">&gt;</span>
+  <span class="t">&lt;span&gt;</span>© 2025 CodeHerWay<span class="t">&lt;/span&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"footer-links"</span><span class="t">&gt;</span>
+    <span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"#"</span><span class="t">&gt;</span>Privacy<span class="t">&lt;/a&gt;</span>
+    <span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"#"</span><span class="t">&gt;</span>About<span class="t">&lt;/a&gt;</span>
+  <span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;/footer&gt;</span></code></div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-text"><p><strong>Flexbox CSS</strong> — three containers, each using the same toolset differently.</p></div>
+      </div>
+
+      <div class="code-window">
+        <div class="code-topbar">
+          <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+          <div class="code-filename">styles.css</div>
+          <div class="code-lang">CSS</div>
+        </div>
+        <div class="code-body"><code><span class="sel-class">.navbar</span> {
+  <span class="prop">display</span>: <span class="val">flex</span>;
+  <span class="prop">justify-content</span>: <span class="val">space-between</span>;
+  <span class="prop">align-items</span>: <span class="val">center</span>;
+  <span class="prop">padding</span>: <span class="val">16px 24px</span>;
+}
+
+<span class="sel-class">.nav-links</span> {
+  <span class="prop">display</span>: <span class="val">flex</span>;
+  <span class="prop">gap</span>: <span class="val">24px</span>;
+  <span class="prop">list-style</span>: <span class="val">none</span>;
+}
+
+<span class="sel-class">.card-grid</span> {
+  <span class="prop">display</span>: <span class="val">flex</span>;
+  <span class="prop">flex-wrap</span>: <span class="val">wrap</span>;
+  <span class="prop">gap</span>: <span class="val">20px</span>;
+  <span class="prop">padding</span>: <span class="val">40px 24px</span>;
+}
+
+<span class="sel-class">.card</span> {
+  <span class="prop">flex</span>: <span class="val">1</span>;
+  <span class="prop">min-width</span>: <span class="val">220px</span>;
+  <span class="prop">background</span>: <span class="val">#12121a</span>;
+  <span class="prop">border-radius</span>: <span class="val">12px</span>;
+  <span class="prop">padding</span>: <span class="val">24px</span>;
+}
+
+<span class="sel-class">.footer</span> {
+  <span class="prop">display</span>: <span class="val">flex</span>;
+  <span class="prop">justify-content</span>: <span class="val">space-between</span>;
+  <span class="prop">align-items</span>: <span class="val">center</span>;
+  <span class="prop">padding</span>: <span class="val">24px</span>;
+  <span class="prop">flex-wrap</span>: <span class="val">wrap</span>;
+  <span class="prop">gap</span>: <span class="val">12px</span>;
+}
+
+<span class="sel-class">.footer-links</span> {
+  <span class="prop">display</span>: <span class="val">flex</span>;
+  <span class="prop">gap</span>: <span class="val">16px</span>;
+}</code></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="confidence-close">
+    <h2>💛 Layout Just Got a Lot Less Frustrating</h2>
+    <p>Flexbox is one of those things that clicks once and then you wonder how you ever built anything without it. The centering problem that haunted CSS developers for years? Two lines. The card grid that used to need float hacks and clearfixes? Four lines.</p>
+    <ul class="recap-list">
+      <li><span class="il">display: flex</span> on the parent activates Flexbox — children become flex items automatically</li>
+      <li><span class="il">flex-direction</span> sets whether items flow in a row or column</li>
+      <li><span class="il">justify-content</span> controls spacing on the main axis — center, space-between, etc.</li>
+      <li><span class="il">align-items</span> controls alignment on the cross axis — finally makes vertical centering easy</li>
+      <li><span class="il">gap</span> adds clean space between items with no edge-case side effects</li>
+      <li><span class="il">flex-wrap: wrap</span> lets items flow to new lines — the start of responsive layout</li>
+    </ul>
+    <p>Next: CSS Grid — the two-dimensional counterpart to Flexbox. When Flexbox handles a row or a column, Grid handles both at once. Together they cover every layout you'll ever need to build.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="devfession">
+    <div class="devfession-header">🧾 DevFession</div>
+    <div class="devfession-body">
+      <p>I learned <span class="il">justify-content</span> and <span class="il">align-items</span> backwards for months. Every time I wanted something centered vertically I'd reach for <span class="il">justify-content</span>. It never worked. I'd switch to <span class="il">align-items</span>. Sometimes that worked, sometimes it didn't, and I couldn't explain why.</p>
+      <p>Then someone drew me the axis diagram — main axis, cross axis, how they flip with <span class="il">flex-direction</span> — and it all locked in instantly. <span class="il">justify-content</span> is always for the main axis. <span class="il">align-items</span> is always for the cross axis. In a row, main = horizontal, so <span class="il">justify-content</span> centers horizontally. Want vertical? That's the cross axis. That's <span class="il">align-items</span>.</p>
+      <p>Draw the axes once. Remember them. You'll never mix them up again.</p>
+    </div></div>
+
+
+  <nav class="post-nav">
+    <a href="06-display-and-positioning.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">CSS Display and Positioning</span></a>
+    <a href="08-css-grid.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">CSS Grid</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

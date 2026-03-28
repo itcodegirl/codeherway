@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSS Responsive Design: Mobile-First, Media Queries, and clamp() Explained — CodeHerWay</title>
+<meta name="description" content="Over half of web traffic is mobile. If your layout only works on desktop, it's only working half the time. Learn media queries, mobile-first CSS, fluid sizing with clamp(), and how to test responsiveness in DevTools.">
+  <link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.prop{color: var(--sky-blue);}
+.val{color: var(--mint-green);}
+.sel{color: var(--pink);}
+.sel-class{color: var(--gold);}
+.breakpoint-stack{display: flex; flex-direction: column; gap: 8px; margin: 28px 0;}
+.bp-row{display: flex; align-items: center; gap: 14px;}
+.bp-label{font-family: 'Fira Code', monospace; font-size: 12px; color: var(--text-muted); width: 80px; flex-shrink: 0;}
+.bp-bar-wrap{flex: 1; background: rgba(255,255,255,0.04); border-radius: 4px; height: 24px; overflow: hidden;}
+.bp-bar{height: 100%; display: flex; align-items: center; padding-left: 10px; font-family: 'Fira Code', monospace; font-size: 11px; font-weight: 700; border-radius: 4px;}
+.bp-mobile{width: 25%; background: rgba(255,105,180,0.3); color: var(--pink);}
+.bp-tablet{width: 50%; background: rgba(180,74,255,0.3); color: var(--purple);}
+.bp-desktop{width: 80%; background: rgba(105,210,231,0.3); color: var(--sky-blue);}
+.bp-wide{width: 100%; background: rgba(125,255,179,0.3); color: var(--mint-green);}
+@media (max-width: 480px){
+      .code-body { font-size: 11.5px; padding: 12px; }
+      .hero h1 { font-size: clamp(24px, 9vw, 32px); }
+      .il { white-space: normal; word-break: break-word; }
+      .unit-grid, .compare-2, .before-after, .phase-grid,
+      .lh-demo, .pair-grid, .ba-grid, .font-compare { grid-template-columns: 1fr; }
+      .shadow-grid { grid-template-columns: 1fr 1fr; }
+      .swatch-row { gap: 8px; }
+      .swatch { min-width: 90px; }
+      .pyramid-row { flex-direction: column; gap: 6px; align-items: flex-start; }
+      .score-row { flex-direction: column; gap: 6px; }
+      .score-sel { min-width: unset; }
+      .recap-item { flex-wrap: wrap; gap: 4px; }
+      .recap-title { width: 100%; }
+      .checklist { padding: 14px; }
+      .demo-row { padding: 16px 12px; gap: 12px; }
+      .series-nav-divider { display: none; }
+      .connect-arrow { display: none; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .layer-margin { padding: 20px; }
+      .layer-border { padding: 16px; }
+    }
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+
+<div class="hero">
+  <div class="post-label"><span class="series-tag">CSS, But Make It Powerful</span> Post 09 of 14</div>
+  <div class="post-number">CSS Series · Post 09</div>
+  <h1>Responsive Design<br><span class="gradient-text">Built for Every Screen</span></h1>
+  <p class="hero-sub">Over half of all web traffic comes from mobile. If your layout only works on a desktop, it's only working half the time. This post teaches you how to build for all screen sizes from the start.</p>
+  <div class="tag-row">
+    <span class="tag css">CSS</span>
+    <span class="tag beginner">Beginner</span>
+    <span class="tag series">Series: Post 09</span>
+    <span class="tag">~13 min read</span>
+  </div>
+</div>
+
+<main class="article">
+
+  <h2>💬 "It Looks Perfect on My Laptop…"</h2>
+
+  <p>You resize the browser on mobile and your three-column card grid becomes a horizontal mess of overlapping text. The sidebar is nowhere to be found. The heading is 48px on a 320px screen. Everything looks wrong.</p>
+
+  <p>Responsive design is not a separate step you add at the end. <span class="key">It's a mindset you build in from the beginning.</span> And the good news: you already know most of the tools. Media queries are how you apply them at the right screen size.</p>
+
+  <h2>🧠 The Viewport Meta Tag — Non-Negotiable</h2>
+
+  <p>Before media queries work correctly, you need this line in your <span class="il">&lt;head&gt;</span>. Without it, mobile browsers zoom out and display a scaled-down desktop view, ignoring your responsive CSS entirely.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">index.html</div>
+      <div class="code-lang">HTML · Viewport Meta</div>
+    </div>
+    <div class="code-body"><code><span class="t">&lt;head&gt;</span>
+  <span class="c">&lt;!-- This line must be in every HTML file you build --&gt;</span>
+  <span class="t">&lt;meta</span> <span class="a">name</span>=<span class="s">"viewport"</span> <span class="a">content</span>=<span class="s">"width=device-width, initial-scale=1.0"</span><span class="t">&gt;</span>
+<span class="t">&lt;/head&gt;</span>
+
+<span class="c">/* width=device-width: use the device's actual screen width
+   initial-scale=1.0:  don't zoom in or out on load
+   Without this: mobile browsers fake a ~980px viewport and shrink everything */</span></code></div>
+  </div>
+
+  <h2>🧱 Media Queries</h2>
+
+  <p>A media query is a conditional CSS block. It says: <em>apply these styles only when this condition is true</em>. The most common condition is viewport width.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">styles.css</div>
+      <div class="code-lang">CSS · Media Query Syntax</div>
+    </div>
+    <div class="code-body"><code><span class="c">/* Basic syntax */</span>
+<span class="sel">@media</span> (<span class="prop">max-width</span>: <span class="val">768px</span>) {
+  <span class="c">/* These styles only apply when screen is 768px or narrower */</span>
+  <span class="sel-class">.card-grid</span> {
+    <span class="prop">grid-template-columns</span>: <span class="val">1fr</span>; <span class="c">/* one column on mobile */</span>
+  }
+}
+
+<span class="c">/* min-width — styles apply when screen is this wide or WIDER */</span>
+<span class="sel">@media</span> (<span class="prop">min-width</span>: <span class="val">768px</span>) {
+  <span class="sel-class">.card-grid</span> {
+    <span class="prop">grid-template-columns</span>: <span class="val">repeat(3, 1fr)</span>;
+  }
+}
+
+<span class="c">/* Range — between two widths */</span>
+<span class="sel">@media</span> (<span class="prop">min-width</span>: <span class="val">640px</span>) <span class="c">and</span> (<span class="prop">max-width</span>: <span class="val">1024px</span>) {
+  <span class="c">/* Tablet only */</span>
+}</code></div>
+  </div>
+
+  <h3>Common Breakpoints</h3>
+
+  <div class="breakpoint-stack">
+    <div class="bp-row">
+      <div class="bp-label">Mobile</div>
+      <div class="bp-bar-wrap"><div class="bp-bar bp-mobile">< 640px</div></div>
+    </div>
+    <div class="bp-row">
+      <div class="bp-label">Tablet</div>
+      <div class="bp-bar-wrap"><div class="bp-bar bp-tablet">640px – 1024px</div></div>
+    </div>
+    <div class="bp-row">
+      <div class="bp-label">Desktop</div>
+      <div class="bp-bar-wrap"><div class="bp-bar bp-desktop">1024px – 1440px</div></div>
+    </div>
+    <div class="bp-row">
+      <div class="bp-label">Wide</div>
+      <div class="bp-bar-wrap"><div class="bp-bar bp-wide">> 1440px</div></div>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">ℹ️ Breakpoints Aren't Fixed Rules</div>
+    <p>The common breakpoints (640px, 768px, 1024px) are starting points based on common device sizes — not universal laws. The table above is a reference, not a rulebook. The real rule: add a breakpoint <em>where your design breaks</em>, not at an arbitrary width. Resize the browser slowly and add media queries wherever things start looking wrong. Resize the browser slowly and add media queries wherever things start looking wrong.</p>
+  </div>
+
+  <h3>Mobile-First vs Desktop-First</h3>
+
+  <p><span class="pink-key">Mobile-first</span> means writing your base CSS for mobile screens, then using <span class="il">min-width</span> media queries to add styles as the screen gets <em>wider</em>. This is the modern professional approach.</p>
+
+  <p><span class="gold-key">Desktop-first</span> means writing for large screens first, then using <span class="il">max-width</span> queries to subtract or override styles as the screen gets <em>narrower</em>. This is how older codebases were often written.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">styles.css</div>
+      <div class="code-lang">CSS · Mobile-First Approach</div>
+    </div>
+    <div class="code-body"><code><span class="c">/* ─── MOBILE FIRST ─── */</span>
+<span class="c">/* Base styles: single column, simple layout */</span>
+<span class="sel-class">.card-grid</span> {
+  <span class="prop">display</span>: <span class="val">grid</span>;
+  <span class="prop">grid-template-columns</span>: <span class="val">1fr</span>;  <span class="c">/* one column */</span>
+  <span class="prop">gap</span>: <span class="val">16px</span>;
+}
+
+<span class="sel-class">.navbar</span> {
+  <span class="prop">flex-direction</span>: <span class="val">column</span>;
+  <span class="prop">gap</span>: <span class="val">12px</span>;
+}
+
+<span class="c">/* Tablet and up — add columns */</span>
+<span class="sel">@media</span> (<span class="prop">min-width</span>: <span class="val">640px</span>) {
+  <span class="sel-class">.card-grid</span> {
+    <span class="prop">grid-template-columns</span>: <span class="val">repeat(2, 1fr)</span>;
+  }
+  <span class="sel-class">.navbar</span> {
+    <span class="prop">flex-direction</span>: <span class="val">row</span>;
+    <span class="prop">justify-content</span>: <span class="val">space-between</span>;
+  }
+}
+
+<span class="c">/* Desktop and up — three columns */</span>
+<span class="sel">@media</span> (<span class="prop">min-width</span>: <span class="val">1024px</span>) {
+  <span class="sel-class">.card-grid</span> {
+    <span class="prop">grid-template-columns</span>: <span class="val">repeat(3, 1fr)</span>;
+  }
+}</code></div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">✦ Why Mobile-First Wins</div>
+    <p>Mobile-first produces cleaner, smaller CSS because simple single-column layouts need fewer rules. You're adding complexity as space allows, rather than removing it under constraints. It also forces you to prioritize content — what's essential when space is limited? Everything else is an enhancement.</p>
+  </div>
+
+  <h3>Fluid Sizing — max-width and min-width</h3>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">styles.css</div>
+      <div class="code-lang">CSS · Fluid Sizing</div>
+    </div>
+    <div class="code-body"><code><span class="c">/* Fluid container — fills up to a max, then stops */</span>
+<span class="sel-class">.container</span> {
+  <span class="prop">width</span>: <span class="val">100%</span>;        <span class="c">/* full width on small screens */</span>
+  <span class="prop">max-width</span>: <span class="val">860px</span>; <span class="c">/* stops growing at 860px */</span>
+  <span class="prop">margin</span>: <span class="val">0 auto</span>;    <span class="c">/* centered */</span>
+  <span class="prop">padding</span>: <span class="val">0 24px</span>;   <span class="c">/* side breathing room */</span>
+}
+
+<span class="c">/* Fluid font sizing with clamp() */</span>
+<span class="sel">h1</span> {
+  <span class="prop">font-size</span>: <span class="val">clamp(28px, 5vw, 52px)</span>;
+  <span class="c">/* minimum: 28px, ideal: 5% of viewport width, max: 52px
+     scales smoothly between breakpoints — no jumps */</span>
+}
+
+<span class="c">/* Images always fluid — display: block removes the small gap below inline images */</span>
+<span class="sel">img</span> {
+  <span class="prop">width</span>: <span class="val">100%</span>;
+  <span class="prop">height</span>: <span class="val">auto</span>;
+  <span class="prop">display</span>: <span class="val">block</span>;
+}</code></div>
+  </div>
+
+  <h3>Common Responsive Patterns</h3>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">styles.css</div>
+      <div class="code-lang">CSS · Responsive Patterns</div>
+    </div>
+    <div class="code-body"><code><span class="c">/* ─── Hide on mobile, show on desktop ─── */</span>
+<span class="sel-class">.desktop-only</span> { <span class="prop">display</span>: <span class="val">none</span>; }
+<span class="sel">@media</span> (<span class="prop">min-width</span>: <span class="val">768px</span>) {
+  <span class="sel-class">.desktop-only</span> { <span class="prop">display</span>: <span class="val">block</span>; }
+}
+
+<span class="c">/* ─── Hide on desktop, show on mobile ─── */</span>
+<span class="sel-class">.mobile-only</span> { <span class="prop">display</span>: <span class="val">block</span>; }
+<span class="sel">@media</span> (<span class="prop">min-width</span>: <span class="val">768px</span>) {
+  <span class="sel-class">.mobile-only</span> { <span class="prop">display</span>: <span class="val">none</span>; }
+}
+
+<span class="c">/* ─── Stack on mobile, side-by-side on desktop ─── */</span>
+<span class="sel-class">.layout</span> {
+  <span class="prop">display</span>: <span class="val">flex</span>;
+  <span class="prop">flex-direction</span>: <span class="val">column</span>;  <span class="c">/* stacked by default */</span>
+  <span class="prop">gap</span>: <span class="val">24px</span>;
+}
+<span class="sel">@media</span> (<span class="prop">min-width</span>: <span class="val">768px</span>) {
+  <span class="sel-class">.layout</span> { <span class="prop">flex-direction</span>: <span class="val">row</span>; } <span class="c">/* side by side */</span>
+}
+
+<span class="c">/* ─── Responsive typography ─── */</span>
+<span class="sel">body</span>  { <span class="prop">font-size</span>: <span class="val">16px</span>; }
+<span class="sel">@media</span> (<span class="prop">min-width</span>: <span class="val">768px</span>) {
+  <span class="sel">body</span> { <span class="prop">font-size</span>: <span class="val">17px</span>; }
+}</code></div>
+  </div>
+
+  <div class="callout warning">
+    <div class="callout-title">⚠️ Always Test in DevTools (See Post 13 for the full DevTools workflow)</div>
+    <p>Chrome and Firefox DevTools have a responsive design mode (F12 → the phone/tablet icon). You can test any screen size without needing a real device. Check your layout at 320px (smallest common mobile), 375px (iPhone), 768px (tablet), and 1280px (typical desktop). If something breaks, that's where your media query goes.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="mini-build">
+    <div class="mini-build-header">
+      <span style="font-size:22px;">🛠</span>
+      <h3>Mini Build: Responsive Landing Page</h3>
+    </div>
+    <div class="mini-build-body">
+      <p>Take the card grid you built in the Flexbox post and make it fully responsive — mobile-first, two breakpoints, fluid typography.</p>
+
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-text">
+          <p><strong>Add the viewport meta tag</strong> if it's not already there. Then write your base (mobile) CSS first — one column, full width, readable font sizes.</p>
+        </div>
+      </div>
+
+      <div class="code-window">
+        <div class="code-topbar">
+          <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+          <div class="code-filename">styles.css — base (mobile)</div>
+          <div class="code-lang">CSS</div>
+        </div>
+        <div class="code-body"><code><span class="sel">*</span> { <span class="prop">margin</span>: <span class="val">0</span>; <span class="prop">padding</span>: <span class="val">0</span>; <span class="prop">box-sizing</span>: <span class="val">border-box</span>; }
+
+<span class="sel">html</span> { <span class="prop">font-size</span>: <span class="val">16px</span>; }
+
+<span class="sel">body</span> {
+  <span class="prop">background</span>: <span class="val">#0a0a0f</span>;
+  <span class="prop">color</span>: <span class="val">#e0e0e8</span>;
+  <span class="prop">font-family</span>: <span class="val">sans-serif</span>;
+  <span class="prop">padding</span>: <span class="val">24px</span>;   <span class="c">/* tight padding on mobile */</span>
+}
+
+<span class="sel-class">.hero-title</span> {
+  <span class="prop">font-size</span>: <span class="val">clamp(28px, 7vw, 52px)</span>; <span class="c">/* fluid — no jumps */</span>
+  <span class="prop">margin-bottom</span>: <span class="val">1rem</span>;
+}
+
+<span class="sel-class">.card-grid</span> {
+  <span class="prop">display</span>: <span class="val">grid</span>;
+  <span class="prop">grid-template-columns</span>: <span class="val">1fr</span>;   <span class="c">/* mobile: one column */</span>
+  <span class="prop">gap</span>: <span class="val">16px</span>;
+  <span class="prop">margin-top</span>: <span class="val">2rem</span>;
+}
+
+<span class="sel-class">.navbar</span> {
+  <span class="prop">display</span>: <span class="val">flex</span>;
+  <span class="prop">flex-direction</span>: <span class="val">column</span>; <span class="c">/* mobile: stacked */</span>
+  <span class="prop">gap</span>: <span class="val">12px</span>;
+  <span class="prop">margin-bottom</span>: <span class="val">2rem</span>;
+}</code></div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-text">
+          <p><strong>Add the tablet breakpoint</strong> — two columns, horizontal navbar.</p>
+        </div>
+      </div>
+
+      <div class="code-window">
+        <div class="code-topbar">
+          <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+          <div class="code-filename">styles.css — tablet breakpoint</div>
+          <div class="code-lang">CSS</div>
+        </div>
+        <div class="code-body"><code><span class="sel">@media</span> (<span class="prop">min-width</span>: <span class="val">640px</span>) {
+  <span class="sel">body</span> { <span class="prop">padding</span>: <span class="val">32px</span>; }
+
+  <span class="sel-class">.card-grid</span> {
+    <span class="prop">grid-template-columns</span>: <span class="val">repeat(2, 1fr)</span>; <span class="c">/* two columns */</span>
+    <span class="prop">gap</span>: <span class="val">20px</span>;
+  }
+
+  <span class="sel-class">.navbar</span> {
+    <span class="prop">flex-direction</span>: <span class="val">row</span>;
+    <span class="prop">justify-content</span>: <span class="val">space-between</span>;
+    <span class="prop">align-items</span>: <span class="val">center</span>;
+  }
+}</code></div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-text">
+          <p><strong>Add the desktop breakpoint</strong> — three columns, wider padding.</p>
+        </div>
+      </div>
+
+      <div class="code-window">
+        <div class="code-topbar">
+          <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+          <div class="code-filename">styles.css — desktop breakpoint</div>
+          <div class="code-lang">CSS</div>
+        </div>
+        <div class="code-body"><code><span class="sel">@media</span> (<span class="prop">min-width</span>: <span class="val">1024px</span>) {
+  <span class="sel">body</span> { <span class="prop">padding</span>: <span class="val">48px</span>; }
+
+  <span class="sel-class">.card-grid</span> {
+    <span class="prop">grid-template-columns</span>: <span class="val">repeat(3, 1fr)</span>; <span class="c">/* three columns */</span>
+    <span class="prop">gap</span>: <span class="val">24px</span>;
+  }
+}</code></div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-text">
+          <p><strong>Test in DevTools.</strong> Open the responsive design panel, drag the width from 320px to 1440px, and watch your layout shift at exactly 640px and 1024px. If anything looks wrong at any size, that's where you add your next fix.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="confidence-close">
+    <h2>💛 Your Sites Work Everywhere Now</h2>
+    <p>Responsive design isn't about making things "work on mobile." It's about building for the full range of human screen sizes — from 320px pocket computers to 2560px monitors — without making assumptions about where your reader is.</p>
+    <ul class="recap-list">
+      <li>The viewport meta tag is mandatory — it turns on responsive behavior</li>
+      <li>Media queries apply CSS conditionally based on screen width</li>
+      <li>Mobile-first means base styles for small, then <span class="il">min-width</span> adds for larger</li>
+      <li><span class="il">max-width: 860px</span> + <span class="il">margin: 0 auto</span> creates a centered, fluid container</li>
+      <li><span class="il">clamp()</span> creates fluid typography that scales smoothly between sizes</li>
+      <li>Always test in DevTools at multiple widths — don't assume it looks right</li>
+    </ul>
+    <p>You now have the full foundational toolset: structure (Post 01), selectors (Post 02), box model (Post 03), typography (Post 04), colors (Post 05), layout (Posts 06–08), and responsiveness (this post). The series continues with specificity, transitions, CSS variables, and professional architecture.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="devfession">
+    <div class="devfession-header">🧾 DevFession</div>
+    <div class="devfession-body">
+      <p>I built my first portfolio entirely on a 1440px monitor. It looked great. Clean. I was proud of it. Then I opened it on my phone to show someone and the text was the size of an ant and the three-column layout was a horizontal scroll nightmare.</p>
+      <p>The viewport meta tag was missing. That was it. One line. The entire site was rendering at fake desktop width and scaling down. I felt like I'd been betrayed by my own code.</p>
+      <p>Now the viewport meta tag is the first thing I put in every HTML file. Before the title. Before the stylesheet link. First line in the head, every single time. Consider this your reminder — and your permission — to treat the viewport meta tag as the first line of every HTML file from now on. Before the title. Before the fonts. First.</p>
+    </div></div>
+
+
+  <nav class="post-nav">
+    <a href="08-css-grid.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">CSS Grid</span></a>
+    <a href="10-specificity-and-cascade.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Specificity and the Cascade</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

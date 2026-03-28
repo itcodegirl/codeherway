@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accessibility (A11Y Basics) — HTML Is for Humans | CodeHerWay</title>
+<meta name="description" content="Learn the accessibility fundamentals every developer needs — proper heading order, alt text, ARIA basics, keyboard navigation, and why a11y is not optional.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.tag.a11y{border-color: rgba(125,255,179,0.3); color: var(--mint-green);}
+.a11y-grid{display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 32px 0;}
+.a11y-card{background: var(--bg-code); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 22px; transition: border-color 0.3s, transform 0.3s;}
+.a11y-card:hover{transform: translateY(-3px);}
+.a11y-card:nth-child(1){border-color: rgba(255,105,180,0.2);}
+.a11y-card:nth-child(1):hover{border-color: var(--pink);}
+.a11y-card:nth-child(2){border-color: rgba(105,210,231,0.2);}
+.a11y-card:nth-child(2):hover{border-color: var(--sky-blue);}
+.a11y-card:nth-child(3){border-color: rgba(125,255,179,0.2);}
+.a11y-card:nth-child(3):hover{border-color: var(--mint-green);}
+.a11y-card:nth-child(4){border-color: rgba(255,211,105,0.2);}
+.a11y-card:nth-child(4):hover{border-color: var(--gold);}
+.a11y-card:nth-child(5){border-color: rgba(180,74,255,0.2);}
+.a11y-card:nth-child(5):hover{border-color: var(--purple);}
+.a11y-card:nth-child(6){border-color: rgba(255,107,107,0.2);}
+.a11y-card:nth-child(6):hover{border-color: var(--coral);}
+.a11y-icon{font-size: 28px; margin-bottom: 10px;}
+.a11y-name{font-family: 'Fira Code', monospace; font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 8px;}
+.a11y-desc{font-size: 14px; color: var(--text-secondary); line-height: 1.65;}
+@media(max-width:640px){.a11y-grid { grid-template-columns: 1fr; }}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<!-- ═══════ HERO ═══════ -->
+<section class="hero">
+  <div class="post-label"><span class="series-tag">HTML Fundamentals</span> Post 10 of 20</div>
+  <div class="post-number">Post 10 · HTML Fundamentals</div>
+  <h1>Accessibility Basics:<br><span class="gradient-text">HTML Is for Humans</span></h1>
+  <p class="hero-sub">This is not optional. If your site doesn't work for everyone, it doesn't work. Here are the a11y fundamentals every developer needs from day one.</p>
+  <div class="tag-row">
+    <span class="tag html">#HTML</span>
+    <span class="tag a11y">#A11Y</span>
+    <span class="tag a11y">#Accessibility</span>
+    <span class="tag">10 min read</span>
+  </div>
+</section>
+
+<!-- ═══════ ARTICLE ═══════ -->
+<main class="article">
+
+  <!-- ── INTRO ── -->
+  <p>Let's get one thing straight before we go any further: <span class="key">accessibility is not a bonus feature</span>. It's not something you "add later." It's not a nice-to-have for extra credit. It's a fundamental part of writing HTML.</p>
+
+  <p>When you write HTML, you're not just writing for Chrome on a MacBook. You're writing for screen readers, keyboard-only users, people with low vision, motor impairments, cognitive differences — the full spectrum of how humans interact with the web. And if your HTML doesn't account for that, your HTML is broken.</p>
+
+  <p>The good news? Accessibility starts with things you already know. Proper headings, good alt text, correct form labels — most of a11y is just <em>writing good HTML in the first place</em>.</p>
+
+  <div class="callout mindset">
+    <div class="callout-title">🧠 What "a11y" Means</div>
+    <p><strong>a11y</strong> is the numeronym for "accessibility" — the "a", then 11 letters, then "y." You'll see it everywhere in the dev world. It's pronounced "ally," which is fitting because that's exactly what accessible code makes you.</p>
+  </div>
+
+  <!-- ── THE SIX PILLARS ── -->
+  <h2>The Six Things You Need to Learn Right Now</h2>
+
+  <p>You don't need to become a WCAG expert overnight. But you do need to understand these six fundamentals. They cover the vast majority of accessibility issues beginners create — and they're all fixable with basic HTML.</p>
+
+  <div class="a11y-grid">
+    <div class="a11y-card">
+      <div class="a11y-icon">🔢</div>
+      <div class="a11y-name">Heading Order</div>
+      <div class="a11y-desc">Headings create the document outline. Never skip levels — go h1 → h2 → h3 in order. Screen readers use this to navigate.</div>
+    </div>
+    <div class="a11y-card">
+      <div class="a11y-icon">🖼️</div>
+      <div class="a11y-name">Alt Attributes</div>
+      <div class="a11y-desc">Every image needs meaningful alt text. It's how screen readers describe images and how broken images communicate.</div>
+    </div>
+    <div class="a11y-card">
+      <div class="a11y-icon">📝</div>
+      <div class="a11y-name">Form Labels</div>
+      <div class="a11y-desc">Every input needs a label. Not a placeholder, not a nearby div — a real &lt;label&gt; element linked with "for."</div>
+    </div>
+    <div class="a11y-card">
+      <div class="a11y-icon">🏷️</div>
+      <div class="a11y-name">ARIA Basics</div>
+      <div class="a11y-desc">ARIA attributes add extra info for assistive tech. But rule one: don't use ARIA if native HTML does the job.</div>
+    </div>
+    <div class="a11y-card">
+      <div class="a11y-icon">⌨️</div>
+      <div class="a11y-name">Keyboard Navigation</div>
+      <div class="a11y-desc">Every interactive element must be reachable and usable with a keyboard alone. No mouse required.</div>
+    </div>
+    <div class="a11y-card">
+      <div class="a11y-icon">🚫</div>
+      <div class="a11y-name">Div Misuse</div>
+      <div class="a11y-desc">A div is not a button. A div is not a link. If it's clickable, use the right element — not a styled div with an onclick.</div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── 1. HEADING ORDER ── -->
+  <h2>1. Proper Heading Order</h2>
+
+  <p>Headings aren't just big text. They create the <span class="key">document outline</span> — a structural map of your page that screen readers use to let users jump between sections. Think of headings like a table of contents: h1 is the title, h2s are chapters, h3s are sub-sections.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML · ❌ Wrong</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- Skipping heading levels --&gt;</span>
+<span class="t">&lt;h1&gt;</span>My Portfolio<span class="t">&lt;/h1&gt;</span>
+<span class="t">&lt;h4&gt;</span>About Me<span class="t">&lt;/h4&gt;</span>        <span class="c">&lt;!-- Skipped h2 and h3! --&gt;</span>
+<span class="t">&lt;h2&gt;</span>My Projects<span class="t">&lt;/h2&gt;</span>
+<span class="t">&lt;h6&gt;</span>Contact<span class="t">&lt;/h6&gt;</span>         <span class="c">&lt;!-- Just because it's small? --&gt;</span>
+    </div>
+  </div>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML · ✅ Correct</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- Logical heading hierarchy --&gt;</span>
+<span class="t">&lt;h1&gt;</span>My Portfolio<span class="t">&lt;/h1&gt;</span>
+
+<span class="t">&lt;h2&gt;</span>About Me<span class="t">&lt;/h2&gt;</span>
+<span class="t">&lt;p&gt;</span>I'm a frontend developer...<span class="t">&lt;/p&gt;</span>
+
+<span class="t">&lt;h2&gt;</span>My Projects<span class="t">&lt;/h2&gt;</span>
+  <span class="t">&lt;h3&gt;</span>CodeHerWay<span class="t">&lt;/h3&gt;</span>
+  <span class="t">&lt;p&gt;</span>A learning platform for women in tech.<span class="t">&lt;/p&gt;</span>
+  <span class="t">&lt;h3&gt;</span>Weather Dashboard<span class="t">&lt;/h3&gt;</span>
+  <span class="t">&lt;p&gt;</span>Real-time weather with API integration.<span class="t">&lt;/p&gt;</span>
+
+<span class="t">&lt;h2&gt;</span>Contact<span class="t">&lt;/h2&gt;</span>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-title">⚠️ Common Mistake</div>
+    <p>Don't pick a heading level because of how it <em>looks</em>. Pick it based on the <strong>document structure</strong>. If you want smaller text, use CSS — that's what it's for. Headings communicate hierarchy, not font size.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── 2. ALT TEXT ── -->
+  <h2>2. Alt Attributes — Describe What Matters</h2>
+
+  <p>The <span class="il">alt</span> attribute on images is one of the most important accessibility features in HTML. Screen readers read it aloud. Search engines index it. And if the image fails to load, the alt text shows up instead.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- ❌ Bad alt text --&gt;</span>
+<span class="t">&lt;img</span> <span class="a">src</span>=<span class="s">"photo.jpg"</span> <span class="a">alt</span>=<span class="s">"image"</span><span class="t">&gt;</span>
+<span class="t">&lt;img</span> <span class="a">src</span>=<span class="s">"banner.png"</span> <span class="a">alt</span>=<span class="s">"banner"</span><span class="t">&gt;</span>
+<span class="t">&lt;img</span> <span class="a">src</span>=<span class="s">"DSC_0042.jpg"</span> <span class="a">alt</span>=<span class="s">"DSC_0042.jpg"</span><span class="t">&gt;</span>
+
+<span class="c">&lt;!-- ✅ Good alt text --&gt;</span>
+<span class="t">&lt;img</span> <span class="a">src</span>=<span class="s">"photo.jpg"</span>
+     <span class="a">alt</span>=<span class="s">"Woman in a hoodie writing code at a coffee shop"</span><span class="t">&gt;</span>
+
+<span class="t">&lt;img</span> <span class="a">src</span>=<span class="s">"banner.png"</span>
+     <span class="a">alt</span>=<span class="s">"CodeHerWay — Where women code on their own terms"</span><span class="t">&gt;</span>
+
+<span class="c">&lt;!-- Decorative image? Use empty alt --&gt;</span>
+<span class="t">&lt;img</span> <span class="a">src</span>=<span class="s">"divider.svg"</span> <span class="a">alt</span>=<span class="s">""</span><span class="t">&gt;</span>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">💡 The Phone Test</div>
+    <p>Write alt text like you're describing the image to a friend over the phone. Be specific and useful. <strong>"Photo"</strong> tells them nothing. <strong>"Woman in a hoodie writing code at a coffee shop"</strong> paints the picture.</p>
+    <p>And if the image is purely decorative (a line, a pattern, a background shape), use <span class="il">alt=""</span> — an empty alt tells the screen reader to skip it entirely.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── 3. FORM LABELS ── -->
+  <h2>3. Labeling Forms Properly</h2>
+
+  <p>Every form input needs a <span class="il">&lt;label&gt;</span>. Not a placeholder. Not a <span class="il">&lt;div&gt;</span> next to it. A real, linked label. This is how screen readers know what each input is for, and it's how users with motor impairments can click the label to focus the input.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML · ❌ vs ✅</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- ❌ No label — screen reader says "edit text" --&gt;</span>
+<span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"email"</span> <span class="a">placeholder</span>=<span class="s">"Your email"</span><span class="t">&gt;</span>
+
+<span class="c">&lt;!-- ❌ Label exists but isn't linked --&gt;</span>
+<span class="t">&lt;div&gt;</span>Email<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"email"</span><span class="t">&gt;</span>
+
+<span class="c">&lt;!-- ✅ Proper label with "for" attribute --&gt;</span>
+<span class="t">&lt;label</span> <span class="a">for</span>=<span class="s">"email"</span><span class="t">&gt;</span>Email Address<span class="t">&lt;/label&gt;</span>
+<span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"email"</span> <span class="a">id</span>=<span class="s">"email"</span> <span class="a">name</span>=<span class="s">"email"</span><span class="t">&gt;</span>
+
+<span class="c">&lt;!-- ✅ Or wrap the input inside the label --&gt;</span>
+<span class="t">&lt;label&gt;</span>
+  Email Address
+  <span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"email"</span> <span class="a">name</span>=<span class="s">"email"</span><span class="t">&gt;</span>
+<span class="t">&lt;/label&gt;</span>
+    </div>
+  </div>
+
+  <p>The <span class="il">for</span> attribute on the label must match the <span class="il">id</span> on the input. That link is what makes it accessible. And as a bonus, it makes the label clickable — click the text, and the input gets focused. Better UX for everyone.</p>
+
+  <div class="callout info">
+    <div class="callout-title">ℹ️ Placeholders Are Not Labels</div>
+    <p>Placeholders disappear as soon as the user starts typing. That means once someone is filling out your form, they can't see what the field was asking for. Always use a visible <span class="il">&lt;label&gt;</span>. Placeholders are optional hints, not replacements.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── 4. ARIA BASICS ── -->
+  <h2>4. ARIA Basics — The Intro Level</h2>
+
+  <p>ARIA stands for <span class="key">Accessible Rich Internet Applications</span>. It's a set of attributes you can add to HTML elements to provide extra information to assistive technology. Think of ARIA as a way to annotate your HTML with instructions for screen readers.</p>
+
+  <p>But here's the most important ARIA rule you'll ever learn:</p>
+
+  <div class="callout warn">
+    <div class="callout-title">⚠️ The First Rule of ARIA</div>
+    <p><strong>Don't use ARIA if native HTML does the job.</strong> A <span class="il">&lt;button&gt;</span> is always better than <span class="il">&lt;div role="button"&gt;</span>. A <span class="il">&lt;nav&gt;</span> is always better than <span class="il">&lt;div role="navigation"&gt;</span>. Native HTML has built-in keyboard support, focus management, and screen reader announcements. ARIA adds none of that — it only adds labels.</p>
+  </div>
+
+  <p>That said, there are times when ARIA is genuinely useful. Here are the most common attributes you'll encounter as a beginner:</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML · Common ARIA</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- aria-label: names an element that has no visible text --&gt;</span>
+<span class="t">&lt;button</span> <span class="a">aria-label</span>=<span class="s">"Close menu"</span><span class="t">&gt;</span>✕<span class="t">&lt;/button&gt;</span>
+
+<span class="c">&lt;!-- aria-hidden: hides decorative elements from screen readers --&gt;</span>
+<span class="t">&lt;span</span> <span class="a">aria-hidden</span>=<span class="s">"true"</span><span class="t">&gt;</span>🎨<span class="t">&lt;/span&gt;</span>
+<span class="p">Choose your theme</span>
+
+<span class="c">&lt;!-- aria-describedby: links an element to a description --&gt;</span>
+<span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"password"</span>
+       <span class="a">aria-describedby</span>=<span class="s">"pw-hint"</span><span class="t">&gt;</span>
+<span class="t">&lt;p</span> <span class="a">id</span>=<span class="s">"pw-hint"</span><span class="t">&gt;</span>Must be at least 8 characters.<span class="t">&lt;/p&gt;</span>
+
+<span class="c">&lt;!-- aria-live: announces dynamic content changes --&gt;</span>
+<span class="t">&lt;div</span> <span class="a">aria-live</span>=<span class="s">"polite"</span><span class="t">&gt;</span>
+  <span class="c">&lt;!-- Screen reader announces when this content updates --&gt;</span>
+  3 items in your cart
+<span class="t">&lt;/div&gt;</span>
+    </div>
+  </div>
+
+  <p>You don't need to memorize every ARIA attribute right now. Just remember: use native HTML first, and reach for ARIA only when you need to fill in gaps that HTML can't cover on its own.</p>
+
+  <div class="sep"></div>
+
+  <!-- ── 5. KEYBOARD NAVIGATION ── -->
+  <h2>5. Keyboard Navigation Awareness</h2>
+
+  <p>Not everyone uses a mouse. Some people navigate entirely with a keyboard — Tab to move between interactive elements, Enter or Space to activate them, Escape to close things, arrow keys to navigate within components.</p>
+
+  <p>If your site requires a mouse to use, it's broken for these users. Here's what you need to know:</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML · Keyboard-Friendly</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- ✅ Native elements are keyboard-accessible by default --&gt;</span>
+<span class="t">&lt;button&gt;</span>Submit<span class="t">&lt;/button&gt;</span>          <span class="c">&lt;!-- Tab + Enter ✓ --&gt;</span>
+<span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"/about"</span><span class="t">&gt;</span>About<span class="t">&lt;/a&gt;</span>      <span class="c">&lt;!-- Tab + Enter ✓ --&gt;</span>
+<span class="t">&lt;input</span> <span class="a">type</span>=<span class="s">"text"</span><span class="t">&gt;</span>          <span class="c">&lt;!-- Tab + type ✓ --&gt;</span>
+
+<span class="c">&lt;!-- ❌ These are NOT keyboard-accessible --&gt;</span>
+<span class="t">&lt;div</span> <span class="a">onclick</span>=<span class="s">"submit()"</span><span class="t">&gt;</span>Submit<span class="t">&lt;/div&gt;</span>  <span class="c">&lt;!-- Can't tab to it --&gt;</span>
+<span class="t">&lt;span</span> <span class="a">onclick</span>=<span class="s">"goTo()"</span><span class="t">&gt;</span>About<span class="t">&lt;/span&gt;</span>  <span class="c">&lt;!-- Can't tab to it --&gt;</span>
+
+<span class="c">&lt;!-- Never remove the focus outline! --&gt;</span>
+<span class="c">&lt;!-- This breaks keyboard navigation --&gt;</span>
+<span class="c">/* ❌ Don't do this in CSS */</span>
+<span class="c">/* *:focus { outline: none; } */</span>
+
+<span class="c">&lt;!-- ✅ Style it instead --&gt;</span>
+<span class="c">/* button:focus-visible { outline: 2px solid #ff69b4; } */</span>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">💡 The Tab Test</div>
+    <p>Here's a quick accessibility check you can do right now: open your project in the browser, put your mouse away, and try to navigate your entire page using only <strong>Tab</strong>, <strong>Enter</strong>, and <strong>Escape</strong>. Can you reach every button? Every link? Every form field? If not, you've found your first accessibility bug.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── 6. DIV MISUSE ── -->
+  <h2>6. Avoiding Div Misuse</h2>
+
+  <p>We covered <span class="il">&lt;div&gt;</span> in the last post — and this is where it connects directly to accessibility. A <span class="il">&lt;div&gt;</span> has <span class="key">zero semantic meaning</span>. Screen readers don't announce it. It doesn't receive keyboard focus. It has no built-in behavior.</p>
+
+  <p>So when you use a div as a button, you're creating something that looks clickable but isn't accessible:</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- ❌ Looks like a button but isn't one --&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"btn"</span> <span class="a">onclick</span>=<span class="s">"handleClick()"</span><span class="t">&gt;</span>
+  Sign Up
+<span class="t">&lt;/div&gt;</span>
+
+<span class="c">&lt;!-- No keyboard focus, no screen reader announcement,</span>
+<span class="c">     no Enter key activation, no role --&gt;</span>
+
+<span class="c">&lt;!-- ✅ Just use a button --&gt;</span>
+<span class="t">&lt;button</span> <span class="a">class</span>=<span class="s">"btn"</span> <span class="a">onclick</span>=<span class="s">"handleClick()"</span><span class="t">&gt;</span>
+  Sign Up
+<span class="t">&lt;/button&gt;</span>
+<span class="c">&lt;!-- Keyboard accessible, announced as "button",</span>
+<span class="c">     activates with Enter and Space --&gt;</span>
+    </div>
+  </div>
+
+  <p>The same applies to links. If something navigates the user to a new page, it should be an <span class="il">&lt;a&gt;</span> tag — not a div or span with a click handler.</p>
+
+  <div class="callout mindset">
+    <div class="callout-title">🧠 The Bottom Line on Divs</div>
+    <p>Use <span class="il">&lt;div&gt;</span> for layout and grouping. Never for interaction. If a user clicks it, tabs to it, or activates it — it needs to be the right element. Buttons are buttons. Links are links. Let HTML do its job.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── DEVFESSION ── -->
+  <div class="devfession">
+    <div class="devfession-header">// dev_fession</div>
+    <div class="devfession-body">
+      <p>I once built an entire contact form with zero labels. Every input just had a placeholder. I thought it looked "cleaner."</p>
+      <p>Then I tested it with a screen reader and every single field announced as "edit text." Just… "edit text." Over and over. No indication of what any field was actually for.</p>
+      <p>I added labels that same day. Took me five minutes. Should've been there from the start. Lesson learned — accessible doesn't mean ugly. It means usable. 💯</p>
+    </div>
+    <div class="devfession-footer">
+      <span>@itcodegirl</span>
+      <span class="tagline">CodeHerWay</span>
+    </div>
+  </div>
+
+  <!-- ── THE BIG PICTURE ── -->
+  <h2>The Big Picture: HTML Is for Humans <em>and</em> Machines</h2>
+
+  <p>Here's the thing about accessibility that changes how you think about HTML: you're not just writing code for browsers to render. You're writing instructions that get interpreted by a whole ecosystem of tools — screen readers like NVDA and VoiceOver, search engine crawlers, browser extensions, voice assistants, and more.</p>
+
+  <p>When you write semantic, accessible HTML, you're giving all of those tools the information they need to present your content correctly. When you write div soup with no labels, no headings, and no structure, you're saying "figure it out" — and most of the time, they can't.</p>
+
+  <p>Accessibility isn't about checking boxes for compliance. It's about recognizing that the web was built to be universal — and writing HTML that lives up to that promise.</p>
+
+  <!-- ── MINI BUILD ── -->
+  <div class="mini-build">
+    <div class="mini-build-header">
+      <h3>🔨 Mini Build: A11Y Audit Your Last Project</h3>
+    </div>
+    <div class="mini-build-body">
+      <p>Open your most recent HTML project and run through this accessibility checklist:</p>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>Heading check:</strong> Do your headings go in order? h1 → h2 → h3? No skipping levels? Only one <span class="sky">&lt;h1&gt;</span> per page?</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>Image check:</strong> Does every <span class="sky">&lt;img&gt;</span> have a descriptive <span class="sky">alt</span> attribute? Are decorative images using <span class="sky">alt=""</span>?</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>Form check:</strong> Does every input have a <span class="sky">&lt;label&gt;</span> with a matching <span class="sky">for</span> attribute? Are you relying on placeholders alone anywhere?</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text"><strong>Keyboard check:</strong> Tab through your entire page. Can you reach every interactive element? Can you activate every button with Enter?</div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-text"><strong>Div check:</strong> Are any divs or spans acting as buttons or links? Replace them with <span class="sky">&lt;button&gt;</span> or <span class="sky">&lt;a&gt;</span>.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-text"><strong>Semantic check:</strong> Are you using <span class="sky">&lt;header&gt;</span>, <span class="sky">&lt;nav&gt;</span>, <span class="sky">&lt;main&gt;</span>, <span class="sky">&lt;footer&gt;</span>, and <span class="sky">&lt;article&gt;</span> where they belong? Or is everything a div?</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── WRAP UP ── -->
+  <h2>The Bottom Line</h2>
+
+  <p>Accessibility isn't advanced. It isn't a specialization. It's <span class="key">HTML fundamentals</span>. If you use the right heading order, write meaningful alt text, label your forms correctly, understand basic ARIA, respect keyboard navigation, and stop misusing divs — you're already ahead of a huge percentage of the web.</p>
+
+  <p>HTML was designed to be accessible from the start. The only way it becomes inaccessible is when developers break it. So don't break it.</p>
+
+  <p>Write HTML for humans. All of them.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">🎉 Series Checkpoint</div>
+    <p>You've made it through 10 posts of HTML fundamentals — from document structure to accessibility. You now have a solid foundation in how HTML actually works, not just what tags exist. The next step? Start building. Take everything you've learned and create something real. You've got the knowledge — now go ship it.</p>
+  </div>
+
+
+  <nav class="post-nav">
+    <a href="09-div-vs-span.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Div vs Span</span></a>
+    <a href="11-html-forms.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">HTML Forms</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

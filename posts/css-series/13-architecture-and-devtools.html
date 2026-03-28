@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSS Architecture and DevTools: How to Write CSS You Can Still Read in 3 Months — CodeHerWay</title>
+<meta name="description" content="Writing CSS that works is one skill. Writing CSS that's maintainable is another. Learn stylesheet organization, BEM naming conventions, and how to use browser DevTools to debug any CSS problem.">
+  <link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.prop{color: var(--sky-blue);}
+.val{color: var(--mint-green);}
+.sel{color: var(--pink);}
+.sel-class{color: var(--gold);}
+.ba-grid{display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0;}
+.ba-panel{border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.06);}
+.ba-head{padding: 10px 18px; font-family: 'Fira Code', monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; border-bottom: 1px solid rgba(255,255,255,0.05);}
+.ba-head.messy{background: rgba(255,107,107,0.08); color: var(--coral);}
+.ba-head.clean{background: rgba(61,220,132,0.08); color: var(--green-tip);}
+.ba-body{padding: 16px 18px; background: var(--bg-code); font-family: 'Fira Code', monospace; font-size: 13px; line-height: 1.7; color: var(--text-secondary); white-space: pre; overflow-x: auto;}
+.devtools-mock{background: #1a1a2e; border-radius: 12px; margin: 28px 0; border: 1px solid rgba(255,255,255,0.08); overflow: hidden;}
+.devtools-topbar{background: rgba(255,255,255,0.04); padding: 10px 16px; font-family: 'Fira Code', monospace; font-size: 12px; color: var(--text-muted); display: flex; gap: 16px; border-bottom: 1px solid rgba(255,255,255,0.06);}
+.devtools-tab{color: var(--text-muted);}
+.devtools-tab.active{color: var(--sky-blue);}
+.devtools-body{padding: 16px 18px; font-family: 'Fira Code', monospace; font-size: 13px;}
+.dt-rule{margin-bottom: 14px;}
+.dt-selector{color: var(--gold); margin-bottom: 4px;}
+.dt-prop{color: var(--sky-blue); padding-left: 16px;}
+.dt-val{color: var(--mint-green);}
+.dt-overridden{text-decoration: line-through; opacity: 0.4;}
+@media (max-width: 480px){
+      .code-body { font-size: 11.5px; padding: 12px; }
+      .hero h1 { font-size: clamp(24px, 9vw, 32px); }
+      .il { white-space: normal; word-break: break-word; }
+      .unit-grid, .compare-2, .before-after, .phase-grid,
+      .lh-demo, .pair-grid, .ba-grid, .font-compare { grid-template-columns: 1fr; }
+      .shadow-grid { grid-template-columns: 1fr 1fr; }
+      .swatch-row { gap: 8px; }
+      .swatch { min-width: 90px; }
+      .pyramid-row { flex-direction: column; gap: 6px; align-items: flex-start; }
+      .score-row { flex-direction: column; gap: 6px; }
+      .score-sel { min-width: unset; }
+      .recap-item { flex-wrap: wrap; gap: 4px; }
+      .recap-title { width: 100%; }
+      .checklist { padding: 14px; }
+      .demo-row { padding: 16px 12px; gap: 12px; }
+      .series-nav-divider { display: none; }
+      .connect-arrow { display: none; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .layer-margin { padding: 20px; }
+      .layer-border { padding: 16px; }
+    }
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+
+<div class="hero">
+  <div class="post-label"><span class="series-tag">CSS, But Make It Powerful</span> Post 13 of 14</div>
+  <div class="post-number">CSS Series · Post 13</div>
+  <h1>Clean CSS Architecture<br><span class="gradient-text">&amp; DevTools</span></h1>
+  <p class="hero-sub">Writing CSS that works is one skill. Writing CSS that you — or anyone else — can still understand in three months is another. This post covers both.</p>
+  <div class="tag-row">
+    <span class="tag css">CSS</span>
+    <span class="tag beginner">Beginner</span>
+    <span class="tag series">Series: Post 13</span>
+    <span class="tag">~12 min read</span>
+  </div>
+</div>
+
+<main class="article">
+
+  <h2>💬 "This Stylesheet Is a Mess and I'm Scared to Touch It"</h2>
+
+  <p>At some point every developer opens their stylesheet, stares at 400 lines of disorganized rules, and has no idea what's safe to change. The styles work — sort of — but touching anything feels like defusing a bomb.</p>
+
+  <p>That's not a CSS problem. That's an architecture problem. <span class="key">CSS doesn't enforce organization. It will let you write a 600-line file with no comments, random rule ordering, and class names that mean nothing — and it will render perfectly. The chaos is optional, but so is the sanity. You have to build the structure deliberately.</span> The good news: a few simple habits prevent the mess entirely.</p>
+
+  <h2>🧱 Organizing Your Stylesheet</h2>
+
+  <p>A well-organized stylesheet has a consistent structure that any developer (including future you) can navigate.
+          <div class="callout callout-info">
+            <span class="callout-label">ℹ️ Why Reset Margins and Padding?</span>
+            <p>Every browser has its own default styles — Chrome, Firefox, and Safari all add slightly different spacing and sizing to HTML elements. Your reset (<code class="il">margin: 0; padding: 0</code>) removes all of them so you start from a blank, consistent canvas across every browser.</p>
+          </div> The most common approach is sectioned with clear comments, ordered from general to specific.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">styles.css</div>
+      <div class="code-lang">CSS · File Structure</div>
+    </div>
+    <div class="code-body"><code><span class="c">/* ════════════════════════════
+   1. DESIGN TOKENS (variables)
+   ════════════════════════════ */</span>
+<span class="sel">:root</span> { <span class="c">/* colors, spacing, fonts */</span> }
+
+<span class="c">/* ════════════════════════════
+   2. RESET / BASE
+   ════════════════════════════ */</span>
+<span class="sel">*</span> { <span class="prop">margin</span>: <span class="val">0</span>; <span class="prop">padding</span>: <span class="val">0</span>; <span class="prop">box-sizing</span>: <span class="val">border-box</span>; }
+<span class="sel">body</span> { <span class="c">/* global font, bg, color */</span> }
+
+<span class="c">/* ════════════════════════════
+   3. TYPOGRAPHY
+   ════════════════════════════ */</span>
+<span class="sel">h1</span>, <span class="sel">h2</span>, <span class="sel">h3</span>, <span class="sel">p</span>, <span class="sel">a</span> { <span class="c">/* base type styles */</span> }
+
+<span class="c">/* ════════════════════════════
+   4. LAYOUT
+   ════════════════════════════ */</span>
+<span class="sel-class">.container</span>, <span class="sel-class">.page-layout</span>, <span class="sel-class">.grid</span> { }
+
+<span class="c">/* ════════════════════════════
+   5. COMPONENTS
+   ════════════════════════════ */</span>
+<span class="c">/* ── Navbar ── */</span>
+<span class="sel-class">.navbar</span> { }
+
+<span class="c">/* ── Cards ── */</span>
+<span class="sel-class">.card</span> { }
+
+<span class="c">/* ── Buttons ── */</span>
+<span class="sel-class">.button</span> { }
+
+<span class="c">/* ════════════════════════════
+   6. UTILITIES
+   ════════════════════════════ */</span>
+<span class="sel-class">.hidden</span> { <span class="prop">display</span>: <span class="val">none !important</span>; }
+<span class="sel-class">.sr-only</span> { <span class="c">/* screen reader only */</span> }
+
+<span class="c">/* ════════════════════════════
+   7. RESPONSIVE
+   ════════════════════════════ */</span>
+<span class="sel">@media</span> (<span class="prop">min-width</span>: <span class="val">640px</span>) { }
+<span class="sel">@media</span> (<span class="prop">min-width</span>: <span class="val">1024px</span>) { }</code></div>
+  </div>
+
+  <h2>🧱 Naming — BEM Basics</h2>
+
+  <p>BEM (Block Element Modifier) is a naming convention that makes CSS class names self-documenting. The three parts: a <span class="pink-key">Block</span> (a standalone component), an <span class="key">Element</span> (a part of the block, prefixed with <span class="il">__</span>), and a <span class="gold-key">Modifier</span> (a variation, prefixed with <span class="il">--</span>).</p>
+
+  <div class="ba-grid">
+    <div class="ba-panel">
+      <div class="ba-head messy">✗ Without BEM — confusing</div>
+      <div class="ba-body">.card { }
+.title { }   /* which card? */
+.text { }    /* what kind? */
+.active { }  /* active what? */
+.blue { }    /* fragile name */
+.button { }
+.big { }     /* big what? */</div>
+    </div>
+    <div class="ba-panel">
+      <div class="ba-head clean">✓ With BEM — self-documenting</div>
+      <div class="ba-body">.card { }
+.card__title { }
+.card__text { }
+.card--active { }
+.card--featured { }
+.card__button { }
+.card__button--large { }</div>
+    </div>
+  </div>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">index.html + styles.css</div>
+      <div class="code-lang">HTML + CSS · BEM Pattern</div>
+    </div>
+    <div class="code-body"><code><span class="c">&lt;!-- HTML: class names describe hierarchy clearly --&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"card card--featured"</span><span class="t">&gt;</span>
+  <span class="t">&lt;span</span> <span class="a">class</span>=<span class="s">"card__tag"</span><span class="t">&gt;</span>Tutorial<span class="t">&lt;/span&gt;</span>
+  <span class="t">&lt;h3</span> <span class="a">class</span>=<span class="s">"card__title"</span><span class="t">&gt;</span>CSS Grid<span class="t">&lt;/h3&gt;</span>
+  <span class="t">&lt;p</span> <span class="a">class</span>=<span class="s">"card__text"</span><span class="t">&gt;</span>Two-dimensional layout.<span class="t">&lt;/p&gt;</span>
+  <span class="t">&lt;a</span> <span class="a">class</span>=<span class="s">"card__link card__link--primary"</span> <span class="a">href</span>=<span class="s">"#"</span><span class="t">&gt;</span>Read More<span class="t">&lt;/a&gt;</span>
+<span class="t">&lt;/div&gt;</span>
+
+<span class="c">/* CSS: one level of specificity — easy to override */</span>
+<span class="sel-class">.card</span>              { <span class="prop">background</span>: <span class="val">#12121a</span>; <span class="prop">border-radius</span>: <span class="val">12px</span>; }
+<span class="sel-class">.card--featured</span>    { <span class="prop">border-color</span>: <span class="val">var(--pink)</span>; }
+<span class="sel-class">.card__title</span>       { <span class="prop">font-size</span>: <span class="val">1.2rem</span>; <span class="prop">font-weight</span>: <span class="val">700</span>; }
+<span class="sel-class">.card__link</span>        { <span class="prop">color</span>: <span class="val">var(--purple)</span>; }
+<span class="sel-class">.card__link--primary</span>{ <span class="prop">color</span>: <span class="val">var(--pink)</span>; }</code></div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">✦ You Don't Have to Go Full BEM</div>
+    <p>BEM is a system, not a religion. The parts worth adopting immediately: the double-underscore <span class="il">__</span> for elements, and the double-dash <span class="il">--</span> for modifiers. Even if you don't follow every BEM rule, consistent separators make names scannable and prevent collisions.</p>
+  </div>
+
+  <h2>🧱 Performance Habits</h2>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">styles.css</div>
+      <div class="code-lang">CSS · Performance</div>
+    </div>
+    <div class="code-body"><code><span class="c">/* ✗ Avoid deep nesting — hard to override, slow to parse */</span>
+<span class="sel-class">.page</span> <span class="sel-class">.section</span> <span class="sel-class">.card</span> <span class="sel-class">.content</span> <span class="sel">p</span> { <span class="prop">color</span>: <span class="val">gray</span>; }
+
+<span class="c">/* ✓ Flat classes — same result, cleaner */</span>
+<span class="sel-class">.card__text</span> { <span class="prop">color</span>: <span class="val">gray</span>; }
+
+<span class="c">/* ✗ Avoid over-qualifying selectors */</span>
+<span class="sel">div</span><span class="sel-class">.card</span> { } <span class="c">/* removes reusability */</span>
+
+<span class="c">/* ✓ Class alone is enough */</span>
+<span class="sel-class">.card</span> { }
+
+<span class="c">/* ✗ Redundant properties — don't repeat what's inherited */</span>
+<span class="sel-class">.card</span>       { <span class="prop">font-family</span>: <span class="val">'Space Grotesk'</span>, <span class="val">sans-serif</span>; }
+<span class="sel-class">.card__text</span> { <span class="prop">font-family</span>: <span class="val">'Space Grotesk'</span>, <span class="val">sans-serif</span>; } <span class="c">/* inherited! */</span>
+
+<span class="c">/* ✓ Set on body once, children inherit */</span>
+<span class="sel">body</span> { <span class="prop">font-family</span>: <span class="val">'Space Grotesk'</span>, <span class="val">sans-serif</span>; }</code></div>
+  </div>
+
+  <h2>🧱 DevTools — Your Best Debugging Tool</h2>
+
+  <p>DevTools is the browser's built-in CSS inspector. Right-click any element → Inspect. The Styles panel shows every CSS rule that applies, in specificity order, with the winning value at the top.</p>
+
+  <div class="devtools-mock">
+    <div class="devtools-topbar">
+      <span class="devtools-tab">Elements</span>
+      <span class="devtools-tab active">Styles</span>
+      <span class="devtools-tab">Computed</span>
+    </div>
+    <div class="devtools-body">
+      <div class="dt-rule">
+        <div class="dt-selector">.card__title {</div>
+        <div class="dt-prop"><span class="dt-val" style="color:var(--mint-green);">font-size: 1.2rem;</span> <span style="font-family:'Fira Code',monospace; font-size:11px; color:var(--text-muted);">styles.css:48</span></div>
+        <div class="dt-prop" style="color:var(--sky-blue);">font-weight: <span class="dt-val" style="color:var(--mint-green);">700;</span></div>
+        <div class="dt-prop dt-overridden" style="color:var(--sky-blue);">color: <span style="color:var(--text-muted);">white;</span></div>
+        <div style="font-family:'Fira Code',monospace;font-size:11px;color:var(--text-muted);padding-left:16px;">}</div>
+      </div>
+      <div class="dt-rule" style="opacity:0.5;">
+        <div class="dt-selector">h3 {</div>
+        <div class="dt-prop dt-overridden" style="color:var(--sky-blue);">font-size: <span style="color:var(--text-muted);">1rem;</span></div>
+        <div style="font-family:'Fira Code',monospace;font-size:11px;color:var(--text-muted);padding-left:16px;">} <span style="color:var(--text-muted);">— overridden by .card__title</span></div>
+      </div>
+    </div>
+  </div>
+
+  <p>That strikethrough on <span class="il">color: white</span> means it's being overridden by a higher-specificity rule. The greyed-out rule at the bottom lost the specificity battle. This is how you find every CSS conflict — no guessing.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">DevTools Workflow</div>
+      <div class="code-lang">Reference</div>
+    </div>
+    <div class="code-body"><code><span class="c">/* The DevTools debugging workflow */</span>
+
+<span class="c">/* 1. Something looks wrong → right-click → Inspect */</span>
+
+<span class="c">/* 2. Styles panel:
+      - Top rule = winning style
+      - Strikethrough = overridden / losing
+      - Filename + line number = where it lives in your file */</span>
+
+<span class="c">/* 3. Computed tab:
+      - Shows the final calculated value of every property
+      - Useful for spacing — shows actual px values of rem/% */</span>
+
+<span class="c">/* 4. Box model diagram (bottom of Computed):
+      - Visual of margin/border/padding/content
+      - Hover to highlight each layer on the page */</span>
+
+<span class="c">/* 5. Edit live:
+      - Click any value to change it in the browser
+      - Changes are temporary — copy what works back to your file
+      - Great for experimenting without touching your code */</span>
+
+<span class="c">/* 6. Toggle media queries:
+      - Responsive icon in toolbar (phone/tablet icon)
+      - Drag width to test any breakpoint */</span></code></div>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="mini-build">
+    <div class="mini-build-header">
+      <span style="font-size:22px;">🛠</span>
+      <h3>Mini Build: Refactor a Messy Stylesheet</h3>
+    </div>
+    <div class="mini-build-body">
+      <p>Take a disorganized CSS file and apply the structure and naming conventions from this post. This is one of the most valuable skills you'll practice — reading CSS that isn't yours and making it maintainable.</p>
+
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-text"><p><strong>The messy version.</strong> Common problems: no sections, flat random names, redundant declarations, deep nesting, hardcoded values everywhere.</p></div>
+      </div>
+
+      <div class="code-window">
+        <div class="code-topbar">
+          <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+          <div class="code-filename">styles-before.css</div>
+          <div class="code-lang">CSS · Before</div>
+        </div>
+        <div class="code-body"><code><span class="sel">body</span> { <span class="prop">background</span>: <span class="val">#0a0a0f</span>; <span class="prop">font-family</span>: <span class="val">sans-serif</span>; }
+<span class="sel-class">.card</span> { <span class="prop">background</span>: <span class="val">#12121a</span>; <span class="prop">border-radius</span>: <span class="val">12px</span>; <span class="prop">padding</span>: <span class="val">24px</span>; }
+<span class="sel-class">.title</span> { <span class="prop">font-size</span>: <span class="val">18px</span>; <span class="prop">color</span>: <span class="val">#fff</span>; <span class="prop">font-family</span>: <span class="val">sans-serif</span>; }
+<span class="sel-class">.text</span> { <span class="prop">color</span>: <span class="val">#9595a8</span>; <span class="prop">font-family</span>: <span class="val">sans-serif</span>; }
+<span class="sel">h1</span> { <span class="prop">font-size</span>: <span class="val">48px</span>; }
+<span class="sel-class">.navbar</span> { <span class="prop">background</span>: <span class="val">#12121a</span>; }
+<span class="sel-class">.nav</span> <span class="sel-class">.links</span> <span class="sel">a</span> { <span class="prop">color</span>: <span class="val">#9595a8</span>; <span class="prop">font-family</span>: <span class="val">sans-serif</span>; }
+<span class="sel-class">.active</span> { <span class="prop">color</span>: <span class="val">#ff69b4</span>; }
+<span class="sel-class">.big-card</span> { <span class="prop">background</span>: <span class="val">#12121a</span>; <span class="prop">padding</span>: <span class="val">32px</span>; <span class="prop">border-radius</span>: <span class="val">12px</span>; }
+<span class="sel">@media</span> (<span class="prop">max-width</span>: <span class="val">768px</span>) { <span class="sel-class">.card</span> { <span class="prop">padding</span>: <span class="val">16px</span>; } }
+<span class="sel-class">.btn</span> { <span class="prop">background</span>: <span class="val">#ff69b4</span>; <span class="prop">color</span>: <span class="val">#fff</span>; <span class="prop">padding</span>: <span class="val">10px 20px</span>; <span class="prop">border-radius</span>: <span class="val">8px</span>; }</code></div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-text"><p><strong>The refactored version.</strong> Variables extracted, sections added, BEM naming, inheritance used properly, media queries at the end.</p></div>
+      </div>
+
+      <div class="code-window">
+        <div class="code-topbar">
+          <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+          <div class="code-filename">styles-after.css</div>
+          <div class="code-lang">CSS · After</div>
+        </div>
+        <div class="code-body"><code><span class="c">/* ── 1. TOKENS ── */</span>
+<span class="sel">:root</span> {
+  <span class="a">--bg</span>: <span class="val">#0a0a0f</span>; <span class="a">--surface</span>: <span class="val">#12121a</span>;
+  <span class="a">--text</span>: <span class="val">#e0e0e8</span>; <span class="a">--muted</span>: <span class="val">#9595a8</span>;
+  <span class="a">--accent</span>: <span class="val">#ff69b4</span>; <span class="a">--radius</span>: <span class="val">12px</span>;
+}
+
+<span class="c">/* ── 2. BASE ── */</span>
+<span class="sel">*</span> { <span class="prop">margin</span>: <span class="val">0</span>; <span class="prop">padding</span>: <span class="val">0</span>; <span class="prop">box-sizing</span>: <span class="val">border-box</span>; }
+<span class="sel">body</span> { <span class="prop">background</span>: <span class="val">var(--bg)</span>; <span class="prop">font-family</span>: <span class="val">sans-serif</span>; <span class="prop">color</span>: <span class="val">var(--text)</span>; }
+<span class="sel">h1</span> { <span class="prop">font-size</span>: <span class="val">3rem</span>; }
+
+<span class="c">/* ── 3. COMPONENTS ── */</span>
+<span class="sel-class">.navbar</span>         { <span class="prop">background</span>: <span class="val">var(--surface)</span>; }
+<span class="sel-class">.navbar__link</span>   { <span class="prop">color</span>: <span class="val">var(--muted)</span>; }
+<span class="sel-class">.navbar__link--active</span> { <span class="prop">color</span>: <span class="val">var(--accent)</span>; }
+
+<span class="sel-class">.card</span>           { <span class="prop">background</span>: <span class="val">var(--surface)</span>; <span class="prop">border-radius</span>: <span class="val">var(--radius)</span>; <span class="prop">padding</span>: <span class="val">24px</span>; }
+<span class="sel-class">.card--featured</span> { <span class="prop">padding</span>: <span class="val">32px</span>; }
+<span class="sel-class">.card__title</span>    { <span class="prop">font-size</span>: <span class="val">1.125rem</span>; <span class="prop">color</span>: <span class="val">#fff</span>; }
+<span class="sel-class">.card__text</span>     { <span class="prop">color</span>: <span class="val">var(--muted)</span>; }
+
+<span class="sel-class">.btn</span>            { <span class="prop">background</span>: <span class="val">var(--accent)</span>; <span class="prop">color</span>: <span class="val">#fff</span>; <span class="prop">padding</span>: <span class="val">10px 20px</span>; <span class="prop">border-radius</span>: <span class="val">8px</span>; }
+
+<span class="c">/* ── 4. RESPONSIVE ── */</span>
+<span class="sel">@media</span> (<span class="prop">max-width</span>: <span class="val">640px</span>) { <span class="sel-class">.card</span> { <span class="prop">padding</span>: <span class="val">16px</span>; } }</code></div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-text"><p><strong>Now open DevTools on any site you admire.</strong> Inspect their CSS — a portfolio that made you feel something, a product page that felt effortless. Look at the class names. See how they structure their variables. Reading other people's CSS is one of the fastest ways to improve your own. Then go open the stylesheet from any of your earlier mini builds and apply the same refactor process to it.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="confidence-close">
+    <h2>💛 Your CSS Is Maintainable Now</h2>
+    <p>Good CSS architecture isn't about perfection — it's about making your code readable to your future self. The habits in this post compound over time. Every project you write with clear sections and consistent naming is a project you can confidently revisit and extend.</p>
+    <ul class="recap-list">
+      <li>Structure your stylesheet in layers: tokens → reset → typography → layout → components → utilities → responsive</li>
+      <li>BEM naming: <span class="il">block__element--modifier</span> — self-documenting, low specificity</li>
+      <li>Keep selectors flat — one or two levels max</li>
+      <li>Use inheritance — don't repeat properties children already get from body</li>
+      <li>DevTools Styles panel shows every rule, winners at top, losers struck through</li>
+      <li>Edit live in DevTools, copy back what works — fastest way to iterate</li>
+    </ul>
+    <p>One more post to go. Post 14 — the CSS Capstone. Take everything from Posts 01–13 and build a complete, polished, responsive personal brand page from scratch. No starter code. No hand-holding. Just the brief and everything you've already learned.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="devfession">
+    <div class="devfession-header">🧾 DevFession</div>
+    <div class="devfession-body">
+      <p>I did not know what DevTools was for an embarrassingly long amount of time. I thought it was for JavaScript developers. The "Elements" panel seemed intimidating. I closed it every time I accidentally opened it.</p>
+      <p>Then one day I had a spacing issue I couldn't figure out. I right-clicked. I opened Inspect. I saw the box model diagram at the bottom of the Computed tab and literally said "oh" out loud. The margin I was looking for was right there. Visualized. Labeled. The problem was solved in 10 seconds.</p>
+      <p>DevTools is not a JavaScript tool. It's a CSS tool. It's a layout tool. It's a typography tool. It is the tool that shows you what the browser is actually doing, and once you start using it you will wonder how you ever worked without it.</p>
+    </div></div>
+
+
+  <nav class="post-nav">
+    <a href="12-shadows-depth-selectors.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Shadows, Pseudo-Elements, and Advanced Selectors</span></a>
+    <a href="14-capstone.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">CSS Capstone Project</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

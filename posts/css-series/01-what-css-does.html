@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <title>What CSS Actually Does (And Why It's Not Just Decoration) — CodeHerWay</title>
+<meta name="description" content="CSS isn't decoration — it's presentation logic. Learn how CSS connects to HTML, the three ways to add it, and write your first real stylesheet in this beginner-friendly tutorial.">
+ <link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.prop{color: var(--sky-blue);}
+.val{color: var(--mint-green);}
+.sel{color: var(--pink);}
+.at{color: var(--purple);}
+.connect-visual{background: var(--bg-code); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 36px 24px; margin: 32px 0; display: flex; align-items: center; justify-content: center; gap: 0; flex-wrap: wrap;}
+.connect-box{text-align: center; padding: 20px 28px; border-radius: 10px; min-width: 140px;}
+.connect-box.html-box{background: rgba(255,105,180,0.08); border: 1px solid rgba(255,105,180,0.2);}
+.connect-box.css-box{background: rgba(105,210,231,0.08); border: 1px solid rgba(105,210,231,0.2);}
+.connect-box.result-box{background: rgba(125,255,179,0.08); border: 1px solid rgba(125,255,179,0.2);}
+.box-label{font-family: 'Fira Code', monospace; font-size: 13px; font-weight: 700; margin-bottom: 6px;}
+.box-desc{font-size: 13px; color: var(--text-muted);}
+.html-box .box-label{color: var(--pink);}
+.css-box .box-label{color: var(--sky-blue);}
+.result-box .box-label{color: var(--mint-green);}
+.connect-arrow{font-size: 24px; color: var(--text-muted); padding: 0 12px;}
+.compare-card-header{padding: 14px 20px; font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px;}
+.compare-card-header.inline-h{background: rgba(255,105,180,0.1); color: var(--pink);    border-bottom: 1px solid rgba(255,105,180,0.15);}
+.compare-card-header.internal-h{background: rgba(180,74,255,0.1);  color: var(--purple);   border-bottom: 1px solid rgba(180,74,255,0.15);}
+.compare-card-header.external-h{background: rgba(61,220,132,0.1);  color: var(--mint-green); border-bottom: 1px solid rgba(61,220,132,0.15);}
+.compare-card-body{padding: 18px 20px; font-size: 14px; color: var(--text-secondary); line-height: 1.7;}
+.badge{display: inline-block; font-family: 'Fira Code', monospace; font-size: 11px; padding: 3px 10px; border-radius: 4px; margin-top: 12px; font-weight: 600;}
+.badge-avoid{background: rgba(255,107,107,0.15); color: var(--coral);   border: 1px solid rgba(255,107,107,0.2);}
+.badge-ok{background: rgba(255,211,105,0.15); color: var(--gold);    border: 1px solid rgba(255,211,105,0.2);}
+.badge-pro{background: rgba(61,220,132,0.15); color: var(--green-tip); border: 1px solid rgba(61,220,132,0.2);}
+.anatomy-visual{background: var(--bg-code); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 32px; margin: 32px 0; text-align: center;}
+.anatomy-rule{font-family: 'Fira Code', monospace; font-size: 20px; margin-bottom: 20px; letter-spacing: 1px;}
+.anatomy-labels{display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;}
+.anatomy-label{font-family: 'Fira Code', monospace; font-size: 12px; padding: 5px 14px; border-radius: 6px;}
+.anatomy-label.pink-l{background: rgba(255,105,180,0.12); color: var(--pink);}
+.anatomy-label.blue-l{background: rgba(105,210,231,0.12); color: var(--sky-blue);}
+.anatomy-label.green-l{background: rgba(125,255,179,0.12); color: var(--mint-green);}
+@media(max-width:640px){.code-body { font-size: 12px; padding: 14px; } .code-topbar { padding: 10px 14px; } .code-lang { font-size: 10px; padding: 2px 8px; } .code-filename { font-size: 10px; } .hero h1 { font-size: clamp(26px, 8vw, 40px); } .hero-sub { font-size: 16px; } .hero { padding: 32px 16px 28px; } .article { padding: 0 16px 60px; } .article h2 { font-size: 22px; margin: 40px 0 14px; } .article h3 { font-size: 18px; margin: 28px 0 12px; } .callout { padding: 18px; } .devfession-body { padding: 20px; } .devfession-header { font-size: 15px; padding: 14px 20px; } .devfession-footer { flex-direction: column; gap: 4px; font-size: 11px; padding: 12px 20px; } .mini-build-body { padding: 20px; } .mini-build-header { padding: 14px 20px; } .mini-build-header h3 { font-size: 17px; } .confidence-close { padding: 22px 20px; } .confidence-close::before { display: none; } .step { gap: 10px; } .step-num { width: 26px; height: 26px; font-size: 12px; flex-shrink: 0; } .tag { font-size: 11px; padding: 4px 10px; } .post-number { font-size: 11px; letter-spacing: 1px; } .sep { margin: 32px 0; } .connect-arrow { display: none; } .compare-grid { grid-template-columns: 1fr; }}
+@media (max-width: 480px){
+   .code-body { font-size: 11.5px; padding: 12px; }
+   .hero h1 { font-size: clamp(24px, 9vw, 32px); }
+   .il { white-space: normal; word-break: break-word; }
+   .unit-grid, .compare-2, .before-after, .phase-grid,
+   .lh-demo, .pair-grid, .ba-grid, .font-compare { grid-template-columns: 1fr; }
+   .shadow-grid { grid-template-columns: 1fr 1fr; }
+   .swatch-row { gap: 8px; }
+   .swatch { min-width: 90px; }
+   .pyramid-row { flex-direction: column; gap: 6px; align-items: flex-start; }
+   .score-row { flex-direction: column; gap: 6px; }
+   .score-sel { min-width: unset; }
+   .recap-item { flex-wrap: wrap; gap: 4px; }
+   .recap-title { width: 100%; }
+   .checklist { padding: 14px; }
+   .demo-row { padding: 16px 12px; gap: 12px; }
+   .series-nav-divider { display: none; }
+   .connect-arrow { display: none; }
+   .compare-grid { grid-template-columns: 1fr; }
+   .layer-margin { padding: 20px; }
+   .layer-border { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+ <div id="site-header"></div>
+<!-- ─── HERO ─── -->
+<div class="hero">
+ <div class="post-label"><span class="series-tag">CSS, But Make It Powerful</span> Post 01 of 14 </div>
+ <div class="post-number">CSS Series · Post 01</div>
+ <h1>What CSS <span class="gradient-text">Actually Does</span><br>(And Why It's Not Just Decoration)</h1>
+ <p class="hero-sub">You're not making things pretty. You're controlling how the entire world sees your work. That's power — and it starts here.</p>
+ <div class="tag-row">
+  <span class="tag css">CSS</span>
+  <span class="tag beginner">Beginner</span>
+  <span class="tag series">Series: Post 01</span>
+  <span class="tag">~10 min read</span>
+ </div>
+</div>
+
+<!-- ─── ARTICLE ─── -->
+<main class="article">
+
+ <!-- 💬 RELATABLE INTRO -->
+ <h2>💬 "Why Does Mine Look Like That?"</h2>
+
+ <p>You wrote the HTML. The content is there. The heading, the paragraph, the button. It all <em>works</em> — technically. But it looks like a document from 2003, and everyone else's stuff looks like a real website.</p>
+
+ <p>Here's what's actually happening: <span class="key">HTML describes what your content <em>is</em>. CSS controls what it <em>looks like</em>.</span> Without CSS, a browser just renders your structure with its default styles — which, honestly, aren't much to look at.</p>
+
+ <p>The moment you add CSS, you're not decorating. You're making decisions. Typography. Color. Spacing. Layout. Every visual choice on every website you've ever admired? Someone wrote CSS for that.</p>
+
+ <div class="callout mindset">
+  <div class="callout-title">🧠 Mindset First</div>
+  <p>Stop thinking of CSS as "making it pretty." That framing undersells you. CSS is <strong>presentation logic</strong> — a separate layer of intentional design decisions layered on top of your content. You're an architect, not a decorator.</p>
+ </div>
+
+ <!-- 🧠 CONCEPT -->
+ <h2>🧠 The Concept: HTML + CSS = Structure + Presentation</h2>
+
+ <p>Think of building a website like building a room. <span class="pink-key">HTML is the walls, the floor, the furniture</span> — the structure. <span class="key">CSS is the paint color, the lighting, the layout of where things sit</span>. You need both. But they're separate jobs, and that separation is intentional.</p>
+
+ <div class="connect-visual">
+  <div class="connect-box html-box">
+   <div class="box-label">HTML</div>
+   <div class="box-desc">Content &amp; Structure</div>
+  </div>
+  <div class="connect-arrow">+</div>
+  <div class="connect-box css-box">
+   <div class="box-label">CSS</div>
+   <div class="box-desc">Presentation &amp; Style</div>
+  </div>
+  <div class="connect-arrow">→</div>
+  <div class="connect-box result-box">
+   <div class="box-label">Browser</div>
+   <div class="box-desc">What the user sees</div>
+  </div>
+ </div>
+
+ <p>This separation is one of the best ideas in web development. It means you can change how your entire site looks without touching a single line of HTML. Redesign? CSS. Brand refresh? CSS. Dark mode? CSS. Your HTML stays clean and untouched.</p>
+
+ <!-- 🧱 TECHNICAL BREAKDOWN -->
+ <h2>🧱 How CSS Actually Connects to HTML</h2>
+
+ <p>CSS doesn't just appear — you have to tell the browser where to find it. There are three ways to add CSS to an HTML document. All three work. But they are <span class="gold-key">not equally good</span> to use.</p>
+
+ <div class="compare-grid">
+  <div class="compare-card">
+   <div class="compare-card-header inline-h">✦ Inline CSS</div>
+   <div class="compare-card-body">
+    Written directly on an HTML element using the <span class="il">style</span> attribute. It only affects that one element. Hard to maintain, impossible to reuse.
+    <div><span class="badge badge-avoid">avoid in practice</span></div>
+   </div>
+  </div>
+  <div class="compare-card">
+   <div class="compare-card-header internal-h">✦ Internal CSS</div>
+   <div class="compare-card-body">
+    Written inside a <span class="il">&lt;style&gt;</span> tag in your HTML <span class="il">&lt;head&gt;</span>. Affects only that one page. Useful for single-page projects or quick experiments.
+    <div><span class="badge badge-ok">situational</span></div>
+   </div>
+  </div>
+  <div class="compare-card">
+   <div class="compare-card-header external-h">✦ External CSS</div>
+   <div class="compare-card-body">
+    Written in a separate <span class="il">.css</span> file, linked to your HTML. One file can style an entire site. Clean, scalable, professional.
+    <div><span class="badge badge-pro">use this one</span></div>
+   </div>
+  </div>
+ </div>
+
+ <h3>Seeing All Three in Code</h3>
+
+ <p>Let's look at each approach styling the same heading element — so you can see exactly what they look like:</p>
+
+ <!-- Inline -->
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">index.html</div>
+   <div class="code-lang">HTML · Inline CSS</div>
+  </div>
+  <div class="code-body"><code><span class="c">&lt;!-- Inline: style lives on the element itself --&gt;</span>
+<span class="t">&lt;h1</span> <span class="a">style</span>=<span class="s">"color: hotpink; font-size: 32px;"</span><span class="t">&gt;</span>Hello World<span class="t">&lt;/h1&gt;</span>
+
+<span class="c">&lt;!-- Problem: to change this on 50 pages, </span>
+<span class="c">   you have to edit 50 elements. No thanks. --&gt;</span></code></div>
+ </div>
+
+ <!-- Internal -->
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">index.html</div>
+   <div class="code-lang">HTML · Internal CSS</div>
+  </div>
+  <div class="code-body"><code><span class="t">&lt;head&gt;</span>
+ <span class="c">&lt;!-- Internal: style tag lives in the &lt;head&gt; --&gt;</span>
+ <span class="t">&lt;style&gt;</span>
+  <span class="sel">h1</span> {
+   <span class="prop">color</span>: <span class="val">hotpink</span>;
+   <span class="prop">font-size</span>: <span class="val">32px</span>;
+  }
+ <span class="t">&lt;/style&gt;</span>
+<span class="t">&lt;/head&gt;</span>
+
+<span class="t">&lt;body&gt;</span>
+ <span class="t">&lt;h1&gt;</span>Hello World<span class="t">&lt;/h1&gt;</span>
+<span class="t">&lt;/body&gt;</span>
+
+<span class="c">&lt;!-- Better — but only affects this one HTML file. --&gt;</span></code></div>
+ </div>
+
+ <!-- External -->
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">index.html</div>
+   <div class="code-lang">HTML · External CSS (the right way)</div>
+  </div>
+  <div class="code-body"><code><span class="t">&lt;head&gt;</span>
+ <span class="c">&lt;!-- External: link to a separate .css file --&gt;</span>
+ <span class="t">&lt;link</span> <span class="a">rel</span>=<span class="s">"stylesheet"</span> <span class="a">href</span>=<span class="s">"styles.css"</span><span class="t">&gt;</span>
+<span class="t">&lt;/head&gt;</span>
+
+<span class="t">&lt;body&gt;</span>
+ <span class="t">&lt;h1&gt;</span>Hello World<span class="t">&lt;/h1&gt;</span>
+<span class="t">&lt;/body&gt;</span></code></div>
+ </div>
+
+ <div class="code-window">
+  <div class="code-topbar">
+   <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+   <div class="code-filename">styles.css</div>
+   <div class="code-lang">CSS</div>
+  </div>
+  <div class="code-body"><code><span class="c">/* styles.css — your entire site's presentation lives here */</span>
+
+<span class="sel">h1</span> {
+ <span class="prop">color</span>: <span class="val">hotpink</span>;
+ <span class="prop">font-size</span>: <span class="val">32px</span>;
+}
+
+<span class="c">/* Now EVERY h1 across EVERY page you link this to is styled.
+  Change it once here. Updates everywhere. That's the power. */</span></code></div>
+ </div>
+
+ <h3>Anatomy of a CSS Rule</h3>
+
+ <p>Before you write a single line of CSS, know what you're looking at. Every CSS rule has the same shape:</p>
+
+ <div class="anatomy-visual">
+  <div class="anatomy-rule">
+   <span style="color:var(--pink)">h1</span>
+   <span style="color:var(--text-muted)"> { </span>
+   <span style="color:var(--sky-blue)">color</span>
+   <span style="color:var(--text-muted)">: </span>
+   <span style="color:var(--mint-green)">hotpink</span>
+   <span style="color:var(--text-muted)">; }</span>
+  </div>
+  <div class="anatomy-labels">
+   <span class="anatomy-label pink-l">selector → what to style</span>
+   <span class="anatomy-label blue-l">property → what to change</span>
+   <span class="anatomy-label green-l">value → how to change it</span>
+  </div>
+ </div>
+
+ <p>That's genuinely all there is to it — everything in CSS follows this one pattern. <span class="il">selector { property: value; }</span> — everything in CSS follows this pattern. The selector targets an HTML element. The property names what you want to change. The value says how.</p>
+
+ <div class="callout tip">
+  <div class="callout-title">✦ Quick Tip</div>
+  <p>The <span class="il">rel="stylesheet"</span> in your <span class="il">&lt;link&gt;</span> tag stands for "relationship." You're telling the browser: <em>this file is a stylesheet, and it relates to this HTML document.</em> Without it, the browser won't know how to use the file.</p>
+ </div>
+
+ <h3>Why External CSS Is Professional</h3>
+
+ <p>It comes down to one principle: <span class="key">separation of concerns</span>. HTML handles content. CSS handles presentation. When they live in different files, each can change without breaking the other.</p>
+
+ <p>Imagine a 20-page website. With external CSS, you update one file and every page reflects it instantly. With inline CSS, you're editing 20 pages. The external approach isn't just cleaner — it's how every production website in the world is built.</p>
+
+ <div class="callout info">
+  <div class="callout-title">ℹ️ File Path Reminder</div>
+  <p>If your <span class="il">styles.css</span> file is in the <em>same folder</em> as your HTML, the link is simply <span class="il">href="styles.css"</span>. If it's in a <span class="il">css/</span> subfolder, it becomes <span class="il">href="css/styles.css"</span>. Always match the path to where your file actually lives.</p>
+ </div>
+
+ <div class="sep"></div>
+
+ <!-- 🛠 MINI BUILD -->
+ <div class="mini-build">
+  <div class="mini-build-header">
+   <span style="font-size:22px;">🛠</span>
+   <h3>Mini Build: Your First External Stylesheet</h3>
+  </div>
+  <div class="mini-build-body">
+   <p>You're going to create two files, link them together, and use CSS to control your page's background color and heading color. That's it. But when it works, you'll feel it — that first moment CSS actually <em>does</em> something is a good one.</p>
+
+   <div class="step">
+    <div class="step-num">01</div>
+    <div class="step-text">
+     <p><strong>Create your project folder.</strong> Make a new folder called <span class="il">my-first-css</span>. Inside it, create two files: <span class="il">index.html</span> and <span class="il">styles.css</span>. They should be in the same folder — no subfolders yet.</p>
+    </div>
+   </div>
+
+   <div class="code-window">
+    <div class="code-topbar">
+     <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+     <div class="code-filename">index.html</div>
+     <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-body"><code><span class="t">&lt;!DOCTYPE html&gt;</span>
+<span class="t">&lt;html</span> <span class="a">lang</span>=<span class="s">"en"</span><span class="t">&gt;</span>
+<span class="t">&lt;head&gt;</span>
+ <span class="t">&lt;meta</span> <span class="a">charset</span>=<span class="s">"UTF-8"</span><span class="t">&gt;</span>
+ <span class="t">&lt;meta</span> <span class="a">name</span>=<span class="s">"viewport"</span> <span class="a">content</span>=<span class="s">"width=device-width, initial-scale=1.0"</span><span class="t">&gt;</span>
+ <span class="t">&lt;title&gt;</span>My First CSS<span class="t">&lt;/title&gt;</span>
+
+ <span class="c">&lt;!-- Step 02: This is where you link your stylesheet --&gt;</span>
+ <span class="t">&lt;link</span> <span class="a">rel</span>=<span class="s">"stylesheet"</span> <span class="a">href</span>=<span class="s">"styles.css"</span><span class="t">&gt;</span>
+<span class="t">&lt;/head&gt;</span>
+<span class="t">&lt;body&gt;</span>
+
+ <span class="t">&lt;h1&gt;</span>I control how this looks.<span class="t">&lt;/h1&gt;</span>
+ <span class="t">&lt;p&gt;</span>CSS is presentation logic — and I just wrote some.<span class="t">&lt;/p&gt;</span>
+
+<span class="t">&lt;/body&gt;</span>
+<span class="t">&lt;/html&gt;</span></code></div>
+   </div>
+
+   <div class="step">
+    <div class="step-num">02</div>
+    <div class="step-text">
+     <p><strong>Add your CSS.</strong> Open <span class="il">styles.css</span> and write the following. We're styling two things: the page background, and the heading color.</p>
+    </div>
+   </div>
+
+   <div class="code-window">
+    <div class="code-topbar">
+     <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+     <div class="code-filename">styles.css</div>
+     <div class="code-lang">CSS</div>
+    </div>
+    <div class="code-body"><code><span class="c">/* Target the entire page body */</span>
+<span class="sel">body</span> {
+ <span class="prop">background-color</span>: <span class="val">#0a0a0f</span>;  <span class="c">/* deep dark background */</span>
+ <span class="prop">color</span>: <span class="val">#e0e0e8</span>;       <span class="c">/* light text for readability */</span>
+ <span class="prop">font-family</span>: <span class="val">sans-serif</span>;
+ <span class="prop">padding</span>: <span class="val">40px</span>;
+}
+
+<span class="c">/* Target the h1 specifically */</span>
+<span class="sel">h1</span> {
+ <span class="prop">color</span>: <span class="val">#ff69b4</span>;  <span class="c">/* hotpink — your choice */</span>
+ <span class="prop">font-size</span>: <span class="val">2.5rem</span>;
+}</code></div>
+   </div>
+
+   <div class="step">
+    <div class="step-num">03</div>
+    <div class="step-text">
+     <p><strong>Open it in your browser.</strong> Double-click your <span class="il">index.html</span> file. You should see a dark background and a pink heading. If the CSS isn't showing up, double-check that both files are in the same folder and your <span class="il">href="styles.css"</span> matches the filename exactly (including case).</p>
+    </div>
+   </div>
+
+   <div class="step">
+    <div class="step-num">04</div>
+    <div class="step-text">
+     <p><strong>Now make it yours.</strong> Change the background to any color you want. Try <span class="il">#1a1a2e</span>, <span class="il">white</span>, or even <span class="il">rebeccapurple</span>. Change the heading to a different color. CSS accepts hex codes, color names, and more. Experiment — nothing breaks.</p>
+    </div>
+   </div>
+
+   <div class="callout tip" style="margin-top: 24px; margin-bottom: 0;">
+    <div class="callout-title">✦ You Built Something Real</div>
+    <p>You didn't just style a heading. You separated structure from presentation, linked two files together, and wrote a complete CSS rule from scratch. That's the foundation every frontend developer builds on.</p>
+   </div>
+  </div>
+ </div>
+
+ <!-- 💛 CONFIDENCE CLOSE -->
+ <div class="confidence-close">
+  <h2>💛 You're Not Making It Pretty. You're Making Decisions.</h2>
+  <p>Every designer, every senior frontend developer, every person whose portfolio you've admired — they all started exactly where you are right now, writing their first <span class="il">color: hotpink;</span> and feeling that little spark when it works.</p>
+  <p>CSS has a reputation for being frustrating. And honestly, parts of it will be. But the foundation you just built? Solid. Here's what you now understand that you didn't before:</p>
+  <ul class="recap-list">
+   <li>CSS is the presentation layer — separate from HTML by design</li>
+   <li>Three ways to add CSS exist, and external is the one that scales</li>
+   <li>The <span class="il">&lt;link&gt;</span> tag is how HTML and CSS find each other</li>
+   <li>Every CSS rule follows the same pattern: selector, property, value</li>
+   <li>You can redesign an entire site without touching a single line of HTML — and that's not a small thing</li>
+  </ul>
+  <p>Next up: Selectors — how CSS knows which element to actually target. Because writing a rule is one thing. Making sure it hits the right element, and <em>only</em> the right element, is another. <em>"why is there so much space there?"</em> will finally have an answer.</p>
+ </div>
+
+ <div class="sep"></div>
+
+ <!-- 🧾 DEVFESSION -->
+ <div class="devfession">
+  <div class="devfession-header">🧾 DevFession</div>
+  <div class="devfession-body">
+   <p>Okay real talk? I spent an embarrassing amount of time thinking CSS was just for people who cared about "how things looked." Like it was the frivolous part of web dev, and the "real" coding was JavaScript and logic and back-end stuff.</p>
+   <p>I was so wrong. CSS is <em>full</em> of logic. The cascade, specificity, inheritance, layout systems — there is a whole engineering discipline here. The moment I stopped dismissing it and actually learned it, my work leveled up immediately.</p>
+   <p>So if anyone ever makes you feel like CSS is "the easy part" or "not real code" — they're wrong. And also, their websites probably look bad.</p>
+  </div></div>
+
+</div>
+ </div>
+
+
+ <nav class="post-nav" style="grid-template-columns:1fr; justify-items:end">
+  
+  <a href="02-selectors.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">CSS Selectors Explained</span></a>
+ </nav>
+ <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+ <div id="site-footer"></div>
+ <script src="../../assets/js/main.js"></script>
+</body>
+</html>

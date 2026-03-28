@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Common Beginner Mistakes — Every Bug You're About to Make | CodeHerWay</title>
+<meta name="description" content="The six HTML mistakes every beginner makes — forgetting closing tags, nesting incorrectly, misusing h1, div soup, missing alt text, and not validating. Learn to spot and fix them now.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.mistake-num{font-family: 'Fira Code', monospace; font-size: 64px; font-weight: 700; line-height: 1; margin-bottom: 8px;}
+.mistake-num.m1{background: linear-gradient(135deg, var(--coral), #ff3cac); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;}
+.mistake-num.m2{background: linear-gradient(135deg, var(--gold), #ff8c00); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;}
+.mistake-num.m3{background: linear-gradient(135deg, var(--pink), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;}
+.mistake-num.m4{background: linear-gradient(135deg, var(--sky-blue), #4facfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;}
+.mistake-num.m5{background: linear-gradient(135deg, var(--mint-green), #3ddc84); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;}
+.mistake-num.m6{background: linear-gradient(135deg, var(--purple), #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;}
+.severity{display: inline-flex; align-items: center; gap: 6px; font-family: 'Fira Code', monospace; font-size: 12px; padding: 4px 12px; border-radius: 6px; margin-bottom: 16px;}
+.severity.high{background: rgba(255,107,107,0.1); color: var(--coral); border: 1px solid rgba(255,107,107,0.2);}
+.severity.medium{background: rgba(255,211,105,0.1); color: var(--gold); border: 1px solid rgba(255,211,105,0.2);}
+.severity.critical{background: rgba(255,105,180,0.1); color: var(--pink); border: 1px solid rgba(255,105,180,0.2);}
+@media(max-width:640px){.mistake-num { font-size: 48px; }}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<!-- ═══════ HERO ═══════ -->
+<section class="hero">
+  <div class="post-label"><span class="series-tag">HTML Fundamentals</span> Post 17 of 20</div>
+  <div class="post-number">Post 17 · HTML Fundamentals</div>
+  <h1>Beginner Mistakes:<br><span class="gradient-text">Every Bug You're About to Make</span></h1>
+  <p class="hero-sub">You're going to make these mistakes. Every beginner does. The difference is whether you spot them fast or spend hours wondering why your page is broken. Let's get ahead of it.</p>
+  <div class="tag-row">
+    <span class="tag html">#HTML</span>
+    <span class="tag warn">#Mistakes</span>
+    <span class="tag warn">#Debugging</span>
+    <span class="tag">9 min read</span>
+  </div>
+</section>
+
+<!-- ═══════ ARTICLE ═══════ -->
+<main class="article">
+
+  <!-- ── INTRO ── -->
+  <p>There's no shame in making mistakes — it's how you learn. But some mistakes are so common that every HTML beginner hits the exact same walls, in the exact same order. Knowing what they are <em>before</em> you encounter them saves you hours of frustration.</p>
+
+  <p>These are the six mistakes I see most often in beginner code. I've made every single one of them. Let's walk through what goes wrong, why it breaks your page, and how to fix it instantly.</p>
+
+  <div class="sep"></div>
+
+  <!-- ── MISTAKE 1 ── -->
+  <div class="mistake-num m1">01</div>
+  <h2>Forgetting Closing Tags</h2>
+  <div class="severity high">🔴 High Impact — Breaks layout</div>
+
+  <p>This is the number one beginner mistake. You open a tag and forget to close it. The browser doesn't throw an error — it just guesses where you meant to close it. And browsers guess badly.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- ❌ Missing closing tags --&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"card"</span><span class="t">&gt;</span>
+  <span class="t">&lt;h2&gt;</span>My Project
+  <span class="t">&lt;p&gt;</span>This is a description of my project.
+  <span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"#"</span><span class="t">&gt;</span>View More
+
+<span class="c">&lt;!-- Where do these end?? The browser doesn't know either --&gt;</span>
+
+<span class="c">&lt;!-- ✅ Always close your tags --&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"card"</span><span class="t">&gt;</span>
+  <span class="t">&lt;h2&gt;</span>My Project<span class="t">&lt;/h2&gt;</span>
+  <span class="t">&lt;p&gt;</span>This is a description of my project.<span class="t">&lt;/p&gt;</span>
+  <span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"#"</span><span class="t">&gt;</span>View More<span class="t">&lt;/a&gt;</span>
+<span class="t">&lt;/div&gt;</span>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">💡 The Fix</div>
+    <p>Get in the habit of typing <strong>both</strong> the opening and closing tag at the same time, then filling in the content between them. Most code editors (VS Code, for example) do this automatically. If yours doesn't, train yourself: open tag → close tag → then go back and write the content.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── MISTAKE 2 ── -->
+  <div class="mistake-num m2">02</div>
+  <h2>Nesting Incorrectly</h2>
+  <div class="severity high">🔴 High Impact — Breaks layout &amp; accessibility</div>
+
+  <p>HTML elements nest like Russian dolls — the last one opened must be the first one closed. When you overlap tags instead of nesting them properly, the browser's parser has to rearrange your code, often in ways you didn't expect.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- ❌ Overlapping tags — opens b, opens i, closes b, closes i --&gt;</span>
+<span class="t">&lt;p&gt;</span>This is <span class="t">&lt;b&gt;</span>bold and <span class="t">&lt;i&gt;</span>italic<span class="t">&lt;/b&gt;</span> text<span class="t">&lt;/i&gt;&lt;/p&gt;</span>
+
+<span class="c">&lt;!-- The b closes before i, but i opened inside b. Broken. --&gt;</span>
+
+<span class="c">&lt;!-- ✅ Properly nested — last opened, first closed --&gt;</span>
+<span class="t">&lt;p&gt;</span>This is <span class="t">&lt;b&gt;</span>bold and <span class="t">&lt;i&gt;</span>italic<span class="t">&lt;/i&gt;&lt;/b&gt;</span> text<span class="t">&lt;/p&gt;</span>
+
+<span class="c">&lt;!-- ❌ Block inside inline — p inside a span --&gt;</span>
+<span class="t">&lt;span&gt;</span>
+  <span class="t">&lt;p&gt;</span>This is wrong<span class="t">&lt;/p&gt;</span>
+<span class="t">&lt;/span&gt;</span>
+
+<span class="c">&lt;!-- ✅ Inline inside block --&gt;</span>
+<span class="t">&lt;p&gt;</span>
+  <span class="t">&lt;span&gt;</span>This is correct<span class="t">&lt;/span&gt;</span>
+<span class="t">&lt;/p&gt;</span>
+    </div>
+  </div>
+
+  <div class="callout info">
+    <div class="callout-title">ℹ️ The Nesting Rule</div>
+    <p>Think of it like parentheses in math: <span class="il">( [ ] )</span> is valid, but <span class="il">( [ ) ]</span> is not. The last element you opened must always be the first one you close. Good indentation makes nesting errors visible at a glance — if your closing tags don't line up with their openers, something's wrong.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── MISTAKE 3 ── -->
+  <div class="mistake-num m3">03</div>
+  <h2>Multiple &lt;h1&gt; Tags</h2>
+  <div class="severity medium">🟡 Medium Impact — Hurts SEO &amp; accessibility</div>
+
+  <p>This one seems harmless but has real consequences. Beginners often use <span class="il">&lt;h1&gt;</span> whenever they want big, bold text. But <span class="il">&lt;h1&gt;</span> isn't a styling tool — it's a <span class="key">semantic declaration</span> that says "this is the most important heading on the page."</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- ❌ Multiple h1s — confuses search engines --&gt;</span>
+<span class="t">&lt;h1&gt;</span>Welcome to My Site<span class="t">&lt;/h1&gt;</span>
+<span class="t">&lt;h1&gt;</span>About Me<span class="t">&lt;/h1&gt;</span>
+<span class="t">&lt;h1&gt;</span>My Projects<span class="t">&lt;/h1&gt;</span>
+<span class="t">&lt;h1&gt;</span>Contact<span class="t">&lt;/h1&gt;</span>
+
+<span class="c">&lt;!-- ✅ One h1, proper hierarchy --&gt;</span>
+<span class="t">&lt;h1&gt;</span>Welcome to My Site<span class="t">&lt;/h1&gt;</span>
+<span class="t">&lt;h2&gt;</span>About Me<span class="t">&lt;/h2&gt;</span>
+<span class="t">&lt;h2&gt;</span>My Projects<span class="t">&lt;/h2&gt;</span>
+<span class="t">&lt;h3&gt;</span>Project 1<span class="t">&lt;/h3&gt;</span>
+<span class="t">&lt;h3&gt;</span>Project 2<span class="t">&lt;/h3&gt;</span>
+<span class="t">&lt;h2&gt;</span>Contact<span class="t">&lt;/h2&gt;</span>
+    </div>
+  </div>
+
+  <p>One <span class="il">&lt;h1&gt;</span> per page. Sections get <span class="il">&lt;h2&gt;</span>. Sub-sections get <span class="il">&lt;h3&gt;</span>. It's an outline — like a table of contents. Google uses this hierarchy to understand your page structure, and screen readers use it to let users navigate between sections. Multiple h1s send a signal that says "everything is equally important" — which means nothing is.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">💡 Want Big Text? Use CSS.</div>
+    <p>If you want text to look like an h1 without it being an h1, use CSS: <span class="il">font-size: 2rem; font-weight: 700;</span>. Headings are for document structure, not visual styling. Separate meaning from appearance.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── MISTAKE 4 ── -->
+  <div class="mistake-num m4">04</div>
+  <h2>Using &lt;div&gt; for Everything</h2>
+  <div class="severity medium">🟡 Medium Impact — Hurts accessibility &amp; maintainability</div>
+
+  <p>This is the infamous <span class="key">div soup</span>. Beginners wrap everything in divs because they're safe and simple. But HTML has semantic elements that carry meaning — and using divs instead of them throws away free accessibility and SEO value.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- ❌ Div soup --&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"header"</span><span class="t">&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"nav"</span><span class="t">&gt;</span>...<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"main"</span><span class="t">&gt;</span>
+  <span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"section"</span><span class="t">&gt;</span>...<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;/div&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"footer"</span><span class="t">&gt;</span>...<span class="t">&lt;/div&gt;</span>
+
+<span class="c">&lt;!-- ✅ Semantic HTML --&gt;</span>
+<span class="t">&lt;header&gt;</span>
+  <span class="t">&lt;nav&gt;</span>...<span class="t">&lt;/nav&gt;</span>
+<span class="t">&lt;/header&gt;</span>
+<span class="t">&lt;main&gt;</span>
+  <span class="t">&lt;section&gt;</span>...<span class="t">&lt;/section&gt;</span>
+<span class="t">&lt;/main&gt;</span>
+<span class="t">&lt;footer&gt;</span>...<span class="t">&lt;/footer&gt;</span>
+    </div>
+  </div>
+
+  <p>The semantic version and the div version look identical in the browser. But screen readers can navigate the semantic version. Search engines understand it. And other developers can read it at a glance. A <span class="il">&lt;div&gt;</span> with a class of "header" tells the browser nothing. A <span class="il">&lt;header&gt;</span> tag tells it everything.</p>
+
+  <div class="sep"></div>
+
+  <!-- ── MISTAKE 5 ── -->
+  <div class="mistake-num m5">05</div>
+  <h2>Forgetting alt Attributes on Images</h2>
+  <div class="severity critical">🔴 Critical — Accessibility violation</div>
+
+  <p>Every <span class="il">&lt;img&gt;</span> tag needs an <span class="il">alt</span> attribute. No exceptions. If the image carries meaning, the alt text describes it. If it's purely decorative, the alt should be empty (<span class="il">alt=""</span>). But it must always be present.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- ❌ No alt at all --&gt;</span>
+<span class="t">&lt;img</span> <span class="a">src</span>=<span class="s">"profile.jpg"</span><span class="t">&gt;</span>
+
+<span class="c">&lt;!-- ❌ Useless alt --&gt;</span>
+<span class="t">&lt;img</span> <span class="a">src</span>=<span class="s">"profile.jpg"</span> <span class="a">alt</span>=<span class="s">"image"</span><span class="t">&gt;</span>
+
+<span class="c">&lt;!-- ✅ Meaningful alt --&gt;</span>
+<span class="t">&lt;img</span> <span class="a">src</span>=<span class="s">"profile.jpg"</span>
+     <span class="a">alt</span>=<span class="s">"Jenna Zawaski smiling at her desk"</span><span class="t">&gt;</span>
+
+<span class="c">&lt;!-- ✅ Decorative image — empty alt --&gt;</span>
+<span class="t">&lt;img</span> <span class="a">src</span>=<span class="s">"divider-line.svg"</span> <span class="a">alt</span>=<span class="s">""</span><span class="t">&gt;</span>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-title">⚠️ This Isn't Just Best Practice — It's the Law</div>
+    <p>In many countries, web accessibility isn't a suggestion. Missing alt attributes can make your site non-compliant with accessibility standards (WCAG). Beyond compliance, it's the right thing to do — screen reader users deserve to know what's on your page just like sighted users do.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── MISTAKE 6 ── -->
+  <div class="mistake-num m6">06</div>
+  <h2>Not Validating Your Code</h2>
+  <div class="severity medium">🟡 Medium Impact — Invisible bugs accumulate</div>
+
+  <p>HTML is forgiving. It won't crash if you make mistakes — it just silently tries to fix them. This means you can have dozens of errors in your code and never notice because the browser is doing damage control behind the scenes. Until one day it can't, and your layout breaks in some browser you never tested in.</p>
+
+  <p>The <span class="key">W3C HTML Validator</span> catches these silent issues. Paste your URL or code, and it tells you every error: unclosed tags, invalid nesting, missing attributes, deprecated elements — everything the browser was quietly fixing for you.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">W3C Validator</div>
+    </div>
+    <div class="code-body">
+<span class="c">// Go to:</span>
+<span class="a">https://validator.w3.org</span>
+
+<span class="c">// Three ways to validate:</span>
+<span class="p">1. Paste your URL → "Check"</span>
+<span class="p">2. Upload your .html file</span>
+<span class="p">3. Paste your code directly</span>
+
+<span class="c">// Common errors it catches:</span>
+<span class="s">Error: Unclosed element "div"</span>
+<span class="s">Error: Element "li" not allowed as child of "div"</span>
+<span class="s">Warning: Missing alt attribute on img</span>
+<span class="s">Error: Duplicate ID "header"</span>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">💡 When to Validate</div>
+    <p>You don't need to validate after every line. But run your code through the validator when you finish a major section, before deploying, and whenever something looks broken but you can't figure out why. Clean code prevents compound bugs — where one small error cascades into bigger layout problems down the line.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── DEVFESSION ── -->
+  <div class="devfession">
+    <div class="devfession-header">// dev_fession</div>
+    <div class="devfession-body">
+      <p>I once built an entire landing page and couldn't figure out why the footer was overlapping the main content. I checked my CSS. I checked the z-index. I checked the positioning. Everything looked right.</p>
+      <p>Turns out I had a missing <span class="il">&lt;/div&gt;</span> somewhere in the middle of the page. One unclosed div meant the browser wrapped the footer <em>inside</em> a section that had different styling. My CSS was perfect — my HTML wasn't.</p>
+      <p>I found it in 30 seconds by pasting my code in the W3C Validator. It told me exactly which line had the unclosed element. Thirty seconds versus forty-five minutes of staring at CSS. Validate your code. 🫠</p>
+    </div>
+    <div class="devfession-footer">
+      <span>@itcodegirl</span>
+      <span class="tagline">CodeHerWay</span>
+    </div>
+  </div>
+
+  <!-- ── MINI BUILD ── -->
+  <div class="mini-build">
+    <div class="mini-build-header">
+      <h3>🔨 Mini Build: Bug Hunt Challenge</h3>
+    </div>
+    <div class="mini-build-body">
+      <p>Create an intentionally broken HTML page and then fix every mistake:</p>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">Write an HTML page with <strong>at least six intentional errors</strong>: a missing closing tag, overlapping nests, multiple h1s, div soup instead of semantic elements, images without alt, and at least one invalid nesting (like a <span class="sky">&lt;p&gt;</span> inside a <span class="sky">&lt;span&gt;</span>).</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">Paste the broken code into the <span class="sky">W3C Validator</span> and screenshot the error list. Count how many errors it finds.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">Fix every error one by one. Replace divs with proper semantic elements. Add alt text. Close every tag. Fix the nesting order.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">Run the fixed version through the validator again. Keep fixing until you get <span class="sky">zero errors</span> and <span class="sky">zero warnings</span>.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-text">Compare both versions in the browser. Chances are they look almost identical — which proves that invisible errors are the most dangerous kind. The validator sees what you can't.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── WRAP UP ── -->
+  <h2>The Bottom Line</h2>
+
+  <p>Every beginner makes these six mistakes. Close your tags. Nest properly. One h1 per page. Use semantic elements instead of divs. Always include alt attributes. And validate your code before you deploy.</p>
+
+  <p>The browser won't tell you when your HTML has errors — it silently tries to fix them. That silence is dangerous because it lets bad habits compound. The W3C Validator tells you everything the browser won't. Use it.</p>
+
+  <p>Making mistakes is how you learn. But making the <em>same</em> mistakes repeatedly is how you stay stuck. Learn them once, fix them once, and move on.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">⬆️ Next Up</div>
+    <p><strong>Post 18: Validation &amp; Best Practices</strong> — We just talked about what to avoid. Now let's talk about what to aim for — clean code, meaningful class names, consistent structure, and the habits that separate beginner code from professional code.</p>
+  </div>
+
+
+  <nav class="post-nav">
+    <a href="16-developer-tools.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Developer Tools</span></a>
+    <a href="18-validation-best-practices.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Validation and Best Practices</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

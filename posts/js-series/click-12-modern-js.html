@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modern JavaScript (ES6+): Template Literals, Destructuring & Optional Chaining | CodeHerWay</title>
+<meta name="description" content="Template literals, destructuring, spread, rest, optional chaining, nullish coalescing — the ES6+ features you'll use every day. CodeHerWay.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+
+@media(max-width:375px){main{padding:20px 14px 48px!important;}.code-body{font-size:11.5px;}}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="chw-wrapper">
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Click</span> Post 12 of 15</div>
+  <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+  <span class="series-label">JavaScript, But Make It Click &nbsp;·&nbsp; Post 12 of 15</span>
+  <div class="post-number">Post 12 of 15</div>
+  <h1 class="post-title">Modern JavaScript (ES6+)</h1>
+  <p class="post-subtitle">Template literals, destructuring, spread, optional chaining — the features that make modern JavaScript readable.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 12 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Intermediate</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+<main id="main-content">
+<div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">Write Less. Mean More.</h2><div class="section-line"></div></div>
+  <p>Modern JavaScript (ES6 and beyond) introduced a set of features that made the language dramatically more readable and expressive. You'll see these in every codebase, every tutorial, and every job interview. This post covers the ones you'll actually use every single day.</p>
+<div class="section-header"><span class="section-icon">📝</span><h2 class="section-title">Template Literals</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>Destructuring is the one feature in this post most worth slowing down for. It works on both arrays and objects, and it shows up everywhere: function parameters, API responses, React props, import statements. The core idea is always the same: instead of pulling values out one at a time, you pull them all out in one line by matching the structure of the source.</p>
+  </div>
+
+</div>  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — template-literals.js</div></div>
+    <div class="code-body"><span class="sy-kw">const</span> <span class="sy-plain">name</span> = <span class="sy-str">"Jenna"</span>
+<span class="sy-kw">const</span> <span class="sy-plain">role</span> = <span class="sy-str">"frontend dev"</span>
+
+<span class="sy-comment">// Old way — messy string concatenation</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Hello, I'm "</span> + <span class="sy-plain">name</span> + <span class="sy-str">" and I'm a "</span> + <span class="sy-plain">role</span>)
+
+<span class="sy-comment">// Template literal — use backticks + ${} expressions</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">`Hello, I'm ${<span class="sy-plain">name</span>} and I'm a ${<span class="sy-plain">role</span>}`</span>)
+
+<span class="sy-comment">// Expressions inside ${} — not just variables</span>
+<span class="sy-kw">const</span> <span class="sy-plain">score</span> = <span class="sy-num">82</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">`Grade: ${<span class="sy-plain">score</span> >= <span class="sy-num">90</span> ? <span class="sy-str">"A"</span> : <span class="sy-str">"B or lower"</span>}`</span>)
+
+<span class="sy-comment">// Multi-line strings — no more 
+ hacks</span>
+<span class="sy-kw">const</span> <span class="sy-plain">card</span> = <span class="sy-str">`
+  &lt;div class="card"&gt;
+    &lt;h2&gt;${<span class="sy-plain">name</span>}&lt;/h2&gt;
+    &lt;p&gt;${<span class="sy-plain">role</span>}&lt;/p&gt;
+  &lt;/div&gt;
+`</span></div>
+  </div><div class="section-header"><span class="section-icon">📦</span><h2 class="section-title">Destructuring</h2><div class="section-line"></div></div>  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — destructuring.js</div></div>
+    <div class="code-body"><span class="sy-comment">// Object destructuring — pull out named properties</span>
+<span class="sy-kw">const</span> <span class="sy-plain">user</span> = { <span class="sy-prop">name</span>: <span class="sy-str">"Jenna"</span>, <span class="sy-prop">age</span>: <span class="sy-num">27</span>, <span class="sy-prop">city</span>: <span class="sy-str">"Chicago"</span> }
+
+<span class="sy-comment">// Long way</span>
+<span class="sy-kw">const</span> <span class="sy-plain">name</span> = <span class="sy-plain">user</span>.<span class="sy-prop">name</span>
+<span class="sy-kw">const</span> <span class="sy-plain">age</span>  = <span class="sy-plain">user</span>.<span class="sy-prop">age</span>
+
+<span class="sy-comment">// Destructuring — same result, one line</span>
+<span class="sy-kw">const</span> { <span class="sy-plain">name</span>, <span class="sy-plain">age</span>, <span class="sy-plain">city</span> } = <span class="sy-plain">user</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">name</span>, <span class="sy-plain">age</span>, <span class="sy-plain">city</span>)  <span class="sy-comment">// "Jenna" 27 "Chicago"</span>
+
+<span class="sy-comment">// Rename while destructuring</span>
+<span class="sy-kw">const</span> { <span class="sy-plain">name</span>: <span class="sy-plain">displayName</span> } = <span class="sy-plain">user</span>
+
+<span class="sy-comment">// Default value if property doesn't exist</span>
+<span class="sy-kw">const</span> { <span class="sy-plain">country</span> = <span class="sy-str">"US"</span> } = <span class="sy-plain">user</span>
+
+<span class="sy-comment">// Array destructuring — pull out by position</span>
+<span class="sy-kw">const</span> [<span class="sy-plain">first</span>, <span class="sy-plain">second</span>, , <span class="sy-plain">fourth</span>] = [<span class="sy-str">"a"</span>, <span class="sy-str">"b"</span>, <span class="sy-str">"c"</span>, <span class="sy-str">"d"</span>]
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">first</span>, <span class="sy-plain">second</span>, <span class="sy-plain">fourth</span>)  <span class="sy-comment">// "a" "b" "d"  (skipped "c")</span>
+
+<span class="sy-comment">// In function parameters — super common with API responses</span>
+<span class="sy-kw">function</span> <span class="sy-fn">greetUser</span>({ <span class="sy-plain">name</span>, <span class="sy-plain">age</span> }) {
+  <span class="sy-kw">return</span> <span class="sy-str">`${<span class="sy-plain">name</span>} is ${<span class="sy-plain">age</span>}`</span>
+}
+<span class="sy-fn">greetUser</span>(<span class="sy-plain">user</span>)  <span class="sy-comment">// "Jenna is 27"</span></div>
+  </div><div class="section-header"><span class="section-icon">↔️</span><h2 class="section-title">Spread &amp; Rest</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>Optional chaining (<code class='il'>?.</code>) and nullish coalescing (<code class='il'>??</code>) solve the same root problem: working with values that might not exist. <code class='il'>?.</code> stops early and returns <code class='il'>undefined</code> instead of throwing. <code class='il'>??</code> provides a fallback only for <code class='il'>null</code>/<code class='il'>undefined</code> (unlike <code class='il'>||</code> which also replaces <code class='il'>0</code> and <code class='il'>''</code>). Together they make 'maybe this value exists' code almost pleasant to write.</p>
+  </div>
+
+</div>  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — spread-rest.js</div></div>
+    <div class="code-body"><span class="sy-comment">// Spread — expand an array or object into individual items</span>
+<span class="sy-kw">const</span> <span class="sy-plain">a</span> = [<span class="sy-num">1</span>, <span class="sy-num">2</span>, <span class="sy-num">3</span>]
+<span class="sy-kw">const</span> <span class="sy-plain">b</span> = [<span class="sy-num">4</span>, <span class="sy-num">5</span>, <span class="sy-num">6</span>]
+<span class="sy-kw">const</span> <span class="sy-plain">combined</span> = [...<span class="sy-plain">a</span>, ...<span class="sy-plain">b</span>]  <span class="sy-comment">// [1, 2, 3, 4, 5, 6]</span>
+
+<span class="sy-comment">// Copy an array (not a reference)</span>
+<span class="sy-kw">const</span> <span class="sy-plain">copy</span> = [...<span class="sy-plain">a</span>]
+
+<span class="sy-comment">// Spread objects — merge or override properties</span>
+<span class="sy-kw">const</span> <span class="sy-plain">defaults</span> = { <span class="sy-prop">theme</span>: <span class="sy-str">"dark"</span>, <span class="sy-prop">lang</span>: <span class="sy-str">"en"</span> }
+<span class="sy-kw">const</span> <span class="sy-plain">userPrefs</span> = { <span class="sy-prop">lang</span>: <span class="sy-str">"fr"</span> }
+<span class="sy-kw">const</span> <span class="sy-plain">settings</span> = { ...<span class="sy-plain">defaults</span>, ...<span class="sy-plain">userPrefs</span> }
+<span class="sy-comment">// { theme: "dark", lang: "fr" } — userPrefs.lang overrides defaults.lang</span>
+
+<span class="sy-comment">// Rest — gather remaining items into an array</span>
+<span class="sy-kw">const</span> [<span class="sy-plain">head</span>, ...<span class="sy-plain">tail</span>] = [<span class="sy-num">1</span>, <span class="sy-num">2</span>, <span class="sy-num">3</span>, <span class="sy-num">4</span>]
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">head</span>)  <span class="sy-comment">// 1</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">tail</span>)  <span class="sy-comment">// [2, 3, 4]</span>
+
+<span class="sy-comment">// Rest in function params — accept any number of args</span>
+<span class="sy-kw">function</span> <span class="sy-fn">sum</span>(...<span class="sy-plain">nums</span>) {
+  <span class="sy-kw">return</span> <span class="sy-plain">nums</span>.<span class="sy-fn">reduce</span>((<span class="sy-plain">a</span>, <span class="sy-plain">b</span>) => <span class="sy-plain">a</span> + <span class="sy-plain">b</span>, <span class="sy-num">0</span>)
+}
+<span class="sy-fn">sum</span>(<span class="sy-num">1</span>, <span class="sy-num">2</span>, <span class="sy-num">3</span>, <span class="sy-num">4</span>)  <span class="sy-comment">// 10</span></div>
+  </div><div class="section-header"><span class="section-icon">🔗</span><h2 class="section-title">Optional Chaining &amp; Nullish Coalescing</h2><div class="section-line"></div></div>  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — optional-chaining.js</div></div>
+    <div class="code-body"><span class="sy-kw">const</span> <span class="sy-plain">user</span> = { <span class="sy-prop">name</span>: <span class="sy-str">"Jenna"</span>, <span class="sy-prop">address</span>: { <span class="sy-prop">city</span>: <span class="sy-str">"Chicago"</span> } }
+<span class="sy-kw">const</span> <span class="sy-plain">incompleteUser</span> = { <span class="sy-prop">name</span>: <span class="sy-str">"Maya"</span> }
+
+<span class="sy-comment">// Without optional chaining — throws TypeError if address is undefined</span>
+<span class="sy-comment">// console.log(incompleteUser.address.city)  ← TypeError!</span>
+
+<span class="sy-comment">// Optional chaining (?.) — returns undefined instead of throwing</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">user</span>?.<span class="sy-prop">address</span>?.<span class="sy-prop">city</span>)          <span class="sy-comment">// "Chicago"</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">incompleteUser</span>?.<span class="sy-prop">address</span>?.<span class="sy-prop">city</span>)  <span class="sy-comment">// undefined (no crash)</span>
+
+<span class="sy-comment">// Also works for method calls — guards against calling undefined as a function</span>
+<span class="sy-plain">user</span>.<span class="sy-fn">getName</span>?.()   <span class="sy-comment">// undefined if getName doesn't exist, no TypeError</span>
+
+<span class="sy-comment">// ?? (Nullish coalescing) — fallback for null/undefined ONLY</span>
+<span class="sy-kw">const</span> <span class="sy-plain">displayName</span> = <span class="sy-plain">user</span>.<span class="sy-prop">nickname</span> ?? <span class="sy-str">"Guest"</span>  <span class="sy-comment">// "Guest" (nickname is undefined)</span>
+
+<span class="sy-comment">// ?? vs || — the key difference</span>
+<span class="sy-kw">const</span> <span class="sy-plain">count</span> = <span class="sy-num">0</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">count</span> || <span class="sy-num">10</span>)   <span class="sy-comment">// 10 — because 0 is falsy, || replaces it</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">count</span> ?? <span class="sy-num">10</span>)   <span class="sy-comment">// 0  — because 0 is NOT null/undefined</span>
+
+<span class="sy-comment">// Assignment operators (ES2021) — assign only if the condition applies</span>
+<span class="sy-kw">let</span> <span class="sy-plain">name</span> = <span class="sy-bool">null</span>
+<span class="sy-plain">name</span> ??= <span class="sy-str">"Guest"</span>        <span class="sy-comment">// assign only if null/undefined → "Guest"</span>
+<span class="sy-plain">name</span> ||= <span class="sy-str">"Fallback"</span>     <span class="sy-comment">// assign only if falsy</span>
+<span class="sy-plain">name</span> &&= <span class="sy-str">"Updated"</span>      <span class="sy-comment">// assign only if currently truthy</span></div>
+  </div>  <div class="callout callout-mindset">
+    <div class="callout-title">🧠 ?? vs || — Don't Mix Them Up</div>
+    <p><code class="il">||</span> replaces any <em>falsy</em> value — including <code class="il">0</span>, <code class="il">""</span>, and <code class="il">false</span>. <code class="il">??</span> only replaces <code class="il">null</span> and <code class="il">undefined</span>. When providing fallbacks for missing data, <code class="il">??</span> is usually what you want — <code class="il">||</span> will silently replace legitimate zero values and empty strings.</p>
+  </div>  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body"><p>I used <span class="il" style="font-style:normal">||</span> as a fallback for months before discovering <span class="il" style="font-style:normal">??</span>. My cart item count showed "Add some items" when the count was zero — because <span class="il" style="font-style:normal">0 || "Add some items"</span> returns the fallback. <span class="il" style="font-style:normal">0 ?? "Add some items"</span> returns <span class="il" style="font-style:normal">0</span>. That one character fix saved me from a confusing bug in production.</p></div>
+  </div>  <div class="mini-build">
+    <div class="mini-build-header"><span class="trophy">🏆</span><span class="mb-title">MINI BUILD — Refactor with Modern Syntax</span></div>
+    <div class="mini-build-body"><p>Take messy old-style JavaScript and rewrite it using every ES6+ feature from this post.</p><div class="goal-label">Your steps:</div><ul class="step-list"><li><span class="step-num">01</span> Rewrite a multi-variable string log using template literals</li>
+<li><span class="step-num">02</span> Destructure a user object in a function's parameter list</li>
+<li><span class="step-num">03</span> Combine two arrays with spread: <code class="il">[...arr1, ...arr2]</span></li>
+<li><span class="step-num">04</span> Copy an object and override one property: <code class="il">{{ ...original, key: newValue }}</span></li>
+<li><span class="step-num">05</span> Use <code class="il">?.</span> on a nested property that might not exist — confirm no crash</li>
+<li><span class="step-num">06</span> Use <code class="il">?.</span> on a method call: <code class="il">someObj.optionalMethod?.()</span></li>
+<li><span class="step-num">07</span> Compare <code class="il">0 || 10</span> vs <code class="il">0 ?? 10</span> in the console — note the difference</li></ul></div>
+  </div>  <div class="confidence-close">
+    <div class="cc-icon">💛</div>
+    <div class="cc-heading">Your Code Just Got Dramatically Cleaner</div>
+    <p>Template literals, destructuring, spread/rest, optional chaining, nullish coalescing — these aren't just nice-to-have. They're what modern JavaScript looks like. Every React component you'll ever write uses these daily. Next: when things go wrong — debugging and try/catch.</p>
+  </div>  <a class="next-post" href="js-click-post13-debugging-try-catch.html">
+    <div><div class="next-label">// next post →</div><div class="next-title">Post 13 — Errors Happen: Debugging &amp; try/catch</div></div>
+    <div class="next-arrow">→</div>
+  </a>
+
+  <nav class="post-nav">
+    <a href="click-11-scope-hoisting.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Scope, Hoisting and Closures</span></a>
+    <a href="click-13-debugging.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Debugging and try/catch</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+</div>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

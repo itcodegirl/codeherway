@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Callbacks Explained: What They Are, Callback Hell & Why Promises Replaced Them | CodeHerWay</title>
+<meta name="description" content="Callbacks, callback hell, and why the community moved to Promises. The history of async JavaScript every developer should know. CodeHerWay.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.tag .tag-icon{font-size: 14px;}
+.hell-meter{background: var(--bg-card); border: 1px solid rgba(255,107,107,.2); border-radius: 12px; overflow: hidden; margin: 28px 0;}
+.hell-meter-header{background: rgba(255,107,107,.08); border-bottom: 1px solid rgba(255,107,107,.15); padding: 12px 20px; font-family: 'Fira Code', monospace; font-size: 12px; font-weight: 700; color: var(--coral); letter-spacing: .08em;}
+.hell-levels{display: flex; flex-direction: column; gap: 0;}
+.hell-level{display: flex; align-items: center; gap: 14px; padding: 10px 20px; border-bottom: 1px solid rgba(255,255,255,.04);}
+.hell-level:last-child{border-bottom: none;}
+.hell-num{font-family: 'Fira Code', monospace; font-size: 11px; font-weight: 700; color: var(--coral); background: rgba(255,107,107,.1); border-radius: 4px; padding: 2px 8px; white-space: nowrap;}
+.hell-label{font-family: 'Fira Code', monospace; font-size: 13px; color: var(--text-secondary);}
+.hell-bar{flex: 1; height: 4px; background: rgba(255,255,255,.06); border-radius: 2px; overflow: hidden;}
+.hell-fill{height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--gold), var(--coral));}
+.compare-bad{border: 1px solid rgba(255,107,107,.25);}
+.compare-good{border: 1px solid rgba(61,220,132,.25);}
+.compare-bad  .compare-header{background: rgba(255,107,107,.08); color: var(--coral);}
+.compare-good .compare-header{background: rgba(61,220,132,.08);  color: var(--green-tip);}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Async</span> Post 02 of 16</div>
+  <div class="chw-logo">
+    <span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span>
+  </div>
+  <div class="series-line">
+    <span class="series-label">⚡ JavaScript, But Make It Async</span>
+    <span class="post-number">Post 02 of 18</span>
+  </div>
+  <h1 class="post-title">JavaScript Callbacks Explained</h1>
+  <p class="post-subtitle">Callbacks were JavaScript's first answer to async. Understanding why they broke down is the whole reason Promises exist.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 11 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Intermediate</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+
+<main>
+
+  <div class="back-ref"><span class="br-arrow">←</span> Builds on <strong>JS Async — Post 01</strong>: How JavaScript Actually Handles Time</div>
+
+  <div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">To Understand Where We Are, You Need to Know Where We've Been</h2><div class="section-line"></div></div>
+
+  <p>Every tutorial teaches you Promises and async/await and says "this is how you handle async code." Very few explain <em>why</em> those things were invented — what problem they were solving, and what that problem looked like before they existed. That context is what makes Promises feel like a relief instead of just another syntax to memorize.</p>
+
+  <p>The answer starts with <span class="highlight">callbacks</span> — the original async pattern in JavaScript. You actually already know what a callback is. You've been writing them since Post 10 of the JS Click series.</p>
+
+  <div class="section-header"><span class="section-icon">🧱</span><h2 class="section-title">What a Callback Actually Is</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>Callbacks aren't bad. The problem is nesting. A single callback is clean and fine. Two nested callbacks are still readable. Three or four nested callbacks — each with their own error handling — is where 'callback hell' earns its name. The code starts looking like a pyramid of doom, and tracing what happens when is genuinely difficult.</p>
+  </div>
+
+</div>
+
+  <div class="back-ref"><span class="br-arrow">←</span> First introduced in <strong>JS Click — Post 10</strong>: Events: Making Things Interactive</div>
+
+  <p>A callback is just a function passed as an argument to another function, to be called later. You've done this constantly with event listeners and array methods — you just didn't always call it by name.</p>
+
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — callbacks-you-know.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// You've been writing callbacks all along</span>
+
+<span class="sy-comment">// addEventListener — the second argument IS a callback</span>
+<span class="sy-plain">btn</span>.<span class="sy-fn">addEventListener</span>(<span class="sy-str">"click"</span>, <span class="sy-kw">function</span>() {
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"clicked!"</span>)  <span class="sy-comment">// runs later, when the click happens</span>
+})
+
+<span class="sy-comment">// setTimeout — callback runs after the delay</span>
+<span class="sy-fn">setTimeout</span>(<span class="sy-kw">function</span>() {
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"later!"</span>)
+}, <span class="sy-num">1000</span>)
+
+<span class="sy-comment">// Array methods — callback runs once per item</span>
+[<span class="sy-num">1</span>, <span class="sy-num">2</span>, <span class="sy-num">3</span>].<span class="sy-fn">forEach</span>(<span class="sy-kw">function</span>(<span class="sy-plain">n</span>) {
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">n</span>)
+})
+
+<span class="sy-comment">// The pattern: pass a function, it gets called for you later</span>
+<span class="sy-comment">// That's all a callback is. You already know this.</span></pre></div>
+  </div>
+
+  <p>For simple cases, callbacks work perfectly. The problem shows up when you need to do several async things <em>in sequence</em> — one after another, each depending on the result of the last. That's where callbacks started to break down.</p>
+
+  <div class="section-header"><span class="section-icon">🕳️</span><h2 class="section-title">Callback Hell</h2><div class="section-line"></div></div>
+
+  <p>Before <span class="il">fetch()</span> existed, JavaScript used a function called <span class="il">XMLHttpRequest</span> — one of the most notoriously verbose APIs ever written. But the problem wasn't the specific API. It was what happened when you needed to make multiple async calls where each one depended on the result of the previous one.</p>
+
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — callback-hell.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// Real code from pre-Promise JavaScript.</span>
+<span class="sy-comment">// Get a user → get their posts → get comments on first post</span>
+
+<span class="sy-fn">getUser</span>(<span class="sy-num">1</span>, <span class="sy-kw">function</span>(<span class="sy-plain">err</span>, <span class="sy-plain">user</span>) {
+  <span class="sy-kw">if</span> (<span class="sy-plain">err</span>) {
+    <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Error getting user:"</span>, <span class="sy-plain">err</span>)
+    <span class="sy-kw">return</span>
+  }
+
+  <span class="sy-fn">getPosts</span>(<span class="sy-plain">user</span>.<span class="sy-prop">id</span>, <span class="sy-kw">function</span>(<span class="sy-plain">err</span>, <span class="sy-plain">posts</span>) {
+    <span class="sy-kw">if</span> (<span class="sy-plain">err</span>) {
+      <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Error getting posts:"</span>, <span class="sy-plain">err</span>)
+      <span class="sy-kw">return</span>
+    }
+
+    <span class="sy-fn">getComments</span>(<span class="sy-plain">posts</span>[<span class="sy-num">0</span>].<span class="sy-prop">id</span>, <span class="sy-kw">function</span>(<span class="sy-plain">err</span>, <span class="sy-plain">comments</span>) {
+      <span class="sy-kw">if</span> (<span class="sy-plain">err</span>) {
+        <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Error getting comments:"</span>, <span class="sy-plain">err</span>)
+        <span class="sy-kw">return</span>
+      }
+
+      <span class="sy-fn">getAuthor</span>(<span class="sy-plain">comments</span>[<span class="sy-num">0</span>].<span class="sy-prop">userId</span>, <span class="sy-kw">function</span>(<span class="sy-plain">err</span>, <span class="sy-plain">author</span>) {
+        <span class="sy-kw">if</span> (<span class="sy-plain">err</span>) {
+          <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Error getting author:"</span>, <span class="sy-plain">err</span>)
+          <span class="sy-kw">return</span>
+        }
+
+        <span class="sy-comment">// Finally — the actual thing we wanted to do</span>
+        <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Author:"</span>, <span class="sy-plain">author</span>.<span class="sy-prop">name</span>)
+      })
+    })
+  })
+})</pre></div>
+  </div>
+
+  <p>This is <span class="highlight">callback hell</span>. Also called the <span class="hl-coral">pyramid of doom</span> — named for the triangular shape the code makes as it indents deeper and deeper. Each nested level is another async operation waiting on the one above it.</p>
+
+  <div class="hell-meter">
+    <div class="hell-meter-header">⚠️ PYRAMID OF DOOM — DEPTH METER</div>
+    <div class="hell-levels">
+      <div class="hell-level"><div class="hell-num">Level 1</div><div class="hell-label">getUser()</div><div class="hell-bar"><div class="hell-fill" style="width:20%"></div></div></div>
+      <div class="hell-level"><div class="hell-num">Level 2</div><div class="hell-label">getPosts(user.id)</div><div class="hell-bar"><div class="hell-fill" style="width:40%"></div></div></div>
+      <div class="hell-level"><div class="hell-num">Level 3</div><div class="hell-label">getComments(posts[0].id)</div><div class="hell-bar"><div class="hell-fill" style="width:65%"></div></div></div>
+      <div class="hell-level"><div class="hell-num">Level 4</div><div class="hell-label">getAuthor(comments[0].userId)</div><div class="hell-bar"><div class="hell-fill" style="width:85%"></div></div></div>
+      <div class="hell-level"><div class="hell-num">Level 5+</div><div class="hell-label">any further operations...</div><div class="hell-bar"><div class="hell-fill" style="width:100%"></div></div></div>
+    </div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🔥</span><h2 class="section-title">The Four Problems With Callbacks</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>Callbacks are still the right tool in many situations: event listeners, array methods (<code class='il'>.map()</code>, <code class='il'>.filter()</code>), and Node.js file system operations. The problem was using them for sequential async operations — fetching data, then processing it, then saving it. That's exactly what Promises and async/await were designed for.</p>
+  </div>
+
+</div>
+
+  <p>The pyramid shape was the visual symptom. The actual problems were deeper:</p>
+
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — callback-problems.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// PROBLEM 1: Error handling is manual and repetitive</span>
+<span class="sy-comment">// You have to check for errors at every single level.</span>
+<span class="sy-comment">// Miss one and errors silently disappear.</span>
+<span class="sy-fn">doSomething</span>(<span class="sy-kw">function</span>(<span class="sy-plain">err</span>, <span class="sy-plain">result</span>) {
+  <span class="sy-kw">if</span> (<span class="sy-plain">err</span>) { <span class="sy-comment">/* handle it */</span> <span class="sy-kw">return</span> }  <span class="sy-comment">// repeated everywhere</span>
+  <span class="sy-fn">doNextThing</span>(<span class="sy-plain">result</span>, <span class="sy-kw">function</span>(<span class="sy-plain">err</span>, <span class="sy-plain">result2</span>) {
+    <span class="sy-kw">if</span> (<span class="sy-plain">err</span>) { <span class="sy-comment">/* handle it again */</span> <span class="sy-kw">return</span> }  <span class="sy-comment">// and again</span>
+  })
+})
+
+<span class="sy-comment">// PROBLEM 2: Inversion of control</span>
+<span class="sy-comment">// You're handing YOUR function to THEIR code.</span>
+<span class="sy-comment">// You trust them to call it once, at the right time.</span>
+<span class="sy-comment">// What if they call it twice? Never? With wrong args?</span>
+<span class="sy-fn">thirdPartyAnalytics</span>.<span class="sy-fn">track</span>(<span class="sy-str">"purchase"</span>, <span class="sy-kw">function</span>() {
+  <span class="sy-fn">chargeCard</span>()  <span class="sy-comment">// if this gets called twice... 😬</span>
+})
+
+<span class="sy-comment">// PROBLEM 3: No way to run things in parallel easily</span>
+<span class="sy-comment">// Need results from A and B before doing C?</span>
+<span class="sy-comment">// You'd have to manually track completion state with flags.</span>
+<span class="sy-kw">let</span> <span class="sy-plain">userDone</span> = <span class="sy-bool">false</span>, <span class="sy-plain">postsDone</span> = <span class="sy-bool">false</span>
+<span class="sy-fn">getUser</span>(<span class="sy-kw">function</span>(<span class="sy-plain">err</span>, <span class="sy-plain">u</span>)   { <span class="sy-plain">userDone</span>  = <span class="sy-bool">true</span>; <span class="sy-kw">if</span> (<span class="sy-plain">postsDone</span>) <span class="sy-fn">finish</span>() })
+<span class="sy-fn">getPosts</span>(<span class="sy-kw">function</span>(<span class="sy-plain">err</span>, <span class="sy-plain">p</span>) { <span class="sy-plain">postsDone</span> = <span class="sy-bool">true</span>; <span class="sy-kw">if</span> (<span class="sy-plain">userDone</span>)  <span class="sy-fn">finish</span>() })
+
+<span class="sy-comment">// PROBLEM 4: Can't use try/catch</span>
+<span class="sy-comment">// Errors thrown inside callbacks escape try/catch blocks</span>
+<span class="sy-kw">try</span> {
+  <span class="sy-fn">setTimeout</span>(<span class="sy-kw">function</span>() {
+    <span class="sy-kw">throw</span> <span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-str">"This error is uncatchable!"</span>)
+  }, <span class="sy-num">100</span>)
+} <span class="sy-kw">catch</span> (<span class="sy-plain">e</span>) {
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"This never runs"</span>)  <span class="sy-comment">// the error already escaped</span>
+}</pre></div>
+  </div>
+
+  <div class="callout callout-accent">
+    <div class="callout-title">⚡ The Inversion of Control Problem</div>
+    <p>This one is subtle but important. When you pass a callback to third-party code, you're surrendering control of when and how your function runs. You're trusting that code completely — that it will call your function exactly once, with the right arguments, at the right time. That's a lot of trust to place in code you didn't write and can't inspect. Promises were designed specifically to take that control back.</p>
+  </div>
+
+  <div class="section-header"><span class="section-icon">✅</span><h2 class="section-title">The Same Code With Promises</h2><div class="section-line"></div></div>
+
+  <p>You don't need to understand Promises deeply yet — that's Posts 03 and 04. But seeing the before and after is the whole point of this post. Here's that same four-level async chain, written with Promises:</p>
+
+  <div class="compare-grid">
+    <div class="compare-card compare-bad">
+      <div class="compare-header">❌ Callbacks — the old way</div>
+      <div class="compare-body"><pre><span class="sy-fn">getUser</span>(<span class="sy-num">1</span>, <span class="sy-kw">function</span>(<span class="sy-plain">err</span>, <span class="sy-plain">user</span>) {
+  <span class="sy-kw">if</span> (<span class="sy-plain">err</span>) <span class="sy-kw">return</span>
+  <span class="sy-fn">getPosts</span>(<span class="sy-plain">user</span>.<span class="sy-prop">id</span>,
+    <span class="sy-kw">function</span>(<span class="sy-plain">err</span>, <span class="sy-plain">posts</span>) {
+      <span class="sy-kw">if</span> (<span class="sy-plain">err</span>) <span class="sy-kw">return</span>
+      <span class="sy-fn">getComments</span>(
+        <span class="sy-plain">posts</span>[<span class="sy-num">0</span>].<span class="sy-prop">id</span>,
+        <span class="sy-kw">function</span>(<span class="sy-plain">err</span>, <span class="sy-plain">comments</span>) {
+          <span class="sy-comment">// deeper and deeper...</span>
+        }
+      )
+    }
+  )
+})</pre></div>
+    </div>
+    <div class="compare-card compare-good">
+      <div class="compare-header">✅ Promises — the modern way</div>
+      <div class="compare-body"><pre><span class="sy-fn">getUser</span>(<span class="sy-num">1</span>)
+  .<span class="sy-fn">then</span>(<span class="sy-plain">user</span> =>
+    <span class="sy-fn">getPosts</span>(<span class="sy-plain">user</span>.<span class="sy-prop">id</span>)
+  )
+  .<span class="sy-fn">then</span>(<span class="sy-plain">posts</span> =>
+    <span class="sy-fn">getComments</span>(<span class="sy-plain">posts</span>[<span class="sy-num">0</span>].<span class="sy-prop">id</span>)
+  )
+  .<span class="sy-fn">then</span>(<span class="sy-plain">comments</span> => {
+    <span class="sy-comment">// flat. readable. clean.</span>
+  })
+  .<span class="sy-fn">catch</span>(<span class="sy-plain">err</span> => {
+    <span class="sy-comment">// ONE handler for all errors</span>
+  })</pre></div>
+    </div>
+  </div>
+
+  <p>Same logic. Flat structure. One error handler at the bottom instead of one at every level. And then async/await made it even cleaner — but we'll get there. The point right now is understanding <em>why</em> the community moved away from callbacks. It wasn't arbitrary. It was a direct response to real, painful problems.</p>
+
+  <div class="callout callout-mindset">
+    <div class="callout-title">🧠 Mindset Shift</div>
+    <p>Callbacks aren't inherently bad. Simple, single-level callbacks — like event listeners and array methods — are perfectly fine and you'll keep writing them forever. The problem was specifically <strong>nested async callbacks</strong> where each level depended on the previous one. That's the pattern Promises were invented to replace. Know the difference.</p>
+  </div>
+
+  <div class="section-header"><span class="section-icon">📖</span><h2 class="section-title">When Callbacks Are Still the Right Tool</h2><div class="section-line"></div></div>
+
+  <p>Now that you understand the problem, here's an important nuance: callbacks didn't disappear. They're still everywhere — and in many cases they're exactly the right tool.</p>
+
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — callbacks-still-valid.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// ✅ Event listeners — callbacks are perfect here</span>
+<span class="sy-plain">btn</span>.<span class="sy-fn">addEventListener</span>(<span class="sy-str">"click"</span>, () => <span class="sy-fn">handleClick</span>())
+
+<span class="sy-comment">// ✅ Array methods — callbacks are perfect here</span>
+<span class="sy-kw">const</span> <span class="sy-plain">doubled</span> = [<span class="sy-num">1</span>, <span class="sy-num">2</span>, <span class="sy-num">3</span>].<span class="sy-fn">map</span>(<span class="sy-plain">n</span> => <span class="sy-plain">n</span> * <span class="sy-num">2</span>)
+
+<span class="sy-comment">// ✅ Simple one-time async — still fine</span>
+<span class="sy-fn">setTimeout</span>(() => <span class="sy-fn">hideToast</span>(), <span class="sy-num">3000</span>)
+
+<span class="sy-comment">// ✅ Node.js file system (traditional style)</span>
+<span class="sy-plain">fs</span>.<span class="sy-fn">readFile</span>(<span class="sy-str">"data.json"</span>, <span class="sy-str">"utf8"</span>, (<span class="sy-plain">err</span>, <span class="sy-plain">data</span>) => {
+  <span class="sy-kw">if</span> (<span class="sy-plain">err</span>) <span class="sy-kw">throw</span> <span class="sy-plain">err</span>
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">data</span>)
+})
+
+<span class="sy-comment">// ❌ Multiple dependent async operations — use Promises/async/await</span>
+<span class="sy-fn">getUser</span>(<span class="sy-kw">function</span>(<span class="sy-plain">err</span>, <span class="sy-plain">user</span>) {
+  <span class="sy-fn">getPosts</span>(<span class="sy-plain">user</span>.<span class="sy-prop">id</span>, <span class="sy-kw">function</span>(<span class="sy-plain">err</span>, <span class="sy-plain">posts</span>) {
+    <span class="sy-comment">// stop here, reach for Promises instead</span>
+  })
+})</pre></div>
+  </div>
+
+  <div class="callout callout-tip">
+    <div class="callout-title">💡 Pro Tip</div>
+    <p>The rule of thumb: if your callback is going to nest, stop and reach for a Promise instead. One level of callback is fine. Two or more levels that each depend on the previous result is callback hell territory — and that's exactly what Promises and async/await were invented to flatten.</p>
+  </div>
+
+  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body">
+      <p>The first real codebase I read as a junior dev was written entirely in callback style — this was older Node.js code. I spent two days trying to understand a single feature because the logic was spread across six levels of nesting and the error handling was inconsistent across all of them. I thought I was too dumb to understand it. Turns out the code was genuinely hard to follow — not because I was new, but because deeply nested callbacks are hard for everyone. That was the day I really understood why the community moved on. It wasn't about aesthetics. It was about survival.</p>
+    </div>
+  </div>
+
+  <div class="mini-build">
+    <div class="mini-build-header"><span class="trophy">🔬</span><span class="mb-title">MINI BUILD — Spot the Callback, Identify the Problem</span></div>
+    <div class="mini-build-body">
+      <p>Practice recognizing callback patterns and identifying which ones are fine versus which ones signal trouble. No new syntax needed — this is about reading code.</p>
+      <div class="goal-label">Exercises:</div>
+      <ul class="step-list">
+        <li><span class="step-num">01</span> Write a simple <span class="il">setTimeout</span> that logs "Toast hidden" after 3 seconds — one level, no nesting. This is fine.</li>
+        <li><span class="step-num">02</span> Write a fake <span class="il">getUser(id, callback)</span> function using <span class="il">setTimeout</span> to simulate async — call the callback with a fake user object after 500ms</li>
+        <li><span class="step-num">03</span> Write a fake <span class="il">getPosts(userId, callback)</span> the same way — returns fake posts after 500ms</li>
+        <li><span class="step-num">04</span> Now chain them: get a user, then get their posts inside the callback. Log the result. Notice how it already starts to indent.</li>
+        <li><span class="step-num">05</span> Add a third level — a fake <span class="il">getComments(postId, callback)</span>. Watch the pyramid form.</div>
+        <li><span class="step-num">06</span> Bonus: deliberately skip the error check at level 2 and see if you can trigger a silent failure</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="confidence-close">
+    <div class="cc-icon">⚡</div>
+    <div class="cc-heading">Now You Know Why Promises Were Invented</div>
+    <p>Callbacks weren't a mistake — they were the right tool for the time, and they're still the right tool for simple cases. But nested async callbacks introduced real problems: unreadable structure, repeated error handling, inversion of control, and broken try/catch. Promises were the direct, deliberate solution to every one of those problems. Next post: how Promises actually work, from the inside out.</p>
+  </div>
+
+  <a class="next-post" href="#">
+    <div>
+      <div class="next-label">// next post →</div>
+      <div class="next-title">Post 03 — Promises, Part 1: The Basics</div>
+    </div>
+    <div class="next-arrow">→</div>
+  </a>
+
+
+  <nav class="post-nav">
+    <a href="async-01-event-loop.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">The Event Loop</span></a>
+    <a href="async-03-promises-basics.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Promises Basics</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

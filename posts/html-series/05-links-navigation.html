@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Post 05 — HTML Links & Navigation | CodeHerWay</title>
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.heading-scale{background:var(--bg-code);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:28px 32px;margin:32px 0;}
+.hs-item{display:flex;align-items:baseline;gap:16px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.04);}
+.hs-item:last-child{margin-bottom:0;padding-bottom:0;border:none;}
+.hs-tag{font-family:"Fira Code",monospace;font-size:13px;color:var(--pink);min-width:48px;flex-shrink:0;}
+.hs-preview{color:#fff;font-weight:700;}
+.hs-1{font-size:32px;}
+.hs-2{font-size:26px;}
+.hs-3{font-size:22px;}
+.hs-4{font-size:18px;}
+.hs-5{font-size:16px;}
+.hs-6{font-size:14px;color:var(--text-secondary);}
+.hs-note{font-family:"Fira Code",monospace;font-size:11px;color:var(--text-muted);margin-left:auto;white-space:nowrap;}
+.compare-cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:32px 0;}
+.compare-card.abs{background:rgba(105,210,231,0.04);border-color:rgba(105,210,231,0.15);}
+.compare-card.rel{background:rgba(125,255,179,0.04);border-color:rgba(125,255,179,0.15);}
+.compare-card.abs h4{color:var(--sky-blue);}
+.compare-card.rel h4{color:var(--mint-green);}
+.compare-card .ex{font-family:"Fira Code",monospace;font-size:13px;background:rgba(255,255,255,0.04);padding:8px 14px;border-radius:6px;color:var(--gold);margin-top:8px;}
+@media(max-width:640px){.compare-cards{grid-template-columns:1fr;}.hs-note{display:none;}}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<section class="hero">
+  <div class="post-label"><span class="series-tag">HTML Fundamentals</span> Post 05 of 20</div>
+  <h1>🔗 HTML Links &amp; <span class="gradient-text">Navigation</span></h1>
+  <p class="hero-sub">The &lt;a&gt; tag is what makes the web a "web." Without links, every page is an island. Let's learn how to connect everything together.</p>
+  <div class="tag-row"><span class="tag html">&lt;a&gt;</span><span class="tag html">href</span><span class="tag html">target</span><span class="tag html">anchor links</span><span class="tag html">mailto: / tel:</span></div>
+</section>
+<main class="article">
+  <h2>The Tag That Makes the Web a Web</h2>
+  <p>The letter "H" in HTML stands for <span class="key">Hypertext</span> — text that links to other text. The <span class="il">&lt;a&gt;</span> tag (anchor tag) is how that comes to life. Every link you've ever clicked on any website was created with an <span class="il">&lt;a&gt;</span> tag.</p>
+  <div class="code-window"><div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML</div></div>
+  <div class="code-body"><code><span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"https://codeherway.com"</span><span class="t">&gt;</span>Visit CodeHerWay<span class="t">&lt;/a&gt;</span></code></div></div>
+  <p>The <span class="il">href</span> attribute (short for <span class="key">hypertext reference</span>) tells the browser where the link goes. Simple, powerful, used on every website.</p>
+  <div class="sep"></div>
+  <h2>Absolute vs. Relative Paths</h2>
+  <div class="compare-cards">
+    <div class="compare-card abs"><h4>Absolute Path</h4><p>The full URL including <span class="il">https://</span>. Use for <strong>external sites</strong>.</p><div class="ex">href="https://github.com/itcodegirl"</div></div>
+    <div class="compare-card rel"><h4>Relative Path</h4><p>A path relative to where the current file lives. Use for <strong>your own pages</strong>.</p><div class="ex">href="about.html"<br>href="pages/contact.html"<br>href="../index.html"</div></div>
+  </div>
+  <div class="code-window"><div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML</div></div>
+  <div class="code-body"><code><span class="c">&lt;!-- Absolute: full URL to an external site --&gt;</span>
+<span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"https://github.com/itcodegirl"</span><span class="t">&gt;</span>My GitHub<span class="t">&lt;/a&gt;</span>
+
+<span class="c">&lt;!-- Relative: file in the same folder --&gt;</span>
+<span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"about.html"</span><span class="t">&gt;</span>About Me<span class="t">&lt;/a&gt;</span>
+
+<span class="c">&lt;!-- Relative: go up one folder --&gt;</span>
+<span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"../index.html"</span><span class="t">&gt;</span>Back to Home<span class="t">&lt;/a&gt;</span></code></div></div>
+  <div class="sep"></div>
+  <h2>Opening Links in a New Tab</h2>
+  <div class="code-window"><div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML</div></div>
+  <div class="code-body"><code><span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"https://github.com/itcodegirl"</span>
+   <span class="a">target</span>=<span class="s">"_blank"</span>
+   <span class="a">rel</span>=<span class="s">"noopener noreferrer"</span><span class="t">&gt;</span>
+  My GitHub Profile
+<span class="t">&lt;/a&gt;</span></code></div></div>
+  <div class="callout info"><div class="callout-title">ℹ️ Security Note</div><p>Always pair <span class="il">target="_blank"</span> with <span class="il">rel="noopener noreferrer"</span>. Without it, the new tab has a reference back to your page that creates a minor security vulnerability. One extra attribute — always include it.</p></div>
+  <div class="sep"></div>
+  <h2>Anchor Links: Jumping Within a Page</h2>
+  <p><span class="key">Anchor links</span> let you link to a specific section on the same page. Point the <span class="il">href</span> to an element's <span class="il">id</span> with a <span class="il">#</span> symbol.</p>
+  <div class="code-window"><div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML</div></div>
+  <div class="code-body"><code><span class="t">&lt;nav&gt;</span>
+  <span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"#about"</span><span class="t">&gt;</span>About<span class="t">&lt;/a&gt;</span>
+  <span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"#projects"</span><span class="t">&gt;</span>Projects<span class="t">&lt;/a&gt;</span>
+  <span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"#contact"</span><span class="t">&gt;</span>Contact<span class="t">&lt;/a&gt;</span>
+<span class="t">&lt;/nav&gt;</span>
+
+<span class="t">&lt;section</span> <span class="a">id</span>=<span class="s">"about"</span><span class="t">&gt;&lt;h2&gt;</span>About Me<span class="t">&lt;/h2&gt;&lt;/section&gt;</span>
+<span class="t">&lt;section</span> <span class="a">id</span>=<span class="s">"projects"</span><span class="t">&gt;&lt;h2&gt;</span>My Projects<span class="t">&lt;/h2&gt;&lt;/section&gt;</span>
+<span class="t">&lt;section</span> <span class="a">id</span>=<span class="s">"contact"</span><span class="t">&gt;&lt;h2&gt;</span>Contact<span class="t">&lt;/h2&gt;&lt;/section&gt;</span></code></div></div>
+  <div class="callout mindset"><div class="callout-title">🧠 Mindset Shift</div><p>Anchor links are one of the first things that make a project feel like a <em>real</em> website. Clicking a nav item that scrolls you to a section — that's a legitimate UX pattern. And it's just an <span class="il">href</span> pointing to an <span class="il">id</span>. No JavaScript required.</p></div>
+  <div class="sep"></div>
+  <h2>Email &amp; Phone Links</h2>
+  <div class="code-window"><div class="code-topbar"><div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div><div class="code-lang">HTML</div></div>
+  <div class="code-body"><code><span class="c">&lt;!-- Opens email client --&gt;</span>
+<span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"mailto:hello@codeherway.com"</span><span class="t">&gt;</span>Email Me<span class="t">&lt;/a&gt;</span>
+
+<span class="c">&lt;!-- Pre-fill subject and body --&gt;</span>
+<span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"mailto:hello@codeherway.com?subject=Hello&amp;body=I love your site!"</span><span class="t">&gt;</span>Send a Message<span class="t">&lt;/a&gt;</span>
+
+<span class="c">&lt;!-- Opens phone dialer on mobile --&gt;</span>
+<span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"tel:+13125551234"</span><span class="t">&gt;</span>Call Us<span class="t">&lt;/a&gt;</span></code></div></div>
+  <div class="sep"></div>
+  <div class="devfession">
+    <div class="devfession-header">🔥 Dev_Fession</div>
+    <div class="devfession-body">
+      <p>My first portfolio had a beautiful contact section with my email address displayed as plain text. Not a link — just text. You couldn't click it. You had to manually select it, copy it, open your email client, paste it, and send. I genuinely thought that was fine.</p>
+      <p>You know how many people emailed me through that contact section? Zero. The moment I turned it into a <span class="il">mailto:</span> link, I actually started getting messages. Every point of friction you create is a person who won't follow through.</p>
+    </div>
+    <div class="devfession-footer"><span>CodeHerWay // HTML Course</span><span class="tagline">Code it. Own it. Her way.</span></div>
+  </div>
+  <div class="mini-build">
+    <div class="mini-build-header"><h3>🏆 Mini Build: Portfolio Navigation</h3></div>
+    <div class="mini-build-body">
+      <p>Build a single-page portfolio structure with working navigation:</p>
+      <div class="step"><div class="step-num">1</div><div class="step-text">A <span class="sky">&lt;nav&gt;</span> with anchor links to <span class="sky">#about</span>, <span class="sky">#projects</span>, and <span class="sky">#contact</span>.</div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-text">Three <span class="sky">&lt;section&gt;</span> blocks with matching <span class="sky">id</span> attributes so the links actually work.</div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-text">An external link to your GitHub with <span class="sky">target="_blank"</span> and <span class="sky">rel="noopener noreferrer"</span>.</div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-text">A <span class="sky">mailto:</span> link in your contact section.</div></div>
+      <div class="step"><div class="step-num">5</div><div class="step-text">A <span class="sky">tel:</span> link for a phone number.</div></div>
+    </div>
+  </div>
+  <div class="sep"></div>
+  <h2>Recap</h2>
+  <p>The <span class="il">&lt;a&gt;</span> tag connects everything on the web. Use <span class="key">absolute paths</span> for external sites and <span class="key">relative paths</span> for your own pages. Always include <span class="il">rel="noopener noreferrer"</span> with <span class="il">target="_blank"</span>. Use anchor links (<span class="il">#id</span>) for same-page navigation. Use <span class="il">mailto:</span> and <span class="il">tel:</span> for contact links. Every link is a UX decision — make them intentional.</p>
+  <nav class="post-nav">
+    <a href="04-text-content-elements.html" class="post-nav-link"><span class="nav-label">← Previous</span><span class="nav-title">Text & Content Elements</span></a>
+    <a href="06-images-media.html" class="post-nav-link next"><span class="nav-label">Next →</span><span class="nav-title">Images & Media</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">← Back to All Posts</a></div>
+</main>
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

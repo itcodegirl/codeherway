@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript if/else, Switch & Ternary: Making Decisions in Code | CodeHerWay</title>
+<meta name="description" content="if/else, switch statements, and ternary operators — every way JavaScript makes a decision. Beginner JavaScript tutorial from CodeHerWay.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+
+@media(max-width:375px){main{padding:20px 14px 48px!important;}.code-body{font-size:11.5px;}}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="chw-wrapper">
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Click</span> Post 04 of 15</div>
+  <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+  <span class="series-label">JavaScript, But Make It Click &nbsp;·&nbsp; Post 04 of 15</span>
+  <div class="post-number">Post 04 of 15</div>
+  <h1 class="post-title">JavaScript if/else, Switch & Ternary</h1>
+  <p class="post-subtitle">Code without decisions is just a list of instructions. Conditionals are where JavaScript starts thinking.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 10 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Complete Beginners</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+<main id="main-content">
+<div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">Your Code Needs to Make Choices</h2><div class="section-line"></div></div>
+  <p>Every interesting program makes decisions. Show this button only if the user is logged in. Display an error only if the field is empty. Change the greeting based on the time of day. This is control flow — and it starts with if/else.</p>
+<div class="section-header"><span class="section-icon">🧱</span><h2 class="section-title">if / else if / else</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>Here's the thing about <code class='il'>else if</code> chains — JavaScript stops the moment it finds a true condition. It doesn't keep checking. That means order matters. Put your most specific checks first, your most general catch-all last. Flip them and you'll get logic bugs that are genuinely hard to spot.</p>
+  </div>
+
+</div>  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — conditionals.js</div></div>
+    <div class="code-body"><span class="sy-kw">const</span> <span class="sy-plain">age</span> = <span class="sy-num">20</span>
+
+<span class="sy-kw">if</span> (<span class="sy-plain">age</span> >= <span class="sy-num">18</span>) {
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"You can vote"</span>)
+} <span class="sy-kw">else</span> {
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Not old enough"</span>)
+}
+
+<span class="sy-comment">// Multiple conditions with else if</span>
+<span class="sy-kw">const</span> <span class="sy-plain">score</span> = <span class="sy-num">82</span>
+
+<span class="sy-kw">if</span> (<span class="sy-plain">score</span> >= <span class="sy-num">90</span>) {
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"A"</span>)
+} <span class="sy-kw">else if</span> (<span class="sy-plain">score</span> >= <span class="sy-num">80</span>) {
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"B"</span>)   <span class="sy-comment">// ← this one runs</span>
+} <span class="sy-kw">else if</span> (<span class="sy-plain">score</span> >= <span class="sy-num">70</span>) {
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"C"</span>)
+} <span class="sy-kw">else</span> {
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Try again"</span>)
+}</div>
+  </div>  <div class="callout callout-tip">
+    <div class="callout-title">💡 Pro Tip</div>
+    <p>JavaScript stops checking conditions as soon as one is true. Once it finds a match, it runs that block and skips everything else. Order your conditions from most specific to least specific.</p>
+  </div><div class="section-header"><span class="section-icon">🔀</span><h2 class="section-title">Switch Statements</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>The ternary operator looks intimidating at first. Read it like a question: <em>condition ? 'if true, use this' : 'if false, use this'.</em> It's not trying to replace if/else — it's for assigning a value in one line. If you need to do multiple things, use if/else. If you just need one value, ternary is cleaner.</p>
+  </div>
+
+</div>
+  <p>When you're checking one variable against many possible exact values, <span class="highlight">switch</span> is cleaner than a chain of else ifs. Don't forget <code class="il">break</span> — without it, JavaScript falls through to the next case and runs it too.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — switch.js</div></div>
+    <div class="code-body"><span class="sy-kw">const</span> <span class="sy-plain">day</span> = <span class="sy-str">"Monday"</span>
+
+<span class="sy-kw">switch</span> (<span class="sy-plain">day</span>) {
+  <span class="sy-kw">case</span> <span class="sy-str">"Monday"</span>:
+    <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Start of the week. You've got this."</span>)
+    <span class="sy-kw">break</span>
+  <span class="sy-kw">case</span> <span class="sy-str">"Friday"</span>:
+    <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Almost there!"</span>)
+    <span class="sy-kw">break</span>
+  <span class="sy-kw">case</span> <span class="sy-str">"Saturday"</span>:
+  <span class="sy-kw">case</span> <span class="sy-str">"Sunday"</span>:
+    <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Weekend mode"</span>)    <span class="sy-comment">// handles both Saturday AND Sunday</span>
+    <span class="sy-kw">break</span>
+  <span class="sy-kw">default</span>:
+    <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Midweek grind"</span>)
+}
+
+<span class="sy-comment">// ⚠️ Missing break — fallthrough in action</span>
+<span class="sy-kw">switch</span> (<span class="sy-str">"Monday"</span>) {
+  <span class="sy-kw">case</span> <span class="sy-str">"Monday"</span>:
+    <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Monday"</span>)   <span class="sy-comment">// runs</span>
+  <span class="sy-kw">case</span> <span class="sy-str">"Tuesday"</span>:
+    <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Tuesday"</span>)  <span class="sy-comment">// ALSO runs — no break above</span>
+    <span class="sy-kw">break</span>
+  <span class="sy-kw">default</span>:
+    <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Other day"</span>)
+}</div>
+  </div><div class="section-header"><span class="section-icon">⚡</span><h2 class="section-title">The Ternary Operator</h2><div class="section-line"></div></div>
+  <p>The ternary is a one-line if/else. Perfect for simple true/false decisions, especially when assigning a value. Syntax: <code class="il">condition ? valueIfTrue : valueIfFalse</span></p>
+  <p>The ternary is an <em>expression</em> — it returns a value. You can store it in a variable or embed it in a template literal. You cannot put statements (like loops or variable declarations) inside a ternary.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — ternary.js</div></div>
+    <div class="code-body"><span class="sy-kw">const</span> <span class="sy-plain">isLoggedIn</span> = <span class="sy-bool">true</span>
+
+<span class="sy-comment">// Long way — if/else</span>
+<span class="sy-kw">let</span> <span class="sy-plain">greeting</span>
+<span class="sy-kw">if</span> (<span class="sy-plain">isLoggedIn</span>) {
+  <span class="sy-plain">greeting</span> = <span class="sy-str">"Welcome back!"</span>
+} <span class="sy-kw">else</span> {
+  <span class="sy-plain">greeting</span> = <span class="sy-str">"Please log in"</span>
+}
+
+<span class="sy-comment">// Short way — ternary RETURNS a value (same result)</span>
+<span class="sy-kw">const</span> <span class="sy-plain">msg</span> = <span class="sy-plain">isLoggedIn</span> ? <span class="sy-str">"Welcome back!"</span> : <span class="sy-str">"Please log in"</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">msg</span>)  <span class="sy-comment">// "Welcome back!"</span>
+
+<span class="sy-comment">// Great inside template literals</span>
+<span class="sy-kw">const</span> <span class="sy-plain">age</span> = <span class="sy-num">20</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">`You are ${<span class="sy-plain">age</span> >= <span class="sy-num">18</span> ? <span class="sy-str">"an adult"</span> : <span class="sy-str">"a minor"</span>}`</span>)
+
+<span class="sy-comment">// Forward reference: the ?? operator (covered fully in Post 12)
+// is a cleaner alternative specifically for null/undefined checks</span>
+<span class="sy-kw">const</span> <span class="sy-plain">username</span> = <span class="sy-bool">null</span>
+<span class="sy-kw">const</span> <span class="sy-plain">displayName</span> = <span class="sy-plain">username</span> ?? <span class="sy-str">"Guest"</span>  <span class="sy-comment">// "Guest" — we'll cover ?? in Post 12</span></div>
+  </div>  <div class="callout callout-mindset">
+    <div class="callout-title">🧠 Mindset Shift</div>
+    <p>Use ternary for simple, single-value decisions. If you're doing multiple things in each branch, use a regular if/else — ternaries get unreadable fast when nested or complex.</p>
+  </div>  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body"><p>I didn't use the ternary operator for over a year because it looked weird and I didn't understand it. Then I saw someone's code with it and suddenly it clicked — it's just a compressed if/else that returns a value. Now I use it constantly for things like <span class="il" style="font-style:normal">className={{isActive ? 'active' : ''}}</span> in React.</p></div>
+  </div>  <div class="mini-build">
+    <div class="mini-build-header"><span class="trophy">🏆</span><span class="mb-title">MINI BUILD — Age Checker (Three Syntax Forms)</span></div>
+    <div class="mini-build-body"><p>Write an age checker that gives different messages depending on age — using all three syntax forms you learned today.</p><div class="goal-label">Your steps:</div><ul class="step-list"><li><span class="step-num">01</span> Declare <code class="il">const age = 17</span> (then test with different values)</li>
+<li><span class="step-num">02</span> Write an <code class="il">if/else if/else</span> — "Can vote + drink" (21+), "Can vote" (18–20), "Can't vote yet" (under 18)</li>
+<li><span class="step-num">03</span> Write a <code class="il">switch</span> with specific cases: 16, 18, 21, and a <code class="il">default</span></li>
+<li><span class="step-num">04</span> Write a ternary that assigns <code class="il">"adult"</span> or <code class="il">"minor"</span> and logs it</li>
+<li><span class="step-num">05</span> Bonus: nest the ternary inside a template literal for a custom message</li></ul></div>
+  </div>  <div class="confidence-close">
+    <div class="cc-icon">💛</div>
+    <div class="cc-heading">Your Code Can Now Think</div>
+    <p>Conditionals are where programs stop being scripts and start being smart. You now have three tools for making decisions — use the right one for the job. Next: functions, the single most powerful concept in JavaScript.</p>
+  </div>  <a class="next-post" href="js-click-post05-functions.html">
+    <div><div class="next-label">// next post →</div><div class="next-title">Post 05 — Functions: Stop Repeating Yourself</div></div>
+    <div class="next-arrow">→</div>
+  </a>
+
+  <nav class="post-nav">
+    <a href="click-03-operators-comparisons.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Operators and Comparisons</span></a>
+    <a href="click-05-functions.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Functions</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+</div>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

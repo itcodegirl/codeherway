@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Loops: for, while, for...of and for...in Explained | CodeHerWay</title>
+<meta name="description" content="for, while, for...of, for...in — every loop type in JavaScript with clear examples. Never write the same line twice. CodeHerWay JavaScript series.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.loop-compare{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:24px 0;}
+@media(max-width:600px){.loop-compare{grid-template-columns:1fr;}}
+.loop-card{background:var(--bg-card);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:16px;}
+.loop-name{font-family:'Fira Code',monospace;font-size:13px;font-weight:700;color:var(--sky-blue);margin-bottom:4px;}
+.loop-use{font-size:13px;color:var(--text-muted);line-height:1.5;}
+
+@media(max-width:375px){main{padding:20px 14px 48px!important;}.code-body{font-size:11.5px;}}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+ <div id="site-header"></div>
+<div class="chw-wrapper">
+<div class="post-hero">
+ <div class="post-label"><span class="series-tag">JS, But Make It Click</span> Post 06 of 06 </div>
+ <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+ <span class="series-label">JavaScript, But Make It Click &nbsp;·&nbsp; Post 06 of 06</span>
+ <div class="post-number">Post 06 of 06</div>
+ <h1 class="post-title">JavaScript Loops</h1>
+ <p class="post-subtitle">Repeat code automatically. Process lists. Count things. Never write the same line twice.</p>
+ <div class="post-tags">
+  <span class="tag"><span class="tag-icon">⏱</span> 9 min read</span>
+  <span class="tag"><span class="tag-icon">🎯</span> Complete Beginners</span>
+  <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+ </div>
+</div>
+<main id="main-content">
+
+ <div class="callout callout-info" role="note">
+  <div class="callout-title">ℹ️ NodeList from the DOM</div>
+  <p><code class="il">document.querySelectorAll("li")</code> returns a NodeList — not an array, but <code class="il">for...of</code> works on it directly. We cover the DOM in detail in <a href="js-click-post09-the-dom.html" style="color:var(--sky-blue);font-weight:600">Post 09: The DOM</a>.</p>
+ </div>
+
+<div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">Stop Writing the Same Line Twelve Times</h2><div class="section-line"></div></div>
+ <p>Loops let JavaScript repeat a block of code automatically — as many times as you need, without you writing it over and over. They're how you process lists, count things, generate repeated output, and handle data at scale.</p>
+<div class="section-header"><span class="section-icon">🔁</span><h2 class="section-title">The for Loop</h2><div class="section-line"></div>
+ <div class="pause-moment">
+  <div class="pm-label">⏸ Pause &amp; Process</div>
+  <p>The <code class='il'>for</code> loop syntax has three parts separated by semicolons: start, condition, step. Read it out loud: 'start at 0; keep going while i is less than 5; add 1 each time.' Once you can narrate it, you can write any for loop. The syntax stops being cryptic.</p>
+ </div>
+
+</div> <div class="code-window">
+  <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — for-loop.js</div></div>
+  <div class="code-body"><span class="sy-comment">// for (start; condition; step)</span>
+<span class="sy-kw">for</span> (<span class="sy-kw">let</span> <span class="sy-plain">i</span> = <span class="sy-num">0</span>; <span class="sy-plain">i</span> < <span class="sy-num">5</span>; <span class="sy-plain">i</span>++) {
+ <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Iteration:"</span>, <span class="sy-plain">i</span>)  <span class="sy-comment">// 0, 1, 2, 3, 4</span>
+}
+
+<span class="sy-comment">// Use break to stop early</span>
+<span class="sy-kw">for</span> (<span class="sy-kw">let</span> <span class="sy-plain">i</span> = <span class="sy-num">0</span>; <span class="sy-plain">i</span> < <span class="sy-num">10</span>; <span class="sy-plain">i</span>++) {
+ <span class="sy-kw">if</span> (<span class="sy-plain">i</span> === <span class="sy-num">3</span>) <span class="sy-kw">break</span>
+ <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">i</span>)  <span class="sy-comment">// 0, 1, 2 — stops at 3</span>
+}
+
+<span class="sy-comment">// Use continue to skip an iteration</span>
+<span class="sy-kw">for</span> (<span class="sy-kw">let</span> <span class="sy-plain">i</span> = <span class="sy-num">0</span>; <span class="sy-plain">i</span> < <span class="sy-num">5</span>; <span class="sy-plain">i</span>++) {
+ <span class="sy-kw">if</span> (<span class="sy-plain">i</span> === <span class="sy-num">2</span>) <span class="sy-kw">continue</span>  <span class="sy-comment">// skip 2, but keep going</span>
+ <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">i</span>)  <span class="sy-comment">// 0, 1, 3, 4</span>
+}</div>
+ </div><div class="section-header"><span class="section-icon">🔄</span><h2 class="section-title">The while Loop</h2><div class="section-line"></div></div> <div class="code-window">
+  <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — while-loop.js</div></div>
+  <div class="code-body"><span class="sy-kw">let</span> <span class="sy-plain">count</span> = <span class="sy-num">0</span>
+
+<span class="sy-kw">while</span> (<span class="sy-plain">count</span> < <span class="sy-num">5</span>) {
+ <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Count:"</span>, <span class="sy-plain">count</span>)
+ <span class="sy-plain">count</span>++ <span class="sy-comment">// CRITICAL: always update or you'll loop forever</span>
+}</div>
+ </div> <div class="callout callout-info">
+  <div class="callout-title">ℹ️ Infinite Loop Warning</div>
+  <p>An infinite loop is when the condition never becomes false — your browser tab will freeze. Always make sure something inside the loop moves it toward the exit condition. If your browser freezes, close the tab and fix your loop counter.</p>
+ </div><div class="section-header"><span class="section-icon">🗂️</span><h2 class="section-title">for...of — The Modern Way to Loop Arrays</h2><div class="section-line"></div>
+ <div class="pause-moment">
+  <div class="pm-label">⏸ Pause &amp; Process</div>
+  <p>Here's the practical guide to picking a loop: Use <code class='il'>for...of</code> when iterating arrays or NodeLists (modern, clean). Use <code class='il'>for...in</code> only for plain objects. Use a classic <code class='il'>for</code> loop when you need the index. Use <code class='il'>while</code> when you don't know how many iterations you'll need upfront. That covers 99% of real cases.</p>
+ </div>
+
+</div> <div class="code-window">
+  <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — for-of.js</div></div>
+  <div class="code-body"><span class="sy-kw">const</span> <span class="sy-plain">languages</span> = [<span class="sy-str">"HTML"</span>, <span class="sy-str">"CSS"</span>, <span class="sy-str">"JavaScript"</span>]
+
+<span class="sy-comment">// for...of — reads: "for each item in languages"</span>
+<span class="sy-kw">for</span> (<span class="sy-kw">const</span> <span class="sy-plain">lang</span> <span class="sy-kw">of</span> <span class="sy-plain">languages</span>) {
+ <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">lang</span>)  <span class="sy-comment">// "HTML", "CSS", "JavaScript"</span>
+}
+
+<span class="sy-comment">// Also works with NodeLists from the DOM (Post 09)</span>
+<span class="sy-kw">const</span> <span class="sy-plain">items</span> = <span class="sy-plain">document</span>.<span class="sy-fn">querySelectorAll</span>(<span class="sy-str">"li"</span>)
+<span class="sy-kw">for</span> (<span class="sy-kw">const</span> <span class="sy-plain">item</span> <span class="sy-kw">of</span> <span class="sy-plain">items</span>) {
+ <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">item</span>.<span class="sy-prop">textContent</span>)
+}</div>
+ </div><div class="section-header"><span class="section-icon">🔑</span><h2 class="section-title">for...in — For Objects (Not Arrays)</h2><div class="section-line"></div></div>
+ <p>The <span class="highlight">for...in</span> loop iterates over the <em>keys</em> of an object. It's designed for objects, not arrays — using it on arrays gives you the index numbers as strings, which is rarely what you want.</p>
+ <div class="code-window">
+  <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — for-in.js</div></div>
+  <div class="code-body"><span class="sy-kw">const</span> <span class="sy-plain">user</span> = { <span class="sy-prop">name</span>: <span class="sy-str">"Jenna"</span>, <span class="sy-prop">age</span>: <span class="sy-num">27</span>, <span class="sy-prop">city</span>: <span class="sy-str">"Chicago"</span> }
+
+<span class="sy-comment">// for...in — iterates over the KEYS of an object</span>
+<span class="sy-kw">for</span> (<span class="sy-kw">const</span> <span class="sy-plain">key</span> <span class="sy-kw">in</span> <span class="sy-plain">user</span>) {
+ <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">key</span>, <span class="sy-plain">user</span>[<span class="sy-plain">key</span>])
+ <span class="sy-comment">// "name" "Jenna"</span>
+ <span class="sy-comment">// "age" 27</span>
+ <span class="sy-comment">// "city" "Chicago"</span>
+}
+
+<span class="sy-comment">// ⚠️ Don't use for...in on arrays — use for...of instead</span>
+<span class="sy-kw">const</span> <span class="sy-plain">nums</span> = [<span class="sy-num">10</span>, <span class="sy-num">20</span>, <span class="sy-num">30</span>]
+<span class="sy-kw">for</span> (<span class="sy-kw">const</span> <span class="sy-plain">i</span> <span class="sy-kw">in</span> <span class="sy-plain">nums</span>) {
+ <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">i</span>)  <span class="sy-comment">// "0", "1", "2" ← keys as strings, not values</span>
+}
+<span class="sy-comment">// You almost never want this. Use for...of for arrays.</span></div>
+ </div> <div class="callout callout-mindset">
+  <div class="callout-title">🧠 Which Loop to Use</div>
+  <p>Use <code class="il">for...of</span> for arrays. Use <code class="il">for...in</span> for objects. Use <code class="il">for</span> when you need the index number. Use <code class="il">while</span> when you don't know how many times you'll loop.</p>
+ </div> <div class="devfession">
+  <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+  <div class="devfession-body"><p>I created an infinite loop on day two of learning JavaScript. My browser froze. I thought I'd broken my computer. I force-quit Chrome, reopened it, and stared at my code for ten minutes before realizing I'd forgotten to increment <span class="il" style="font-style:normal">i</span>. The loop ran millions of times in a second. Always update your loop counter.</p></div>
+ </div> <div class="mini-build">
+  <div class="mini-build-header"><span class="trophy">🏆</span><span class="mb-title">MINI BUILD — Loop All Four Ways</span></div>
+  <div class="mini-build-body"><p>Create an array of 5 things you want to learn. Then loop through it four different ways.</p><div class="goal-label">Your steps:</div><ul class="step-list"><li><span class="step-num">01</span> Create <code class="il">const goals = ["React", "TypeScript", ...]</span> with 5 items</li>
+<li><span class="step-num">02</span> Loop with a <strong>for loop</strong> using index — log: <code class="il">"1. React"</span>, <code class="il">"2. TypeScript"</span>, etc.</li>
+<li><span class="step-num">03</span> Loop with <strong>for...of</strong> — log each item cleanly</li>
+<li><span class="step-num">04</span> Create an object <code class="il">{{ name, role, city }}</span> and loop its keys with <strong>for...in</strong></li>
+<li><span class="step-num">05</span> Loop with <strong>while</strong> — stop when the counter hits 3 using <code class="il">break</span></li>
+<li><span class="step-num">06</span> Bonus: use <code class="il">continue</span> to skip any item that includes the letter "a"</li></ul></div>
+ </div> <div class="confidence-close">
+  <div class="cc-icon">💛</div>
+  <div class="cc-heading">You Just Made JavaScript Do the Boring Work</div>
+  <p>Loops are how developers handle scale — 5 items or 5,000, the code is the same length. You know four loop types and when to reach for each one. Next: arrays — the most important data structure you'll use every single day.</p>
+ </div> <a class="next-post" href="js-click-post07-arrays.html">
+  <div><div class="next-label">// next post →</div><div class="next-title">Post 07 — Arrays: Lists That Actually Work</div></div>
+  <div class="next-arrow">→</div>
+ </a>
+
+ <nav class="post-nav">
+  <a href="05-functions.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Functions</span></a>
+    <a href="07-fetch-beyond-basics.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">fetch() API Beyond the Basics</span></a>
+ </nav>
+ <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+</div>
+
+<script>
+ document.querySelectorAll('.cy-question').forEach(function(q) {
+  q.addEventListener('click', function() {
+   q.closest('.cy-item').classList.toggle('open');
+  });
+ });
+</script>
+
+ <div id="site-footer"></div>
+ <script src="../../assets/js/main.js"></script>
+</body>
+</html>

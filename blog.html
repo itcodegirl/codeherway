@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>console.blog() — CodeHerWay</title>
+<meta name="description" content="Tutorials, tips, and real talk on HTML, CSS, JavaScript, and beyond. No gatekeeping. No fluff. Just code.">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@1,600;1,700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --bg:          #0a0a0f;
+  --bg-card:     #12121a;
+  --bg-elevated: #1a1a26;
+  --border:      rgba(255,255,255,0.07);
+  --text:        #e0e0e8;
+  --text-muted:  #9595a8;
+  --text-dim:    #6a6a80;
+  --pink:        #ff69b4;
+  --purple:      #b44aff;
+  --teal:        #0d9488;
+  --teal-light:  #2dd4bf;
+  --sky:         #69d2e7;
+  --gold:        #ffd369;
+  --grad-main:   linear-gradient(135deg, #b44aff 0%, #ff69b4 50%, #ff3cac 100%);
+  --grad-teal:   linear-gradient(135deg, #0d9488, #2dd4bf);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; font-size: 17px; line-height: 1.7; overflow-x: hidden; }
+a { text-decoration: none; color: inherit; }
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0; opacity: 0.4;
+}
+
+.container { max-width: 1140px; margin: 0 auto; padding: 0 28px; width: 100%; }
+
+/* ─── SERIES TABS ─── */
+.series-tabs {
+  display: flex;
+  background: var(--bg-card);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  overflow-x: auto;
+}
+
+.series-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  font-family: 'Fira Code', monospace;
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-right: 1px solid rgba(255,255,255,0.04);
+  white-space: nowrap;
+  transition: color 0.2s, background 0.2s;
+}
+
+.series-tab:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.03);
+}
+
+.series-tab-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ─── BLOG HERO ─── */
+.blog-hero {
+  position: relative;
+  padding: 120px 0 72px;
+  overflow: hidden;
+}
+
+.blog-hero::after {
+  content: '';
+  position: absolute;
+  top: -200px; right: -200px;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(180,74,255,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.blog-hero-orb {
+  position: absolute;
+  bottom: -100px; left: -100px;
+  width: 450px; height: 450px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(13,148,136,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.code-float {
+  position: absolute;
+  font-family: 'Fira Code', monospace;
+  font-size: 12px;
+  opacity: 0.16;
+  pointer-events: none;
+  user-select: none;
+  line-height: 1.9;
+  color: var(--teal-light);
+}
+.code-float.pink   { color: var(--pink); opacity: 0.13; }
+.code-float.purple { color: var(--purple); opacity: 0.15; }
+.code-float.gold   { color: var(--gold); opacity: 0.12; }
+
+.blog-hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 760px;
+}
+
+.blog-hero-eyebrow {
+  font-family: 'Fira Code', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--teal-light);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.blog-hero-eyebrow::before { content: ''; width: 32px; height: 1px; background: var(--teal-light); }
+
+.blog-hero-title {
+  font-size: clamp(48px, 7vw, 88px);
+  font-weight: 700;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+.grad-text {
+  background: var(--grad-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.blog-hero-sub {
+  font-size: 19px;
+  color: var(--text-muted);
+  line-height: 1.65;
+  margin-bottom: 40px;
+  max-width: 580px;
+}
+
+/* Blog stats */
+.blog-stats {
+  display: flex;
+  gap: 40px;
+  padding-top: 40px;
+  border-top: 1px solid var(--border);
+}
+.bstat-num {
+  font-family: 'Fira Code', monospace;
+  font-size: 28px;
+  font-weight: 700;
+  background: var(--grad-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.bstat-label {
+  font-family: 'Fira Code', monospace;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+/* ─── FILTER TABS ─── */
+.blog-filters {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10,10,15,0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0;
+}
+
+.filter-inner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 0;
+  flex-wrap: wrap;
+}
+
+.filter-tab {
+  padding: 8px 20px;
+  border-radius: 999px;
+  font-family: 'Fira Code', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+}
+.filter-tab:hover { border-color: var(--pink); color: var(--pink); }
+.filter-tab.active {
+  background: var(--grad-main);
+  border-color: transparent;
+  color: #fff;
+}
+
+.filter-count {
+  margin-left: auto;
+  font-family: 'Fira Code', monospace;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+/* ─── POSTS GRID ─── */
+.posts-section { padding: 60px 0 100px; }
+
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+/* ─── POST CARD ─── */
+.post-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+}
+
+.post-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255,105,180,0.35);
+  box-shadow: 0 16px 48px rgba(255,105,180,0.08);
+}
+
+.post-card[data-series="css"]:hover {
+  border-color: rgba(13,148,136,0.35);
+  box-shadow: 0 16px 48px rgba(13,148,136,0.08);
+}
+
+.post-card-inner {
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+
+.post-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tag {
+  font-family: 'Fira Code', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 12px;
+  border-radius: 999px;
+}
+
+.tag-teal   { background: rgba(13,148,136,0.12);  color: var(--teal-light); border: 1px solid rgba(13,148,136,0.2); }
+.tag-purple { background: rgba(180,74,255,0.12);   color: var(--purple);     border: 1px solid rgba(180,74,255,0.2); }
+.tag-pink   { background: rgba(255,105,180,0.12);  color: var(--pink);       border: 1px solid rgba(255,105,180,0.2); }
+
+.post-number {
+  font-family: 'Fira Code', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.post-title {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.post-title a { color: var(--text); transition: color 0.2s; }
+.post-card:hover .post-title a { color: var(--pink); }
+.post-card[data-series="css"]:hover .post-title a { color: var(--teal-light); }
+
+.post-excerpt {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.65;
+  flex-grow: 1;
+  margin: 0;
+}
+
+.post-link {
+  font-family: 'Fira Code', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--teal-light);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: gap 0.2s, color 0.2s;
+}
+.post-card:hover .post-link { gap: 10px; color: var(--pink); }
+.post-card[data-series="css"]:hover .post-link { color: var(--teal-light); }
+
+/* ─── SERIES DIVIDER ─── */
+.series-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  grid-column: 1 / -1;
+  margin: 16px 0 8px;
+}
+.series-divider-label {
+  font-family: 'Fira Code', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 4px 16px;
+  border-radius: 999px;
+}
+.series-divider-label.html { background: rgba(180,74,255,0.1); color: var(--purple); border: 1px solid rgba(180,74,255,0.2); }
+.series-divider-label.css  { background: rgba(13,148,136,0.1); color: var(--teal-light); border: 1px solid rgba(13,148,136,0.2); }
+.series-divider-line { flex: 1; height: 1px; background: var(--border); }
+
+/* ─── SEARCH BAR ─── */
+.search-wrapper {
+  position: relative;
+  flex: 1;
+  max-width: 280px;
+  margin-left: 8px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-dim);
+  pointer-events: none;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 8px 36px 8px 38px;
+  font-family: 'Fira Code', monospace;
+  font-size: 12px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.search-input::placeholder {
+  color: var(--text-dim);
+}
+
+.search-input:focus {
+  border-color: var(--purple);
+  background: rgba(180,74,255,0.06);
+  box-shadow: 0 0 0 3px rgba(180,74,255,0.1);
+}
+
+.search-input:focus + .search-icon,
+.search-wrapper:focus-within .search-icon {
+  color: var(--purple);
+}
+
+.search-clear {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 2px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: color 0.2s;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.search-clear:hover { color: var(--pink); }
+.search-clear.visible { display: flex; }
+
+/* No results state */
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 80px 20px;
+  display: none;
+}
+
+.no-results.visible { display: block; }
+
+.no-results-code {
+  font-family: 'Fira Code', monospace;
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-bottom: 16px;
+}
+
+.no-results-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.no-results-sub {
+  font-size: 15px;
+  color: var(--text-muted);
+}
+
+@media (max-width: 700px) {
+  .search-wrapper { max-width: 100%; margin-left: 0; margin-top: 8px; flex-basis: 100%; }
+}
+
+/* ─── REVEAL ANIMATIONS ─── */
+.reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s ease, transform 0.5s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 900px) {
+  .posts-grid { grid-template-columns: repeat(2, 1fr); }
+  .blog-stats { gap: 28px; flex-wrap: wrap; }
+}
+@media (max-width: 600px) {
+  .posts-grid { grid-template-columns: 1fr; }
+  .blog-hero { padding: 100px 0 56px; }
+  .filter-inner { gap: 6px; }
+  .filter-count { display: none; }
+}
+
+</style>
+</head>
+<body>
+
+  <div id="site-header"></div>
+
+  <!-- ═══ SERIES TABS ═══ -->
+  <div class="series-tabs">
+    <a href="posts/html-series/01-what-is-html.html" class="series-tab">
+      <span class="series-tab-dot" style="background:#ff69b4;"></span> html-series/
+    </a>
+    <a href="posts/css-series/01-what-css-does.html" class="series-tab">
+      <span class="series-tab-dot" style="background:#b44aff;"></span> css-series/
+    </a>
+    <a href="posts/js-series/01-what-javascript-does.html" class="series-tab">
+      <span class="series-tab-dot" style="background:#ffd369;"></span> js-series/
+    </a>
+  </div>
+
+  <!-- ═══ BLOG HERO ═══ -->
+  <section class="blog-hero">
+    <div class="blog-hero-orb"></div>
+
+    <span class="code-float" style="top:10%;right:4%;font-size:11px;">
+      &lt;article&gt;<br>
+      &nbsp;&nbsp;&lt;h2&gt;...&lt;/h2&gt;<br>
+      &nbsp;&nbsp;&lt;p&gt;...&lt;/p&gt;<br>
+      &lt;/article&gt;
+    </span>
+    <span class="code-float pink" style="bottom:5%;right:8%;font-size:11px;">
+      .post-card:hover {<br>
+      &nbsp;&nbsp;transform: translateY(-5px);<br>
+      }
+    </span>
+    <span class="code-float gold" style="top:30%;right:2%;font-size:10px;">
+      // 34 free tutorials<br>
+      // 0 gatekeeping<br>
+      // ∞ potential
+    </span>
+
+    <div class="container">
+      <div class="blog-hero-inner">
+        <div class="blog-hero-eyebrow">CodeHerWay</div>
+        <div style="font-family:'Fira Code',monospace;font-size:15px;margin-bottom:20px;line-height:1;">
+          <span style="color:#b44aff;">jenna</span><span style="color:#6a6a80;">@codeherway:~$</span> <span style="color:#2dd4bf;">cat</span> <span style="color:#ffd369;">blog.md</span>
+        </div>
+        <h1 class="blog-hero-title" style="font-family:'Fira Code',monospace;letter-spacing:-0.03em;">console.<span class="grad-text">blog</span>()</h1>
+        <p class="blog-hero-sub">Tutorials, tips, and real talk on HTML, CSS, JavaScript, and beyond. No gatekeeping. No fluff. Just code — explained clearly, by someone who's been there.</p>
+        <div class="blog-stats">
+          <div><div class="bstat-num">81</div><div class="bstat-label">// free posts</div></div>
+          <div><div class="bstat-num">4</div><div class="bstat-label">// series complete</div></div>
+          <div><div class="bstat-num">0</div><div class="bstat-label">// gatekeeping</div></div>
+          <div><div class="bstat-num">∞</div><div class="bstat-label">// your potential</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FILTER TABS ═══ -->
+  <div class="blog-filters">
+    <div class="container">
+      <div class="filter-inner">
+        <button class="filter-tab active" data-filter="all">All Posts</button>
+        <button class="filter-tab" data-filter="html">HTML Fundamentals</button>
+        <button class="filter-tab" data-filter="css">CSS Series</button>
+        <button class="filter-tab" data-filter="js">JS: Click</button>
+        <button class="filter-tab" data-filter="js-async">JS: Async</button>
+        <div class="search-wrapper">
+          <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input
+            type="search"
+            class="search-input"
+            id="post-search"
+            placeholder="Search posts..."
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="Search posts"
+          >
+          <button class="search-clear" id="search-clear" aria-label="Clear search">✕</button>
+        </div>
+        <span class="filter-count" id="post-count">65 posts</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ POSTS ═══ -->
+  <main class="posts-section">
+    <div class="container">
+      <div class="posts-grid" id="posts-grid">
+
+<div class="series-divider" data-series="html">
+          <span class="series-divider-label html">HTML Fundamentals — 20 Posts</span>
+          <span class="series-divider-line"></span>
+        </div>
+
+          <article class="post-card reveal" data-series="html">
+            <div class="post-card-inner">
+              <div class="post-meta">
+                <span class="tag tag-teal">HTML</span>
+                <span class="post-number">01</span>
+              </div>
+              <h2 class="post-title"><a href="posts/html-series/01-what-is-html.html">What HTML Actually Is (And Why It's Not Scary)</a></h2>
+              <p class="post-excerpt">No gatekeeping, no jargon spirals — just the truth about what HTML is, how browsers use it, and why it's the foundation that makes everything else possible.</p>
+              <a href="posts/html-series/01-what-is-html.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="html">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-teal">HTML</span><span class="post-number">02</span></div>
+              <h2 class="post-title"><a href="posts/html-series/02-document-structure.html">Document Structure: The Non-Negotiable Skeleton</a></h2>
+              <p class="post-excerpt">Every HTML file starts with the same bones. Learn the boilerplate — DOCTYPE, html, head, body — and why each piece exists.</p>
+              <a href="posts/html-series/02-document-structure.html" class="post-link">Read Post &rarr;</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="html">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-teal">HTML</span><span class="post-number">03</span></div>
+              <h2 class="post-title"><a href="posts/html-series/03-elements-tags-attributes.html">Elements, Tags &amp; Attributes</a></h2>
+              <p class="post-excerpt">Three words that describe literally everything in HTML. Understand these and nothing in the language will ever surprise you again.</p>
+              <a href="posts/html-series/03-elements-tags-attributes.html" class="post-link">Read Post &rarr;</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="html">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-teal">HTML</span><span class="post-number">04</span></div>
+              <h2 class="post-title"><a href="posts/html-series/04-text-content-elements.html">Text &amp; Content Elements</a></h2>
+              <p class="post-excerpt">Headings, paragraphs, bold, italic, highlights, and more — the elements you will use on literally every page you build.</p>
+              <a href="posts/html-series/04-text-content-elements.html" class="post-link">Read Post &rarr;</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="html">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-teal">HTML</span><span class="post-number">05</span></div>
+              <h2 class="post-title"><a href="posts/html-series/05-links-navigation.html">HTML Links &amp; Navigation</a></h2>
+              <p class="post-excerpt">The anchor tag is what makes the web a web. Without links, every page is an island. Let us connect everything together.</p>
+              <a href="posts/html-series/05-links-navigation.html" class="post-link">Read Post &rarr;</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="html">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-teal">HTML</span><span class="post-number">06</span></div>
+              <h2 class="post-title"><a href="posts/html-series/06-images-media.html">Images</a></h2>
+              <p class="post-excerpt">A website without images is a book without a cover. The right format, the right attributes, and the right way to make them work for everyone.</p>
+              <a href="posts/html-series/06-images-media.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="html">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-teal">HTML</span><span class="post-number">07</span></div>
+              <h2 class="post-title"><a href="posts/html-series/07-lists.html">HTML Lists</a></h2>
+              <p class="post-excerpt">Navigation menus, step-by-step instructions, glossaries — HTML gives you three list types and each one means something different.</p>
+              <a href="posts/html-series/07-lists.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="html">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-teal">HTML</span><span class="post-number">08</span></div>
+              <h2 class="post-title"><a href="posts/html-series/08-semantic-html.html">Semantic HTML (Extremely Important)</a></h2>
+              <p class="post-excerpt">The single most important concept in this series. Semantic HTML is what separates someone who writes HTML from someone who writes it well.</p>
+              <a href="posts/html-series/08-semantic-html.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="html">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-teal">HTML</span><span class="post-number">09</span></div>
+              <h2 class="post-title"><a href="posts/html-series/09-div-vs-span.html">Div vs Span: The Container Showdown</a></h2>
+              <p class="post-excerpt">Two of the most common tags in HTML and the most misused. Here is when to reach for each, and when to reach for neither.</p>
+              <a href="posts/html-series/09-div-vs-span.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="html">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-teal">HTML</span><span class="post-number">10</span></div>
+              <h2 class="post-title"><a href="posts/html-series/10-accessibility-basics.html">Accessibility (A11Y Basics)</a></h2>
+              <p class="post-excerpt">HTML is for humans — all of them. The essential accessibility foundations every developer needs to know before shipping a single page.</p>
+              <a href="posts/html-series/10-accessibility-basics.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="html">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-teal">HTML</span><span class="post-number">11</span></div>
+              <h2 class="post-title"><a href="posts/html-series/11-html-forms.html">HTML Forms: The Most Critical Skill</a></h2>
+              <p class="post-excerpt">Forms are how users talk to your site — login, checkout, contact, search. Master the elements that make the web interactive.</p>
+              <a href="posts/html-series/11-html-forms.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="html">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-teal">HTML</span><span class="post-number">12</span></div>
+              <h2 class="post-title"><a href="posts/html-series/12-html-tables.html">HTML Tables: Data, Not Layout</a></h2>
+              <p class="post-excerpt">Tables have one job: organize tabular data. Learn when to use them, how to build them correctly, and why they are not for layout.</p>
+              <a href="posts/html-series/12-html-tables.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="html">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-teal">HTML</span><span class="post-number">13</span></div>
+              <h2 class="post-title"><a href="posts/html-series/13-file-structure.html">File Structure &amp; Organization</a></h2>
+              <p class="post-excerpt">Your project's blueprint — how to organize files and folders so your site stays maintainable as it grows.</p>
+              <a href="posts/html-series/13-file-structure.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="html">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-teal">HTML</span><span class="post-number">14</span></div>
+              <h2 class="post-title"><a href="posts/html-series/14-meta-tags-seo.html">Meta Tags &amp; SEO Basics</a></h2>
+              <p class="post-excerpt">The invisible power of the &lt;head&gt; — meta tags that control how your site appears in search results and on social media.</p>
+              <a href="posts/html-series/14-meta-tags-seo.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="html">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-teal">HTML</span><span class="post-number">15</span></div>
+              <h2 class="post-title"><a href="posts/html-series/15-html5-media.html">HTML5 Media: Video, Audio &amp; Embeds</a></h2>
+              <p class="post-excerpt">Add video, audio, and embedded content to your pages — natively in the browser, no plugins required.</p>
+              <a href="posts/html-series/15-html5-media.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="html">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-teal">HTML</span><span class="post-number">16</span></div>
+              <h2 class="post-title"><a href="posts/html-series/16-developer-tools.html">Developer Tools: Your Browser's Superpower</a></h2>
+              <p class="post-excerpt">The DevTools panel hiding in your browser is the most powerful learning and debugging tool you have. Time to use it.</p>
+              <a href="posts/html-series/16-developer-tools.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="html">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-teal">HTML</span><span class="post-number">17</span></div>
+              <h2 class="post-title"><a href="posts/html-series/17-common-mistakes.html">Common Beginner Mistakes</a></h2>
+              <p class="post-excerpt">Every bug you are about to make — missing closing tags, nesting errors, div overuse, and more. Learn them now so they stop surprising you.</p>
+              <a href="posts/html-series/17-common-mistakes.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="html">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-teal">HTML</span><span class="post-number">18</span></div>
+              <h2 class="post-title"><a href="posts/html-series/18-validation-best-practices.html">Validation &amp; Best Practices</a></h2>
+              <p class="post-excerpt">Writing HTML like a professional — the W3C validator, clean indentation, consistent naming, and the habits that separate good code from great code.</p>
+              <a href="posts/html-series/18-validation-best-practices.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="html">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-teal">HTML</span><span class="post-number">19</span></div>
+              <h2 class="post-title"><a href="posts/html-series/19-intermediate-concepts.html">Intermediate HTML Concepts</a></h2>
+              <p class="post-excerpt">You have mastered the fundamentals. Now: entities, data attributes, templates, and DOM awareness for the features that make experienced devs faster.</p>
+              <a href="posts/html-series/19-intermediate-concepts.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="html">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-teal">HTML</span><span class="post-number">20</span></div>
+              <h2 class="post-title"><a href="posts/html-series/20-html-js-connection.html">How HTML Connects to JavaScript</a></h2>
+              <p class="post-excerpt">The bridge to interactivity — how JavaScript finds, reads, and changes your HTML. The final post in the HTML Fundamentals series.</p>
+              <a href="posts/html-series/20-html-js-connection.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <div class="series-divider" data-series="css">
+          <span class="series-divider-label css">CSS, But Make It Powerful — 14 Posts</span>
+          <span class="series-divider-line"></span>
+        </div>
+
+          <article class="post-card reveal" data-series="css">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-purple">CSS</span><span class="post-number">01</span></div>
+              <h2 class="post-title"><a href="posts/css-series/01-what-css-does.html">What CSS Actually Does (And Why It's Not Just Decoration)</a></h2>
+              <p class="post-excerpt">CSS is not just making things pretty — it is control. Here is how to start speaking its language with confidence and stop guessing why things look broken.</p>
+              <a href="posts/css-series/01-what-css-does.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="css">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-purple">CSS</span><span class="post-number">02</span></div>
+              <h2 class="post-title"><a href="posts/css-series/02-selectors.html">CSS Selectors Explained</a></h2>
+              <p class="post-excerpt">How to target the right element every time — class selectors, ID selectors, combinators, pseudo-classes, and the specificity rules that govern them all.</p>
+              <a href="posts/css-series/02-selectors.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="css">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-purple">CSS</span><span class="post-number">03</span></div>
+              <h2 class="post-title"><a href="posts/css-series/03-box-model.html">The CSS Box Model Explained</a></h2>
+              <p class="post-excerpt">Why your spacing is weird and how to fix it — margin, padding, border, and the box-sizing property that changes everything.</p>
+              <a href="posts/css-series/03-box-model.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="css">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-purple">CSS</span><span class="post-number">04</span></div>
+              <h2 class="post-title"><a href="posts/css-series/04-typography.html">CSS Typography for Beginners</a></h2>
+              <p class="post-excerpt">Fonts, line height, letter spacing, and why your site looks off — how to take control of type and make it actually readable.</p>
+              <a href="posts/css-series/04-typography.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="css">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-purple">CSS</span><span class="post-number">05</span></div>
+              <h2 class="post-title"><a href="posts/css-series/05-colors-and-units.html">CSS Colors and Units Explained</a></h2>
+              <p class="post-excerpt">HEX, RGBA, HSL, rem, em, vh — what each one actually does and when to reach for each in your stylesheets.</p>
+              <a href="posts/css-series/05-colors-and-units.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="css">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-purple">CSS</span><span class="post-number">06</span></div>
+              <h2 class="post-title"><a href="posts/css-series/06-display-and-positioning.html">CSS Display and Positioning Explained</a></h2>
+              <p class="post-excerpt">How elements actually get placed on the page — block, inline, flex, grid, relative, absolute, fixed, and sticky finally explained clearly.</p>
+              <a href="posts/css-series/06-display-and-positioning.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="css">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-purple">CSS</span><span class="post-number">07</span></div>
+              <h2 class="post-title"><a href="posts/css-series/07-flexbox.html">CSS Flexbox for Beginners</a></h2>
+              <p class="post-excerpt">Centering, spacing, and one-dimensional layouts — Flexbox is the layout tool you will reach for every single day.</p>
+              <a href="posts/css-series/07-flexbox.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="css">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-purple">CSS</span><span class="post-number">08</span></div>
+              <h2 class="post-title"><a href="posts/css-series/08-css-grid.html">CSS Grid for Beginners</a></h2>
+              <p class="post-excerpt">Two-dimensional layouts, fr units, and named areas — CSS Grid is how modern page layouts actually get built.</p>
+              <a href="posts/css-series/08-css-grid.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="css">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-purple">CSS</span><span class="post-number">09</span></div>
+              <h2 class="post-title"><a href="posts/css-series/09-responsive-design.html">CSS Responsive Design</a></h2>
+              <p class="post-excerpt">Mobile-first, media queries, and clamp() — how to make your site look great on every screen without losing your mind.</p>
+              <a href="posts/css-series/09-responsive-design.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="css">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-purple">CSS</span><span class="post-number">10</span></div>
+              <h2 class="post-title"><a href="posts/css-series/10-specificity-and-cascade.html">CSS Specificity and the Cascade</a></h2>
+              <p class="post-excerpt">Why your styles are not working — the specificity rules and cascade order that determine which CSS actually wins.</p>
+              <a href="posts/css-series/10-specificity-and-cascade.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="css">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-purple">CSS</span><span class="post-number">11</span></div>
+              <h2 class="post-title"><a href="posts/css-series/11-transitions-transforms-variables.html">Transitions, Transforms, and Variables</a></h2>
+              <p class="post-excerpt">How to make your site feel alive — smooth hover effects, movement, and CSS custom properties that make your design system maintainable.</p>
+              <a href="posts/css-series/11-transitions-transforms-variables.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="css">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-purple">CSS</span><span class="post-number">12</span></div>
+              <h2 class="post-title"><a href="posts/css-series/12-shadows-depth-selectors.html">Shadows, Pseudo-Elements &amp; Advanced Selectors</a></h2>
+              <p class="post-excerpt">The details that make it look designed — box-shadow, text-shadow, ::before, ::after, and the advanced selectors that give you precise control.</p>
+              <a href="posts/css-series/12-shadows-depth-selectors.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="css">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-purple">CSS</span><span class="post-number">13</span></div>
+              <h2 class="post-title"><a href="posts/css-series/13-architecture-and-devtools.html">CSS Architecture and DevTools</a></h2>
+              <p class="post-excerpt">How to write CSS you can still read in 3 months — file organization, naming conventions, DevTools workflow, and the habits of maintainable stylesheets.</p>
+              <a href="posts/css-series/13-architecture-and-devtools.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+          <article class="post-card reveal" data-series="css">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag tag-purple">CSS</span><span class="post-number">14</span></div>
+              <h2 class="post-title"><a href="posts/css-series/14-capstone.html">CSS Capstone: Build a Full Responsive Portfolio</a></h2>
+              <p class="post-excerpt">Put everything together — build a complete responsive portfolio page from scratch using every CSS concept covered in this series.</p>
+              <a href="posts/css-series/14-capstone.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+        <!-- ─── JS CLICK SERIES ─── -->
+        <div class="series-divider" data-series="js">
+          <span class="series-divider-label" style="background:rgba(255,211,105,0.1);color:#ffd369;border:1px solid rgba(255,211,105,0.2);">JS, But Make It Click — 15 Posts</span>
+          <span class="series-divider-line"></span>
+        </div>
+
+          <article class="post-card reveal" data-series="js">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,211,105,0.1);color:#ffd369;border:1px solid rgba(255,211,105,0.2);">JS</span><span class="post-number">01</span></div>
+              <h2 class="post-title"><a href="posts/js-series/click-01-what-javascript-does.html">What JavaScript Actually Does</a></h2>
+              <p class="post-excerpt">No gatekeeping — just the truth about what JavaScript is, what it does to a webpage, and why learning it changes everything.</p>
+              <a href="posts/js-series/click-01-what-javascript-does.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,211,105,0.1);color:#ffd369;border:1px solid rgba(255,211,105,0.2);">JS</span><span class="post-number">02</span></div>
+              <h2 class="post-title"><a href="posts/js-series/click-02-variables-data-types.html">Variables and Data Types</a></h2>
+              <p class="post-excerpt">const, let, and why var is retired — how JavaScript stores information and the types of data it understands.</p>
+              <a href="posts/js-series/click-02-variables-data-types.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,211,105,0.1);color:#ffd369;border:1px solid rgba(255,211,105,0.2);">JS</span><span class="post-number">03</span></div>
+              <h2 class="post-title"><a href="posts/js-series/click-03-operators-comparisons.html">Operators and Comparisons</a></h2>
+              <p class="post-excerpt">===, &&, || and truthy/falsy explained — the building blocks of every decision your code will ever make.</p>
+              <a href="posts/js-series/click-03-operators-comparisons.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,211,105,0.1);color:#ffd369;border:1px solid rgba(255,211,105,0.2);">JS</span><span class="post-number">04</span></div>
+              <h2 class="post-title"><a href="posts/js-series/click-04-making-decisions.html">Making Decisions in Code</a></h2>
+              <p class="post-excerpt">if/else, switch, and the ternary operator — how JavaScript chooses what to do based on what is true.</p>
+              <a href="posts/js-series/click-04-making-decisions.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,211,105,0.1);color:#ffd369;border:1px solid rgba(255,211,105,0.2);">JS</span><span class="post-number">05</span></div>
+              <h2 class="post-title"><a href="posts/js-series/click-05-functions.html">JavaScript Functions Explained</a></h2>
+              <p class="post-excerpt">Declarations, expressions, and arrow functions — how to write reusable code and why functions are everything.</p>
+              <a href="posts/js-series/click-05-functions.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,211,105,0.1);color:#ffd369;border:1px solid rgba(255,211,105,0.2);">JS</span><span class="post-number">06</span></div>
+              <h2 class="post-title"><a href="posts/js-series/click-06-loops.html">JavaScript Loops</a></h2>
+              <p class="post-excerpt">for, while, for...of and for...in — how to make JavaScript repeat itself without repeating yourself.</p>
+              <a href="posts/js-series/click-06-loops.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,211,105,0.1);color:#ffd369;border:1px solid rgba(255,211,105,0.2);">JS</span><span class="post-number">07</span></div>
+              <h2 class="post-title"><a href="posts/js-series/click-07-arrays.html">JavaScript Arrays</a></h2>
+              <p class="post-excerpt">.map(), .filter(), .reduce() and more — how to work with lists of data the way real developers do.</p>
+              <a href="posts/js-series/click-07-arrays.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,211,105,0.1);color:#ffd369;border:1px solid rgba(255,211,105,0.2);">JS</span><span class="post-number">08</span></div>
+              <h2 class="post-title"><a href="posts/js-series/click-08-objects.html">JavaScript Objects</a></h2>
+              <p class="post-excerpt">Key-value pairs, methods, and destructuring — the data structure you will use in literally every JS project.</p>
+              <a href="posts/js-series/click-08-objects.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,211,105,0.1);color:#ffd369;border:1px solid rgba(255,211,105,0.2);">JS</span><span class="post-number">09</span></div>
+              <h2 class="post-title"><a href="posts/js-series/click-09-the-dom.html">JavaScript DOM Manipulation</a></h2>
+              <p class="post-excerpt">querySelector, classList, createElement — how JavaScript reads and changes what is on the page.</p>
+              <a href="posts/js-series/click-09-the-dom.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,211,105,0.1);color:#ffd369;border:1px solid rgba(255,211,105,0.2);">JS</span><span class="post-number">10</span></div>
+              <h2 class="post-title"><a href="posts/js-series/click-10-events.html">JavaScript Events</a></h2>
+              <p class="post-excerpt">addEventListener, event delegation, and the event object — how to make your page respond to what users do.</p>
+              <a href="posts/js-series/click-10-events.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,211,105,0.1);color:#ffd369;border:1px solid rgba(255,211,105,0.2);">JS</span><span class="post-number">11</span></div>
+              <h2 class="post-title"><a href="posts/js-series/click-11-scope-hoisting.html">Scope, Hoisting and Closures</a></h2>
+              <p class="post-excerpt">Why variables disappear — the JavaScript rules that trip everyone up and how to finally understand them.</p>
+              <a href="posts/js-series/click-11-scope-hoisting.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,211,105,0.1);color:#ffd369;border:1px solid rgba(255,211,105,0.2);">JS</span><span class="post-number">12</span></div>
+              <h2 class="post-title"><a href="posts/js-series/click-12-modern-js.html">Modern JavaScript (ES6+)</a></h2>
+              <p class="post-excerpt">Template literals, destructuring, optional chaining, and the features that make modern JS so much cleaner.</p>
+              <a href="posts/js-series/click-12-modern-js.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,211,105,0.1);color:#ffd369;border:1px solid rgba(255,211,105,0.2);">JS</span><span class="post-number">13</span></div>
+              <h2 class="post-title"><a href="posts/js-series/click-13-debugging.html">Debugging and try/catch</a></h2>
+              <p class="post-excerpt">How to find and fix errors — the debugging workflow and error handling patterns every developer needs.</p>
+              <a href="posts/js-series/click-13-debugging.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,211,105,0.1);color:#ffd369;border:1px solid rgba(255,211,105,0.2);">JS</span><span class="post-number">14</span></div>
+              <h2 class="post-title"><a href="posts/js-series/click-14-async.html">Async JavaScript: Promises, async/await and fetch()</a></h2>
+              <p class="post-excerpt">How to talk to servers and handle data that takes time — the async concepts that unlock the whole web.</p>
+              <a href="posts/js-series/click-14-async.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,211,105,0.1);color:#ffd369;border:1px solid rgba(255,211,105,0.2);">JS</span><span class="post-number">15</span></div>
+              <h2 class="post-title"><a href="posts/js-series/click-15-capstone.html">Capstone: Build a JavaScript API Dashboard</a></h2>
+              <p class="post-excerpt">Put it all together — build a complete API dashboard using everything from this series.</p>
+              <a href="posts/js-series/click-15-capstone.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+        <!-- ─── JS ASYNC SERIES ─── -->
+        <div class="series-divider" data-series="js-async">
+          <span class="series-divider-label" style="background:rgba(255,149,0,0.1);color:#ff9500;border:1px solid rgba(255,149,0,0.2);">JS, But Make It Async — 16 Posts</span>
+          <span class="series-divider-line"></span>
+        </div>
+
+          <article class="post-card reveal" data-series="js-async">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,149,0,0.1);color:#ff9500;border:1px solid rgba(255,149,0,0.2);">JS Async</span><span class="post-number">01</span></div>
+              <h2 class="post-title"><a href="posts/js-series/async-01-event-loop.html">How the JavaScript Event Loop Works</a></h2>
+              <p class="post-excerpt">Call stack, task queue, and microtasks — the mental model that makes every async concept finally click.</p>
+              <a href="posts/js-series/async-01-event-loop.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js-async">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,149,0,0.1);color:#ff9500;border:1px solid rgba(255,149,0,0.2);">JS Async</span><span class="post-number">02</span></div>
+              <h2 class="post-title"><a href="posts/js-series/async-02-callbacks.html">JavaScript Callbacks Explained</a></h2>
+              <p class="post-excerpt">What callbacks are, how callback hell happens, and why Promises were invented to replace them.</p>
+              <a href="posts/js-series/async-02-callbacks.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js-async">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,149,0,0.1);color:#ff9500;border:1px solid rgba(255,149,0,0.2);">JS Async</span><span class="post-number">03</span></div>
+              <h2 class="post-title"><a href="posts/js-series/async-03-promises-basics.html">JavaScript Promises Explained</a></h2>
+              <p class="post-excerpt">States, .then(), .catch(), and the common mistakes that trip up every developer learning async for the first time.</p>
+              <a href="posts/js-series/async-03-promises-basics.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js-async">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,149,0,0.1);color:#ff9500;border:1px solid rgba(255,149,0,0.2);">JS Async</span><span class="post-number">04</span></div>
+              <h2 class="post-title"><a href="posts/js-series/async-04-promises-chaining.html">JavaScript Promise Chaining</a></h2>
+              <p class="post-excerpt">.then(), Promise.all(), and static methods — how to sequence and coordinate async work cleanly.</p>
+              <a href="posts/js-series/async-04-promises-chaining.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js-async">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,149,0,0.1);color:#ff9500;border:1px solid rgba(255,149,0,0.2);">JS Async</span><span class="post-number">05</span></div>
+              <h2 class="post-title"><a href="posts/js-series/async-05-async-await.html">async/await Explained</a></h2>
+              <p class="post-excerpt">Error handling patterns, return values, and the common mistakes — async/await is simpler than you think.</p>
+              <a href="posts/js-series/async-05-async-await.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js-async">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,149,0,0.1);color:#ff9500;border:1px solid rgba(255,149,0,0.2);">JS Async</span><span class="post-number">06</span></div>
+              <h2 class="post-title"><a href="posts/js-series/async-06-parallel-sequential.html">Async Performance: Sequential vs Parallel with Promise.all()</a></h2>
+              <p class="post-excerpt">When to run requests one at a time vs all at once — and how to choose the right approach for your use case.</p>
+              <a href="posts/js-series/async-06-parallel-sequential.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js-async">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,149,0,0.1);color:#ff9500;border:1px solid rgba(255,149,0,0.2);">JS Async</span><span class="post-number">07</span></div>
+              <h2 class="post-title"><a href="posts/js-series/async-07-fetch.html">fetch() API: POST, PUT, DELETE, Headers & Status Codes</a></h2>
+              <p class="post-excerpt">Go beyond GET requests — how to send data, set headers, handle status codes, and talk to a server correctly.</p>
+              <a href="posts/js-series/async-07-fetch.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js-async">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,149,0,0.1);color:#ff9500;border:1px solid rgba(255,149,0,0.2);">JS Async</span><span class="post-number">08</span></div>
+              <h2 class="post-title"><a href="posts/js-series/async-08-error-handling.html">Async Error Handling: Retry Logic, Custom Errors & User States</a></h2>
+              <p class="post-excerpt">What to do when things go wrong — retry logic, custom error classes, loading states, and resilient async code.</p>
+              <a href="posts/js-series/async-08-error-handling.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js-async">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,149,0,0.1);color:#ff9500;border:1px solid rgba(255,149,0,0.2);">JS Async</span><span class="post-number">09</span></div>
+              <h2 class="post-title"><a href="posts/js-series/async-09-abort-controller.html">AbortController: Cancel Fetch Requests & Prevent Stale Data</a></h2>
+              <p class="post-excerpt">How to cancel in-flight requests, handle race conditions, and stop your UI from showing outdated data.</p>
+              <a href="posts/js-series/async-09-abort-controller.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js-async">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,149,0,0.1);color:#ff9500;border:1px solid rgba(255,149,0,0.2);">JS Async</span><span class="post-number">10</span></div>
+              <h2 class="post-title"><a href="posts/js-series/async-10-real-apis.html">Working With Real APIs: Auth, Pagination, Rate Limits & Keys</a></h2>
+              <p class="post-excerpt">Everything they don't tell you about real APIs — auth headers, paginating results, rate limits, keeping keys safe.</p>
+              <a href="posts/js-series/async-10-real-apis.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js-async">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,149,0,0.1);color:#ff9500;border:1px solid rgba(255,149,0,0.2);">JS Async</span><span class="post-number">11</span></div>
+              <h2 class="post-title"><a href="posts/js-series/async-11-localstorage.html">localStorage & sessionStorage: Caching, Persistence & Safe Use</a></h2>
+              <p class="post-excerpt">How to store data in the browser, when to use each type, and the gotchas that trip everyone up.</p>
+              <a href="posts/js-series/async-11-localstorage.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js-async">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,149,0,0.1);color:#ff9500;border:1px solid rgba(255,149,0,0.2);">JS Async</span><span class="post-number">12</span></div>
+              <h2 class="post-title"><a href="posts/js-series/async-12-state-management.html">State Management Without React: Build a Reactive Store</a></h2>
+              <p class="post-excerpt">Build a reactive state store from scratch — the concept behind Redux, Zustand, and every state manager.</p>
+              <a href="posts/js-series/async-12-state-management.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js-async">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,149,0,0.1);color:#ff9500;border:1px solid rgba(255,149,0,0.2);">JS Async</span><span class="post-number">13</span></div>
+              <h2 class="post-title"><a href="posts/js-series/async-13-debounce-throttle.html">Debounce vs Throttle: Build Both From Scratch</a></h2>
+              <p class="post-excerpt">Two patterns every frontend dev needs — how to control how often a function fires and build both from scratch.</p>
+              <a href="posts/js-series/async-13-debounce-throttle.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js-async">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,149,0,0.1);color:#ff9500;border:1px solid rgba(255,149,0,0.2);">JS Async</span><span class="post-number">14</span></div>
+              <h2 class="post-title"><a href="posts/js-series/async-14-multiple-apis.html">Fetching From Multiple APIs: Parallel, Sequential & Errors</a></h2>
+              <p class="post-excerpt">Promise.all, Promise.allSettled, sequential chaining — how to coordinate multiple API calls without chaos.</p>
+              <a href="posts/js-series/async-14-multiple-apis.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js-async">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,149,0,0.1);color:#ff9500;border:1px solid rgba(255,149,0,0.2);">JS Async</span><span class="post-number">15</span></div>
+              <h2 class="post-title"><a href="posts/js-series/async-15-patterns-1.html">Async Patterns in Real Apps: Polling, Optimistic Updates</a></h2>
+              <p class="post-excerpt">The patterns in every real codebase — polling for live data, optimistic UI, and deduplicating requests.</p>
+              <a href="posts/js-series/async-15-patterns-1.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+          <article class="post-card reveal" data-series="js-async">
+            <div class="post-card-inner">
+              <div class="post-meta"><span class="tag" style="background:rgba(255,149,0,0.1);color:#ff9500;border:1px solid rgba(255,149,0,0.2);">JS Async</span><span class="post-number">16</span></div>
+              <h2 class="post-title"><a href="posts/js-series/async-16-patterns-2.html">Advanced Async Patterns: Stale-While-Revalidate, Infinite Scroll</a></h2>
+              <p class="post-excerpt">The advanced layer — cached data while fetching fresh, building infinite scroll, syncing in the background.</p>
+              <a href="posts/js-series/async-16-patterns-2.html" class="post-link">Read Post →</a>
+            </div>
+          </article>
+
+        <!-- No results state -->
+        <div class="no-results" id="no-results">
+          <p class="no-results-code">// 0 results found</p>
+          <p class="no-results-title">No posts match that search.</p>
+          <p class="no-results-sub">Try a different keyword — or <button onclick="clearSearch()" style="background:none;border:none;color:var(--pink);cursor:pointer;font-family:inherit;font-size:inherit;">clear the search</button> to see everything.</p>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+    const tabs      = document.querySelectorAll('.filter-tab');
+    const cards     = document.querySelectorAll('.post-card');
+    const dividers  = document.querySelectorAll('.series-divider');
+    const countEl   = document.getElementById('post-count');
+    const searchEl  = document.getElementById('post-search');
+    const clearBtn  = document.getElementById('search-clear');
+    const noResults = document.getElementById('no-results');
+
+    let activeFilter = 'all';
+    let searchQuery  = '';
+
+    function normalize(str) {
+      return str.toLowerCase().replace(/[^a-z0-9\s]/g, '');
+    }
+
+    function applyFilters() {
+      let visible = 0;
+
+      cards.forEach(card => {
+        const seriesMatch = activeFilter === 'all' || card.dataset.series === activeFilter;
+
+        const title   = normalize(card.querySelector('.post-title')?.textContent || '');
+        const excerpt = normalize(card.querySelector('.post-excerpt')?.textContent || '');
+        const tag     = normalize(card.querySelector('.tag')?.textContent || '');
+        const q       = normalize(searchQuery);
+        const searchMatch = !q || title.includes(q) || excerpt.includes(q) || tag.includes(q);
+
+        const show = seriesMatch && searchMatch;
+        card.style.display = show ? 'flex' : 'none';
+        if (show) visible++;
+      });
+
+      // Show/hide series dividers
+      dividers.forEach(div => {
+        const series = div.dataset.series;
+        const seriesMatch = activeFilter === 'all' || series === activeFilter;
+        // Check if any visible cards belong to this series
+        const hasVisible = [...cards].some(c =>
+          c.dataset.series === series && c.style.display !== 'none'
+        );
+        div.style.display = (seriesMatch && hasVisible) ? 'flex' : 'none';
+      });
+
+      // Update count
+      countEl.textContent = visible + ' post' + (visible !== 1 ? 's' : '');
+
+      // No results state
+      noResults.classList.toggle('visible', visible === 0);
+    }
+
+    // Filter tabs
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        activeFilter = tab.dataset.filter;
+        applyFilters();
+      });
+    });
+
+    // Search input — live as you type
+    searchEl.addEventListener('input', () => {
+      searchQuery = searchEl.value.trim();
+      clearBtn.classList.toggle('visible', searchQuery.length > 0);
+      applyFilters();
+    });
+
+    // Clear button
+    clearBtn.addEventListener('click', () => clearSearch());
+
+    function clearSearch() {
+      searchEl.value = '';
+      searchQuery = '';
+      clearBtn.classList.remove('visible');
+      searchEl.focus();
+      applyFilters();
+    }
+
+    // Reveal on scroll
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.08 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Init
+    applyFilters();
+  </script>
+</body>
+</html>

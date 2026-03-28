@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript fetch() API: POST, PUT, DELETE, Headers & Status Codes | CodeHerWay</title>
+<meta name="description" content="POST, PUT, DELETE, headers, sending JSON, status codes, and building a reusable fetch wrapper. The full fetch API. CodeHerWay.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.method-table{width:100%;border-collapse:collapse;margin:24px 0;font-size:15px;}
+.method-table th{text-align:left;padding:10px 14px;font-family:'Fira Code',monospace;font-size:11px;letter-spacing:.08em;color:var(--text-muted);border-bottom:1px solid rgba(255,255,255,.08);}
+.method-table td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--text-secondary);}
+.method-table tr:last-child td{border-bottom:none;}
+.method-table .m-verb{font-family:'Fira Code',monospace;color:var(--accent);font-weight:700;}
+.method-table .m-body{font-family:'Fira Code',monospace;font-size:13px;color:var(--text-muted);}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Async</span> Post 07 of 16</div>
+  <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+  <div class="series-line"><span class="series-label">⚡ JavaScript, But Make It Async</span><span class="post-number">Post 07 of 18</span></div>
+  <h1 class="post-title">JavaScript fetch() API</h1>
+  <p class="post-subtitle">GET is just the beginning. Headers, POST, PUT, DELETE, sending JSON, reading status codes, and building a reusable fetch wrapper.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 13 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Intermediate</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+<main>
+  <div class="back-ref"><span class="br-arrow">←</span> Builds on <strong>JS Click — Post 14</strong>: Async JavaScript: Fetch, Promises &amp; async/await</div>
+
+  <div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">You Know GET. Now Learn the Rest.</h2><div class="section-line"></div></div>
+  <p>Every example you've seen so far has been a basic GET request — the default when you call <span class="il">fetch(url)</span> with no other arguments. But real APIs require you to POST data, include auth headers, send JSON, and handle HTTP status codes properly. This post covers the full <span class="highlight">fetch API</span> — everything you need to interact with real-world APIs professionally.</p>
+
+  <div class="section-header"><span class="section-icon">📋</span><h2 class="section-title">HTTP Methods</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>HTTP methods are a communication convention. GET means 'give me data.' POST means 'create something new.' PUT/PATCH means 'update something.' DELETE means 'remove it.' When you're building a UI that talks to an API, knowing which method to use isn't optional — it's the contract between your code and the server.</p>
+  </div>
+
+</div>
+  <table class="method-table">
+    <thead><tr><th>Method</th><th>Purpose</th><th>Has Body?</th></tr></thead>
+    <tbody>
+      <tr><td class="m-verb">GET</td><td>Read data — the default</td><td class="m-body">No</td></tr>
+      <tr><td class="m-verb">POST</td><td>Create new data</td><td class="m-body">Yes — sends the new data</td></tr>
+      <tr><td class="m-verb">PUT</td><td>Replace existing data entirely</td><td class="m-body">Yes — the full replacement</td></tr>
+      <tr><td class="m-verb">PATCH</td><td>Update part of existing data</td><td class="m-body">Yes — only the changed fields</td></tr>
+      <tr><td class="m-verb">DELETE</td><td>Remove data</td><td class="m-body">Sometimes — usually not</td></tr>
+    </tbody>
+  </table>
+
+    <div class="callout callout-warn" role="alert">
+    <div class="callout-title">⚠️ The Error You Will See: CORS</div>
+    <p>CORS (Cross-Origin Resource Sharing) is the #1 error beginners hit with fetch. It looks like this in the console:</p>
+    <p style="margin-top:8px"><code class="il">Access to fetch at 'https://api.example.com' from origin 'http://localhost' has been blocked by CORS policy.</code></p>
+    <p style="margin-top:12px;margin-bottom:0"><strong>Why it happens:</strong> Browsers block cross-origin requests unless the server explicitly allows them. This is a server-side security setting — you can't fix it from your JavaScript. <strong>What to do:</strong> Use an API that supports CORS (most public APIs do), use a CORS proxy for testing, or build a backend route that makes the request for you. If you're getting CORS errors with your own server, add the correct <code class="il">Access-Control-Allow-Origin</code> response header.</p>
+  </div>
+
+<div class="section-header"><span class="section-icon">📤</span><h2 class="section-title">The Full fetch() Options Object</h2><div class="section-line"></div></div>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — fetch-options.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// fetch() takes a URL and an optional options object</span>
+<span class="sy-kw">const</span> <span class="sy-plain">response</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">"/api/posts"</span>, {
+  <span class="sy-prop">method</span>: <span class="sy-str">"POST"</span>,          <span class="sy-comment">// GET, POST, PUT, PATCH, DELETE</span>
+
+  <span class="sy-prop">headers</span>: {
+    <span class="sy-str">"Content-Type"</span>: <span class="sy-str">"application/json"</span>,  <span class="sy-comment">// tells server we're sending JSON</span>
+    <span class="sy-str">"Authorization"</span>: <span class="sy-str">"Bearer my-token-here"</span>,
+    <span class="sy-str">"Accept"</span>: <span class="sy-str">"application/json"</span>
+  },
+
+  <span class="sy-prop">body</span>: <span class="sy-method">JSON</span>.<span class="sy-fn">stringify</span>({   <span class="sy-comment">// body must be a string — JSON.stringify() it</span>
+    <span class="sy-prop">title</span>: <span class="sy-str">"My New Post"</span>,
+    <span class="sy-prop">body</span>:  <span class="sy-str">"Content here"</span>,
+    <span class="sy-prop">userId</span>: <span class="sy-num">1</span>
+  })
+})
+
+<span class="sy-comment">// GET requests CANNOT have a body — the browser ignores it</span>
+<span class="sy-comment">// POST/PUT/PATCH requests need both Content-Type header AND body</span></pre></div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🌐</span><h2 class="section-title">All Four HTTP Methods in Practice</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>Status codes tell the whole story in two numbers. <code class='il'>200</code> = OK. <code class='il'>201</code> = Created (after a successful POST). <code class='il'>400</code> = your request was wrong. <code class='il'>401</code> = not authenticated. <code class='il'>403</code> = authenticated but not allowed. <code class='il'>404</code> = not found. <code class='il'>500</code> = server error. Reading the status code in the Network tab should be your first debugging step, every time.</p>
+  </div>
+
+</div>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — crud-operations.js</div></div>
+    <div class="code-body"><pre><span class="sy-kw">const</span> <span class="sy-plain">BASE</span> = <span class="sy-str">"https://jsonplaceholder.typicode.com"</span>
+
+<span class="sy-comment">// GET — fetch a post</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">getPost</span>(<span class="sy-plain">id</span>) {
+  <span class="sy-kw">const</span> <span class="sy-plain">res</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">`</span>${<span class="sy-plain">BASE</span>}<span class="sy-str">/posts/</span>${<span class="sy-plain">id</span>}<span class="sy-str">`</span>)
+  <span class="sy-kw">if</span> (!<span class="sy-plain">res</span>.<span class="sy-prop">ok</span>) <span class="sy-kw">throw</span> <span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-plain">res</span>.<span class="sy-prop">status</span>)
+  <span class="sy-kw">return</span> <span class="sy-plain">res</span>.<span class="sy-fn">json</span>()
+}
+
+<span class="sy-comment">// POST — create a new post</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">createPost</span>(<span class="sy-plain">data</span>) {
+  <span class="sy-kw">const</span> <span class="sy-plain">res</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">`</span>${<span class="sy-plain">BASE</span>}<span class="sy-str">/posts`</span>, {
+    <span class="sy-prop">method</span>: <span class="sy-str">"POST"</span>,
+    <span class="sy-prop">headers</span>: { <span class="sy-str">"Content-Type"</span>: <span class="sy-str">"application/json"</span> },
+    <span class="sy-prop">body</span>: <span class="sy-method">JSON</span>.<span class="sy-fn">stringify</span>(<span class="sy-plain">data</span>)
+  })
+  <span class="sy-kw">if</span> (!<span class="sy-plain">res</span>.<span class="sy-prop">ok</span>) <span class="sy-kw">throw</span> <span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-plain">res</span>.<span class="sy-prop">status</span>)
+  <span class="sy-kw">return</span> <span class="sy-plain">res</span>.<span class="sy-fn">json</span>()  <span class="sy-comment">// returns the created resource with its new id</span>
+}
+
+<span class="sy-comment">// PATCH — update only specific fields</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">updatePost</span>(<span class="sy-plain">id</span>, <span class="sy-plain">changes</span>) {
+  <span class="sy-kw">const</span> <span class="sy-plain">res</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">`</span>${<span class="sy-plain">BASE</span>}<span class="sy-str">/posts/</span>${<span class="sy-plain">id</span>}<span class="sy-str">`</span>, {
+    <span class="sy-prop">method</span>: <span class="sy-str">"PATCH"</span>,
+    <span class="sy-prop">headers</span>: { <span class="sy-str">"Content-Type"</span>: <span class="sy-str">"application/json"</span> },
+    <span class="sy-prop">body</span>: <span class="sy-method">JSON</span>.<span class="sy-fn">stringify</span>(<span class="sy-plain">changes</span>)
+  })
+  <span class="sy-kw">if</span> (!<span class="sy-plain">res</span>.<span class="sy-prop">ok</span>) <span class="sy-kw">throw</span> <span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-plain">res</span>.<span class="sy-prop">status</span>)
+  <span class="sy-kw">return</span> <span class="sy-plain">res</span>.<span class="sy-fn">json</span>()
+}
+
+<span class="sy-comment">// DELETE — remove a post</span>
+<span class="sy-kw">async function</span> <span class="sy-fn">deletePost</span>(<span class="sy-plain">id</span>) {
+  <span class="sy-kw">const</span> <span class="sy-plain">res</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">`</span>${<span class="sy-plain">BASE</span>}<span class="sy-str">/posts/</span>${<span class="sy-plain">id</span>}<span class="sy-str">`</span>, { <span class="sy-prop">method</span>: <span class="sy-str">"DELETE"</span> })
+  <span class="sy-kw">if</span> (!<span class="sy-plain">res</span>.<span class="sy-prop">ok</span>) <span class="sy-kw">throw</span> <span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-plain">res</span>.<span class="sy-prop">status</span>)
+  <span class="sy-kw">return</span> <span class="sy-bool">true</span>  <span class="sy-comment">// 204 No Content — nothing to parse</span>
+}</pre></div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🔢</span><h2 class="section-title">HTTP Status Codes You Must Know</h2><div class="section-line"></div></div>
+  <p>Status codes tell you what happened on the server. <span class="il">response.ok</span> is true for codes 200–299. Everything else is a failure — but you often want to know <em>which kind</em> of failure to give the user the right message.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — status-codes.js</div></div>
+    <div class="code-body"><pre><span class="sy-kw">async function</span> <span class="sy-fn">fetchWithStatusHandling</span>(<span class="sy-plain">url</span>) {
+  <span class="sy-kw">const</span> <span class="sy-plain">res</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-plain">url</span>)
+
+  <span class="sy-kw">switch</span> (<span class="sy-plain">res</span>.<span class="sy-prop">status</span>) {
+    <span class="sy-kw">case</span> <span class="sy-num">200</span>: <span class="sy-kw">return</span> <span class="sy-plain">res</span>.<span class="sy-fn">json</span>()                          <span class="sy-comment">// OK</span>
+    <span class="sy-kw">case</span> <span class="sy-num">201</span>: <span class="sy-kw">return</span> <span class="sy-plain">res</span>.<span class="sy-fn">json</span>()                          <span class="sy-comment">// Created</span>
+    <span class="sy-kw">case</span> <span class="sy-num">204</span>: <span class="sy-kw">return</span> <span class="sy-bool">null</span>                                 <span class="sy-comment">// No Content — don't call .json()</span>
+    <span class="sy-kw">case</span> <span class="sy-num">400</span>: <span class="sy-kw">throw</span> <span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-str">"Bad request — check your data"</span>)
+    <span class="sy-kw">case</span> <span class="sy-num">401</span>: <span class="sy-kw">throw</span> <span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-str">"Unauthorized — log in first"</span>)
+    <span class="sy-kw">case</span> <span class="sy-num">403</span>: <span class="sy-kw">throw</span> <span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-str">"Forbidden — you don't have access"</span>)
+    <span class="sy-kw">case</span> <span class="sy-num">404</span>: <span class="sy-kw">throw</span> <span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-str">"Not found"</span>)
+    <span class="sy-kw">case</span> <span class="sy-num">429</span>: <span class="sy-kw">throw</span> <span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-str">"Rate limited — slow down"</span>)
+    <span class="sy-kw">case</span> <span class="sy-num">500</span>: <span class="sy-kw">throw</span> <span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-str">"Server error — not your fault"</span>)
+    <span class="sy-kw">default</span>:  <span class="sy-kw">throw</span> <span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-str">`Unexpected status: </span>${<span class="sy-plain">res</span>.<span class="sy-prop">status</span>}<span class="sy-str">`</span>)
+  }
+}</pre></div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🔧</span><h2 class="section-title">Building a Reusable Fetch Wrapper</h2><div class="section-line"></div></div>
+  <p>In real projects you'll make many fetch calls. Writing out all the headers and error handling every time is verbose and inconsistent. A fetch wrapper centralizes that logic so every call in your app behaves the same way.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — api-client.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// A reusable API client — use this as a starting point for any project</span>
+<span class="sy-kw">const</span> <span class="sy-plain">api</span> = {
+  <span class="sy-prop">baseUrl</span>: <span class="sy-str">"https://jsonplaceholder.typicode.com"</span>,
+  <span class="sy-prop">token</span>: <span class="sy-bool">null</span>,
+
+  <span class="sy-fn">getHeaders</span>() {
+    <span class="sy-kw">const</span> <span class="sy-plain">headers</span> = { <span class="sy-str">"Content-Type"</span>: <span class="sy-str">"application/json"</span> }
+    <span class="sy-kw">if</span> (<span class="sy-kw">this</span>.<span class="sy-prop">token</span>) <span class="sy-plain">headers</span>[<span class="sy-str">"Authorization"</span>] = <span class="sy-str">`Bearer </span>${<span class="sy-kw">this</span>.<span class="sy-prop">token</span>}<span class="sy-str">`</span>
+    <span class="sy-kw">return</span> <span class="sy-plain">headers</span>
+  },
+
+  <span class="sy-kw">async</span> <span class="sy-fn">request</span>(<span class="sy-plain">path</span>, <span class="sy-plain">options</span> = {}) {
+    <span class="sy-kw">const</span> <span class="sy-plain">res</span> = <span class="sy-kw">await</span> <span class="sy-fn">fetch</span>(<span class="sy-str">`</span>${<span class="sy-kw">this</span>.<span class="sy-prop">baseUrl</span>}${<span class="sy-plain">path</span>}<span class="sy-str">`</span>, {
+      ...{<span class="sy-prop">headers</span>: <span class="sy-kw">this</span>.<span class="sy-fn">getHeaders</span>()},
+      ...<span class="sy-plain">options</span>
+    })
+    <span class="sy-kw">if</span> (<span class="sy-plain">res</span>.<span class="sy-prop">status</span> === <span class="sy-num">204</span>) <span class="sy-kw">return</span> <span class="sy-bool">null</span>
+    <span class="sy-kw">if</span> (!<span class="sy-plain">res</span>.<span class="sy-prop">ok</span>) <span class="sy-kw">throw</span> <span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-str">`</span>${<span class="sy-plain">res</span>.<span class="sy-prop">status</span>}<span class="sy-str"> </span>${<span class="sy-plain">res</span>.<span class="sy-prop">statusText</span>}<span class="sy-str">`</span>)
+    <span class="sy-kw">return</span> <span class="sy-plain">res</span>.<span class="sy-fn">json</span>()
+  },
+
+  <span class="sy-fn">get</span>(<span class="sy-plain">path</span>)          { <span class="sy-kw">return</span> <span class="sy-kw">this</span>.<span class="sy-fn">request</span>(<span class="sy-plain">path</span>) },
+  <span class="sy-fn">post</span>(<span class="sy-plain">path</span>, <span class="sy-plain">body</span>)  { <span class="sy-kw">return</span> <span class="sy-kw">this</span>.<span class="sy-fn">request</span>(<span class="sy-plain">path</span>, { <span class="sy-prop">method</span>: <span class="sy-str">"POST"</span>,   <span class="sy-prop">body</span>: <span class="sy-method">JSON</span>.<span class="sy-fn">stringify</span>(<span class="sy-plain">body</span>) }) },
+  <span class="sy-fn">patch</span>(<span class="sy-plain">path</span>, <span class="sy-plain">body</span>) { <span class="sy-kw">return</span> <span class="sy-kw">this</span>.<span class="sy-fn">request</span>(<span class="sy-plain">path</span>, { <span class="sy-prop">method</span>: <span class="sy-str">"PATCH"</span>,  <span class="sy-prop">body</span>: <span class="sy-method">JSON</span>.<span class="sy-fn">stringify</span>(<span class="sy-plain">body</span>) }) },
+  <span class="sy-fn">del</span>(<span class="sy-plain">path</span>)          { <span class="sy-kw">return</span> <span class="sy-kw">this</span>.<span class="sy-fn">request</span>(<span class="sy-plain">path</span>, { <span class="sy-prop">method</span>: <span class="sy-str">"DELETE"</span>                          }) }
+}
+
+<span class="sy-comment">// Clean usage — no more boilerplate everywhere</span>
+<span class="sy-kw">const</span> <span class="sy-plain">post</span>    = <span class="sy-kw">await</span> <span class="sy-plain">api</span>.<span class="sy-fn">get</span>(<span class="sy-str">"/posts/1"</span>)
+<span class="sy-kw">const</span> <span class="sy-plain">created</span> = <span class="sy-kw">await</span> <span class="sy-plain">api</span>.<span class="sy-fn">post</span>(<span class="sy-str">"/posts"</span>, { <span class="sy-prop">title</span>: <span class="sy-str">"New"</span>, <span class="sy-prop">body</span>: <span class="sy-str">"Content"</span>, <span class="sy-prop">userId</span>: <span class="sy-num">1</span> })
+<span class="sy-kw">const</span> <span class="sy-plain">updated</span> = <span class="sy-kw">await</span> <span class="sy-plain">api</span>.<span class="sy-fn">patch</span>(<span class="sy-str">"/posts/1"</span>, { <span class="sy-prop">title</span>: <span class="sy-str">"Updated"</span> })
+<span class="sy-kw">await</span> <span class="sy-plain">api</span>.<span class="sy-fn">del</span>(<span class="sy-str">"/posts/1"</span>)</pre></div>
+  </div>
+  <div class="callout callout-tip">
+    <div class="callout-title">💡 Pro Tip</div>
+    <p>This fetch wrapper pattern — sometimes called an API client or service layer — is how professional codebases work. You define it once, the whole app imports it. When the API changes its base URL or auth scheme, you change it in one place. Put this in your portfolio projects now. Interviewers will notice.</p>
+  </div>
+
+  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body">
+      <p>I sent my first POST request and spent 20 minutes wondering why the server kept rejecting my data. I was sending a perfectly valid JavaScript object. What I didn't know: the body had to be a string. <span class="il" style="font-style:normal;">JSON.stringify()</span> converts an object to a JSON string. Without it, you're literally sending <span class="il" style="font-style:normal;">[object Object]</span> to the server. The server has no idea what to do with that. Neither did I, for about 20 minutes.</p>
+    </div>
+  </div>
+
+  <div class="mini-build">
+    <div class="mini-build-header"><span class="trophy">🔬</span><span class="mb-title">MINI BUILD — Full CRUD With JSONPlaceholder</span></div>
+    <div class="mini-build-body">
+      <p>Build a complete CRUD suite against JSONPlaceholder. This is the closest thing to a real API without needing auth.</p>
+      <div class="goal-label">Exercises:</div>
+      <ul class="step-list">
+        <li><span class="step-num">01</span> GET post #1 and log the title and body</li>
+        <li><span class="step-num">02</span> POST a new post (title, body, userId: 1) — log the response including the new id</li>
+        <li><span class="step-num">03</span> PATCH post #1 to update just the title — confirm the change in the response</li>
+        <li><span class="step-num">04</span> DELETE post #1 — confirm you get a 200 response</li>
+        <li><span class="step-num">05</span> Build the <span class="il">api</span> wrapper object from this post and repeat all four operations through it</li>
+        <li><span class="step-num">06</span> Bonus: make a deliberately bad request (invalid URL) and handle the error with a user-friendly message</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="confidence-close">
+    <div class="cc-icon">⚡</div>
+    <div class="cc-heading">You Can Talk to Real APIs Now</div>
+    <p>GET, POST, PATCH, DELETE — headers, bodies, status codes, and a reusable client pattern. These are production skills. Next: what to do when things go wrong — error handling at scale, retry logic, and graceful degradation.</p>
+  </div>
+  <a class="next-post" href="#"><div><div class="next-label">// next post →</div><div class="next-title">Post 08 — Handling Errors Like a Senior Dev</div></div><div class="next-arrow">→</div></a>
+
+  <nav class="post-nav">
+    <a href="async-06-parallel-sequential.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Parallel vs Sequential</span></a>
+    <a href="async-08-error-handling.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Error Handling</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Objects Explained: Key-Value Pairs, Methods & Destructuring | CodeHerWay</title>
+<meta name="description" content="Key-value pairs, dot notation, destructuring, Object.keys/values/entries, and nested objects. Model real data with JavaScript objects. CodeHerWay.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+
+@media(max-width:375px){main{padding:20px 14px 48px!important;}.code-body{font-size:11.5px;}}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="chw-wrapper">
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Click</span> Post 08 of 15</div>
+  <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+  <span class="series-label">JavaScript, But Make It Click &nbsp;·&nbsp; Post 08 of 15</span>
+  <div class="post-number">Post 08 of 15</div>
+  <h1 class="post-title">JavaScript Objects Explained</h1>
+  <p class="post-subtitle">Arrays have indexes. Objects have names. Learn to model real-world data with key-value pairs.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 10 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Complete Beginners</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+<main id="main-content">
+<div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">Arrays Have Numbers. Objects Have Names.</h2><div class="section-line"></div></div>
+  <p>Arrays are great for ordered lists. But real-world data usually has <em>shape</em> — a user has a name, an email, and an age. A product has a title, a price, and an in-stock status. That structured data needs named properties, not numbered indexes. That's what <span class="highlight">objects</span> are for.</p>
+<div class="section-header"><span class="section-icon">🧱</span><h2 class="section-title">Creating &amp; Accessing Objects</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>The <code class='il'>const</code> rule trips people up with objects. <code class='il'>const user = {}</code> doesn't freeze the object — it just means you can't reassign <code class='il'>user</code> to point at a different object. You can freely add, change, or delete properties inside it. <code class='il'>const</code> protects the binding, not the contents.</p>
+  </div>
+
+</div>  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — objects.js</div></div>
+    <div class="code-body"><span class="sy-kw">const</span> <span class="sy-plain">user</span> = {
+  <span class="sy-prop">name</span>: <span class="sy-str">"Jenna"</span>,
+  <span class="sy-prop">age</span>: <span class="sy-num">27</span>,
+  <span class="sy-prop">isSubscribed</span>: <span class="sy-bool">true</span>,
+  <span class="sy-prop">handle</span>: <span class="sy-str">"@itcodegirl"</span>
+}
+
+<span class="sy-comment">// Dot notation — most common</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">user</span>.<span class="sy-prop">name</span>)    <span class="sy-comment">// "Jenna"</span>
+
+<span class="sy-comment">// Bracket notation — use when the key is dynamic or stored in a variable</span>
+<span class="sy-kw">const</span> <span class="sy-plain">key</span> = <span class="sy-str">"handle"</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">user</span>[<span class="sy-plain">key</span>])    <span class="sy-comment">// "@itcodegirl"</span>
+
+<span class="sy-comment">// Add or update properties after creation</span>
+<span class="sy-comment">// This works even with const — const prevents reassigning the variable,</span>
+<span class="sy-comment">// NOT changing the object's properties. The object is still mutable.</span>
+<span class="sy-plain">user</span>.<span class="sy-prop">location</span> = <span class="sy-str">"Chicago"</span>   <span class="sy-comment">// adds a new property ✅</span>
+<span class="sy-plain">user</span>.<span class="sy-prop">age</span> = <span class="sy-num">28</span>               <span class="sy-comment">// updates existing property ✅</span>
+<span class="sy-comment">// user = { name: "Maya" }  ← this would throw — can't reassign const</span></div>
+  </div>  <div class="callout callout-info">
+    <div class="callout-title">ℹ️ Why const Objects Are Still Mutable</div>
+    <p><code class="il">const</span> prevents you from pointing the variable at a different object. It does not freeze the object itself. <code class="il">user.age = 28</span> is fine. <code class="il">user = {{ name: "Maya" }}</span> throws a TypeError. This surprises almost every beginner.</p>
+  </div><div class="section-header"><span class="section-icon">🔑</span><h2 class="section-title">Iterating Objects: Object.keys, values, entries</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>Object destructuring is worth a full pause. <code class='il'>const { name, age } = user</code> does the same thing as <code class='il'>const name = user.name; const age = user.age</code> — just in one line. You'll use this constantly, especially when working with API responses and function parameters. Get comfortable with it now.</p>
+  </div>
+
+</div>  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — object-methods.js</div></div>
+    <div class="code-body"><span class="sy-kw">const</span> <span class="sy-plain">user</span> = { <span class="sy-prop">name</span>: <span class="sy-str">"Jenna"</span>, <span class="sy-prop">age</span>: <span class="sy-num">27</span>, <span class="sy-prop">city</span>: <span class="sy-str">"Chicago"</span> }
+
+<span class="sy-comment">// Object.keys() — array of property names</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-fn">Object</span>.<span class="sy-fn">keys</span>(<span class="sy-plain">user</span>))    <span class="sy-comment">// ["name", "age", "city"]</span>
+
+<span class="sy-comment">// Object.values() — array of property values</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-fn">Object</span>.<span class="sy-fn">values</span>(<span class="sy-plain">user</span>))  <span class="sy-comment">// ["Jenna", 27, "Chicago"]</span>
+
+<span class="sy-comment">// Object.entries() — array of [key, value] pairs</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-fn">Object</span>.<span class="sy-fn">entries</span>(<span class="sy-plain">user</span>)) <span class="sy-comment">// [["name","Jenna"],["age",27],["city","Chicago"]]</span>
+
+<span class="sy-comment">// Loop over entries — the most common pattern</span>
+<span class="sy-kw">for</span> (<span class="sy-kw">const</span> [<span class="sy-plain">key</span>, <span class="sy-plain">value</span>] <span class="sy-kw">of</span> <span class="sy-fn">Object</span>.<span class="sy-fn">entries</span>(<span class="sy-plain">user</span>)) {
+  <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">`${<span class="sy-plain">key</span>}: ${<span class="sy-plain">value</span>}`</span>)
+  <span class="sy-comment">// "name: Jenna"</span>
+  <span class="sy-comment">// "age: 27"</span>
+  <span class="sy-comment">// "city: Chicago"</span>
+}</div>
+  </div><div class="section-header"><span class="section-icon">🪆</span><h2 class="section-title">Nested Objects &amp; Methods</h2><div class="section-line"></div></div>  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — nested-objects.js</div></div>
+    <div class="code-body"><span class="sy-kw">const</span> <span class="sy-plain">user</span> = {
+  <span class="sy-prop">name</span>: <span class="sy-str">"Jenna"</span>,
+  <span class="sy-prop">links</span>: {
+    <span class="sy-prop">github</span>: <span class="sy-str">"github.com/itcodegirl"</span>,
+    <span class="sy-prop">site</span>: <span class="sy-str">"itcodegirl.com"</span>
+  },
+  <span class="sy-comment">// Method — a function inside an object</span>
+  <span class="sy-comment">// ⚠️ Use regular function syntax, NOT arrow function</span>
+  <span class="sy-comment">// Arrow functions don't bind 'this' — they'd lose access to the object</span>
+  <span class="sy-fn">introduce</span>() {
+    <span class="sy-kw">return</span> <span class="sy-str">`Hi, I'm ${<span class="sy-kw">this</span>.<span class="sy-prop">name</span>}!`</span>
+  }
+}
+
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">user</span>.<span class="sy-prop">links</span>.<span class="sy-prop">github</span>)   <span class="sy-comment">// "github.com/itcodegirl"</span>
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">user</span>.<span class="sy-fn">introduce</span>())    <span class="sy-comment">// "Hi, I'm Jenna!"</span>
+
+<span class="sy-comment">// The most common pattern — array of objects</span>
+<span class="sy-kw">const</span> <span class="sy-plain">products</span> = [
+  { <span class="sy-prop">id</span>: <span class="sy-num">1</span>, <span class="sy-prop">name</span>: <span class="sy-str">"Hoodie"</span>, <span class="sy-prop">price</span>: <span class="sy-num">49</span> },
+  { <span class="sy-prop">id</span>: <span class="sy-num">2</span>, <span class="sy-prop">name</span>: <span class="sy-str">"Sticker Pack"</span>, <span class="sy-prop">price</span>: <span class="sy-num">9</span> },
+]
+<span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">products</span>[<span class="sy-num">0</span>].<span class="sy-prop">name</span>)   <span class="sy-comment">// "Hoodie"</span></div>
+  </div>  <div class="callout callout-warn">
+    <div class="callout-title">⚠️ Never Use Arrow Functions as Object Methods</div>
+    <p>Arrow functions don't have their own <code class="il">this</span> — they inherit <code class="il">this</span> from the surrounding scope, which inside an object literal is usually the global object or <code class="il">undefined</span>. Always use regular function syntax (<code class="il">introduce() {{}}</span> or <code class="il">introduce: function() {{}}</span>) for object methods.</p>
+  </div>  <div class="callout callout-mindset">
+    <div class="callout-title">🧠 Array of Objects Is Everywhere</div>
+    <p>The pattern of an <strong>array of objects</strong> is how almost all real data is structured — API responses, database results, React state. Get comfortable with <code class="il">items[0].property</span> and <code class="il">items.map(item => item.name)</span>. You'll write these hundreds of times.</p>
+  </div>  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body"><p>I avoided objects for way too long because they looked complicated. I kept storing everything in separate variables — <span class="il" style="font-style:normal">userName</span>, <span class="il" style="font-style:normal">userAge</span>, <span class="il" style="font-style:normal">userEmail</span> — instead of just making a <span class="il" style="font-style:normal">user</span> object. Everything clicked the day I fetched data from an API and realized the entire response was just objects nested inside arrays.</p></div>
+  </div>  <div class="mini-build">
+    <div class="mini-build-header"><span class="trophy">🏆</span><span class="mb-title">MINI BUILD — Developer Profile Object</span></div>
+    <div class="mini-build-body"><p>Build a complete developer profile as an object with nested data, methods, and iteration.</p><div class="goal-label">Your steps:</div><ul class="step-list"><li><span class="step-num">01</span> Create a <code class="il">const developer</span> object with: name, location, yearsOfExperience, isJobHunting</li>
+<li><span class="step-num">02</span> Add a nested <code class="il">skills</span> object with: languages (array), frameworks (array)</li>
+<li><span class="step-num">03</span> Add an <code class="il">introduce()</span> method (regular function, NOT arrow) that returns a string using <code class="il">this.name</span></li>
+<li><span class="step-num">04</span> Log the name using dot notation, and a skill using bracket notation</li>
+<li><span class="step-num">05</span> Use <code class="il">Object.keys()</span> and <code class="il">Object.entries()</span> to iterate and log all properties</li>
+<li><span class="step-num">06</span> Add a new property after creation: <code class="il">developer.github = "your-handle"</span> — confirm <code class="il">const</span> doesn't prevent this</li></ul></div>
+  </div>  <div class="confidence-close">
+    <div class="cc-icon">💛</div>
+    <div class="cc-heading">You Can Now Model Real-World Data</div>
+    <p>Objects are the backbone of JavaScript data. You understand properties, dot notation, why const objects are mutable, Object.keys/values/entries, methods, and the array-of-objects pattern. Next: the DOM — where JavaScript finally touches your HTML page.</p>
+  </div>  <a class="next-post" href="js-click-post09-the-dom.html">
+    <div><div class="next-label">// next post →</div><div class="next-title">Post 09 — The DOM: Where JS Finally Meets HTML</div></div>
+    <div class="next-arrow">→</div>
+  </a>
+
+  <nav class="post-nav">
+    <a href="click-07-arrays.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Arrays</span></a>
+    <a href="click-09-the-dom.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">The DOM</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+</div>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

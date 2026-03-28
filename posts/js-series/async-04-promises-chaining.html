@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript Promise Chaining: .then(), Promise.all() & Static Methods | CodeHerWay</title>
+<meta name="description" content="Promise chaining, error propagation, Promise.all, Promise.allSettled, and the full static method toolkit. CodeHerWay async JavaScript.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.method-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:28px 0;}
+@media(max-width:600px){.method-grid{grid-template-columns:1fr;}}
+.method-card{background:var(--bg-card);border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,.07);}
+.method-name{font-family:'Fira Code',monospace;font-size:14px;font-weight:700;color:var(--accent);margin-bottom:6px;}
+.method-when{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;}
+.method-desc{font-size:13px;color:var(--text-secondary);line-height:1.6;}
+.method-card.m-all{border-top:3px solid var(--green-tip);}
+.method-card.m-all .method-name{color:var(--green-tip);}
+.method-card.m-settled{border-top:3px solid var(--sky-blue);}
+.method-card.m-settled .method-name{color:var(--sky-blue);}
+.method-card.m-race{border-top:3px solid var(--gold);}
+.method-card.m-race .method-name{color:var(--gold);}
+.method-card.m-any{border-top:3px solid var(--pink);}
+.method-card.m-any .method-name{color:var(--pink);}
+.cy-item.open .cy-toggle{transform: rotate(180deg);}
+.cy-item.open .cy-answer{display: block;}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<div class="post-hero">
+  <div class="post-label"><span class="series-tag">JS, But Make It Async</span> Post 04 of 16</div>
+  <div class="chw-logo"><span class="l-bracket">&lt;</span><span class="l-code">Code</span><span class="l-bracket">&gt;</span><span class="l-her">Her</span><span class="l-close">&lt;/</span><span class="l-way">Way</span><span class="l-bracket">&gt;</span></div>
+  <div class="series-line"><span class="series-label">⚡ JavaScript, But Make It Async</span><span class="post-number">Post 04 of 18</span></div>
+  <h1 class="post-title">JavaScript Promise Chaining</h1>
+  <p class="post-subtitle">How to run Promises in sequence, pass values through a chain, and coordinate multiple Promises running in parallel.</p>
+  <div class="post-tags">
+    <span class="tag"><span class="tag-icon">⏱</span> 12 min read</span>
+    <span class="tag"><span class="tag-icon">🎯</span> Intermediate</span>
+    <span class="tag"><span class="tag-icon">🛠</span> Mini Build Included</span>
+  </div>
+</div>
+<main>
+  <div class="back-ref"><span class="br-arrow">←</span> Builds on <strong>JS Async — Post 03</strong>: Promises, Part 1: The Basics</div>
+
+  <div class="section-header"><span class="section-icon">💬</span><h2 class="section-title">Why .then() Returns a Promise</h2><div class="section-line"></div></div>
+  <p>In Post 03 you learned the basic Promise API. Now we go deeper. The most important thing to understand about <span class="il">.then()</span> is that it <em>always returns a new Promise</em>. That's what makes chaining possible — and it's the core mechanic that replaced callback hell with clean, flat, readable code.</p>
+  <p>When you return a value from inside <span class="il">.then()</span>, that value becomes the resolved value of the next Promise in the chain. When you return another Promise, the chain waits for it to settle before continuing.</p>
+
+  <div class="section-header"><span class="section-icon">🔗</span><h2 class="section-title">Chaining .then()</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p>The key to understanding chaining is this: <code class='il'>.then()</code> always returns a new Promise. Whatever you return from inside <code class='il'>.then()</code> becomes the resolved value of that new Promise. Return nothing → <code class='il'>undefined</code> gets passed down. Return a value → that value gets passed down. Return another Promise → the chain waits for it. Once you internalize this, chains stop feeling like magic.</p>
+  </div>
+
+</div>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — chaining.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// Each .then() receives the return value of the previous one</span>
+<span class="sy-method">Promise</span>.<span class="sy-fn">resolve</span>(<span class="sy-num">1</span>)
+  .<span class="sy-fn">then</span>(<span class="sy-plain">n</span> => <span class="sy-plain">n</span> + <span class="sy-num">1</span>)       <span class="sy-comment">// 2</span>
+  .<span class="sy-fn">then</span>(<span class="sy-plain">n</span> => <span class="sy-plain">n</span> * <span class="sy-num">10</span>)      <span class="sy-comment">// 20</span>
+  .<span class="sy-fn">then</span>(<span class="sy-plain">n</span> => <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">n</span>))  <span class="sy-comment">// 20</span>
+
+<span class="sy-comment">// Real-world chain — fetch → parse → transform → use</span>
+<span class="sy-fn">fetch</span>(<span class="sy-str">"https://jsonplaceholder.typicode.com/users/1"</span>)
+  .<span class="sy-fn">then</span>(<span class="sy-plain">response</span> => {
+    <span class="sy-kw">if</span> (!<span class="sy-plain">response</span>.<span class="sy-prop">ok</span>) <span class="sy-kw">throw</span> <span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-plain">response</span>.<span class="sy-prop">status</span>)
+    <span class="sy-kw">return</span> <span class="sy-plain">response</span>.<span class="sy-fn">json</span>()          <span class="sy-comment">// returns a Promise — chain waits</span>
+  })
+  .<span class="sy-fn">then</span>(<span class="sy-plain">user</span> => {
+    <span class="sy-kw">return</span> { <span class="sy-prop">name</span>: <span class="sy-plain">user</span>.<span class="sy-prop">name</span>, <span class="sy-prop">city</span>: <span class="sy-plain">user</span>.<span class="sy-prop">address</span>.<span class="sy-prop">city</span> }  <span class="sy-comment">// transform</span>
+  })
+  .<span class="sy-fn">then</span>(<span class="sy-plain">simplified</span> => <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">simplified</span>))
+  .<span class="sy-fn">catch</span>(<span class="sy-plain">err</span> => <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Failed:"</span>, <span class="sy-plain">err</span>.<span class="sy-prop">message</span>))</pre></div>
+  </div>
+  <div class="callout callout-mindset">
+    <div class="callout-title">🧠 Mindset Shift</div>
+    <p>Think of a Promise chain as a pipeline. Data enters at the top and flows through each <span class="il">.then()</span> stage, getting transformed at each step. Each stage only runs after the previous one completes. One <span class="il">.catch()</span> at the bottom catches any error from any stage above it — you don't repeat error handling at every level. That was the whole point.</p>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🛑</span><h2 class="section-title">Error Propagation in Chains</h2><div class="section-line"></div></div>
+  <p>When an error is thrown (or a Promise rejects) anywhere in the chain, it skips all remaining <span class="il">.then()</span> handlers and jumps straight to the nearest <span class="il">.catch()</span>. This is the power of centralized error handling.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — error-propagation.js</div></div>
+    <div class="code-body"><pre><span class="sy-method">Promise</span>.<span class="sy-fn">resolve</span>(<span class="sy-str">"start"</span>)
+  .<span class="sy-fn">then</span>(<span class="sy-plain">val</span> => {
+    <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Step 1:"</span>, <span class="sy-plain">val</span>)   <span class="sy-comment">// runs ✓</span>
+    <span class="sy-kw">throw</span> <span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-str">"Something broke"</span>)
+  })
+  .<span class="sy-fn">then</span>(<span class="sy-plain">val</span> => {
+    <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Step 2:"</span>, <span class="sy-plain">val</span>)   <span class="sy-comment">// SKIPPED — error in step 1</span>
+  })
+  .<span class="sy-fn">then</span>(<span class="sy-plain">val</span> => {
+    <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Step 3:"</span>, <span class="sy-plain">val</span>)   <span class="sy-comment">// SKIPPED</span>
+  })
+  .<span class="sy-fn">catch</span>(<span class="sy-plain">err</span> => {
+    <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"Caught:"</span>, <span class="sy-plain">err</span>.<span class="sy-prop">message</span>)  <span class="sy-comment">// "Caught: Something broke" ✓</span>
+  })
+  .<span class="sy-fn">then</span>(() => {
+    <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"After catch — chain continues"</span>) <span class="sy-comment">// runs ✓</span>
+  })</pre></div>
+  </div>
+  <div class="callout callout-tip">
+    <div class="callout-title">💡 Pro Tip</div>
+    <p>You can recover from errors mid-chain. If your <span class="il">.catch()</span> returns a value instead of re-throwing, the chain continues from there as if nothing happened. This lets you provide fallback data: <span class="il">.catch(() => defaultUser)</span> — the next <span class="il">.then()</span> gets <span class="il">defaultUser</span> and keeps going.</p>
+  </div>
+
+  <div class="section-header"><span class="section-icon">⚡</span><h2 class="section-title">Promise.all — Run in Parallel, Wait for All</h2><div class="section-line"></div>
+  <div class="pause-moment">
+    <div class="pm-label">⏸ Pause &amp; Process</div>
+    <p><code class='il'>Promise.all()</code> vs <code class='il'>Promise.allSettled()</code> is a real architectural decision. Use <code class='il'>Promise.all()</code> when all requests must succeed (one failure means the whole operation failed). Use <code class='il'>Promise.allSettled()</code> when you want all results regardless — you can handle each success and failure individually. For most UI dashboards, <code class='il'>allSettled()</code> gives a better user experience.</p>
+  </div>
+
+</div>
+  <p>The most important static composition method. Pass an array of Promises, get back a single Promise that resolves when <em>all</em> of them resolve — with an array of all their values in order. If <em>any</em> one rejects, the whole thing rejects immediately.</p>
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — promise-all.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// Three fetches running in parallel</span>
+<span class="sy-kw">const</span> <span class="sy-plain">userReq</span>  = <span class="sy-fn">fetch</span>(<span class="sy-str">"https://jsonplaceholder.typicode.com/users/1"</span>)
+<span class="sy-kw">const</span> <span class="sy-plain">postReq</span>  = <span class="sy-fn">fetch</span>(<span class="sy-str">"https://jsonplaceholder.typicode.com/posts/1"</span>)
+<span class="sy-kw">const</span> <span class="sy-plain">albumReq</span> = <span class="sy-fn">fetch</span>(<span class="sy-str">"https://jsonplaceholder.typicode.com/albums/1"</span>)
+
+<span class="sy-method">Promise</span>.<span class="sy-fn">all</span>([<span class="sy-plain">userReq</span>, <span class="sy-plain">postReq</span>, <span class="sy-plain">albumReq</span>])
+  .<span class="sy-fn">then</span>(([<span class="sy-plain">userRes</span>, <span class="sy-plain">postRes</span>, <span class="sy-plain">albumRes</span>]) => {
+    <span class="sy-comment">// All three destructured in order — all Responses</span>
+    <span class="sy-kw">return</span> <span class="sy-method">Promise</span>.<span class="sy-fn">all</span>([
+      <span class="sy-plain">userRes</span>.<span class="sy-fn">json</span>(),
+      <span class="sy-plain">postRes</span>.<span class="sy-fn">json</span>(),
+      <span class="sy-plain">albumRes</span>.<span class="sy-fn">json</span>()
+    ])
+  })
+  .<span class="sy-fn">then</span>(([<span class="sy-plain">user</span>, <span class="sy-plain">post</span>, <span class="sy-plain">album</span>]) => {
+    <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">user</span>.<span class="sy-prop">name</span>, <span class="sy-plain">post</span>.<span class="sy-prop">title</span>, <span class="sy-plain">album</span>.<span class="sy-prop">title</span>)
+  })
+  .<span class="sy-fn">catch</span>(<span class="sy-plain">err</span> => <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">"One failed:"</span>, <span class="sy-plain">err</span>))
+
+<span class="sy-comment">// Total time = slowest request, not sum of all requests</span>
+<span class="sy-comment">// Sequential would take: req1 + req2 + req3</span>
+<span class="sy-comment">// Parallel takes:        max(req1, req2, req3)  ← much faster</span></pre></div>
+  </div>
+
+  <div class="section-header"><span class="section-icon">🗂️</span><h2 class="section-title">The Full Static Method Toolkit</h2><div class="section-line"></div></div>
+  <div class="method-grid">
+    <div class="method-card m-all">
+      <div class="method-name">Promise.all()</div>
+      <div class="method-when">Use when: all must succeed</div>
+      <div class="method-desc">Resolves when ALL Promises fulfill. Rejects immediately if ANY rejects. Returns array of all values.</div>
+    </div>
+    <div class="method-card m-settled">
+      <div class="method-name">Promise.allSettled()</div>
+      <div class="method-when">Use when: some may fail</div>
+      <div class="method-desc">Waits for ALL to settle (fulfilled or rejected). Never rejects. Returns array of result objects with status.</div>
+    </div>
+    <div class="method-card m-race">
+      <div class="method-name">Promise.race()</div>
+      <div class="method-when">Use when: fastest wins</div>
+      <div class="method-desc">Resolves or rejects as soon as the FIRST Promise settles. Used for timeouts and fallbacks.</div>
+    </div>
+    <div class="method-card m-any">
+      <div class="method-name">Promise.any()</div>
+      <div class="method-when">Use when: one success is enough</div>
+      <div class="method-desc">Resolves with the first FULFILLED value. Only rejects if ALL reject. Ignores individual rejections.</div>
+    </div>
+  </div>
+
+  <div class="code-window">
+    <div class="code-titlebar"><div class="dots"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div></div><div class="code-lang">JavaScript — composition-methods.js</div></div>
+    <div class="code-body"><pre><span class="sy-comment">// Promise.allSettled — when some might fail, you still want all results</span>
+<span class="sy-kw">const</span> <span class="sy-plain">requests</span> = [
+  <span class="sy-fn">fetch</span>(<span class="sy-str">"/api/users"</span>),
+  <span class="sy-fn">fetch</span>(<span class="sy-str">"/api/broken-endpoint"</span>),
+  <span class="sy-fn">fetch</span>(<span class="sy-str">"/api/posts"</span>)
+]
+
+<span class="sy-method">Promise</span>.<span class="sy-fn">allSettled</span>(<span class="sy-plain">requests</span>).<span class="sy-fn">then</span>(<span class="sy-plain">results</span> => {
+  <span class="sy-plain">results</span>.<span class="sy-fn">forEach</span>((<span class="sy-plain">result</span>, <span class="sy-plain">i</span>) => {
+    <span class="sy-kw">if</span> (<span class="sy-plain">result</span>.<span class="sy-prop">status</span> === <span class="sy-str">"fulfilled"</span>) {
+      <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">`Request </span>${<span class="sy-plain">i</span>}<span class="sy-str"> succeeded`</span>)
+    } <span class="sy-kw">else</span> {
+      <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-str">`Request </span>${<span class="sy-plain">i</span>}<span class="sy-str"> failed:`</span>, <span class="sy-plain">result</span>.<span class="sy-prop">reason</span>)
+    }
+  })
+})
+
+<span class="sy-comment">// Promise.race — add a timeout to any async operation</span>
+<span class="sy-kw">function</span> <span class="sy-fn">withTimeout</span>(<span class="sy-plain">promise</span>, <span class="sy-plain">ms</span>) {
+  <span class="sy-kw">const</span> <span class="sy-plain">timeout</span> = <span class="sy-kw">new</span> <span class="sy-fn">Promise</span>((_, <span class="sy-plain">reject</span>) =>
+    <span class="sy-fn">setTimeout</span>(() => <span class="sy-fn">reject</span>(<span class="sy-kw">new</span> <span class="sy-fn">Error</span>(<span class="sy-str">`Timed out after </span>${<span class="sy-plain">ms</span>}<span class="sy-str">ms`</span>)), <span class="sy-plain">ms</span>)
+  )
+  <span class="sy-kw">return</span> <span class="sy-method">Promise</span>.<span class="sy-fn">race</span>([<span class="sy-plain">promise</span>, <span class="sy-plain">timeout</span>])
+}
+
+<span class="sy-fn">withTimeout</span>(<span class="sy-fn">fetch</span>(<span class="sy-str">"/api/slow-endpoint"</span>), <span class="sy-num">3000</span>)
+  .<span class="sy-fn">then</span>(<span class="sy-plain">res</span> => <span class="sy-plain">res</span>.<span class="sy-fn">json</span>())
+  .<span class="sy-fn">catch</span>(<span class="sy-plain">err</span> => <span class="sy-method">console</span>.<span class="sy-fn">log</span>(<span class="sy-plain">err</span>.<span class="sy-prop">message</span>))  <span class="sy-comment">// "Timed out after 3000ms"</span></pre></div>
+  </div>
+  <div class="callout callout-info">
+    <div class="callout-title">ℹ️ allSettled vs all — Know Which to Reach For</div>
+    <p>Use <span class="il">Promise.all()</span> when every request must succeed for the feature to work — like loading required data before rendering a page. Use <span class="il">Promise.allSettled()</span> when you want to show partial results even if some fail — like a dashboard where widgets load independently and a broken widget shouldn't hide the others.</p>
+  </div>
+
+  <div class="devfession">
+    <div class="devfession-header"><span>⚡</span> DEV_FESSION</div>
+    <div class="devfession-body">
+      <p>I used <span class="il" style="font-style:normal;">Promise.all()</span> for a dashboard that loaded four independent widgets. One widget's endpoint was flaky and would occasionally fail — and when it did, it took the whole dashboard down with it. Every widget. Gone. I switched to <span class="il" style="font-style:normal;">Promise.allSettled()</span> in about two minutes and suddenly flaky widgets just showed an error state while the other three loaded perfectly. Knowing which tool to reach for is half the job.</p>
+    </div>
+  </div>
+
+  <div class="mini-build">
+    <div class="mini-build-header"><span class="trophy">🔬</span><span class="mb-title">MINI BUILD — Parallel Fetch Dashboard</span></div>
+    <div class="mini-build-body">
+      <p>Fetch three different resources simultaneously using Promise composition methods. Practice the difference between <span class="il">Promise.all</span> and <span class="il">Promise.allSettled</span> with real network requests.</p>
+      <div class="goal-label">Exercises:</div>
+      <ul class="step-list">
+        <li><span class="step-num">01</span> Use <span class="il">Promise.all()</span> to fetch a user, a post, and an album from JSONPlaceholder simultaneously</li>
+        <li><span class="step-num">02</span> Destructure the results array and log each item's title/name</li>
+        <li><span class="step-num">03</span> Replace one URL with a broken endpoint — confirm <span class="il">Promise.all()</span> rejects entirely</li>
+        <li><span class="step-num">04</span> Switch to <span class="il">Promise.allSettled()</span> — confirm you still get the two successful results</li>
+        <li><span class="step-num">05</span> Build the <span class="il">withTimeout(promise, ms)</span> utility from this post using <span class="il">Promise.race()</span></li>
+        <li><span class="step-num">06</span> Bonus: use <span class="il">Promise.any()</span> to fetch from two endpoints and use whichever responds first</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="confidence-close">
+    <div class="cc-icon">⚡</div>
+    <div class="cc-heading">You Can Now Orchestrate Promises Like a Pro</div>
+    <p>Chaining, error propagation, parallel execution, timeout patterns — this is the full Promise toolkit. In interviews, these four static methods come up constantly. Know them cold. Next: async/await — the syntax that makes all of this even cleaner.</p>
+  </div>
+  <a class="next-post" href="#"><div><div class="next-label">// next post →</div><div class="next-title">Post 05 — async/await: The Full Picture</div></div><div class="next-arrow">→</div></a>
+
+  <nav class="post-nav">
+    <a href="async-03-promises-basics.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Promises Basics</span></a>
+    <a href="async-05-async-await.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">async/await</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+
+<script>
+  document.querySelectorAll('.cy-question').forEach(function(q) {
+    q.addEventListener('click', function() {
+      q.closest('.cy-item').classList.toggle('open');
+    });
+  });
+</script>
+
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML5 Media — Video, Audio & Embeds | CodeHerWay</title>
+<meta name="description" content="Learn to add video, audio, and embeds to your HTML — the video and audio tags, source element, iframes, and how to embed YouTube, Google Maps, and more.">
+<link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.media-grid{display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 32px 0;}
+.media-card{background: var(--bg-code); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 24px; transition: border-color 0.3s, transform 0.3s;}
+.media-card:hover{transform: translateY(-2px);}
+.media-card:nth-child(1){border-color: rgba(255,105,180,0.2);}
+.media-card:nth-child(1):hover{border-color: var(--pink);}
+.media-card:nth-child(2){border-color: rgba(105,210,231,0.2);}
+.media-card:nth-child(2):hover{border-color: var(--sky-blue);}
+.media-card:nth-child(3){border-color: rgba(125,255,179,0.2);}
+.media-card:nth-child(3):hover{border-color: var(--mint-green);}
+.media-card:nth-child(4){border-color: rgba(180,74,255,0.2);}
+.media-card:nth-child(4):hover{border-color: var(--purple);}
+.mc-icon{font-size: 32px; margin-bottom: 10px;}
+.mc-name{font-family: 'Fira Code', monospace; font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 4px;}
+.mc-type{font-family: 'Fira Code', monospace; font-size: 12px; color: var(--text-muted); margin-bottom: 10px;}
+.mc-desc{font-size: 14px; color: var(--text-secondary); line-height: 1.65;}
+.attr-chips{display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 28px;}
+.attr-chip{font-family: 'Fira Code', monospace; font-size: 13px; padding: 6px 14px; border-radius: 8px; background: var(--bg-code); border: 1px solid rgba(255,255,255,0.08); color: var(--text-secondary);}
+.attr-chip.important{border-color: rgba(255,105,180,0.25); color: var(--pink);}
+.attr-chip.caution{border-color: rgba(255,107,107,0.25); color: var(--coral);}
+.embed-mock{background: var(--bg-code); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; overflow: hidden; margin: 28px 0;}
+.embed-mock-bar{padding: 10px 16px; background: rgba(255,255,255,0.03); border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 8px;}
+.embed-mock-bar .em-icon{font-size: 16px;}
+.embed-mock-bar .em-label{font-family: 'Fira Code', monospace; font-size: 12px; color: var(--text-muted);}
+.embed-mock-body{aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; text-align: center; padding: 28px;}
+.embed-mock-body .em-big-icon{font-size: 48px; margin-bottom: 12px;}
+.embed-mock-body .em-title{font-size: 16px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px;}
+.embed-mock-body .em-sub{font-size: 13px; color: var(--text-muted);}
+@media(max-width:640px){.media-grid { grid-template-columns: 1fr; }}
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+<!-- ═══════ HERO ═══════ -->
+<section class="hero">
+  <div class="post-label"><span class="series-tag">HTML Fundamentals</span> Post 15 of 20</div>
+  <div class="post-number">Post 15 · HTML Fundamentals</div>
+  <h1>HTML5 Media:<br><span class="gradient-text">Video, Audio &amp; Embeds</span></h1>
+  <p class="hero-sub">No plugins. No Flash. HTML5 gives you native video, audio, and the ability to embed anything from YouTube to Google Maps — all with a few tags.</p>
+  <div class="tag-row">
+    <span class="tag html">#HTML</span>
+    <span class="tag html">#Media</span>
+    <span class="tag">#HTML5</span>
+    <span class="tag">10 min read</span>
+  </div>
+</section>
+
+<!-- ═══════ ARTICLE ═══════ -->
+<main class="article">
+
+  <!-- ── INTRO ── -->
+  <p>There was a time when adding video to a website required Flash Player, three browser plugins, and a prayer. HTML5 changed all of that. Now you can embed video, audio, and content from other sites using native HTML elements — no plugins, no hacks, no dependencies.</p>
+
+  <p>This post covers the four media-related elements you need to know: <span class="il">&lt;video&gt;</span>, <span class="il">&lt;audio&gt;</span>, <span class="il">&lt;source&gt;</span>, and <span class="il">&lt;iframe&gt;</span>. Plus how to embed content from YouTube, Google Maps, and other platforms.</p>
+
+  <!-- ── THE FOUR ELEMENTS ── -->
+  <h2>The Four Media Elements</h2>
+
+  <div class="media-grid">
+    <div class="media-card">
+      <div class="mc-icon">🎬</div>
+      <div class="mc-name">&lt;video&gt;</div>
+      <div class="mc-type">Self-hosted video</div>
+      <div class="mc-desc">Plays video files you host on your own server. Supports controls, autoplay, looping, poster images, and multiple formats via &lt;source&gt;.</div>
+    </div>
+    <div class="media-card">
+      <div class="mc-icon">🎵</div>
+      <div class="mc-name">&lt;audio&gt;</div>
+      <div class="mc-type">Self-hosted audio</div>
+      <div class="mc-desc">Plays audio files — podcasts, music, sound effects. Same attribute pattern as video but renders as a compact player bar.</div>
+    </div>
+    <div class="media-card">
+      <div class="mc-icon">🔄</div>
+      <div class="mc-name">&lt;source&gt;</div>
+      <div class="mc-type">Format fallback</div>
+      <div class="mc-desc">Goes inside &lt;video&gt; or &lt;audio&gt;. Lets you provide multiple file formats so the browser picks the one it supports.</div>
+    </div>
+    <div class="media-card">
+      <div class="mc-icon">🪟</div>
+      <div class="mc-name">&lt;iframe&gt;</div>
+      <div class="mc-type">External embed</div>
+      <div class="mc-desc">Embeds another webpage inside yours — YouTube videos, Google Maps, CodePen demos, Spotify players, and more.</div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── VIDEO ── -->
+  <h2>&lt;video&gt; — Self-Hosted Video</h2>
+
+  <p>The <span class="il">&lt;video&gt;</span> element plays video files that you host on your own server or file system. It gives you full control over the player — controls, autoplay behavior, poster images, looping, and more.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- Basic video with controls --&gt;</span>
+<span class="t">&lt;video</span> <span class="a">controls</span> <span class="a">width</span>=<span class="s">"640"</span><span class="t">&gt;</span>
+  <span class="t">&lt;source</span> <span class="a">src</span>=<span class="s">"videos/tutorial.mp4"</span>
+          <span class="a">type</span>=<span class="s">"video/mp4"</span><span class="t">&gt;</span>
+  <span class="t">&lt;source</span> <span class="a">src</span>=<span class="s">"videos/tutorial.webm"</span>
+          <span class="a">type</span>=<span class="s">"video/webm"</span><span class="t">&gt;</span>
+  Your browser doesn't support video.
+<span class="t">&lt;/video&gt;</span>
+
+<span class="c">&lt;!-- Video with poster image (thumbnail) --&gt;</span>
+<span class="t">&lt;video</span> <span class="a">controls</span>
+       <span class="a">poster</span>=<span class="s">"images/video-thumb.jpg"</span>
+       <span class="a">width</span>=<span class="s">"640"</span><span class="t">&gt;</span>
+  <span class="t">&lt;source</span> <span class="a">src</span>=<span class="s">"videos/demo.mp4"</span>
+          <span class="a">type</span>=<span class="s">"video/mp4"</span><span class="t">&gt;</span>
+<span class="t">&lt;/video&gt;</span>
+
+<span class="c">&lt;!-- Muted autoplay background video --&gt;</span>
+<span class="t">&lt;video</span> <span class="a">autoplay</span> <span class="a">muted</span> <span class="a">loop</span> <span class="a">playsinline</span><span class="t">&gt;</span>
+  <span class="t">&lt;source</span> <span class="a">src</span>=<span class="s">"videos/hero-bg.mp4"</span>
+          <span class="a">type</span>=<span class="s">"video/mp4"</span><span class="t">&gt;</span>
+<span class="t">&lt;/video&gt;</span>
+    </div>
+  </div>
+
+  <p>Key attributes for <span class="il">&lt;video&gt;</span>:</p>
+
+  <div class="attr-chips">
+    <span class="attr-chip important">controls</span>
+    <span class="attr-chip">width</span>
+    <span class="attr-chip">height</span>
+    <span class="attr-chip important">poster</span>
+    <span class="attr-chip caution">autoplay</span>
+    <span class="attr-chip">muted</span>
+    <span class="attr-chip">loop</span>
+    <span class="attr-chip">playsinline</span>
+    <span class="attr-chip">preload</span>
+  </div>
+
+  <div class="callout warn">
+    <div class="callout-title">⚠️ Autoplay Rules</div>
+    <p>Modern browsers <strong>block autoplay with sound</strong>. If you use <span class="il">autoplay</span>, you must also use <span class="il">muted</span> — otherwise the browser silently ignores it. This is a user experience decision by browsers, and it's a good one. Nobody wants a website screaming at them on page load.</p>
+    <p>Autoplay + muted is perfect for background hero videos. For anything the user should actively watch, use <span class="il">controls</span> instead and let them press play.</p>
+  </div>
+
+  <h3>Why &lt;source&gt; Matters</h3>
+
+  <p>Different browsers support different video formats. By providing multiple <span class="il">&lt;source&gt;</span> elements, the browser picks the first format it understands. MP4 has the widest support, but WebM offers better compression. Include both to cover all bases.</p>
+
+  <p>The text between the opening and closing <span class="il">&lt;video&gt;</span> tags ("Your browser doesn't support video.") is the <span class="key">fallback content</span> — it only shows if the browser doesn't support the video element at all. Extremely rare today, but good practice.</p>
+
+  <div class="sep"></div>
+
+  <!-- ── AUDIO ── -->
+  <h2>&lt;audio&gt; — Self-Hosted Audio</h2>
+
+  <p>The <span class="il">&lt;audio&gt;</span> element works almost identically to <span class="il">&lt;video&gt;</span> — same pattern, same <span class="il">&lt;source&gt;</span> fallbacks, same attributes. The difference is that it renders as a compact audio player bar instead of a video rectangle.</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- Basic audio player --&gt;</span>
+<span class="t">&lt;audio</span> <span class="a">controls</span><span class="t">&gt;</span>
+  <span class="t">&lt;source</span> <span class="a">src</span>=<span class="s">"audio/podcast-ep1.mp3"</span>
+          <span class="a">type</span>=<span class="s">"audio/mpeg"</span><span class="t">&gt;</span>
+  <span class="t">&lt;source</span> <span class="a">src</span>=<span class="s">"audio/podcast-ep1.ogg"</span>
+          <span class="a">type</span>=<span class="s">"audio/ogg"</span><span class="t">&gt;</span>
+  Your browser doesn't support audio.
+<span class="t">&lt;/audio&gt;</span>
+
+<span class="c">&lt;!-- With figure/figcaption for context --&gt;</span>
+<span class="t">&lt;figure&gt;</span>
+  <span class="t">&lt;figcaption&gt;</span>Episode 1: Why I Started Coding<span class="t">&lt;/figcaption&gt;</span>
+  <span class="t">&lt;audio</span> <span class="a">controls</span> <span class="a">src</span>=<span class="s">"audio/ep1.mp3"</span><span class="t">&gt;&lt;/audio&gt;</span>
+<span class="t">&lt;/figure&gt;</span>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">💡 When to Self-Host vs Embed</div>
+    <p><strong>Self-host</strong> (using <span class="il">&lt;video&gt;</span> and <span class="il">&lt;audio&gt;</span>) when you need full control over the player, the files are small, or you're building something like a background video or sound effect. <strong>Embed</strong> (using <span class="il">&lt;iframe&gt;</span>) when the content lives on another platform — YouTube, Spotify, SoundCloud. Embedding offloads bandwidth and gives you the platform's player for free.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── IFRAME ── -->
+  <h2>&lt;iframe&gt; — Embedding External Content</h2>
+
+  <p>The <span class="il">&lt;iframe&gt;</span> (inline frame) is how you embed content from other websites into your page. It creates a window into another site — YouTube videos, Google Maps, CodePen demos, Spotify players, Calendly widgets — all running inside your page.</p>
+
+  <h3>Embedding YouTube</h3>
+
+  <p>YouTube gives you an embed code. On any video, click Share → Embed, and it hands you an iframe. Here's what it looks like:</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML · YouTube Embed</div>
+    </div>
+    <div class="code-body">
+<span class="t">&lt;iframe</span>
+  <span class="a">width</span>=<span class="s">"560"</span>
+  <span class="a">height</span>=<span class="s">"315"</span>
+  <span class="a">src</span>=<span class="s">"https://www.youtube.com/embed/VIDEO_ID"</span>
+  <span class="a">title</span>=<span class="s">"CSS Flexbox Tutorial"</span>
+  <span class="a">frameborder</span>=<span class="s">"0"</span>
+  <span class="a">allow</span>=<span class="s">"accelerometer; autoplay; clipboard-write;
+         encrypted-media; gyroscope; picture-in-picture"</span>
+  <span class="a">allowfullscreen</span><span class="t">&gt;</span>
+<span class="t">&lt;/iframe&gt;</span>
+    </div>
+  </div>
+
+  <div class="embed-mock">
+    <div class="embed-mock-bar">
+      <span class="em-icon">▶️</span>
+      <span class="em-label">YouTube Embed — CSS Flexbox Tutorial</span>
+    </div>
+    <div class="embed-mock-body" style="background:linear-gradient(135deg,#1a1a2e,#2d1040);">
+      <div>
+        <div class="em-big-icon">▶️</div>
+        <div class="em-title">CSS Flexbox Tutorial</div>
+        <div class="em-sub">youtube.com/embed/VIDEO_ID</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Embedding Google Maps</h3>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML · Google Maps</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- Share → Embed a map from Google Maps --&gt;</span>
+<span class="t">&lt;iframe</span>
+  <span class="a">src</span>=<span class="s">"https://www.google.com/maps/embed?pb=..."</span>
+  <span class="a">width</span>=<span class="s">"600"</span>
+  <span class="a">height</span>=<span class="s">"450"</span>
+  <span class="a">style</span>=<span class="s">"border:0;"</span>
+  <span class="a">allowfullscreen</span>=<span class="s">""</span>
+  <span class="a">loading</span>=<span class="s">"lazy"</span>
+  <span class="a">title</span>=<span class="s">"Office Location"</span><span class="t">&gt;</span>
+<span class="t">&lt;/iframe&gt;</span>
+    </div>
+  </div>
+
+  <div class="embed-mock">
+    <div class="embed-mock-bar">
+      <span class="em-icon">📍</span>
+      <span class="em-label">Google Maps Embed — Office Location</span>
+    </div>
+    <div class="embed-mock-body" style="background:linear-gradient(135deg,#1a3a2e,#0a2a1e);">
+      <div>
+        <div class="em-big-icon">🗺️</div>
+        <div class="em-title">Interactive Google Map</div>
+        <div class="em-sub">google.com/maps/embed</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>Embedding Other Sites</h3>
+
+  <p>The pattern is always the same — the platform gives you an embed URL, and you put it in an <span class="il">&lt;iframe&gt;</span>. CodePen demos, Spotify playlists, Figma files, Calendly scheduling widgets — they all work this way. Just look for the "Embed" or "Share" option on the platform.</p>
+
+  <div class="callout info">
+    <div class="callout-title">ℹ️ Always Add a Title</div>
+    <p>The <span class="il">title</span> attribute on iframes is important for accessibility. Screen readers announce it so users know what the embedded content is without seeing it. Don't leave it blank — describe what's embedded: "CodeHerWay intro video", "Office location map", "Spotify podcast player."</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── RESPONSIVE EMBEDS ── -->
+  <h2>Making Embeds Responsive</h2>
+
+  <p>By default, iframes have fixed pixel dimensions — they don't resize with the screen. On mobile, a 560px-wide YouTube embed overflows the viewport. Here's the modern CSS fix:</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML + CSS</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- HTML: wrap the iframe --&gt;</span>
+<span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"video-wrapper"</span><span class="t">&gt;</span>
+  <span class="t">&lt;iframe</span>
+    <span class="a">src</span>=<span class="s">"https://www.youtube.com/embed/VIDEO_ID"</span>
+    <span class="a">title</span>=<span class="s">"Tutorial"</span>
+    <span class="a">allowfullscreen</span><span class="t">&gt;</span>
+  <span class="t">&lt;/iframe&gt;</span>
+<span class="t">&lt;/div&gt;</span>
+
+<span class="c">/* CSS: responsive 16:9 container */</span>
+<span class="p">.video-wrapper {</span>
+  <span class="a">position</span>: <span class="s">relative</span>;
+  <span class="a">padding-bottom</span>: <span class="s">56.25%</span>;  <span class="c">/* 16:9 ratio */</span>
+  <span class="a">height</span>: <span class="s">0</span>;
+  <span class="a">overflow</span>: <span class="s">hidden</span>;
+<span class="p">}</span>
+
+<span class="p">.video-wrapper iframe {</span>
+  <span class="a">position</span>: <span class="s">absolute</span>;
+  <span class="a">top</span>: <span class="s">0</span>;
+  <span class="a">left</span>: <span class="s">0</span>;
+  <span class="a">width</span>: <span class="s">100%</span>;
+  <span class="a">height</span>: <span class="s">100%</span>;
+<span class="p">}</span>
+    </div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">💡 The Modern Way</div>
+    <p>If you're using modern CSS, you can skip the padding hack and use <span class="il">aspect-ratio: 16/9</span> directly on the iframe. It's cleaner, but check browser support for your audience. The padding-bottom trick works everywhere.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── SECURITY ── -->
+  <h2>iframe Security — What to Know</h2>
+
+  <p>Iframes load an entire external webpage inside your page. That comes with security considerations. Never embed untrusted content, and use these attributes to lock things down:</p>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-lang">HTML · Security Attributes</div>
+    </div>
+    <div class="code-body">
+<span class="c">&lt;!-- loading="lazy" — don't load until user scrolls to it --&gt;</span>
+<span class="t">&lt;iframe</span> <span class="a">loading</span>=<span class="s">"lazy"</span> ...<span class="t">&gt;&lt;/iframe&gt;</span>
+
+<span class="c">&lt;!-- sandbox — restricts what the embedded page can do --&gt;</span>
+<span class="t">&lt;iframe</span> <span class="a">sandbox</span>=<span class="s">"allow-scripts allow-same-origin"</span>
+        ...<span class="t">&gt;&lt;/iframe&gt;</span>
+
+<span class="c">&lt;!-- referrerpolicy — control what info you send --&gt;</span>
+<span class="t">&lt;iframe</span> <span class="a">referrerpolicy</span>=<span class="s">"no-referrer"</span> ...<span class="t">&gt;&lt;/iframe&gt;</span>
+    </div>
+  </div>
+
+  <div class="callout mindset">
+    <div class="callout-title">🧠 The Embed Mindset</div>
+    <p>Think of an iframe like inviting someone else's website into your living room. If it's YouTube, Google Maps, or CodePen — trusted platforms — you're fine. But you wouldn't embed a random URL you found on the internet. Only embed content from sources you trust, and use <span class="il">loading="lazy"</span> on anything below the fold to keep your page fast.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── DEVFESSION ── -->
+  <div class="devfession">
+    <div class="devfession-header">// dev_fession</div>
+    <div class="devfession-body">
+      <p>I once added a YouTube embed to my portfolio and shipped it with <span class="il">autoplay</span> enabled. On the YouTube embed URL. I didn't realize it was there because I copied the embed code from somewhere else without reading it.</p>
+      <p>So every time someone opened my portfolio, a tutorial video started blaring out of their speakers. A recruiter emailed me to say "cool portfolio, but the screaming video scared my cat."</p>
+      <p>I removed autoplay that same minute. Always read the embed code before you paste it. 🐱</p>
+    </div>
+    <div class="devfession-footer">
+      <span>@itcodegirl</span>
+      <span class="tagline">CodeHerWay</span>
+    </div>
+  </div>
+
+  <!-- ── MINI BUILD ── -->
+  <div class="mini-build">
+    <div class="mini-build-header">
+      <h3>🔨 Mini Build: Media Gallery Page</h3>
+    </div>
+    <div class="mini-build-body">
+      <p>Create a media gallery page that uses all four media elements:</p>
+
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">Add a self-hosted <span class="sky">&lt;video&gt;</span> with <span class="sky">controls</span>, a <span class="sky">poster</span> image, and two <span class="sky">&lt;source&gt;</span> formats (MP4 and WebM). Wrap it in a <span class="sky">&lt;figure&gt;</span> with a <span class="sky">&lt;figcaption&gt;</span>.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">Add an <span class="sky">&lt;audio&gt;</span> player for a podcast or music track, also wrapped in a figure with a caption describing the episode.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">Embed a YouTube video using an <span class="sky">&lt;iframe&gt;</span>. Wrap it in a responsive <span class="sky">video-wrapper</span> div so it scales on mobile.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">Embed a Google Map showing your city using an iframe with <span class="sky">loading="lazy"</span> and a descriptive <span class="sky">title</span> attribute.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-text">Make sure every media element has proper <span class="sky">alt</span> text, <span class="sky">title</span> attributes, and fallback content between the opening and closing tags.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- ── WRAP UP ── -->
+  <h2>The Bottom Line</h2>
+
+  <p><span class="il">&lt;video&gt;</span> and <span class="il">&lt;audio&gt;</span> give you native media players — no plugins required. <span class="il">&lt;source&gt;</span> provides format fallbacks so every browser finds something it can play. And <span class="il">&lt;iframe&gt;</span> lets you embed content from any platform that supports it — YouTube, Maps, CodePen, Spotify, and beyond.</p>
+
+  <p>Use <span class="il">controls</span> for anything users should actively play. Use <span class="il">muted autoplay loop</span> for background visuals. Always add a <span class="il">title</span> to iframes for accessibility. And make your embeds responsive so they don't break on mobile.</p>
+
+  <p>Media makes your sites feel alive. Now you know how to add it properly.</p>
+
+  <div class="callout tip">
+    <div class="callout-title">⬆️ Next Up</div>
+    <p><strong>Post 16: Developer Tools</strong> — The browser's built-in superpower. Inspect Element, the DOM tree, live HTML editing, and network requests. This is where you learn to debug like a developer.</p>
+  </div>
+
+
+  <nav class="post-nav">
+    <a href="14-meta-tags-seo.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Meta Tags and SEO Basics</span></a>
+    <a href="16-developer-tools.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">Developer Tools</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

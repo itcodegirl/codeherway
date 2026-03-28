@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSS Shadows, Pseudo-Elements, and Advanced Selectors: The Details That Make It Look Designed — CodeHerWay</title>
+<meta name="description" content="The difference between 'built it' and 'designed it' is usually shadows, ::before/::after pseudo-elements, and precision selectors. Learn how to add depth and polish to any CSS project.">
+  <link rel="stylesheet" href="../../assets/css/global.css">
+  <link rel="stylesheet" href="../../assets/css/post.css">
+  <style>
+.prop{color: var(--sky-blue);}
+.val{color: var(--mint-green);}
+.sel{color: var(--pink);}
+.sel-class{color: var(--gold);}
+.shadow-grid{display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; margin: 28px 0;}
+.shadow-card{background: #12121a; border-radius: 12px; padding: 20px; text-align: center;}
+.shadow-card p{font-family: 'Fira Code', monospace; font-size: 11px; color: var(--text-muted); margin-top: 10px; margin-bottom: 0;}
+.s-none{box-shadow: none; border: 1px solid rgba(255,255,255,0.07);}
+.s-subtle{box-shadow: 0 2px 8px rgba(0,0,0,0.3);}
+.s-soft{box-shadow: 0 8px 24px rgba(0,0,0,0.4);}
+.s-deep{box-shadow: 0 16px 48px rgba(0,0,0,0.6);}
+.s-glow{box-shadow: 0 0 24px rgba(255,105,180,0.25);}
+.s-layered{box-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04);}
+.pseudo-demo{position: relative; background: var(--bg-code); border-radius: 12px; padding: 28px; margin: 28px 0; border: 1px solid rgba(255,255,255,0.06);}
+.pseudo-label{font-family: 'Fira Code', monospace; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px;}
+.quote-block{position: relative; padding: 16px 20px 16px 48px; font-style: italic; color: var(--text-secondary); font-size: 15px;}
+.quote-block::before{content: '"'; position: absolute; left: 12px; top: 8px; font-size: 48px; color: rgba(180,74,255,0.3); font-family: Georgia, serif; line-height: 1;}
+.numbered-item{position: relative; padding-left: 36px; margin-bottom: 12px; font-size: 15px; color: var(--text-secondary); counter-increment: step-counter;}
+.counter-list{counter-reset: step-counter;}
+.numbered-item::before{content: counter(step-counter); position: absolute; left: 0; top: 0; width: 24px; height: 24px; background: rgba(180,74,255,0.15); color: var(--purple); border-radius: 50%; font-family: 'Fira Code', monospace; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; text-align: center; line-height: 24px;}
+@media (max-width: 480px){
+      .code-body { font-size: 11.5px; padding: 12px; }
+      .hero h1 { font-size: clamp(24px, 9vw, 32px); }
+      .il { white-space: normal; word-break: break-word; }
+      .unit-grid, .compare-2, .before-after, .phase-grid,
+      .lh-demo, .pair-grid, .ba-grid, .font-compare { grid-template-columns: 1fr; }
+      .shadow-grid { grid-template-columns: 1fr 1fr; }
+      .swatch-row { gap: 8px; }
+      .swatch { min-width: 90px; }
+      .pyramid-row { flex-direction: column; gap: 6px; align-items: flex-start; }
+      .score-row { flex-direction: column; gap: 6px; }
+      .score-sel { min-width: unset; }
+      .recap-item { flex-wrap: wrap; gap: 4px; }
+      .recap-title { width: 100%; }
+      .checklist { padding: 14px; }
+      .demo-row { padding: 16px 12px; gap: 12px; }
+      .series-nav-divider { display: none; }
+      .connect-arrow { display: none; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .layer-margin { padding: 20px; }
+      .layer-border { padding: 16px; }
+    }
+</style>
+</head>
+<body>
+  <div id="site-header"></div>
+
+<div class="hero">
+  <div class="post-label"><span class="series-tag">CSS, But Make It Powerful</span> Post 12 of 14</div>
+  <div class="post-number">CSS Series · Post 12</div>
+  <h1>Shadows, Depth<br><span class="gradient-text">&amp; Advanced Selectors</span></h1>
+  <p class="hero-sub">The details that separate "built it" from "designed it." Layered shadows, pseudo-elements that don't need HTML, and precision selectors that target exactly the right element.</p>
+  <div class="tag-row">
+    <span class="tag css">CSS</span>
+    <span class="tag beginner">Beginner</span>
+    <span class="tag series">Series: Post 12</span>
+    <span class="tag">~12 min read</span>
+  </div>
+</div>
+
+<main class="article">
+
+  <h2>💬 "It Looks Flat"</h2>
+
+  <p>Your layout is solid. Your typography is clean. But something still feels off — flat, somehow. Like everything is printed on the same piece of paper. Nothing floats. Nothing recedes. Nothing has weight.
+          <br><br>
+          That's a depth problem. And depth in CSS is entirely a shadows and layering decision.</p>
+
+  <p>That's a depth problem. <span class="key">Depth in CSS comes from shadows, layering, and intentional use of space.</span> This post covers the tools that create visual hierarchy without changing your layout at all.</p>
+
+  <h2>🧱 box-shadow</h2>
+
+  <p>Box shadows add depth below or around an element. The full syntax has five values: horizontal offset, vertical offset, blur radius, spread radius, and color. Most shadows use zero horizontal offset (centered), positive vertical offset (cast downward), and a semi-transparent dark color.</p>
+
+  <div class="shadow-grid">
+    <div class="shadow-card s-none"><div style="height:40px;background:rgba(255,255,255,0.04);border-radius:6px;"></div><p>no shadow</p></div>
+    <div class="shadow-card s-subtle"><div style="height:40px;background:rgba(255,255,255,0.04);border-radius:6px;"></div><p>subtle</p></div>
+    <div class="shadow-card s-soft"><div style="height:40px;background:rgba(255,255,255,0.04);border-radius:6px;"></div><p>soft</p></div>
+    <div class="shadow-card s-deep"><div style="height:40px;background:rgba(255,255,255,0.04);border-radius:6px;"></div><p>deep</p></div>
+    <div class="shadow-card s-glow"><div style="height:40px;background:rgba(255,255,255,0.04);border-radius:6px;"></div><p>color glow</p></div>
+    <div class="shadow-card s-layered"><div style="height:40px;background:rgba(255,255,255,0.04);border-radius:6px;"></div><p>layered</p></div>
+  </div>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">styles.css</div>
+      <div class="code-lang">CSS · box-shadow</div>
+    </div>
+    <div class="code-body"><code><span class="c">/* box-shadow: x-offset y-offset blur spread color */</span>
+
+<span class="c">/* Subtle — barely lifts the element */</span>
+<span class="sel-class">.card-subtle</span>  { <span class="prop">box-shadow</span>: <span class="val">0 2px 8px rgba(0,0,0,0.3)</span>; }
+
+<span class="c">/* Soft — standard card shadow */</span>
+<span class="sel-class">.card-soft</span>    { <span class="prop">box-shadow</span>: <span class="val">0 8px 24px rgba(0,0,0,0.4)</span>; }
+
+<span class="c">/* Deep — elevated, prominent */</span>
+<span class="sel-class">.card-deep</span>    { <span class="prop">box-shadow</span>: <span class="val">0 16px 48px rgba(0,0,0,0.6)</span>; }
+
+<span class="c">/* Glow — colored light source */</span>
+<span class="sel-class">.card-glow</span>    { <span class="prop">box-shadow</span>: <span class="val">0 0 24px rgba(255,105,180,0.25)</span>; }
+
+<span class="c">/* Inset — shadow inside the element */</span>
+<span class="sel-class">.input-focused</span> { <span class="prop">box-shadow</span>: <span class="val">inset 0 0 0 2px #b44aff</span>; }
+
+<span class="c">/* Layered — multiple shadows for realism */</span>
+<span class="sel-class">.card-layered</span> {
+  <span class="prop">box-shadow</span>:
+    <span class="val">0 1px 3px rgba(0,0,0,0.3)</span>,   <span class="c">/* close, sharp */</span>
+    <span class="val">0 8px 24px rgba(0,0,0,0.4)</span>,  <span class="c">/* medium, soft */</span>
+    <span class="val">0 0 0 1px rgba(255,255,255,0.04)</span>; <span class="c">/* inner border */</span>
+}</code></div>
+  </div>
+
+  <div class="callout tip">
+    <div class="callout-title">✦ The Layered Shadow Trick</div>
+    <p>Real-world shadows have multiple layers — a close sharp one near the object and a diffuse soft one further away. Combine two or three box-shadows with different blur values and you get depth that feels physical rather than flat. The inner <span class="il">0 0 0 1px</span> adds a subtle border that doesn't affect layout.</p>
+  </div>
+
+  <h2>🧱 ::before and ::after — Pseudo-Elements</h2>
+
+  <p>Pseudo-elements let you insert content before or after an element's content using pure CSS — no extra HTML needed. They're positioned like normal elements and can be styled however you want. <span class="key">Every element gets two free slots: <span class="il">::before</span> and <span class="il">::after</span></span>. The only requirement: they must have a <span class="il">content</span> property (even if it's <span class="il">content: ""</span>).</p>
+
+  <div class="pseudo-demo">
+    <div class="pseudo-label">Live pseudo-element examples</div>
+    <div class="accent-line" style="margin-bottom:20px;">This paragraph has a pink left border from ::before — no extra HTML element.</div>
+    <div class="quote-block" style="margin-bottom:20px;">The best way to understand CSS is to break things intentionally and then fix them.</div>
+    <div class="counter-list">
+      <div class="numbered-item">First step in the process</div>
+      <div class="numbered-item">Second step in the process</div>
+      <div class="numbered-item">Third step in the process</div>
+    </div>
+  </div>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">styles.css</div>
+      <div class="code-lang">CSS · ::before and ::after</div>
+    </div>
+    <div class="code-body"><code><span class="c">/* Left accent bar — no extra HTML */</span>
+<span class="sel-class">.accent-line</span> {
+  <span class="prop">position</span>: <span class="val">relative</span>;
+  <span class="prop">padding-left</span>: <span class="val">20px</span>;
+}
+<span class="sel-class">.accent-line</span><span style="color:var(--purple)">::before</span> {
+  <span class="prop">content</span>: <span class="val">""</span>;  <span class="c">/* required — even if empty */</span>
+  <span class="prop">position</span>: <span class="val">absolute</span>;
+  <span class="prop">left</span>: <span class="val">0</span>;
+  <span class="prop">top</span>: <span class="val">4px</span>;
+  <span class="prop">width</span>: <span class="val">3px</span>;
+  <span class="prop">height</span>: <span class="val">calc(100% - 8px)</span>;
+  <span class="prop">background</span>: <span class="val">#ff69b4</span>;
+  <span class="prop">border-radius</span>: <span class="val">2px</span>;
+}
+
+<span class="c">/* Decorative quote mark */</span>
+<span class="sel-class">.quote</span><span style="color:var(--purple)">::before</span> {
+  <span class="prop">content</span>: <span class="val">'"'</span>;  <span class="c">/* actual text content */</span>
+  <span class="prop">font-size</span>: <span class="val">4rem</span>;
+  <span class="prop">color</span>: <span class="val">rgba(180,74,255,0.3)</span>;
+  <span class="prop">position</span>: <span class="val">absolute</span>;
+  <span class="prop">top</span>: <span class="val">-8px</span>;
+  <span class="prop">left</span>: <span class="val">0</span>;
+}
+
+<span class="c">/* Add text after a link */</span>
+<span class="sel-class">.external-link</span><span style="color:var(--purple)">::after</span> {
+  <span class="prop">content</span>: <span class="val">' ↗'</span>;
+  <span class="prop">font-size</span>: <span class="val">0.8em</span>;
+  <span class="prop">opacity</span>: <span class="val">0.6</span>;
+}</code></div>
+  </div>
+
+  <h2>🧱 Advanced Selectors</h2>
+
+  <h3>Child Selector ( > )</h3>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">styles.css</div>
+      <div class="code-lang">CSS · > child selector</div>
+    </div>
+    <div class="code-body"><code><span class="c">/* .parent p — targets ALL p descendants (nested too) */</span>
+<span class="sel-class">.parent</span> <span class="sel">p</span> { <span class="prop">color</span>: <span class="val">pink</span>; }
+
+<span class="c">/* .parent > p — targets ONLY direct p children */</span>
+<span class="sel-class">.parent</span> > <span class="sel">p</span> { <span class="prop">color</span>: <span class="val">pink</span>; }
+
+<span class="c">/* Useful for nested components that share element names */</span>
+<span class="sel-class">.nav</span> > <span class="sel-class">.nav-item</span> { <span class="prop">font-weight</span>: <span class="val">600</span>; } <span class="c">/* direct items only */</span></code></div>
+  </div>
+
+  <h3>Attribute Selectors</h3>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">styles.css</div>
+      <div class="code-lang">CSS · attribute selectors</div>
+    </div>
+    <div class="code-body"><code><span class="c">/* [attr] — has the attribute at all */</span>
+<span class="sel">input</span>[<span class="a">required</span>] { <span class="prop">border-color</span>: <span class="val">#ff69b4</span>; }
+
+<span class="c">/* [attr="value"] — exact match */</span>
+<span class="sel">input</span>[<span class="a">type</span>=<span class="s">"email"</span>] { <span class="prop">padding-right</span>: <span class="val">40px</span>; }
+
+<span class="c">/* [attr^="value"] — starts with */</span>
+<span class="sel">a</span>[<span class="a">href</span>^=<span class="s">"https"</span>] { <span class="prop">color</span>: <span class="val">var(--mint-green)</span>; } <span class="c">/* secure links */</span>
+
+<span class="c">/* [attr$="value"] — ends with */</span>
+<span class="sel">a</span>[<span class="a">href</span>$=<span class="s">".pdf"</span>]  { } <span class="c">/* PDF links */</span>
+
+<span class="c">/* [attr*="value"] — contains */</span>
+<span class="sel">a</span>[<span class="a">href</span>*=<span class="s">"github"</span>] { } <span class="c">/* any GitHub link */</span></code></div>
+  </div>
+
+  <h3>:nth-child() and Structural Pseudo-Classes</h3>
+
+  <div class="code-window">
+    <div class="code-topbar">
+      <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+      <div class="code-filename">styles.css</div>
+      <div class="code-lang">CSS · structural pseudo-classes</div>
+    </div>
+    <div class="code-body"><code><span class="c">/* :first-child / :last-child */</span>
+<span class="sel-class">.list-item</span><span style="color:var(--purple)">:first-child</span> { <span class="prop">border-top</span>: <span class="val">none</span>; }
+<span class="sel-class">.list-item</span><span style="color:var(--purple)">:last-child</span>  { <span class="prop">border-bottom</span>: <span class="val">none</span>; }
+
+<span class="c">/* :nth-child(n) — every n-th element */</span>
+<span class="sel-class">.table-row</span><span style="color:var(--purple)">:nth-child(even)</span>    { <span class="prop">background</span>: <span class="val">rgba(255,255,255,0.02)</span>; }
+<span class="sel-class">.table-row</span><span style="color:var(--purple)">:nth-child(odd)</span>     { <span class="prop">background</span>: <span class="val">transparent</span>; }
+<span class="sel-class">.feature</span><span style="color:var(--purple)">:nth-child(3n)</span>       { <span class="prop">border-color</span>: <span class="val">var(--pink)</span>; } <span class="c">/* every 3rd */</span>
+
+<span class="c">/* :not() — exclude specific elements */</span>
+<span class="sel-class">.card</span><span style="color:var(--purple)">:not</span>(<span class="sel-class">.card-disabled</span>) { <span class="prop">cursor</span>: <span class="val">pointer</span>; }
+<span class="sel">p</span><span style="color:var(--purple)">:not</span>(<span class="sel-class">.lead</span>)            { <span class="prop">font-size</span>: <span class="val">1rem</span>; }
+
+<span class="c">/* :focus-visible — keyboard focus only (accessibility) */</span>
+<span class="sel-class">.button</span><span style="color:var(--purple)">:focus-visible</span> {
+  <span class="prop">outline</span>: <span class="val">2px solid #b44aff</span>;
+  <span class="prop">outline-offset</span>: <span class="val">3px</span>;
+}</code></div>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="mini-build">
+    <div class="mini-build-header">
+      <span style="font-size:22px;">🛠</span>
+      <h3>Mini Build: Cards with Depth + Decorative ::before</h3>
+    </div>
+    <div class="mini-build-body">
+      <p>Add layered shadows to your card component, and use <span class="il">::before</span> to create a decorative accent bar — no extra HTML.</p>
+
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-text"><p><strong>Add layered shadows to the card.</strong> Three-layer shadow for realistic depth, with a colored glow on hover.</p></div>
+      </div>
+
+      <div class="code-window">
+        <div class="code-topbar">
+          <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+          <div class="code-filename">styles.css</div>
+          <div class="code-lang">CSS</div>
+        </div>
+        <div class="code-body"><code><span class="sel-class">.card</span> {
+  <span class="prop">position</span>: <span class="val">relative</span>;  <span class="c">/* needed for ::before */</span>
+  <span class="prop">background</span>: <span class="val">#12121a</span>;
+  <span class="prop">border-radius</span>: <span class="val">12px</span>;
+  <span class="prop">padding</span>: <span class="val">28px</span>;
+  <span class="prop">overflow</span>: <span class="val">hidden</span>;   <span class="c">/* clips the ::before accent */</span>
+  <span class="prop">box-shadow</span>:
+    <span class="val">0 1px 3px rgba(0,0,0,0.3)</span>,
+    <span class="val">0 8px 24px rgba(0,0,0,0.4)</span>,
+    <span class="val">0 0 0 1px rgba(255,255,255,0.04)</span>;
+  <span class="prop">transition</span>: <span class="val">box-shadow 0.3s ease, transform 0.3s ease</span>;
+}
+
+<span class="sel-class">.card</span><span style="color:var(--purple)">:hover</span> {
+  <span class="prop">transform</span>: <span class="val">translateY(-4px)</span>;
+  <span class="prop">box-shadow</span>:
+    <span class="val">0 4px 8px rgba(0,0,0,0.3)</span>,
+    <span class="val">0 16px 40px rgba(0,0,0,0.5)</span>,
+    <span class="val">0 0 0 1px rgba(255,105,180,0.2)</span>,
+    <span class="val">0 0 40px rgba(255,105,180,0.08)</span>;
+}</code></div>
+      </div>
+
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-text"><p><strong>Add a top accent bar with ::before.</strong> A thin color bar across the top of the card — purely decorative, zero HTML.</p></div>
+      </div>
+
+      <div class="code-window">
+        <div class="code-topbar">
+          <div class="code-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+          <div class="code-filename">styles.css</div>
+          <div class="code-lang">CSS</div>
+        </div>
+        <div class="code-body"><code><span class="sel-class">.card</span><span style="color:var(--purple)">::before</span> {
+  <span class="prop">content</span>: <span class="val">""</span>;
+  <span class="prop">position</span>: <span class="val">absolute</span>;
+  <span class="prop">top</span>: <span class="val">0</span>;
+  <span class="prop">left</span>: <span class="val">0</span>;
+  <span class="prop">right</span>: <span class="val">0</span>;
+  <span class="prop">height</span>: <span class="val">2px</span>;
+  <span class="prop">background</span>: <span class="val">var(--gradient-header)</span>;
+  <span class="prop">opacity</span>: <span class="val">0</span>;
+  <span class="prop">transition</span>: <span class="val">opacity 0.3s ease</span>;
+}
+
+<span class="sel-class">.card</span><span style="color:var(--purple)">:hover</span><span style="color:var(--purple)">::before</span> {
+  <span class="prop">opacity</span>: <span class="val">1</span>;  <span class="c">/* bar appears on hover */</span>
+}
+
+<span class="c">/* Now every .card gets this effect with no extra HTML */</span></code></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="confidence-close">
+    <h2>💛 You're Building Things That Look Designed</h2>
+    <p>Shadows, pseudo-elements, and precise selectors are the finishing layer. They're what makes someone look at your project and think "this looks polished" without being able to articulate exactly why.</p>
+    <ul class="recap-list">
+      <li><span class="il">box-shadow</span> takes x, y, blur, spread, and color — stack multiple for realism</li>
+      <li>Colored glows use transparent RGBA with no y-offset and high blur</li>
+      <li><span class="il">::before</span> and <span class="il">::after</span> insert CSS-only decorative content — always need <span class="il">content: ""</span></li>
+      <li>Pseudo-elements need <span class="il">position: absolute</span> to be placed precisely — and their parent needs <span class="il">position: relative</span> (the same rule from Post 06 — Display &amp; Positioning)</li>
+      <li>Attribute selectors target elements by their HTML attributes — less common than class selectors, but extremely useful for forms, link styling, and accessibility. You'll reach for them more than you expect</li>
+      <li><span class="il">:nth-child()</span> targets structural positions — alternating rows, every 3rd item</li>
+      <li><span class="il">:not()</span> excludes elements from a rule cleanly</li>
+    </ul>
+    <p>Next: Post 13 — Clean CSS Architecture &amp; DevTools. This is the post that makes your CSS maintainable long-term: stylesheet organization, BEM naming, and a full walkthrough of the DevTools debugging workflow. This is the post that makes your CSS maintainable long-term.</p>
+  </div>
+
+  <div class="sep"></div>
+
+  <div class="devfession">
+    <div class="devfession-header">🧾 DevFession</div>
+    <div class="devfession-body">
+      <p>I used to add extra <span class="il">&lt;div&gt;</span> elements just for decorative purposes. A thin line above a card, a colored dot before a list item, a quote mark before a blockquote — all had their own HTML elements, sitting in the markup doing nothing structural.</p>
+      <p>Then I learned <span class="il">::before</span> and <span class="il">::after</span>. Every one of those decorative elements disappeared from the HTML. The markup got cleaner, the CSS got more expressive, and I stopped feeling like I was polluting the structure with presentation.</p>
+      <p>If you have an element whose sole purpose is to look like something, it's probably a pseudo-element waiting to be freed from the HTML.</p>
+    </div></div>
+
+
+  <nav class="post-nav">
+    <a href="11-transitions-transforms-variables.html" class="post-nav-link"><span class="nav-label">&larr; Previous</span><span class="nav-title">Transitions, Transforms, and Variables</span></a>
+    <a href="13-architecture-and-devtools.html" class="post-nav-link next"><span class="nav-label">Next &rarr;</span><span class="nav-title">CSS Architecture and DevTools</span></a>
+  </nav>
+  <div class="post-back"><a href="../../blog.html" class="btn-back">&larr; Back to All Posts</a></div>
+</main>
+  <div id="site-footer"></div>
+  <script src="../../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dev_Fessions — CodeHerWay</title>
+<meta name="description" content="The unfiltered truth about learning to code. Real mistakes, real moments, no gatekeeping.">
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@1,600;1,700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --bg:          #1a0e2e;
+  --bg-card:     #0d0d14;
+  --bg-terminal: #0f0f0f;
+  --bg-elevated: #141420;
+  --border:      rgba(255,255,255,0.07);
+  --term-green:  #00ff88;
+  --term-green-dim: rgba(0,255,136,0.6);
+  --term-green-glow: rgba(0,255,136,0.15);
+  --pink:        #ff69b4;
+  --purple:      #b44aff;
+  --teal:        #0d9488;
+  --teal-light:  #2dd4bf;
+  --gold:        #ffd369;
+  --text:        #e0e0e8;
+  --text-muted:  #9595a8;
+  --text-dim:    #6a6a80;
+  --grad-main:   linear-gradient(135deg, #b44aff 0%, #ff69b4 50%, #ff3cac 100%);
+  --dot-red: #ff5f57; --dot-yellow: #ffbd2e; --dot-green: #28c840;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 17px;
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+a { text-decoration: none; color: inherit; }
+
+/* Scanline overlay */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Noise texture */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0; opacity: 0.5;
+}
+
+.container { max-width: 1000px; margin: 0 auto; padding: 0 28px; width: 100%; position: relative; z-index: 1; }
+
+/* ─── HERO ─── */
+.df-hero {
+  position: relative;
+  padding: 120px 0 80px;
+  overflow: hidden;
+}
+
+.df-hero-orb-1 {
+  position: absolute;
+  top: -200px; right: -200px;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,255,136,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.df-hero-orb-2 {
+  position: absolute;
+  bottom: -150px; left: -150px;
+  width: 500px; height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(180,74,255,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Floating code decorations */
+.code-float {
+  position: absolute;
+  font-family: 'Fira Code', monospace;
+  font-size: 11px;
+  opacity: 0.12;
+  pointer-events: none;
+  user-select: none;
+  line-height: 2;
+  color: var(--term-green);
+}
+.code-float.pink   { color: var(--pink); opacity: 0.1; }
+.code-float.purple { color: var(--purple); opacity: 0.12; }
+.code-float.gold   { color: var(--gold); opacity: 0.09; }
+.code-float.dim    { opacity: 0.06; }
+
+/* Full-page code rain overlay */
+.code-rain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.code-rain span {
+  position: absolute;
+  font-family: 'Fira Code', monospace;
+  pointer-events: none;
+  user-select: none;
+  line-height: 1.8;
+  white-space: pre;
+}
+
+.df-prompt {
+  font-family: 'Fira Code', monospace;
+  font-size: 13px;
+  color: var(--term-green-dim);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  animation: fadeUp 0.5s ease forwards 0.1s;
+}
+
+.df-prompt-path { color: var(--purple); }
+.df-prompt-symbol { color: var(--term-green); }
+
+.df-hero-title {
+  font-family: 'Fira Code', monospace;
+  font-size: clamp(40px, 6vw, 76px);
+  font-weight: 700;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+  color: #fff;
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards 0.2s;
+}
+
+.df-title-accent {
+  background: var(--grad-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.df-title-underscore {
+  color: var(--term-green);
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+.df-hero-sub {
+  font-size: 18px;
+  color: var(--text-muted);
+  max-width: 580px;
+  line-height: 1.7;
+  margin-bottom: 40px;
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards 0.3s;
+}
+
+/* Boot sequence */
+.df-boot {
+  font-family: 'Fira Code', monospace;
+  font-size: 13px;
+  line-height: 2;
+  color: var(--text-dim);
+  margin-bottom: 48px;
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards 0.4s;
+}
+.df-boot-line { display: flex; align-items: center; gap: 10px; }
+.df-boot-ok   { color: var(--term-green); font-weight: 700; }
+.df-boot-warn { color: var(--gold); }
+.df-boot-err  { color: #ff6b6b; }
+
+/* ─── TERMINAL WINDOW ─── */
+.terminal {
+  background: var(--bg-terminal);
+  border: 1px solid rgba(0,255,136,0.2);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 32px;
+  box-shadow: 0 0 0 1px rgba(0,255,136,0.05), 0 20px 60px rgba(0,0,0,0.6), 0 0 60px rgba(0,255,136,0.04);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.terminal:hover {
+  border-color: rgba(0,255,136,0.35);
+  box-shadow: 0 0 0 1px rgba(0,255,136,0.1), 0 20px 60px rgba(0,0,0,0.7), 0 0 80px rgba(0,255,136,0.08);
+}
+
+.terminal-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: rgba(255,255,255,0.025);
+  border-bottom: 1px solid rgba(0,255,136,0.08);
+}
+
+.terminal-dots { display: flex; gap: 7px; }
+.terminal-dots span { width: 12px; height: 12px; border-radius: 50%; }
+.terminal-dots .red    { background: var(--dot-red); }
+.terminal-dots .yellow { background: var(--dot-yellow); }
+.terminal-dots .green  { background: var(--dot-green); }
+
+.terminal-title {
+  font-family: 'Fira Code', monospace;
+  font-size: 12px;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.terminal-title .t-path { color: var(--purple); }
+.terminal-title .t-file { color: var(--term-green); }
+
+.terminal-badge {
+  font-family: 'Fira Code', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 6px;
+  background: rgba(255,105,180,0.1);
+  color: var(--pink);
+  border: 1px solid rgba(255,105,180,0.2);
+}
+
+.terminal-body {
+  padding: 28px 32px 32px;
+}
+
+/* Confession header */
+.confession-header {
+  margin-bottom: 24px;
+}
+
+.confession-cmd {
+  font-family: 'Fira Code', monospace;
+  font-size: 13px;
+  color: var(--term-green-dim);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.confession-cmd .c-ps1 { color: var(--purple); }
+.confession-cmd .c-cmd { color: var(--term-green); }
+.confession-cmd .c-arg { color: var(--gold); }
+
+.confession-title {
+  font-family: 'Fira Code', monospace;
+  font-size: clamp(17px, 2vw, 21px);
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.confession-num {
+  font-size: 12px;
+  color: var(--text-dim);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  padding: 2px 10px;
+  border-radius: 6px;
+}
+
+/* Confession content */
+.confession-body {
+  font-size: 16px;
+  color: var(--text-muted);
+  line-height: 1.85;
+  border-left: 2px solid rgba(0,255,136,0.2);
+  padding-left: 20px;
+  margin-bottom: 24px;
+}
+
+.confession-body p { margin-bottom: 14px; }
+.confession-body p:last-child { margin-bottom: 0; }
+
+/* Inline code */
+.ic {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.88em;
+  background: rgba(180,74,255,0.1);
+  color: var(--pink);
+  padding: 1px 7px;
+  border-radius: 4px;
+  border: 1px solid rgba(180,74,255,0.15);
+}
+
+/* Output block */
+.confession-output {
+  background: rgba(0,255,136,0.04);
+  border: 1px solid rgba(0,255,136,0.1);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-top: 20px;
+}
+
+.output-label {
+  font-family: 'Fira Code', monospace;
+  font-size: 11px;
+  color: var(--term-green-dim);
+  margin-bottom: 8px;
+  letter-spacing: 0.08em;
+}
+
+.output-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 17px;
+  color: rgba(255,255,255,0.8);
+  line-height: 1.6;
+}
+
+/* Confession footer */
+.confession-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.04);
+  margin-top: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.confession-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.c-tag {
+  font-family: 'Fira Code', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  padding: 3px 10px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  transition: color 0.2s, border-color 0.2s;
+}
+.c-tag:hover { color: var(--term-green); border-color: rgba(0,255,136,0.3); }
+
+.confession-sig {
+  font-family: 'Dancing Script', cursive;
+  font-size: 1.3rem;
+  color: var(--pink);
+}
+
+/* ─── SECTION HEADER ─── */
+.section-label {
+  font-family: 'Fira Code', monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--term-green-dim);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-label::before { content: ''; width: 24px; height: 1px; background: var(--term-green-dim); }
+
+.section-heading {
+  font-size: clamp(26px, 3.5vw, 40px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+/* ─── SUBMIT SECTION ─── */
+.df-submit {
+  padding: 80px 0 100px;
+  position: relative;
+  overflow: hidden;
+}
+
+.df-submit-orb {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(180,74,255,0.07) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.df-submit-card {
+  background: var(--bg-terminal);
+  border: 1px solid rgba(180,74,255,0.25);
+  border-radius: 16px;
+  overflow: hidden;
+  max-width: 720px;
+  margin: 0 auto;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+.df-submit-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: rgba(255,255,255,0.025);
+  border-bottom: 1px solid rgba(180,74,255,0.1);
+}
+
+.df-submit-topbar .terminal-dots span { }
+
+.df-submit-topbar-title {
+  font-family: 'Fira Code', monospace;
+  font-size: 12px;
+  color: var(--purple);
+}
+
+.df-submit-body {
+  padding: 40px;
+}
+
+.df-submit-prompt {
+  font-family: 'Fira Code', monospace;
+  font-size: 13px;
+  color: var(--term-green-dim);
+  margin-bottom: 20px;
+}
+
+.df-submit-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+
+.df-submit-sub {
+  font-size: 16px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 32px;
+  max-width: 520px;
+}
+
+.df-submit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.df-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.df-form-label {
+  font-family: 'Fira Code', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.df-form-input,
+.df-form-textarea {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-family: 'Fira Code', monospace;
+  font-size: 13px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  resize: none;
+}
+
+.df-form-input::placeholder,
+.df-form-textarea::placeholder { color: var(--text-dim); }
+
+.df-form-input:focus,
+.df-form-textarea:focus {
+  border-color: var(--term-green);
+  background: rgba(0,255,136,0.03);
+  box-shadow: 0 0 0 3px rgba(0,255,136,0.08);
+}
+
+.df-form-textarea { min-height: 120px; line-height: 1.7; }
+
+.df-submit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 32px;
+  background: var(--grad-main);
+  border: none;
+  border-radius: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  width: fit-content;
+  transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+.df-submit-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(180,74,255,0.3);
+}
+
+.df-form-note {
+  font-family: 'Fira Code', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 700px) {
+  .df-hero { padding: 100px 0 60px; }
+  .terminal-body { padding: 20px; }
+  .df-submit-body { padding: 28px 20px; }
+  .confession-footer { flex-direction: column; align-items: flex-start; }
+}
+
+</style>
+</head>
+<body>
+
+  <div id="site-header"></div>
+
+  <!-- ═══ HERO ═══ -->
+  <section class="df-hero">
+    <div class="df-hero-orb-1"></div>
+    <div class="df-hero-orb-2"></div>
+
+    <span class="code-float" style="top:12%;right:4%;font-size:11px;">
+      cat confessions.log<br>
+      // reading file...<br>
+      // 47 entries found<br>
+      // honesty.exe running
+    </span>
+    <span class="code-float pink" style="bottom:15%;right:6%;font-size:10px;">
+      if (youMadeAMistake) {<br>
+      &nbsp;&nbsp;join the club;<br>
+      &nbsp;&nbsp;we have cookies;<br>
+      }
+    </span>
+    <span class="code-float purple" style="top:45%;left:0%;font-size:10px;">
+      // no shame here<br>
+      // we debug together
+    </span>
+
+    <div class="container">
+      <div class="df-prompt">
+        <span class="df-prompt-path">~/codeherway</span>
+        <span class="df-prompt-symbol">$</span>
+        <span>cat dev_fessions.log</span>
+      </div>
+
+      <h1 class="df-hero-title">Dev<span class="df-title-accent">_Fessions</span><span class="df-title-underscore">_</span></h1>
+
+      <p class="df-hero-sub">
+        The unfiltered truth about learning to code. Real mistakes, real moments, real embarrassing bugs — because nobody got good at this without first being <em>really</em> bad at it.
+      </p>
+
+      <div class="df-boot">
+        <div class="df-boot-line"><span class="df-boot-ok">[ OK ]</span><span>Judgment.exe — process terminated</span></div>
+        <div class="df-boot-line"><span class="df-boot-ok">[ OK ]</span><span>Shame.dll — uninstalled successfully</span></div>
+        <div class="df-boot-line"><span class="df-boot-ok">[ OK ]</span><span>Honesty module — loaded</span></div>
+        <div class="df-boot-line"><span class="df-boot-warn">[ !! ]</span><span>Warning: contents may cause excessive nodding</span></div>
+        <div class="df-boot-line"><span class="df-boot-ok">[ OK ]</span><span>Dev_Fessions ready. You belong here.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CONFESSIONS ═══ -->
+  <section style="padding: 0 0 80px; position:relative; z-index:1;">
+    <div class="container">
+
+      <!-- #001 -->
+      <div class="terminal reveal">
+        <div class="terminal-topbar">
+          <div class="terminal-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+          <div class="terminal-title"><span class="t-path">~/codeherway/dev_fessions</span>
+            
+          </div>
+          <span class="terminal-badge">🔥 Most Relatable</span>
+        </div>
+        <div class="terminal-body">
+          <div class="confession-header">
+            <div class="confession-title">
+              I built my entire portfolio with nothing but &lt;div&gt; tags
+              <span class="confession-num">#001</span>
+            </div>
+          </div>
+          <div class="confession-body">
+            <p>My first portfolio site had 47 nested divs. Forty-seven. The whole page was <span class="ic">div > div > div > div</span> like some kind of HTML turducken. I didn't know <span class="ic">&lt;main&gt;</span> existed. I didn't know <span class="ic">&lt;section&gt;</span> was a thing.</p>
+            <p>I was out here writing <span class="ic">&lt;div class="footer"&gt;</span> like <span class="ic">&lt;footer&gt;</span> wasn't right there, free, waiting for me. The day I learned semantic HTML I refactored the whole thing and deleted 30 divs. It felt like cleaning out a closet. 🧹</p>
+          </div>
+          <div class="confession-output">
+            <div class="output-label">// lesson_learned.txt</div>
+            <div class="output-text">"Every &lt;div&gt; where a semantic element would work is a door with no label. Build the signs."</div>
+          </div>
+          <div class="confession-footer">
+            <div class="confession-tags">
+              <span class="c-tag">#html</span>
+              <span class="c-tag">#semantics</span>
+              <span class="c-tag">#divs</span>
+              <span class="c-tag">#beginner-life</span>
+            </div>
+            <span class="confession-sig">— Jenna 💜</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- #002 -->
+      <div class="terminal reveal reveal-delay-1">
+        <div class="terminal-topbar">
+          <div class="terminal-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+          <div class="terminal-title"><span class="t-path">~/codeherway/dev_fessions</span>
+            
+          </div>
+          <span class="terminal-badge">😭 The Struggle</span>
+        </div>
+        <div class="terminal-body">
+          <div class="confession-header">
+            <div class="confession-title">
+              I tried to center a div for 3 hours before Googling it
+              <span class="confession-num">#002</span>
+            </div>
+          </div>
+          <div class="confession-body">
+            <p>Three hours. I tried <span class="ic">margin: auto</span>. I tried <span class="ic">text-align: center</span>. I tried <span class="ic">position: absolute; left: 50%</span> without the transform. I tried <span class="ic">width: 50%; margin-left: 25%</span> which almost worked and somehow made everything worse.</p>
+            <p>I genuinely thought I was bad at math. When I finally Googled it and learned that <span class="ic">display: flex; justify-content: center; align-items: center</span> just... works like that... I sat back in my chair and stared at the ceiling for five full minutes.</p>
+          </div>
+          <div class="confession-output">
+            <div class="output-label">// lesson_learned.txt</div>
+            <div class="output-text">"Google is not cheating. It's the job. Every senior dev you admire Googled how to center a div."</div>
+          </div>
+          <div class="confession-footer">
+            <div class="confession-tags">
+              <span class="c-tag">#css</span>
+              <span class="c-tag">#flexbox</span>
+              <span class="c-tag">#centering</span>
+              <span class="c-tag">#we-have-all-been-here</span>
+            </div>
+            <span class="confession-sig">— Jenna 💜</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- #003 -->
+      <div class="terminal reveal reveal-delay-2">
+        <div class="terminal-topbar">
+          <div class="terminal-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+          <div class="terminal-title"><span class="t-path">~/codeherway/dev_fessions</span>
+            
+          </div>
+          <span class="terminal-badge">😅 Too Real</span>
+        </div>
+        <div class="terminal-body">
+          <div class="confession-header">
+            <div class="confession-title">
+              I left console.logs in my portfolio during an interview
+              <span class="confession-num">#003</span>
+            </div>
+          </div>
+          <div class="confession-body">
+            <p>The interviewer opened DevTools to look at my code. I watched them notice <span class="ic">console.log("WHY IS THIS STILL BROKEN")</span> buried in my main.js. Then below it: <span class="ic">console.log("ok it works now but I don't know why")</span>.</p>
+            <p>There was a pause. Then they laughed. Actually laughed. And said, "This is the most honest portfolio I've seen." I didn't get the job, but I did get feedback that my code was solid. And I learned to always <span class="ic">Ctrl+F</span> for console.log before submitting anything. Ever.</p>
+          </div>
+          <div class="confession-output">
+            <div class="output-label">// lesson_learned.txt</div>
+            <div class="output-text">"Run a find-all for console.log before you ship. Every. Single. Time."</div>
+          </div>
+          <div class="confession-footer">
+            <div class="confession-tags">
+              <span class="c-tag">#javascript</span>
+              <span class="c-tag">#debugging</span>
+              <span class="c-tag">#console-log</span>
+              <span class="c-tag">#interviews</span>
+            </div>
+            <span class="confession-sig">— Jenna 💜</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- #004 -->
+      <div class="terminal reveal">
+        <div class="terminal-topbar">
+          <div class="terminal-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+          <div class="terminal-title"><span class="t-path">~/codeherway/dev_fessions</span>
+            
+          </div>
+          <span class="terminal-badge">💜 From the Heart</span>
+        </div>
+        <div class="terminal-body">
+          <div class="confession-header">
+            <div class="confession-title">
+              I almost quit coding because I felt like I was the only one who didn't "get it"
+              <span class="confession-num">#004</span>
+            </div>
+          </div>
+          <div class="confession-body">
+            <p>There was a specific Tuesday. I had been staring at a JavaScript error for two days. I'd watched three YouTube tutorials. I'd read the docs. I'd asked on Stack Overflow and gotten a response that made me feel stupid for asking. I closed my laptop and genuinely thought: maybe this isn't for me.</p>
+            <p>What I didn't know then is that everybody has that Tuesday. Senior developers have that Tuesday. The difference isn't that some people never struggle — it's that some people learned to keep going anyway. I'm still here. That's the whole thing.</p>
+          </div>
+          <div class="confession-output">
+            <div class="output-label">// lesson_learned.txt</div>
+            <div class="output-text">"The developers who look effortless have just had more Tuesdays than you. That's it. That's the whole secret."</div>
+          </div>
+          <div class="confession-footer">
+            <div class="confession-tags">
+              <span class="c-tag">#imposter-syndrome</span>
+              <span class="c-tag">#mental-health</span>
+              <span class="c-tag">#keep-going</span>
+              <span class="c-tag">#you-belong-here</span>
+            </div>
+            <span class="confession-sig">— Jenna 💜</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- #005 -->
+      <div class="terminal reveal reveal-delay-1">
+        <div class="terminal-topbar">
+          <div class="terminal-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+          <div class="terminal-title"><span class="t-path">~/codeherway/dev_fessions</span>
+            
+          </div>
+          <span class="terminal-badge">😬 Git Happens</span>
+        </div>
+        <div class="terminal-body">
+          <div class="confession-header">
+            <div class="confession-title">
+              I force-pushed to main and overwrote a week of work
+              <span class="confession-num">#005</span>
+            </div>
+          </div>
+          <div class="confession-body">
+            <p>I did not understand what <span class="ic">git push --force</span> meant. I thought "force" just meant "push even if it's slow." I ran it on a Thursday afternoon. By Thursday evening I had learned exactly what it means.</p>
+            <p>A week of progress. Gone. I had no local backup. I cried a little. Then I spent the weekend rewriting everything from memory, and honestly? The second version was better. But I will never, not once, run <span class="ic">--force</span> without a full breath and a triple-check ever again.</p>
+          </div>
+          <div class="confession-output">
+            <div class="output-label">// lesson_learned.txt</div>
+            <div class="output-text">"Commit often. Push to branches. Read the docs on any flag that includes the word 'force'."</div>
+          </div>
+          <div class="confession-footer">
+            <div class="confession-tags">
+              <span class="c-tag">#git</span>
+              <span class="c-tag">#version-control</span>
+              <span class="c-tag">#rip-my-code</span>
+              <span class="c-tag">#it-happens</span>
+            </div>
+            <span class="confession-sig">— Jenna 💜</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ SUBMIT YOUR OWN ═══ -->
+  <section class="df-submit">
+    <div class="df-submit-orb"></div>
+    <div class="container">
+      <div style="text-align:center; margin-bottom: 40px;">
+        <div class="section-label" style="justify-content:center;">Your turn</div>
+        <h2 class="section-heading">Got a Dev_Fession?</h2>
+        <p style="color:var(--text-muted); max-width:520px; margin: 12px auto 0; font-size:16px;">We're all out here making the same mistakes. Submit yours and I might feature it — anonymously, of course.</p>
+      </div>
+      <div class="df-submit-card">
+        <div class="df-submit-topbar">
+          <div class="terminal-dots"><span class="red"></span><span class="yellow"></span><span class="green"></span></div>
+          <span class="df-submit-topbar-title">new_confession.txt — write mode</span>
+        </div>
+        <div class="df-submit-body">
+          <div class="df-submit-prompt">jenna@codeherway:~$ vim new_confession.txt</div>
+          <h3 class="df-submit-title">Share your story. <span style="background:var(--grad-main);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">No judgment.</span></h3>
+          <p class="df-submit-sub">The mistake you made, the bug that broke you, the moment you almost quit — whatever it is, someone out there needs to hear it. We learn better when we're honest with each other.</p>
+          <div class="df-submit-form">
+            <div class="df-form-field">
+              <label class="df-form-label" for="df-name">// your name (or alias)</label>
+              <input type="text" id="df-name" class="df-form-input" placeholder="Anonymous Dev" autocomplete="off">
+            </div>
+            <div class="df-form-field">
+              <label class="df-form-label" for="df-title">// confession title</label>
+              <input type="text" id="df-title" class="df-form-input" placeholder="The time I..." autocomplete="off">
+            </div>
+            <div class="df-form-field">
+              <label class="df-form-label" for="df-body">// the full story</label>
+              <textarea id="df-body" class="df-form-textarea" placeholder="What happened, what you learned, and what you'd tell your past self..."></textarea>
+            </div>
+            <div class="df-form-field">
+              <label class="df-form-label" for="df-email">// your email (optional — for a shoutout if featured)</label>
+              <input type="email" id="df-email" class="df-form-input" placeholder="your@email.com" autocomplete="off">
+            </div>
+            <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+              <button class="df-submit-btn" onclick="handleSubmit()">
+                Submit Confession
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <span class="df-form-note">// anonymous by default · no judgment · no gatekeeping</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="site-footer"></div>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.08 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Submit handler (visual only — wire to backend/Netlify Forms when ready)
+    function handleSubmit() {
+      const title = document.getElementById('df-title').value.trim();
+      const body  = document.getElementById('df-body').value.trim();
+      if (!title || !body) {
+        alert('Add a title and your story before submitting!');
+        return;
+      }
+      const btn = document.querySelector('.df-submit-btn');
+      btn.textContent = '✓ Confession received';
+      btn.style.background = 'linear-gradient(135deg, #0d9488, #2dd4bf)';
+      btn.style.pointerEvents = 'none';
+      document.getElementById('df-name').value  = '';
+      document.getElementById('df-title').value = '';
+      document.getElementById('df-body').value  = '';
+      document.getElementById('df-email').value = '';
+    }
+  </script>
+
+  <!-- Code Rain Background -->
+  <script>
+  (function() {
+    const snippets = [
+      'git commit -m "fixed it"',
+      'console.log("why???")',
+      'console.log("here 1")',
+      'console.log("here 2")',
+      'console.log("here 3!!!")',
+      '// TODO: fix later',
+      '// FIXME: no idea why this works',
+      '// this should not work but it does',
+      '/* do not touch */',
+      '/* ask before deleting */',
+      'if (works) { dont.touch(); }',
+      'while (true) { learn(); }',
+      'try { code(); } catch { cry(); }',
+      'try { deploy(); } catch { panic(); }',
+      'return coffee.then(code)',
+      'npm install --save-my-sanity',
+      'npm install hope',
+      'pip install confidence',
+      'git push --force // sorry',
+      'git stash // will come back to this',
+      'git blame // it was me',
+      '// deleted 200 lines, app works now',
+      '// added a semicolon, everything broke',
+      '// it works on my machine',
+      '// 3am code, do not review',
+      '// stack overflow saved me again',
+      '// I swear I tested this',
+      '// interview prep at 2am',
+      '// women who code > impostor syndrome',
+      '// she codes, she leads, she ships',
+      '// first PR merged!!!',
+      '// you belong here',
+      '// no gatekeeping zone',
+      '// built by women, for everyone',
+      'const courage = require("showing-up")',
+      'const growth = err => try_again()',
+      'export default BelieveInYourself',
+      'import { confidence } from "practice"',
+      'import { grit } from "experience"',
+      'let mistakes = ++learning',
+      'var bugs = "features"',
+      'const sleep = null',
+      'const coffee = true',
+      'const imposter = false',
+      'await believe(yourself)',
+      'Promise.resolve(youCanDoThis)',
+      '.container { display: flex; }',
+      'margin: 0 auto;',
+      'position: relative;',
+      'z-index: 9999; /* why */',
+      'border-radius: 50%;',
+      '!important /* forgive me */',
+      'display: grid;',
+      'align-items: center;',
+      'font-family: monospace;',
+      '<div class="hero">',
+      '<section id="believe">',
+      '<!DOCTYPE html>',
+      '<meta charset="UTF-8">',
+      'aria-label="you got this"',
+      'alt="a woman who codes"',
+      'const app = express()',
+      'fetch("/api/confidence")',
+      '.then(res => res.json())',
+      'addEventListener("click", go)',
+      'document.querySelector(".dream")',
+      'localStorage.setItem("progress")',
+      'array.filter(bug => squash(bug))',
+      'skills.push("new-thing")',
+      'Object.keys(myDoubts).length === 0',
+      'Math.random() < 0.5 ? code : sleep',
+      'setInterval(keepGoing, 1000)',
+      'clearTimeout(givingUp)',
+      'JSON.parse(feedback)',
+      'new Date() // ship day',
+      'Boolean(youCanDoThis) // true',
+      'typeof undefined // story of my life',
+      'NaN === NaN // false, like my confidence',
+      '"use strict" // on myself',
+      'debugger; // help',
+      'return null // my social life',
+      '() => keepCoding()',
+      'async function learnNewThing() {}',
+      'class Developer extends Human {}',
+      'super() // call for help',
+      'this.believe = true',
+      'throw new Error("not enough coffee")',
+      'catch (e) { drinkCoffee(); retry(); }',
+      'finally { ship_it(); }',
+      '// merge conflict at 11pm',
+      '// forgot to save. again.',
+      '// CSS is not a programming language fight me',
+      '// divs all the way down',
+      '// semantic HTML? never heard of her',
+      '// flexbox fixed everything',
+      '// grid > float, always',
+      '// dark mode is not optional',
+      '// mobile first or mobile worst',
+      '// she wrote her first function today',
+      '// 100 days of code, day 47',
+      '// PR approved, tears of joy',
+      '// deployed to production on a Friday',
+      'chmod +x believe-in-yourself.sh',
+      'mkdir new-chapter && cd new-chapter',
+      'rm -rf self-doubt',
+      'touch first-website.html',
+      'echo "I am a developer"',
+      'cat ~/.bash_history | grep "help"',
+      'curl https://api.encouragement.dev',
+      'grep -r "passion" ~/life',
+      'sudo apt-get install confidence',
+      'brew install determination',
+      'exit 0 // graceful',
+      ':wq // vim escape finally',
+      'SELECT * FROM developers WHERE grit = true',
+      'INSERT INTO skills VALUES ("resilience")',
+      'DROP TABLE self_doubt;',
+      'UPDATE confidence SET level = "max"',
+      'CREATE TABLE achievements (id SERIAL)',
+    ];
+
+    const colors = [
+      { color: '#2dd4bf', opacity: 0.07 },
+      { color: '#2dd4bf', opacity: 0.05 },
+      { color: '#2dd4bf', opacity: 0.09 },
+      { color: '#ff69b4', opacity: 0.06 },
+      { color: '#ff69b4', opacity: 0.04 },
+      { color: '#b44aff', opacity: 0.07 },
+      { color: '#b44aff', opacity: 0.05 },
+      { color: '#ffd369', opacity: 0.05 },
+      { color: '#ffd369', opacity: 0.04 },
+      { color: '#6a6a80', opacity: 0.08 },
+    ];
+
+    const container = document.createElement('div');
+    container.className = 'code-rain';
+
+    for (let i = 0; i < 150; i++) {
+      const span = document.createElement('span');
+      const snippet = snippets[Math.floor(Math.random() * snippets.length)];
+      const style = colors[Math.floor(Math.random() * colors.length)];
+      const size = 9 + Math.random() * 4;
+
+      span.textContent = snippet;
+      span.style.left = (Math.random() * 96) + '%';
+      span.style.top = (Math.random() * 96) + '%';
+      span.style.fontSize = size + 'px';
+      span.style.color = style.color;
+      span.style.opacity = style.opacity;
+      span.style.transform = 'rotate(' + (Math.random() * 16 - 8) + 'deg)';
+      container.appendChild(span);
+    }
+
+    document.body.prepend(container);
+  })();
+  </script>
+
+</body>
+</html>
