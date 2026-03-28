@@ -1,4 +1,5 @@
 <header class="site-header">
+  <div class="header-gradient"></div>
   <div class="container">
     <nav class="nav">
 
@@ -14,11 +15,37 @@
         <li class="has-dropdown">
           <a href="#" aria-haspopup="true">Series ▾</a>
           <ul class="dropdown" role="list">
-            <li><a href="/posts/html-series/">HTML Fundamentals</a></li>
-            <li><a href="/posts/css-series/01-what-css-does.html">CSS, But Make It Powerful</a></li>
-            <li><a href="/posts/js-series/" class="coming-soon">JS, But Make It Async <span class="tag tag-pink">Soon</span></a></li>
+            <li>
+              <a href="/posts/html-series/01-what-is-html.html">
+                <span class="dd-dot" style="background:#ff69b4;"></span>
+                <span class="dd-name">HTML Fundamentals</span>
+                <span class="dd-count">20</span>
+              </a>
+            </li>
+            <li>
+              <a href="/posts/css-series/01-what-css-does.html">
+                <span class="dd-dot" style="background:#2dd4bf;"></span>
+                <span class="dd-name">CSS, But Make It Powerful</span>
+                <span class="dd-count">14</span>
+              </a>
+            </li>
+            <li>
+              <a href="/posts/js-series/click-01-what-javascript-does.html">
+                <span class="dd-dot" style="background:#ffd369;"></span>
+                <span class="dd-name">JS, But Make It Click</span>
+                <span class="dd-count">15</span>
+              </a>
+            </li>
+            <li>
+              <a href="/posts/js-series/async-01-event-loop.html">
+                <span class="dd-dot" style="background:#ff9500;"></span>
+                <span class="dd-name">JS, But Make It Async</span>
+                <span class="dd-count">16</span>
+              </a>
+            </li>
           </ul>
         </li>
+        <li><a href="/dev-fessions.html">Dev_Fessions</a></li>
         <li><a href="/widgets/code-playground.html">Playground</a></li>
       </ul>
 
@@ -32,26 +59,29 @@
 </header>
 
 <style>
-/* ── Header ── */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(10, 10, 15, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
+  background: rgba(10, 10, 15, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.header-gradient {
+  height: 2px;
+  background: linear-gradient(90deg, #b44aff, #ff69b4, #2dd4bf);
 }
 
 .nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 64px;
-  gap: var(--space-xl);
+  height: 56px;
+  gap: 2rem;
 }
 
-/* Logo */
 .logo {
   font-family: var(--font-code);
   font-weight: 700;
@@ -62,30 +92,30 @@
 }
 .logo-code { color: var(--teal); }
 .logo-her  { font-family: var(--font-serif); font-style: italic; color: var(--pink); font-size: 1.2rem; }
-.logo-way  { color: var(--white); }
+.logo-way  { color: #fff; }
 
-/* Nav Links */
 .nav-links {
   display: flex;
   align-items: center;
-  gap: var(--space-xl);
+  gap: 1.75rem;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
 .nav-links a {
+  font-family: var(--font-code);
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 0.82rem;
   font-weight: 500;
-  transition: color var(--transition);
+  transition: color 0.2s;
   text-decoration: none;
   position: relative;
 }
 
 .nav-links a:hover,
 .nav-links a.active {
-  color: var(--text);
+  color: #fff;
 }
 
 .nav-links a::after {
@@ -95,28 +125,27 @@
   left: 0;
   width: 0;
   height: 2px;
-  background: var(--grad-primary);
-  transition: width var(--transition);
+  background: linear-gradient(90deg, #b44aff, #ff69b4);
+  transition: width 0.2s;
   border-radius: 999px;
 }
 .nav-links a:hover::after { width: 100%; }
 
-/* Dropdown */
 .has-dropdown { position: relative; }
 
 .dropdown {
   display: none;
   position: absolute;
-  top: calc(100% + 12px);
+  top: calc(100% + 16px);
   left: 50%;
   transform: translateX(-50%);
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-sm);
+  background: #12121a;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 8px;
   list-style: none;
-  min-width: 220px;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.4);
+  min-width: 280px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
 }
 
 .has-dropdown:hover .dropdown { display: block; }
@@ -124,22 +153,40 @@
 .dropdown li a {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  padding: 0.6rem var(--space-md);
-  border-radius: var(--radius);
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 8px;
   white-space: nowrap;
   color: var(--text-muted);
+  font-family: var(--font-code);
+  font-size: 0.78rem;
 }
-.dropdown li a:hover { background: var(--bg-elevated); color: var(--text); }
+.dropdown li a:hover { background: rgba(255,255,255,0.04); color: #fff; }
 .dropdown li a::after { display: none; }
 
-/* Mobile Toggle */
+.dd-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.dd-name { flex: 1; }
+
+.dd-count {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.04);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
 .nav-toggle {
   display: none;
   flex-direction: column;
   justify-content: space-between;
-  width: 24px;
-  height: 18px;
+  width: 22px;
+  height: 16px;
   background: none;
   border: none;
   cursor: pointer;
@@ -149,25 +196,24 @@
 .nav-toggle span {
   display: block;
   height: 2px;
-  background: var(--text);
+  background: #fff;
   border-radius: 2px;
-  transition: all var(--transition);
+  transition: all 0.2s;
 }
 
-/* Mobile Nav */
 @media (max-width: 768px) {
   .nav-links {
     display: none;
     position: absolute;
-    top: 64px;
+    top: 58px;
     left: 0;
     right: 0;
-    background: var(--bg-card);
-    border-bottom: 1px solid var(--border);
+    background: #12121a;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
     flex-direction: column;
     align-items: flex-start;
-    padding: var(--space-lg) var(--space-xl);
-    gap: var(--space-md);
+    padding: 1rem 1.5rem;
+    gap: 0.75rem;
   }
 
   .nav-links.open { display: flex; }
@@ -179,8 +225,9 @@
     box-shadow: none;
     border: none;
     background: transparent;
-    padding-left: var(--space-md);
+    padding-left: 1rem;
     display: block;
+    min-width: unset;
   }
 }
 </style>
