@@ -1,165 +1,212 @@
 <style>
 .chw-footer {
-  background: #2D1B69;
+  background: #0d0a1a;
   color: rgba(255,255,255,0.7);
-  padding: 5rem 3rem 2.5rem;
+  padding: 0;
   position: relative;
   overflow: hidden;
   width: 100%;
 }
-.chw-footer::before {
-  content: '';
-  position: absolute; inset: 0;
-  background:
-    radial-gradient(ellipse at 0% 100%, rgba(224,64,160,0.1) 0%, transparent 50%),
-    radial-gradient(ellipse at 100% 0%, rgba(13,148,136,0.1) 0%, transparent 50%);
-  pointer-events: none;
+.chw-footer-gradient {
+  height: 2px;
+  background: linear-gradient(90deg, #b44aff, #ff69b4, #2dd4bf);
 }
-.chw-footer-top {
-  display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr;
-  gap: 4rem; margin-bottom: 3rem;
-  padding-bottom: 3rem;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  position: relative; align-items: start;
+.chw-footer-inner {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 3rem 2.5rem 0;
 }
-.chw-footer-brand { display: flex; flex-direction: column; align-items: flex-start; gap: 0; }
+.chw-footer-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 2.5rem;
+}
 .chw-footer-logo {
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+.chw-footer-logo .fl-code,
+.chw-footer-logo .fl-close,
+.chw-footer-logo .fl-way {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+}
+.chw-footer-logo .fl-her {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 700;
+  font-style: italic;
+  font-size: 1.6rem;
+}
+.chw-footer-logo .fl-code { color: #0D9488; }
+.chw-footer-logo .fl-her  { color: #E040A0; }
+.chw-footer-logo .fl-close { color: #C4B5FD; }
+.chw-footer-logo .fl-way  { color: #FFFFFF; }
+.chw-footer-console {
   font-family: var(--font-code);
-  font-size: 1.5rem; font-weight: 700;
-  text-decoration: none; display: inline-flex;
-  align-items: center; margin-bottom: 0.75rem; line-height: 1;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.25);
+  font-style: italic;
 }
-.chw-footer-logo .fl-bracket { color: #0D9488; }
-.chw-footer-logo .fl-her { color: #E040A0; font-style: italic; font-family: var(--font-serif); font-size: 1.75rem; font-weight: 700; }
-.chw-footer-logo .fl-slash { color: #C4B5FD; }
-.chw-footer-logo .fl-way { color: #FFFFFF; }
-.chw-footer-tagline {
-  font-family: 'Dancing Script', cursive;
-  font-size: 1.1rem; color: #C4B5FD;
-  display: block; margin-bottom: 1rem; opacity: 0.85;
+.chw-footer-columns {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 3rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 }
-.chw-footer-brand p {
-  font-family: var(--font-body);
-  font-size: 0.88rem; line-height: 1.75;
-  color: rgba(255,255,255,0.5); margin-bottom: 1.5rem;
-}
-.chw-footer-note {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-left: 3px solid #E040A0;
-  border-radius: 0 10px 10px 0;
-  padding: 1rem 1.25rem; margin-bottom: 1.5rem;
-}
-.chw-footer-note p {
-  font-family: var(--font-serif);
-  font-size: 0.92rem; font-style: italic;
-  color: rgba(255,255,255,0.7); line-height: 1.6; margin-bottom: 0.4rem;
-}
-.chw-footer-note .chw-fsig {
-  font-family: 'Dancing Script', cursive;
-  font-size: 1.15rem; color: #E040A0; display: block;
-}
-.chw-footer-social { display: flex; gap: 0.75rem; flex-wrap: wrap; }
-.chw-fsocial-btn {
-  width: 38px; height: 38px; border-radius: 50%;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.1);
-  display: flex; align-items: center; justify-content: center;
-  color: rgba(255,255,255,0.6);
-  text-decoration: none; transition: background 0.2s, transform 0.15s, border-color 0.2s;
-}
-.chw-fsocial-btn:hover { background: #E040A0; border-color: #E040A0; transform: translateY(-2px); color: white; }
 .chw-footer-col h4 {
   font-family: var(--font-code);
-  font-size: 0.68rem; font-weight: 600;
-  letter-spacing: 0.14em; text-transform: uppercase;
-  color: #C4B5FD; margin-bottom: 1.4rem;
-  padding-bottom: 0.6rem;
-  border-bottom: 1px solid rgba(196,181,253,0.2);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #C4B5FD;
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(196,181,253,0.15);
 }
-.chw-footer-col ul { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.65rem; }
+.chw-footer-col ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
 .chw-footer-col ul a {
-  text-decoration: none; color: rgba(255,255,255,0.5);
-  font-family: var(--font-body); font-size: 0.9rem;
+  text-decoration: none;
+  color: rgba(255,255,255,0.45);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
   transition: color 0.2s, padding-left 0.2s;
-  display: inline-flex; align-items: center; gap: 0.4rem;
 }
-.chw-footer-col ul a:hover { color: white; padding-left: 4px; }
+.chw-footer-col ul a:hover {
+  color: white;
+  padding-left: 4px;
+}
+.chw-footer-social-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.chw-footer-social-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.45);
+  background: rgba(255,255,255,0.03);
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s, transform 0.15s, color 0.2s, box-shadow 0.2s;
+}
+.chw-footer-social-btn:hover {
+  background: linear-gradient(135deg, #b44aff, #ff69b4);
+  color: white;
+  border-color: transparent;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(180,74,255,0.2);
+}
 .chw-footer-bottom {
-  display: flex; justify-content: space-between; align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2.5rem;
+  max-width: 1140px;
+  margin: 0 auto;
   font-family: var(--font-code);
-  font-size: 0.72rem; color: rgba(255,255,255,0.25);
-  position: relative; padding-top: 0.5rem;
+  font-size: 0.68rem;
+  color: rgba(255,255,255,0.2);
 }
-.chw-footer-heart { color: #E040A0; opacity: 0.8; }
-@media (max-width: 900px) {
-  .chw-footer { padding: 3.5rem 1.5rem 1.5rem; }
-  .chw-footer-top { grid-template-columns: 1fr; gap: 2rem; }
-  .chw-footer-bottom { flex-direction: column; gap: 0.5rem; text-align: center; }
+.chw-footer-heart { color: #E040A0; }
+.chw-footer-top-link {
+  color: rgba(255,255,255,0.25);
+  text-decoration: none;
+  font-family: var(--font-code);
+  font-size: 0.68rem;
+  transition: color 0.2s;
+}
+.chw-footer-top-link:hover { color: #fff; }
+@media (max-width: 768px) {
+  .chw-footer-inner { padding: 2rem 1.5rem 0; }
+  .chw-footer-columns { grid-template-columns: 1fr; gap: 2rem; }
+  .chw-footer-bottom { flex-direction: column; gap: 0.5rem; text-align: center; padding: 1rem 1.5rem; }
 }
 </style>
 
 <footer class="chw-footer">
-  <div class="chw-footer-top">
+  <div class="chw-footer-gradient"></div>
+  <div class="chw-footer-inner">
 
-    <!-- Brand column -->
+    <!-- Brand -->
     <div class="chw-footer-brand">
       <a href="/index.html" class="chw-footer-logo">
-        <span class="fl-bracket">&lt;Code&gt;</span><span class="fl-her">Her</span><span class="fl-slash">&lt;/</span><span class="fl-way">Way&gt;</span>
+        <span class="fl-code">&lt;Code&gt;</span><span class="fl-her">Her</span><span class="fl-close">&lt;/</span><span class="fl-way">Way&gt;</span>
       </a>
-      <span class="chw-footer-tagline">Where women code &amp; rewrite the future of tech — on their own terms.</span>
-      <p>Built by Jenna Zawaski for every woman who ever walked into a room full of developers and wondered if she belonged. You did. You always did.</p>
-      <div class="chw-footer-note">
-        <p>"If this place makes even one woman feel less alone in tech, it's worth every late night and every console.log."</p>
-        <span class="chw-fsig">— Jenna 💜</span>
+      <span class="chw-footer-console">console.log("you belong here");</span>
+    </div>
+
+    <!-- Columns -->
+    <div class="chw-footer-columns">
+
+      <!-- Explore -->
+      <div class="chw-footer-col">
+        <h4>Explore</h4>
+        <ul>
+          <li><a href="/index.html">Home</a></li>
+          <li><a href="/blog.html">Start Learning</a></li>
+          <li><a href="/posts/html-series/01-what-is-html.html">HTML Series</a></li>
+          <li><a href="/posts/css-series/01-what-css-does.html">CSS Series</a></li>
+          <li><a href="/posts/js-series/click-01-what-javascript-does.html">JavaScript Series</a></li>
+          <li><a href="/dev-fessions.html">Dev_Fessions</a></li>
+        </ul>
       </div>
-      <div class="chw-footer-social">
-        <a href="https://instagram.com/codeherway" class="chw-fsocial-btn" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
-        </a>
-        <a href="https://linkedin.com/in/jenna-zawaski" class="chw-fsocial-btn" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
-        </a>
-        <a href="https://twitter.com/codeherway" class="chw-fsocial-btn" target="_blank" rel="noopener noreferrer" aria-label="X / Twitter">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-        </a>
-        <a href="https://youtube.com/@codeherway" class="chw-fsocial-btn" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58a2.78 2.78 0 001.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.96A29 29 0 0023 12a29 29 0 00-.46-5.58zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg>
-        </a>
-        <a href="https://tiktok.com/@codeherway" class="chw-fsocial-btn" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75a4.85 4.85 0 01-1.01-.06z"/></svg>
-        </a>
+
+      <!-- Connect -->
+      <div class="chw-footer-col">
+        <h4>Connect</h4>
+        <div class="chw-footer-social-btns">
+          <a href="https://instagram.com/codeherway" class="chw-footer-social-btn" target="_blank" rel="noopener noreferrer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+            <span>Instagram</span>
+          </a>
+          <a href="https://linkedin.com/in/jenna-zawaski" class="chw-footer-social-btn" target="_blank" rel="noopener noreferrer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+            <span>LinkedIn</span>
+          </a>
+          <a href="https://twitter.com/codeherway" class="chw-footer-social-btn" target="_blank" rel="noopener noreferrer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            <span>X / Twitter</span>
+          </a>
+          <a href="https://youtube.com/@codeherway" class="chw-footer-social-btn" target="_blank" rel="noopener noreferrer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58a2.78 2.78 0 001.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.96A29 29 0 0023 12a29 29 0 00-.46-5.58zM9.75 15.02V8.98L15.5 12l-5.75 3.02z"/></svg>
+            <span>YouTube</span>
+          </a>
+          <a href="https://tiktok.com/@codeherway" class="chw-footer-social-btn" target="_blank" rel="noopener noreferrer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.75a4.85 4.85 0 01-1.01-.06z"/></svg>
+            <span>TikTok</span>
+          </a>
+        </div>
       </div>
-    </div>
 
-    <!-- Connect column -->
-    <div class="chw-footer-col">
-      <h4>Connect</h4>
-      <ul>
-        <li><a href="/about.html">About Jenna</a></li>
-        <li><a href="/index.html#newsletter">Weekly Newsletter</a></li>
-        <li><a href="/contact.html">Say Hello</a></li>
-      </ul>
     </div>
-
-    <!-- Read column -->
-    <div class="chw-footer-col">
-      <h4>Read</h4>
-      <ul>
-        <li><a href="/blog.html">All Articles</a></li>
-        <li><a href="/blog.html">Dev_Fessions</a></li>
-        <li><a href="/blog.html">Career &amp; Mindset</a></li>
-        <li><a href="/blog.html">JavaScript</a></li>
-        <li><a href="/blog.html">HTML &amp; CSS</a></li>
-      </ul>
-    </div>
-
   </div>
 
+  <!-- Bottom bar -->
   <div class="chw-footer-bottom">
-    <span>© <span id="footer-year"></span> CodeHerWay · All rights reserved</span>
-    <span>Made with <span class="chw-footer-heart">♥</span> for women in tech · Chicago, IL</span>
+    <span>&copy; <span id="footer-year"></span> CodeHerWay</span>
+    <span>Built with <span class="chw-footer-heart">&hearts;</span> by Jenna Zawaski</span>
+    <a href="#" class="chw-footer-top-link" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">Back to top &uarr;</a>
   </div>
 </footer>
 

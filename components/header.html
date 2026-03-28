@@ -5,7 +5,7 @@
 
       <!-- Logo -->
       <a href="/index.html" class="logo" aria-label="CodeHerWay Home">
-        <span class="logo-code">&lt;Code&gt;</span><span class="logo-her">Her</span><span class="logo-way">&lt;/Way&gt;</span>
+        <span class="logo-code">&lt;Code&gt;</span><span class="logo-her">Her</span><span class="logo-close-tag">&lt;/</span><span class="logo-way">Way&gt;</span>
       </a>
 
       <!-- Desktop Nav Links -->
@@ -83,16 +83,27 @@
 }
 
 .logo {
-  font-family: var(--font-code);
-  font-weight: 700;
   font-size: 1.1rem;
   text-decoration: none;
   white-space: nowrap;
   flex-shrink: 0;
 }
-.logo-code { color: var(--teal); }
-.logo-her  { font-family: var(--font-serif); font-style: italic; color: var(--pink); font-size: 1.2rem; }
-.logo-way  { color: #fff; }
+.logo-code,
+.logo-close-tag,
+.logo-way {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+}
+.logo-her {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 700;
+  font-style: italic;
+  font-size: 1.2rem;
+}
+.logo-code      { color: #0D9488; }
+.logo-her       { color: #E040A0; }
+.logo-close-tag { color: #C4B5FD; }
+.logo-way       { color: #FFFFFF; }
 
 .nav-links {
   display: flex;
@@ -136,7 +147,7 @@
 .dropdown {
   display: none;
   position: absolute;
-  top: calc(100% + 16px);
+  top: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
   background: #12121a;
@@ -146,6 +157,15 @@
   list-style: none;
   min-width: 280px;
   box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+.has-dropdown::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 16px;
 }
 
 .has-dropdown:hover .dropdown { display: block; }
