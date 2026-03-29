@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Playground — CodeHerWay</title>
+
+<!-- CodeMirror 5 core -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js"></script>
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../assets/css/global.css" />
+
+<style>
+  *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --pink: #F599FF;
+    --pink-dim: rgba(245, 153, 255, 0.18);
+    --pink-mid: rgba(245, 153, 255, 0.4);
+    --pink-bright: rgba(245, 153, 255, 0.6);
+    --pink-glow: rgba(245, 153, 255, 0.35);
+    --cyan: #7DF9FF;
+    --cyan-dim: rgba(125, 249, 255, 0.15);
+    --cyan-glow: rgba(125, 249, 255, 0.3);
+    --bg-deep: #0b0b1a;
+    --bg-mid: #2a1c4f;
+    --bg-surface: rgba(0, 0, 0, 0.5);
+    --bg-surface-alt: rgba(0, 0, 0, 0.55);
+    --text: #fff;
+    --text-dim: #c4a8d0;
+    --text-muted: #fbd6ff;
+    --font-ui: 'Outfit', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --radius: 14px;
+    --radius-lg: 20px;
+    --transition: 0.2s ease;
+    --editor-height: 280px;
+  }
+
+  body {
+    font-family: var(--font-ui);
+    background: var(--bg-deep);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  .playground-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px 60px;
+    min-height: calc(100vh - 120px);
+  }
+
+  .sp-playground {
+    width: 100%;
+    max-width: 960px;
+    background: radial-gradient(ellipse at top, var(--bg-mid), var(--bg-deep));
+    border-radius: var(--radius-lg);
+    box-shadow:
+      0 0 0 1px var(--pink-mid),
+      0 0 40px var(--pink-glow),
+      0 0 120px rgba(245, 153, 255, 0.2);
+    overflow: hidden;
+    position: relative;
+    animation: fadeIn 0.6s ease;
+  }
+
+  .sp-playground.fullscreen {
+    position: fixed;
+    inset: 0;
+    max-width: none;
+    border-radius: 0;
+    z-index: 9999;
+  }
+
+  .sp-playground.fullscreen .sp-editors { height: calc(50vh - 160px); }
+  .sp-playground.fullscreen iframe { height: 40vh; }
+
+  .sp-playground.readonly .sp-editors .CodeMirror { opacity: 0.7; }
+  .sp-playground.readonly .btn[data-action="run"] { display: none; }
+  .sp-playground.readonly .btn[data-action="readonly"] {
+    background: var(--pink-mid);
+    border-color: var(--pink);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .sp-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: clamp(12px, 2.5vw, 24px);
+    padding: clamp(12px, 2vw, 20px) clamp(16px, 3vw, 32px);
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--pink-mid);
+  }
+
+  .sp-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.02em;
+    padding: 4px 16px;
+  }
+
+  .sp-brand-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .sp-brand-text .b-code { color: #0D9488; }
+  .sp-brand-text .b-her { color: #E040A0; font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 16px; }
+  .sp-brand-text .b-close { color: #C4B5FD; }
+  .sp-brand-text .b-way { color: #fff; }
+
+  .sp-actions, .sp-modes {
+    display: flex;
+    gap: clamp(4px, 1vw, 10px);
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: var(--font-ui);
+    font-size: clamp(12px, 1.4vw, 14px);
+    font-weight: 500;
+    background: var(--pink-dim);
+    color: var(--text);
+    border: 1px solid var(--pink-bright);
+    border-radius: var(--radius);
+    padding: clamp(6px, 1vw, 10px) clamp(10px, 1.8vw, 18px);
+    cursor: pointer;
+    transition: all var(--transition);
+    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent, rgba(245, 153, 255, 0.15));
+    opacity: 0;
+    transition: opacity var(--transition);
+  }
+
+  .btn:hover {
+    background: rgba(245, 153, 255, 0.3);
+    box-shadow: 0 0 20px var(--pink-mid), 0 2px 8px rgba(0,0,0,0.3);
+    transform: translateY(-1px);
+  }
+
+  .btn:hover::before { opacity: 1; }
+
+  .btn:active {
+    transform: translateY(0);
+    box-shadow: 0 0 10px var(--pink-dim);
+  }
+
+  .btn[data-action="run"] {
+    background: rgba(245, 153, 255, 0.28);
+    border-color: var(--pink);
+    font-weight: 600;
+  }
+
+  .btn[data-action="run"]:hover {
+    background: rgba(245, 153, 255, 0.45);
+    box-shadow: 0 0 28px var(--pink-glow);
+  }
+
+  .btn[data-action="autorun"].active {
+    background: var(--cyan-dim);
+    border-color: var(--cyan);
+    color: var(--cyan);
+    box-shadow: 0 0 16px var(--cyan-glow);
+  }
+
+  .sp-tabs {
+    display: flex;
+    background: var(--bg-surface-alt);
+    border-bottom: 1px solid rgba(245, 153, 255, 0.15);
+  }
+
+  .sp-tabs button {
+    flex: 1;
+    padding: 11px 16px;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    position: relative;
+    transition: color var(--transition);
+  }
+
+  .sp-tabs button:hover { color: var(--text); }
+
+  .sp-tabs button.active { color: var(--pink); }
+
+  .sp-tabs button.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 16px;
+    right: 16px;
+    height: 3px;
+    background: var(--pink);
+    border-radius: 3px 3px 0 0;
+    box-shadow: 0 0 10px var(--pink-glow);
+  }
+
+  .sp-tabs .copy-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 13px;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all var(--transition);
+    opacity: 0.5;
+  }
+
+  .sp-tabs .copy-btn:hover { opacity: 1; color: var(--pink); }
+  .sp-tabs .copy-btn.copied { color: var(--cyan); opacity: 1; }
+
+  .sp-editors {
+    position: relative;
+    height: var(--editor-height);
+    overflow: hidden;
+  }
+
+  .sp-editors .CodeMirror {
+    position: absolute;
+    inset: 0;
+    height: 100% !important;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .CodeMirror-scroll { overflow-x: hidden !important; }
+
+  .sp-preview-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    background: var(--bg-surface-alt);
+    border-top: 1px solid rgba(245, 153, 255, 0.15);
+    border-bottom: 1px solid rgba(245, 153, 255, 0.1);
+  }
+
+  .sp-preview-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .sp-preview-bar .sp-shortcut-hint {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: rgba(196, 168, 208, 0.5);
+  }
+
+  .sp-preview-bar kbd {
+    display: inline-block;
+    background: rgba(245, 153, 255, 0.1);
+    border: 1px solid rgba(245, 153, 255, 0.2);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  iframe {
+    width: 100%;
+    height: 260px;
+    border: none;
+    background: #fff;
+    display: block;
+  }
+
+  .sp-console-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 16px;
+    background: rgba(0, 0, 0, 0.65);
+    border-top: 1px solid rgba(125, 249, 255, 0.15);
+    cursor: pointer;
+    transition: background var(--transition);
+  }
+
+  .sp-console-bar:hover { background: rgba(0, 0, 0, 0.75); }
+
+  .sp-console-title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sp-console-badge {
+    background: var(--cyan-dim);
+    border: 1px solid rgba(125, 249, 255, 0.3);
+    color: var(--cyan);
+    font-size: 10px;
+    padding: 1px 7px;
+    border-radius: 10px;
+    min-width: 22px;
+    text-align: center;
+  }
+
+  .sp-console-toggle {
+    color: var(--text-dim);
+    font-size: 12px;
+    transition: transform 0.3s ease;
+  }
+
+  .sp-console-bar.open .sp-console-toggle { transform: rotate(180deg); }
+
+  .sp-console-output {
+    max-height: 0;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.7);
+    transition: max-height 0.35s ease;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.7;
+  }
+
+  .sp-console-output.open { max-height: 180px; overflow-y: auto; }
+
+  .sp-console-output .log-line {
+    padding: 3px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .sp-console-output .log-line:hover { background: rgba(255,255,255,0.02); }
+
+  .log-line .log-prefix { font-size: 10px; opacity: 0.4; flex-shrink: 0; }
+  .log-line.log { color: #e0e0e0; }
+  .log-line.warn { color: #FFD54F; background: rgba(255, 213, 79, 0.05); }
+  .log-line.error { color: #FF7043; background: rgba(255, 112, 67, 0.06); }
+
+  .sp-console-empty {
+    padding: 16px;
+    text-align: center;
+    color: rgba(196, 168, 208, 0.35);
+    font-style: italic;
+    font-size: 12px;
+  }
+
+  .sp-console-clear {
+    background: none;
+    border: 1px solid rgba(125, 249, 255, 0.2);
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 2px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+
+  .sp-console-clear:hover { border-color: var(--cyan); color: var(--cyan); }
+
+  .sp-toast {
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: rgba(0, 0, 0, 0.85);
+    border: 1px solid var(--pink-mid);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 8px 20px;
+    border-radius: 10px;
+    pointer-events: none;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  }
+
+  .sp-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .sp-footer {
+    text-align: center;
+    padding: 10px;
+    color: var(--text-muted);
+    font-size: 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border-top: 1px solid rgba(245, 153, 255, 0.08);
+  }
+
+  .sp-footer strong { color: var(--pink); }
+
+  .sp-console-output::-webkit-scrollbar { width: 6px; }
+  .sp-console-output::-webkit-scrollbar-track { background: transparent; }
+  .sp-console-output::-webkit-scrollbar-thumb { background: var(--pink-dim); border-radius: 3px; }
+
+  @media (min-width: 1100px) {
+    .sp-toolbar { padding: 18px 32px; gap: 24px; }
+    .sp-actions, .sp-modes { gap: 12px; }
+    .btn { padding: 10px 22px; font-size: 14px; }
+  }
+
+  @media (max-width: 700px) {
+    .sp-toolbar { flex-direction: column; align-items: center; gap: 8px; }
+    .sp-brand { width: 100%; justify-content: center; }
+    .sp-actions, .sp-modes { width: 100%; justify-content: center; gap: 5px; }
+    .btn { font-size: 12px; padding: 6px 10px; border-radius: 10px; }
+  }
+
+  @media (max-width: 420px) {
+    .btn { font-size: 11px; padding: 5px 8px; border-radius: 8px; }
+    .sp-actions, .sp-modes { gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+  <div id="site-header"></div>
+
+  <div class="playground-page">
+    <div class="sp-playground" data-id="codeherway-1">
+
+      <div class="sp-toolbar">
+        <div class="sp-brand">
+          <span class="sp-brand-text">
+            <span class="b-code">&lt;Code&gt;</span><span class="b-her">Her</span><span class="b-close">&lt;/</span><span class="b-way">Way&gt;</span>
+          </span>
+          Playground
+        </div>
+
+        <div class="sp-actions">
+          <button class="btn" data-action="run">▶ Run</button>
+          <button class="btn" data-action="reset-lesson">↺ Reset</button>
+          <button class="btn" data-action="reset-all">⟲ Reset All</button>
+          <button class="btn" data-action="autorun">⚡ Auto</button>
+        </div>
+
+        <div class="sp-modes">
+          <button class="btn" data-action="fullscreen">⛶ Fullscreen</button>
+          <button class="btn" data-action="readonly">🔒 Read</button>
+          <button class="btn" data-action="share">🔗 Share</button>
+        </div>
+      </div>
+
+      <div class="sp-tabs">
+        <button class="active" data-tab="html">
+          HTML
+          <span class="copy-btn" data-copy="html" title="Copy HTML">📋</span>
+        </button>
+        <button data-tab="css">
+          CSS
+          <span class="copy-btn" data-copy="css" title="Copy CSS">📋</span>
+        </button>
+        <button data-tab="js">
+          JS
+          <span class="copy-btn" data-copy="js" title="Copy JS">📋</span>
+        </button>
+      </div>
+
+      <div class="sp-editors">
+        <textarea data-editor="html"><h1>Hello, CodeHerWay!</h1>
+<p>Start coding — you got this. 💜</p>
+<button id="magic">Click me</button>
+<p id="output"></p></textarea>
+        <textarea data-editor="css">body {
+  font-family: 'Outfit', system-ui, sans-serif;
+  padding: 2rem;
+  text-align: center;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  color: #F599FF;
+}
+
+h1 { margin-bottom: 0.5rem; }
+
+button {
+  margin-top: 1rem;
+  padding: 10px 28px;
+  background: #F599FF;
+  color: #0b0b1a;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(245,153,255,0.5);
+}</textarea>
+        <textarea data-editor="js">const btn = document.getElementById("magic");
+const out = document.getElementById("output");
+let clicks = 0;
+
+btn.addEventListener("click", () => {
+  clicks++;
+  out.textContent = `Clicked ${clicks} time${clicks > 1 ? "s" : ""}!`;
+  console.log(`Button clicked: ${clicks}`);
+});</textarea>
+      </div>
+
+      <div class="sp-preview-bar">
+        <span class="sp-preview-label">▸ Preview</span>
+        <span class="sp-shortcut-hint"><kbd>Ctrl</kbd> + <kbd>Enter</kbd> to run</span>
+      </div>
+
+      <iframe title="Live preview"></iframe>
+
+      <div class="sp-console-bar" data-action="toggle-console">
+        <span class="sp-console-title">
+          Console
+          <span class="sp-console-badge">0</span>
+        </span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <button class="sp-console-clear" data-action="clear-console">Clear</button>
+          <span class="sp-console-toggle">▼</span>
+        </div>
+      </div>
+      <div class="sp-console-output">
+        <div class="sp-console-empty">Run your code to see console output here</div>
+      </div>
+
+      <div class="sp-toast"></div>
+
+      <div class="sp-footer">Powered by <strong>CodeHerWay</strong></div>
+    </div>
+  </div>
+
+  <div id="site-footer"></div>
+
+  <script src="../assets/js/main.js"></script>
+
+  <script>
+  (() => {
+    const root   = document.querySelector('.sp-playground');
+    const iframe = root.querySelector('iframe');
+    const tabs   = root.querySelectorAll('.sp-tabs > button');
+    const toast  = root.querySelector('.sp-toast');
+    const badge  = root.querySelector('.sp-console-badge');
+    const consoleBar    = root.querySelector('.sp-console-bar');
+    const consoleOutput = root.querySelector('.sp-console-output');
+
+    const editors  = {};
+    const defaults = {};
+    let autoRun    = false;
+    let readOnly   = false;
+    let logCount   = 0;
+
+    root.querySelectorAll('[data-editor]').forEach(el => {
+      const key = el.dataset.editor;
+      defaults[key] = el.value;
+      editors[key] = CodeMirror.fromTextArea(el, {
+        mode:        key === 'html' ? 'htmlmixed' : key === 'css' ? 'css' : 'javascript',
+        theme:       'material-darker',
+        lineNumbers: true,
+        tabSize:     2,
+        lineWrapping:true,
+        matchBrackets: true,
+      });
+    });
+
+    function showTab(tab) {
+      tabs.forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+      Object.keys(editors).forEach(k => {
+        editors[k].getWrapperElement().style.display = k === tab ? 'block' : 'none';
+        if (k === tab) editors[k].refresh();
+      });
+    }
+
+    tabs.forEach(b => {
+      b.addEventListener('click', e => {
+        if (e.target.closest('.copy-btn')) return;
+        showTab(b.dataset.tab);
+      });
+    });
+
+    function clearConsole() {
+      logCount = 0;
+      badge.textContent = '0';
+      consoleOutput.innerHTML = '<div class="sp-console-empty">Run your code to see console output here</div>';
+    }
+
+    function addLog(type, args) {
+      const empty = consoleOutput.querySelector('.sp-console-empty');
+      if (empty) empty.remove();
+      logCount++;
+      badge.textContent = logCount;
+      const line = document.createElement('div');
+      line.className = `log-line ${type}`;
+      const prefix = document.createElement('span');
+      prefix.className = 'log-prefix';
+      prefix.textContent = type === 'log' ? '›' : type === 'warn' ? '⚠' : '✖';
+      const msg = document.createElement('span');
+      msg.textContent = args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ');
+      line.append(prefix, msg);
+      consoleOutput.appendChild(line);
+      consoleOutput.scrollTop = consoleOutput.scrollHeight;
+    }
+
+    function run() {
+      if (readOnly) return;
+      clearConsole();
+      const html = editors.html.getValue();
+      const css  = editors.css.getValue();
+      const js   = editors.js.getValue();
+      const consoleHook = `
+        <script>
+          (function(){
+            const _post = msg => window.parent.postMessage(msg, '*');
+            ['log','warn','error'].forEach(m => {
+              const orig = console[m];
+              console[m] = function() {
+                orig.apply(console, arguments);
+                _post({ __chw_console: true, type: m, args: Array.from(arguments).map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)) });
+              };
+            });
+            window.onerror = function(msg, src, line) {
+              _post({ __chw_console: true, type: 'error', args: ['Error: ' + msg + ' (line ' + line + ')'] });
+            };
+          })();
+        <\/script>
+      `;
+      iframe.srcdoc = `<!DOCTYPE html><html><head><style>${css}</style>${consoleHook}</head><body>${html}<script>${js}<\/script></body></html>`;
+    }
+
+    window.addEventListener('message', e => {
+      if (e.data && e.data.__chw_console) {
+        addLog(e.data.type, e.data.args);
+      }
+    });
+
+    let toastTimer;
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    root.addEventListener('click', e => {
+      const copyBtn = e.target.closest('.copy-btn');
+      if (copyBtn) {
+        e.stopPropagation();
+        const key = copyBtn.dataset.copy;
+        navigator.clipboard.writeText(editors[key].getValue()).then(() => {
+          copyBtn.classList.add('copied');
+          copyBtn.textContent = '✓';
+          showToast(`${key.toUpperCase()} copied`);
+          setTimeout(() => { copyBtn.classList.remove('copied'); copyBtn.textContent = '📋'; }, 1500);
+        });
+        return;
+      }
+
+      const action = e.target.dataset?.action || e.target.closest('[data-action]')?.dataset?.action;
+      if (!action) return;
+
+      switch (action) {
+        case 'run': run(); break;
+        case 'autorun': {
+          autoRun = !autoRun;
+          e.target.closest('.btn')?.classList.toggle('active', autoRun);
+          showToast(autoRun ? 'Auto-run ON' : 'Auto-run OFF');
+          if (autoRun) run();
+          break;
+        }
+        case 'reset-lesson':
+          Object.keys(editors).forEach(k => editors[k].setValue(defaults[k]));
+          showToast('Lesson reset');
+          run();
+          break;
+        case 'reset-all':
+          if (location.hash) { location.hash = ''; location.reload(); }
+          else { Object.keys(editors).forEach(k => editors[k].setValue(defaults[k])); showToast('All reset'); run(); }
+          break;
+        case 'fullscreen':
+          root.classList.toggle('fullscreen');
+          Object.values(editors).forEach(e => setTimeout(() => e.refresh(), 50));
+          showToast(root.classList.contains('fullscreen') ? 'Fullscreen ON' : 'Fullscreen OFF');
+          break;
+        case 'readonly':
+          readOnly = !readOnly;
+          root.classList.toggle('readonly', readOnly);
+          Object.values(editors).forEach(e => e.setOption('readOnly', readOnly));
+          showToast(readOnly ? 'Read-only ON' : 'Read-only OFF');
+          break;
+        case 'share':
+          try {
+            const state = btoa(JSON.stringify({ h: editors.html.getValue(), c: editors.css.getValue(), j: editors.js.getValue() }));
+            const url = location.origin + location.pathname + '#' + state;
+            navigator.clipboard.writeText(url).then(() => showToast('Link copied'));
+          } catch { showToast('Could not generate share link'); }
+          break;
+        case 'toggle-console':
+          consoleBar.classList.toggle('open');
+          consoleOutput.classList.toggle('open');
+          break;
+        case 'clear-console':
+          e.stopPropagation();
+          clearConsole();
+          break;
+      }
+    });
+
+    Object.values(editors).forEach(ed => {
+      ed.on('change', () => { if (autoRun) run(); });
+    });
+
+    document.addEventListener('keydown', e => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); run(); }
+      if (e.key === 'Escape' && root.classList.contains('fullscreen')) {
+        root.classList.remove('fullscreen');
+        Object.values(editors).forEach(ed => setTimeout(() => ed.refresh(), 50));
+        showToast('Fullscreen OFF');
+      }
+    });
+
+    if (location.hash) {
+      try {
+        const s = JSON.parse(atob(location.hash.slice(1)));
+        if (s.h != null) editors.html.setValue(s.h);
+        if (s.c != null) editors.css.setValue(s.c);
+        if (s.j != null) editors.js.setValue(s.j);
+      } catch {}
+    }
+
+    const hintEl = root.querySelector('.sp-shortcut-hint');
+    if (hintEl && navigator.platform.includes('Mac')) {
+      hintEl.innerHTML = '<kbd>⌘</kbd> + <kbd>Enter</kbd> to run';
+    }
+
+    showTab('html');
+    run();
+  })();
+  </script>
+
+</body>
+</html>
