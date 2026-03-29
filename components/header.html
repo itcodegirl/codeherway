@@ -11,10 +11,17 @@
       <!-- Desktop Nav Links -->
       <ul class="nav-links" role="list">
         <li><a href="/index.html">Home</a></li>
-        <li><a href="/blog.html">Blog</a></li>
         <li class="has-dropdown">
-          <a href="#" aria-haspopup="true">Series ▾</a>
+          <a href="#" aria-haspopup="true">console.blog() ▾</a>
           <ul class="dropdown" role="list">
+            <li>
+              <a href="/blog.html">
+                <span class="dd-dot" style="background:#fff;"></span>
+                <span class="dd-name">All Posts</span>
+                <span class="dd-count">81</span>
+              </a>
+            </li>
+            <li class="dd-divider"></li>
             <li>
               <a href="/posts/html-series/01-what-is-html.html">
                 <span class="dd-dot" style="background:#ff69b4;"></span>
@@ -183,6 +190,12 @@
 }
 .dropdown li a:hover { background: rgba(255,255,255,0.04); color: #fff; }
 .dropdown li a::after { display: none; }
+
+.dd-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+  margin: 4px 14px;
+}
 
 .dd-dot {
   width: 7px;
