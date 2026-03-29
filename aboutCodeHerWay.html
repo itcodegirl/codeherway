@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About CodeHerWay — Our Story</title>
+<meta name="description" content="Why CodeHerWay exists, who built it, and why beginner-friendly coding education for women in tech matters.">
+<link rel="stylesheet" href="assets/css/global.css">
+<style>
+
+.about-hero {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 100px 24px 60px;
+  text-align: center;
+}
+
+.about-eyebrow {
+  font-family: var(--font-code);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--teal-light);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+.about-eyebrow::before,
+.about-eyebrow::after {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: var(--teal-light);
+}
+
+.about-title {
+  font-size: clamp(36px, 6vw, 64px);
+  font-weight: 700;
+  line-height: 1.05;
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.about-subtitle {
+  font-size: 19px;
+  color: var(--text-muted);
+  max-width: 580px;
+  margin: 0 auto;
+  line-height: 1.65;
+}
+
+.about-body {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px 80px;
+}
+
+.about-body h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #fff;
+  margin: 56px 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.about-body p {
+  font-size: 17px;
+  color: var(--text-muted);
+  line-height: 1.75;
+  margin-bottom: 20px;
+}
+
+.about-body .highlight {
+  color: var(--teal-light);
+  font-weight: 600;
+}
+
+.about-body .highlight-pink {
+  color: var(--pink);
+  font-weight: 600;
+}
+
+.about-quote {
+  border-left: 3px solid var(--pink);
+  padding: 1.25rem 1.5rem;
+  margin: 2rem 0;
+  background: rgba(255,105,180,0.04);
+  border-radius: 0;
+}
+
+.about-quote p {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  font-style: italic;
+  color: var(--text);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.about-values {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 2rem 0;
+}
+
+.about-value {
+  background: var(--bg-card);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.about-value-icon {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.about-value h3 {
+  font-family: var(--font-code);
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.about-value p {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+  line-height: 1.55;
+}
+
+.about-cta {
+  text-align: center;
+  padding: 3rem 0;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  margin-top: 2rem;
+}
+
+.about-cta p {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  font-style: italic;
+  color: var(--text);
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 600px) {
+  .about-values { grid-template-columns: 1fr; }
+  .about-hero { padding: 80px 20px 40px; }
+}
+
+</style>
+</head>
+<body>
+
+  <div id="site-header"></div>
+
+  <section class="about-hero">
+    <div class="about-eyebrow">Our Story</div>
+    <h1 class="about-title">Built different.<br><span class="grad-text-teal">On purpose.</span></h1>
+    <p class="about-subtitle">CodeHerWay exists because learning to code shouldn't come with a side of intimidation. Here's why we built this — and who it's for.</p>
+  </section>
+
+  <main class="about-body">
+
+    <h2>Why CodeHerWay Exists</h2>
+    <p>There's no shortage of coding tutorials on the internet. But most of them weren't written with <span class="highlight-pink">you</span> in mind.</p>
+    <p>They assume you already know the jargon. They skip the "why" and jump to the "how." They make you feel like you're behind before you've even started.</p>
+    <p>CodeHerWay was built to be different. Every tutorial, every series, every Dev_Fession on this site is written the way we wish someone had explained it to us — <span class="highlight">clearly, patiently, and without gatekeeping</span>.</p>
+
+    <div class="about-quote">
+      <p>"If this place makes even one woman feel less alone in tech, it's worth every late night and every console.log."</p>
+    </div>
+
+    <h2>What We Believe</h2>
+
+    <div class="about-values">
+      <div class="about-value">
+        <div class="about-value-icon">🚪</div>
+        <h3>No gatekeeping</h3>
+        <p>Every concept is explained from the ground up. No "just Google it." No assumed knowledge.</p>
+      </div>
+      <div class="about-value">
+        <div class="about-value-icon">💬</div>
+        <h3>Real talk</h3>
+        <p>We share the mistakes, the confusion, and the breakthroughs. Learning is messy — and that's okay.</p>
+      </div>
+      <div class="about-value">
+        <div class="about-value-icon">🧱</div>
+        <h3>Build on foundations</h3>
+        <p>Each series is structured so concepts stack. Start at post 1, and every post after makes more sense.</p>
+      </div>
+      <div class="about-value">
+        <div class="about-value-icon">💜</div>
+        <h3>For women in tech</h3>
+        <p>Built by a woman who knows what it's like to be the only one in the room. You belong here.</p>
+      </div>
+    </div>
+
+    <h2>What You'll Find Here</h2>
+    <p><span class="highlight">81 free tutorials</span> across HTML, CSS, and JavaScript — structured into complete series that build on each other. Plus Dev_Fessions: honest, sometimes embarrassing stories from the coding trenches that remind you every developer started exactly where you are.</p>
+    <p>No paywalls. No upsells. No "subscribe to unlock." Just code — explained clearly, by someone who's been there.</p>
+
+    <h2>Who Built This</h2>
+    <p>CodeHerWay was built by <span class="highlight-pink">Jenna Zawaski</span> — a developer, educator, and professional bug whisperer based in Chicago, IL. She started this project because she believes the tech industry gets better when more women have a seat at the table — and the skills to build their own.</p>
+
+    <div class="about-cta">
+      <p>"Start where you are. Build what's next."</p>
+      <a href="/blog.html" class="btn-primary" style="display:inline-flex;gap:8px;">
+        Start Learning
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+
+  </main>
+
+  <div id="site-footer"></div>
+
+  <script src="assets/js/main.js"></script>
+
+</body>
+</html>
